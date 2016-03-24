@@ -1,0 +1,134 @@
+{% extends 'admin/master' %}
+{% set activeNav = 'cms' %}
+{% set title =  message('pagesManagement') %}
+
+{% block head %}
+    <link href="/resources/admin/libs/fancytree/dist/skin-fab/ui.fancytree.css" rel="stylesheet" type="text/css" media="screen">
+    <script src="/resources/admin/libs/fancytree/dist/jquery.fancytree-all.min.js"></script>
+    <script src="/resources/admin/libs/jqUpload/js/jquery.iframe-transport.js"></script>
+    <script src="/resources/admin/libs/jqUpload/js/jquery.fileupload.js"></script>
+{% endblock head %}
+
+{% block modal %}
+    {{ csrf | raw }}
+    <div id="modalCreateNewPage" tabindex="-1" role="dialog" aria-hidden="true"
+         class="modal fade slide-up disable-scroll">
+        <div class="modal-dialog">
+            <div class="modal-content-wrapper">
+                <div class="modal-content">
+                    <div class="modal-header clearfix text-left p-b-25">
+                        <button type="button" data-dismiss="modal" aria-hidden="true" class="close"><i class="pg-close fs-14"></i></button>
+                        <h4>{{ message('admin.newPage') }}</h4>
+                        <hr class="section">
+                    </div>
+                    <div class="modal-body">
+                        <form id="createPageForm" role="form" method="post" action="/admin/cms/page/create">
+                            <div class="form-group form-group-default m-b-20 required">
+                                <label>{{ message('name') }}</label>
+                                <input id="createPageName" name="name" type="text" required class="form-control">
+                            </div>
+                            <h5>{{ message('level') }}</h5>
+                            <div class="radio radio-success">
+                                 <span id="radio-parent-container">
+                                 <input id="radio-parent" type="radio" value="{{ value }}" name="parentId">
+                                 <label for="radio-parent">{{ name }}</label></span><span id="radio-root-container">
+                                 <input id="radio-root" type="radio" value="-1" name="parentId">
+                                 <label for="radio-root">{{ message('admin.rootPage') }}</label></span>
+                            </div>
+                            <h5>{{ message('admin.pageParam') }}</h5>
+
+                            <div class="form-group form-group-default form-group-default-select2 required">
+                                <label for="selectType">{{ message('type') }}</label>
+                                <select id="selectType" name="type" data-init-plugin="select2" data-disable-search="true" class="full-width">
+                                    <option value="Page">{{ message('page') }}</option>
+                                    <option value="Link">{{ message('link') }}</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-group-default form-group-default-select2 required js-page">
+                                <label for="selectTemplate">{{ message('template') }}</label>
+
+                                <select id="selectTemplate" name="templateId" data-placeholder="Select Country" data-init-plugin="select2" class="full-width">
+                                    {% for t in templates %}
+                                    <option value="{{ t.id }}">{{ t.name }}</option>
+                                    {% else %}
+                                    <option value="-1"></option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
+                        <hr class="section m-t-5 light">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <button type="button" data-dismiss="modal" class="btn btn-danger btn-block m-t-5">{{ message('cancel') }}</button>
+                            </div>
+                            <div class="col-sm-6">
+                                <button type="button" id="btnFormCeatePage" class="btn btn-success btn-block m-t-5">{{ message('save') }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modalSlideLeft" tabindex="-1" role="dialog" aria-hidden="true"
+         class="modal fade slide-right slide-right-center">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content-wrapper">
+                <div class="modal-content">
+                    <button type="button" data-dismiss="modal" aria-hidden="true" class="close"><i class="pg-close fs-14"></i></button>
+                    <div class="container-xs-height full-height">
+                        <div class="row-xs-height">
+                            <div class="modal-body col-xs-height col-middle text-center">
+                                <h5 class="text-primary"><span class="semi-bold">{{ message('warning') }}</span> {{ message('admin.pageDeleteMessage') }}</h5><br>
+                                <button id="btnDeletePage" type="button" data-dismiss="modal" class="btn btn-success btn-block">{{ message('delete') }}
+                                </button>
+                                <button type="button" data-dismiss="modal" class="btn btn-danger btn-block">{{ message('cancel') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock modal %}
+
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="panel panel-default panel-tree">
+                <div class="panel-heading">
+                    <div class="panel-title"><span>{{ message('admin.tree') }}</span><span id="matches" class="label label-info"></span>
+                        <button id="btnCreatePage" type="button" class="btn btn-success m-t-5 pull-right"><i
+                                    class="fa fa-plus-circle"></i></button>
+                        <hr class="section">
+                    </div>
+                    <div class="tree-search">
+                        <div class="tree-search-btn-reset">
+                            <button id="btnResetSearch" class="btn btn-default">X</button>
+                        </div>
+                        <div class="tree-search-input">
+                            <input placeholder="search" id="searchTree" class="light-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="tree">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="pageContentContainer" class="col-sm-9">
+            <form role="form" id="pageForm" action="/admin/cms/edit/" enctype="multipart/form-data" method="post">
+            </form>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block bottom %}
+    <script src="/resources/admin/js/page/cms.js"></script>
+{% endblock bottom %}

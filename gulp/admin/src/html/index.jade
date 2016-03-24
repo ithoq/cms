@@ -1,0 +1,458 @@
+doctype html
+html
+  head
+    include shared/head.jade
+
+  body.fixed-header
+    include shared/nav.jade
+    .page-container
+      include shared/header.jade
+      .page-content-wrapper
+        - var pageName = 'Gestion des pages'
+        #modalCreateNewPage.modal.fade.slide-up.disable-scroll(tabindex='-1', role='dialog', aria-hidden='true')
+          .modal-dialog
+            .modal-content-wrapper
+              .modal-content
+                .modal-header.clearfix.text-left.p-b-25
+                  button.close(type='button', data-dismiss='modal', aria-hidden='true')
+                    i.pg-close.fs-14
+                  h4
+                    | Créer une nouvelle page 
+                  hr.section
+                .modal-body
+                  form(role='form')
+                      .form-group.form-group-default.m-b-20.required
+                        label Nom de la page
+                        input.form-control(type='text')
+                      h5 Niveau :
+                      .radio.radio-success
+                        span#radio-parent-container
+                          input#radio-parent(type='radio', value='{{value}}', name='parentId')
+                          label(for='radio-parent') {{name}}
+                        span#radio-root-container
+                          input#radio-root(type='radio', value='-1', name='parentId')
+                          label(for='radio-root') Page racine
+
+                      h5 Type de la page :
+                      .cs-wrapper.selectStyle
+                        select#selectType.cs-select.cs-skin-slide(data-init-plugin='cs-select')
+                          option(value='page') Page
+                          option(value='lien') Lien
+                          option(value='module') Module
+
+                      .form-group.form-group-default.form-group-default-select2.required.selectHide.page
+                        label Template
+                        select.full-width(data-placeholder='Select Country', data-init-plugin='select2')
+                          optgroup(label='Template/Exemple')
+                            option(value='1') Template 1
+                            option(value='2') Template 2
+                      .form-group.form-group-default.form-group-default-select2.required.selectHide.module
+                        label Module
+                        select.full-width(data-placeholder='Select Country', data-init-plugin='select2')
+                          optgroup(label='Module/Exemple')
+                            option(value='1') Module 1
+                            option(value='2') Module 2
+                  
+                  hr.section.m-t-5.light
+                  .row
+                    .col-sm-6
+                      button.btn.btn-danger.btn-block.m-t-5(type='button', data-dismiss='modal') Annuler   
+                    .col-sm-6
+                      button.btn.btn-success.btn-block.m-t-5(type='button') Enregister 
+  
+        #modalSlideLeft.modal.fade.slide-right.slide-right-center(tabindex='-1', role='dialog', aria-hidden='true')
+          .modal-dialog.modal-sm
+            .modal-content-wrapper
+              .modal-content
+                button.close(type='button', data-dismiss='modal', aria-hidden='true')
+                  i.pg-close.fs-14
+                .container-xs-height.full-height
+                  .row-xs-height
+                    .modal-body.col-xs-height.col-middle.text-center
+                      h5.text-primary
+                        span.semi-bold Attention,
+                        |  cette page va être supprimée
+                      br
+                      button.btn.btn-success.btn-block(type='button', data-dismiss='modal') Continue
+                      button.btn.btn-danger.btn-block(type='button', data-dismiss='modal') Cancel
+
+        include shared/breadcrumb.jade
+        .container-fluid.container-fixed-lg
+          .row
+            .col-sm-3
+              .panel.panel-default.panel-tree
+                .panel-heading
+                  .panel-title 
+                    span Tree
+                    span.label.label-info#matches
+                    button#btnCreatePage.btn.btn-success.m-t-5.pull-right(type='button')
+                      i.fa.fa-plus-circle
+                    hr.section
+                  .tree-search
+                    .tree-search-btn-reset       
+                      button.btn.btn-default#btnResetSearch X    
+                    .tree-search-input                    
+                      input(placeholder="search")#searchTree.light-input
+  
+                .panel-body
+                  #tree
+                    ul#treeData(style='display: none;')
+                      li(title='Look, a tool tip!', id="1")
+                        | Accueil 1
+                      li(id="2")
+                        | Contact 2
+                      li.folder(id="3")
+                        | Contenu 3
+                        ul
+                          li(id='4')
+                            | Assurance personnelle 4
+                            ul
+                              li(id='5')
+                                | maladie 5
+                              li(id='6')
+                                | décès 6
+                          li(id='8')
+                            | Assurance entreprise 8
+                            ul
+                              li(id='9')
+                                | accident 9
+                              li(id='10')
+                                | auto 10
+                      li(id='11')
+                        | Qui somme nous 11
+                        ul
+                          li(id='12')
+                            | Notre boite 12
+                            ul
+                              li(id='13')
+                                | Nos partenaires 13
+                              li(id='14')
+                                | Nos amis 14
+
+            .col-sm-9#pageContentContainer
+              form(role='form')
+                .panel.panel-transparent
+                  ul#tab-3.nav.nav-tabs.nav-tabs-simple.nav-tabs-right.bg-white
+                    li.active
+                      a(data-toggle='tab', href='#tabGeneral') Général
+                    li
+                      a(data-toggle='tab', href='#tabFile') File
+                    li
+                      a(data-toggle='tab', href='#tabDev') Dev
+                    li
+                      a(data-toggle='tab', href='#tabSeo') SEO
+                  .tab-content.bg-white
+                    .panel-heading.clearfix
+                      .operation-box
+                        button.btn.btn-default.btn-delete(type='button', data-toggle='modal', data-target='#modalSlideLeft')
+                          i.fa.fa-trash-o
+                        button#submitForm.btn.btn-default.btn-add(type='button', onclick='uploadForm()')
+                          i.fa.fa-save
+                      span.thumbnail-wrapper.d100.circular.inline.m-t-5 template
+                      .panel-page-title
+                        input.light-input.page-title(type="text", value="Nom de la page")
+                        .title-page-sub
+                          .checkbox.check-success.checkbox-circle
+                            input#checkbox8(type='checkbox', value='1')
+                            label(for='checkbox8') Menu 
+                              i.fa.fa-info-circle(data-placement='bottom', title='', data-toggle='tooltip', type='button', data-original-title='Affiche la page dans le menu')
+                          .checkbox.check-success.checkbox-circle
+                            input#checkbox9(type='checkbox', value='1')
+                            label(for='checkbox9') Enabled 
+                              i.fa.fa-info-circle(data-placement='bottom', title='', data-toggle='tooltip', type='button', data-original-title='Page activée') 
+                    hr.section
+
+                    #tabGeneral.tab-pane.active
+                      .form-group.form-group-default.required
+                        label Slug 
+                        i.fa.fa-info-circle(data-placement='right', title='', data-toggle='tooltip', type='button', data-original-title='Label unique, pour identifier un élément. Exemple : http://www.exemple.com/blog/le-titre-de-mon-article où la chaîne de caractères le-titre-de-mon-article est le slug')
+                        input.form-control(type='text')
+                      .form-group.form-group-default
+                        label Contenu dynamique 
+                        input.form-control(type='text')
+                    #tabSeo.tab-pane
+                      .form-group.form-group-default.required
+                        label Titre de la page
+                        input.form-control(type='text')
+                      .form-group.form-group-default.required
+                        label H1
+                        input.form-control(type='text')
+                      .form-group.form-group-default
+                        label Tag 
+                        input.form-control(type='text')
+                      .form-group
+                        label(for='comment') Description:
+                        textarea#comment.form-control(rows='5')
+                    #tabDev.tab-pane
+                      .form-group
+                        label(for='comment') Include bottom:
+                        textarea#comment.form-control(rows='5')
+                      .form-group
+                        label(for='comment') Include top:
+                        textarea#comment.form-control(rows='5')
+                    #tabFile.tab-pane
+                      .dropzone
+                        .dropzone-container
+                          .dropzone-center
+                            i.fa.fa-download
+                            .span Déposez vos images ici
+                      #file-progress.progress
+                        .progress-bar(style='width:0%')
+                      button.btn.btn-success.btn-cons.m-b-10(type='button')
+                        i.fa.fa-cloud-upload
+                        span.bold Upload
+                      input#search-table-files.form-control.pull-right(type='text', placeholder='Search')
+                      table#tableFiles.table.table-small-pad
+                        thead
+                          tr
+                            th Nom
+                            th.no-sort Description
+                            th.no-sort Actif
+                            th.no-sort Type
+                            th Taille
+                            th.no-sort(style="width:100px") Opération
+                        tbody
+                          tr
+                            td  
+                              input.light-input(value="ceci est mon nom")
+                            td
+                              textarea.light-input(value="ceci est ma description")
+                            td.center
+                              .checkbox.check-success.checkbox-circle.checkbox-alone
+                                input#checkbox3(type='checkbox', value='1')
+                                label(for='checkbox3')
+                            td.center
+                              img.imgType(src='images/flat-icons/Image.png', alt='')
+                            td.center  {{ file.sizeKb }}
+                            td.center
+                              .op-table-slider-wrapper
+                                .op-table-slide-container(data-id='1')
+                                  .op-table-slide-item
+                                    button#js-show-controls.btn.btn-default.button.js-move(type='button')
+                                      i.fa.fa-save  
+                                  .op-table-slide-item
+                                    | <button type="button" class="btn btn-danger js-move operation"><i class="fa fa-times"></i></button><button type="button" class="btn btn-success js-op-ajax operation"> <i class="fa fa-check"></i></button>
+      
+      
+
+                          tr
+                            td  
+                              input.light-input(value="ceci est mon nom")
+                            td
+                              textarea.light-input(value="ceci est ma description")
+                            td.center
+                              .checkbox.check-success.checkbox-circle.checkbox-alone
+                                input#checkbox4(type='checkbox', value='1')
+                                label(for='checkbox4')
+                            td.center
+                              img.imgType(src='images/flat-icons/Image.png', alt='')
+                            td.center  {{ file.sizeKb }}
+                            td.center
+                              .op-table-slider-wrapper
+                                .op-table-slide-container(data-id='1')
+                                  .op-table-slide-item
+                                    button#js-show-controls.btn.btn-default.button.js-move(type='button', data-type='trash')
+                                      i.fa.fa-trash
+                                    button#js-show-controls.btn.btn-default.button.js-move(type='button', data-type='save')
+                                      i.fa.fa-save  
+                                  .op-table-slide-item.save
+                                    | <button type="button" class="btn btn-danger js-move operation"><i class="fa fa-times"></i></button><button type="button" class="btn btn-success js-op-ajax operation"> <i class="fa fa-save"></i></button>
+                                  .op-table-slide-item.trash
+                                    | <button type="button" class="btn btn-danger js-move operation"><i class="fa fa-times"></i></button><button type="button" class="btn btn-success js-op-ajax operation"> <i class="fa fa-trash"></i></button>
+
+
+
+
+        include shared/footer.jade
+    include shared/bottom.jade
+
+    script.
+      var initFilesTab = function() {
+        var table = $('#tableFiles');
+        var settings = {
+          "sDom": "<'table-responsive't><'row'<p i>>",
+          "destroy": true,
+          "scrollCollapse": true,
+          "oLanguage": {
+            "sLengthMenu": "_MENU_ ",
+            "sInfo": "Showing <b>_START_ to _END_</b> of _TOTAL_ entries"
+          },
+          "iDisplayLength": 5,
+          "columnDefs": [{
+            "targets": 'no-sort',
+            "orderable": false,
+          }]
+        };
+        table.dataTable(settings);
+        $('#search-table-files').keyup(function() {
+          table.fnFilter($(this).val());
+        });
+      }
+
+      $(function() {
+        
+        $("#btnCreatePage").click(function(){
+          var tree = $("#tree").fancytree("getTree").getActiveNode();
+          var $containerParent = $("#radio-parent-container");
+          var $containerRoot = $("#radio-root-container");
+          $containerParent.show();
+          $containerRoot.show();
+          if(tree){
+            var title = tree.title;
+            var parentId = tree.key;
+            $("#radio-parent").val(parentId).prop("checked", true);
+            $("#radio-parent-container label").html("Enfant de : " + title);
+          }
+          else{
+            $containerParent.hide();
+            $("#radio-root").prop("checked", true);
+          }
+          $("#modalCreateNewPage").modal('show');  
+        });
+        // active l'arbre de navigation
+        $("#tree").fancytree({
+            extensions: ["filter", "dnd"],
+            click: function(event, data) {
+              //console.log(event, data, ", targetType=" + data.targetType);
+              //console.log($(data).data("id"));
+            },
+            quicksearch: true,
+            filter: {
+                autoApply: true, // Re-apply last filter if lazy data is loaded
+                counter: true, // Show a badge with number of matching child nodes near parent icons
+                fuzzy: false, // Match single characters in order, e.g. 'fb' will match 'FooBar'
+                hideExpandedCounter: true, // Hide counter badge, when parent is expanded
+                highlight: true, // Highlight matches by wrapping inside <mark> tags
+                mode: "hide" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
+            },
+            dnd: {
+              autoExpandMS: 400,
+              focusOnClick: true,
+              preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
+              preventRecursiveMoves: true, // Prevent dropping nodes on own descendants
+              dragStart: function(node, data) {
+                return true;
+              },
+              dragEnter: function(node, data) {
+                // Prevent dropping a parent below another parent (only sort
+                // nodes under the same parent)
+                //if(node.parent !== data.otherNode.parent){
+                //  return false;
+                //}
+                return true;
+              },
+              dragDrop: function(node, data) {
+                console.log("Index avant : " + data.otherNode.getIndex());
+                console.log("Parent avant " + data.otherNode.parent.key);
+                console.log("Tu as bougé le noeud " + data.otherNode.key + " " + data.hitMode + " le noeud" + node.key);
+                if(data.hitMode === 'over'){
+                  parentId = node.key;
+                }
+                else{
+                  if(node.parent.getLevel() !==0)
+                    parentId = node.parent.key;
+                }
+                console.log("Son parent est " + parentId);
+                data.otherNode.moveTo(node, data.hitMode);
+                console.log("Index après : " + data.otherNode.getIndex());
+                var parentId = data.otherNode.parent.getLevel() === 0 ? null : data.otherNode.parent.key;
+                
+                console.log("Parent après " + parentId);
+
+                var brother = data.otherNode.parent.getChildren();
+                var result = [];
+                for (var i = 0, len = brother.length; i < len; i++) {
+                  var id = brother[i].key;
+                  var position = brother[i].getIndex();
+                  var level = brother[i].getLevel();
+                  result[i] = { id : id, position: position, level: level };
+                }
+                console.log(result);
+              }
+            }
+        });
+
+        var tree = $("#tree").fancytree("getTree");
+        
+        $("#searchTree").keyup(function(e) {
+            var n,
+                opts = {
+                    autoExpand: $("#autoExpand").is(":checked"),
+                    leavesOnly: $("#leavesOnly").is(":checked")
+                },
+                match = $(this).val();
+
+            if (e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === "") {
+                $("button#btnResetSearch").click();
+                return;
+            }
+
+            // Pass a string to perform case insensitive matching
+            n = tree.filterNodes(match, opts);
+        
+            $("button#btnResetSearch").attr("disabled", false);
+            var result = " resultat"
+            if(n>1)
+              result += 's';
+            $("span#matches").text(n + result);
+        }).focus();
+
+        $("button#btnResetSearch").click(function(e) {
+            $("input[name=search]").val("");
+            $("span#matches").text("");
+            tree.clearFilter();
+        }).attr("disabled", true);
+        
+        // checkbox
+        $('#selectAll').click(function(e) {
+          $(this).closest('table').find('td input:checkbox').prop('checked', this.checked);
+        });
+
+        //select
+        $('#selectType').on('change', function() {
+            var selector = "#modalCreateNewPage .selectHide";
+            var anim = "slow";
+            if (this.value === 'page'){
+              $(selector + ".page").show(anim);
+            $(selector + ".podule").hide(anim);
+          } else if (this.value === 'module') {
+            $(selector + ".page").hide(anim);
+            $(selector + ".module").show(anim);
+          } else {
+            $(selector).hide(anim);
+          };
+        });
+      });
+
+      // bouton opération du tableau de fichiers
+      $(function() {
+
+        $("#tableFiles .js-move").on("click", function() {
+          $this = $(this);
+          $container = $this.closest(".op-table-slide-container");
+          $container.toggleClass("move");
+          changeClass($container, $this.data("type"));
+        });
+
+        $("#tableFiles .js-op-ajax").on("click", function() {
+          $this = $(this);
+          $container = $this.closest(".op-table-slide-container");
+          var id = $container.data("id");
+          var nom = "nom de l'image que tu vas récupérer";
+          var enabled = true;
+          alert("Tu peux envoyer les données avec l'id" + id);
+          $container.toggleClass("move");
+          changeClass($container, $this.data("type"));
+        })
+
+        function changeClass($container, type) {
+          if (!type) {
+            // pour l'annimation
+            setTimeout(function() {$container.removeClass("trash save")}, 300);
+          } else {
+            $container.addClass(type);
+          }
+        }
+        // active le file datatable
+        initFilesTab();
+      });

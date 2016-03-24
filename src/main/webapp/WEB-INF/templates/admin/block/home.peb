@@ -1,0 +1,179 @@
+{% extends 'admin/master' %}
+{% set activeNav = 'cms' %}
+{% set title = message('admin.blocksManagement') %}
+
+{% block head %}
+    <script src="/resources/admin/libs/mustache/mustache.min.js" type="text/javascript"></script>
+    <script src="/resources/admin/libs/ace/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+{% endblock head %}
+
+{% block modal %}
+<div id="modalEditBlock" tabindex="-1" role="dialog" aria-hidden="true" class="modal modal-thin fade slide-up">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content-wrapper">
+            <div class="modal-content">
+                <form id="modalEditBlockForm" role="form" action="/admin/block/edit" method="post">
+                    <!-- Content injected by Mustache Template -->
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock modal %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-block-title m-b-30">
+                    <h2>{{ message('admin.blocksManagement') | capitalize }}</h2>
+                </div>
+            </div>
+            <div class="panel-body">
+                <form role="form">
+                    <div class="panel panel-transparent">
+                        <div class="panel-body">
+                            <input id="search-table" type="text" placeholder="{{ message('search') }}" class="form-control pull-right">
+                            <table id="blockTable" class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th class="center">{{ message('name') }}</th>
+                                    <th style="width: 80px" class="center">{{ message('type') }}</th>
+                                    <th style="width: 80px" class="center">{{ message('dynamic') }}</th>
+                                    <th style="width: 80px" class="center">{{ message('cacheable') }}</th>
+                                    <th style="width: 80px" class="center no-sort">{{ message('edit') }}</th>
+                                    <th style="width:100px" class="center no-sort">{{ message('operation') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-block-title m-b-30">
+                    <h2>{{ message('admin.newBlock') | capitalize }}</h2>
+                </div>
+            </div>
+            <div class="panel-body">
+                <form id="createBlockForm" data-parsley-validate role="form" action="/admin/block/add" method="post">
+                    {{ csrf | raw }}
+                    <div class="form-group form-group-default m-b-20 required">
+                        <label>{{ message('name') }}</label>
+                        <input id="createFormName" type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="form-group form-group-default form-group-default-select2 required">
+                        <label for="addSelectType">{{ message('type') }}</label>
+                        <select id="addSelectType" name="blockType" data-init-plugin="select2" data-disable-search="true" class="full-width">
+                            <option value="Content">{{ message('content') }}</option>
+                            <option value="Navigation">{{ message('navigation') }}</option>
+                            <option value="PageTemplate">{{ message('admin.pageTemplate') }}</option>
+                            <option value="FieldSet">{{ message('fieldset') }}</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 center">
+                            <h5>{{ message('dynamic') }}</h5>
+                            <div class="fc-switch">
+                                <input id="new-block-dynamic" name="dynamic" type="checkbox">
+                                <label for="new-block-dynamic" data-off="{{ message('no') }}" data-on="{{ message('yes') }}"></label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 center">
+                            <h5>{{ message('cacheable') }}</h5>
+                            <div class="fc-switch">
+                                <input id="new-block-cachaeble" name="cacheable" type="checkbox" checked>
+                                <label for="new-block-cachaeble" data-off="{{ message('no') }}" data-on="{{ message('yes') }}"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="section m-t-5 light">
+                    <button type="submit" class="btn btn-success btn-block m-t-5">{{ message('add') }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+{% block bottom %}
+
+<script type="text/template" id="modalEditBlockTpl">
+    <div class="modal-header clearfix text-left">
+        <button type="button" data-dismiss="modal" aria-hidden="true" class="close">
+            <i class="pg-close fs-14"></i>
+        </button>
+        <h3 class="titleModalBlock">{{ message('admin.blockEdit') | capitalize }}</h3>
+        <div class="changeTypeContainer">
+            {% verbatim %}{{#dynamic}}{% endverbatim %}
+            <span class="label label-success">{{ message('dynamic') }}</span>
+            <span id="changeType" class="label changeType" data-dynamic="true" data-id="{{id}}" >Statique</span>
+            {% verbatim %}
+            {{/dynamic}}
+            {{^ dynamic}}
+            {% endverbatim %}
+            <span id="changeType" class="label changeType" data-dynamic="false" data-id="{{id}}">Dynamique</span>
+            <span class="label label-success">{{ message('static') }}</span>
+            {% verbatim %}{{/dynamic}}{% endverbatim %}
+        </div>
+        <hr class="section"/>
+    </div>
+    <div class="modal-body">
+        <div class="inline">
+            <h3 class="like-label">{{ message('cacheable') }}</h3>
+            <div class="fc-switch inline">
+                {% verbatim %}
+                <input id="edit-block-cachaeble" name="cacheable" type="checkbox" {{#cacheable}}checked{{/cacheable}}>
+                {% endverbatim %}
+                <label for="edit-block-cachaeble" data-off="{{ message('no') }}" data-on="{{ message('yes') }}"></label>
+            </div>
+        </div>
+        <div class="form-group form-group-default form-group-default-select2">
+            <label for="selectType">{{ message('type') }}</label>
+            <select id="selectType" name="blockType" data-disable-search="true" class="full-width">
+                <option value="Content">{{ message('content') }}</option>
+                <option value="Navigation">{{ message('navigation') }}</option>
+                <option value="PageTemplate">{{ message('admin.pageTemplate') }}</option>
+                <option value="FieldSet">{{ message('fieldset') }}</option>
+            </select>
+        </div>
+        <div class="form-group form-group-default m-b-20 required">
+            <label>{{ message('name') }}</label>
+            {% verbatim %}
+            <input value="{{ name }}" type="text" name="name" class="form-control" />
+            {% endverbatim %}
+        </div>
+        <div class="form-group">
+        <label for="content-block">{{ message('content') }}</label>
+        {% verbatim %}
+        <textarea id="content" rows="5" name="content" class="form-control" {{#dynamic}}style="display:none"{{/dynamic}}>{{^ dynamic}}{{{content}}}{{/dynamic}}</textarea>
+        </div>
+        {{#dynamic}}
+        <div class="ace-editor-container">
+            <div id="ace-editor">{{content}}</div>
+        </div>
+        {{/dynamic}}
+        <input name="id" type="hidden" value="{{id}}"/>
+        {% endverbatim %}
+
+        <div class="row">
+            <div class="col-sm-6">
+                <button type="button" data-dismiss="modal" class="btn btn-danger btn-block m-t-5">{{ message('cancel') }}</button>
+            </div>
+            <div class="col-sm-6">
+                <button type="submit" class="btn btn-success btn-block m-t-5">{{ message('save') }}</button>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script src="/resources/admin/js/page/block.js"></script>
+{% endblock bottom %}

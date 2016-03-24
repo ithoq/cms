@@ -1,0 +1,24 @@
+{% extends 'admin/master' %}
+{% set activeNav = 'dashboard' %}
+{% set title = 'Dashboard' %}
+
+{% block head %}
+    <link href="/resources/admin/libs/fancytree/dist/skin-fab/ui.fancytree.css" rel="stylesheet" type="text/css" media="screen">
+    <script src="/resources/admin/libs/fancytree/dist/jquery.fancytree-all.min.js"></script>
+    <script src="/resources/admin/libs/jqUpload/js/jquery.iframe-transport.js"></script>
+    <script src="/resources/admin/libs/jqUpload/js/jquery.fileupload.js"></script>
+{% endblock head %}
+
+{% block modal %}
+
+{% endblock modal %}
+
+
+{% block content %}
+
+
+{% endblock content %}
+
+{% block bottom %}
+
+{% endblock bottom %}

@@ -1,0 +1,115 @@
+/* a refaire http://www.htmllion.com/css3-toggle-switch-button.html */
+
+.fc-switch
+{
+    display: inline-block;
+
+    width: 40px;
+    margin: 0 30px;
+
+    text-align: center;
+    vertical-align: middle;
+
+    label
+    {
+        font-size: 12px;
+        line-height: 16px;
+
+        position: relative;
+
+        display: block;
+
+        width: 100%;
+        height: 20px;
+        //margin-bottom: 20px;
+        padding: 10px;
+
+        cursor: pointer;
+        transition: background .25s;
+
+        border-radius: 18px;
+        background: #f8f8f8;
+        box-shadow: inset 0 0 0 0 #10cfbd,0 0 0 2px #f1f1f1;
+        /*border-radius*/
+
+
+        &:before
+        {
+            line-height: 34px;
+
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            right: auto;
+            left: 0;
+
+            display: block;
+
+            width: 20px;
+            height: 20px;
+
+            content: '';
+            transition: all .25s;
+            text-indent: 40px;
+            /*border-radius*/
+
+            border-radius: 100%;
+            background: #fff;
+            /*box-shadow*/
+            box-shadow: 0 1px 1px rgba(0,0,0,.2),0 0 0 1px #ddd;
+        }
+        &:after
+        {
+            position: absolute;
+            z-index: 0;
+            top: -7px;
+            left: -300px;
+
+            display: block;
+
+            width: 300px;
+            height: 100%;
+            padding: 10px;
+
+            content: attr(data-off);
+            text-align: right;
+            white-space: nowrap;
+
+            color: #bfbfbf;
+        }
+    }
+
+    input
+    {
+        /*
+        position: absolute;
+        top: -5000px;
+        width: 0;
+        height: 0;
+        transition: background .25s;
+        opacity: 0;
+        border: none;
+        outline: none;
+*/
+        display: none;
+        &:checked + label
+        {
+            background: #10cfbd;
+            &:before
+            {
+                left: calc(100% - 20px);
+            }
+
+            &:after
+            {
+                left: 38px;
+
+                width: 20px;
+
+                content: attr(data-on);
+
+                color: #10cfbd;
+            }
+        }
+    }
+}

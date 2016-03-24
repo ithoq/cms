@@ -1,0 +1,224 @@
+/* ==========================================================================
+     Page "Gestion CMS"
+   ========================================================================== */
+
+/* Image template */
+.thumbnail-wrapper.d100
+{
+    font-weight: bold;
+    line-height: 100px;
+
+    width: 100px;
+    height: 100px;
+    margin-left: 20px;
+
+    text-align: center;
+
+    color: white;
+    background: #10cfbd;
+}
+
+/* Titre Nom de la page */
+input.page-title
+{
+    font-size: 31px;
+    line-height: 40px;
+}
+
+.panel-page-title
+{
+    margin-top: 18px;
+    margin-left: 142px;
+}
+
+/* Alignememt bouton Menu et enabled */
+.checkbox.check-success
+{
+    display: inline-block;
+}
+
+/* Opération bouton ajouter/supprimer une page */
+.operation-box
+{
+    position: absolute;
+    top: -8px;
+    right: 10px;
+
+    button
+    {
+        width: 40px!important;
+        height: 40px;
+        padding: 0;
+
+        transition: .7s!important;
+
+        opacity: .7;
+        border-color: #e8e8e8;
+        border-radius: 100%;
+        i
+        {
+            font-size: 18px;
+
+            margin-top: 3px;
+            margin-left: 2px;
+
+            transition: .8s;
+
+            color: #717171;
+        }
+        &:hover
+        {
+            opacity: 1;
+        }
+        &:hover i
+        {
+            color: #fff;
+        }
+        &.btn-delete
+        {
+            transition: 2s;
+
+            background: #fff;
+        }
+        &.btn-delete:hover
+        {
+            border-color: #f55753;
+            background: #f55753;
+        }
+
+        &.btn-add:hover
+        {
+            border-color: #10cfbd;
+            background: #10cfbd;
+        }
+    }
+}
+
+/* ==========================================================================
+   Arbre
+   ========================================================================== */
+
+/* Alignement du titre et du bouton */
+.panel.panel-tree .panel-heading .panel-title
+{
+    line-height: 35px;
+
+    width: 100%;
+}
+#btnCreatePage
+{
+    padding: 2px 10px;
+}
+
+.panel-tree .panel-title i
+{
+    font-size: 17px;
+
+    vertical-align: middle;
+}
+
+/* ==========================================================================
+   Modals
+   ========================================================================== */
+
+/* Modal delete */
+.modal.fade.slide-right-center.in .modal-dialog
+{
+    transform: translate3d(0, 0, 0) translateY(-50%);
+}
+.modal.fade.slide-right-center .modal-dialog
+{
+    top: 50%;
+
+    height: auto;
+}
+
+.modal.fade.slide-right-top.in .modal-dialog
+{
+    transform: translate3d(0, 0, 0) translateY(-50%);
+}
+.modal.fade.slide-right-top .modal-dialog
+{
+    top: 30%;
+
+    height: auto;
+}
+
+.modal.fade.slide-right-bottom.in .modal-dialog
+{
+    transform: translate3d(0, 0, 0) translateY(-50%);
+}
+.modal.fade.slide-right-bottom .modal-dialog
+{
+    top: 70%;
+
+    height: auto;
+}
+
+/* ==========================================================================
+   Tableau FILE
+   ========================================================================== */
+
+/* Alignement du tableau */
+.table.table-hover.table-small-pad tr td
+{
+    padding: 5px;
+
+    vertical-align: middle;
+}
+
+#tableFiles label,
+#tableFiles label:before
+{
+    margin: 0;
+}
+
+table#tableFiles.table.table-hover th
+{
+    text-align: center;
+}
+.table tbody tr td
+{
+    padding: 15px;
+}
+
+/* Image Type */
+img.imgType
+{
+    width: 30px;
+}
+
+/* Chekbox alignement */
+.checkbox-alone label:before,
+.checkbox-alone label:after
+{
+    left: 50%;
+
+    transform: translateX(-50%);
+}
+
+/* Opération sur les boutons enregister/supprimer */
+
+
+
+/* ==========================================================================
+   Média Queries
+   ========================================================================== */
+
+@media (max-width: 991px)
+{
+    .thumbnail-wrapper.d100,
+    .panel-page-title
+    {
+        display: block!important;
+        float: none;
+
+        margin: 0 auto;
+
+        text-align: center;
+    }
+    input.page-title
+    {
+        text-align: center;
+    }
+}

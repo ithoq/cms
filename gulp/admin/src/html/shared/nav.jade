@@ -1,0 +1,51 @@
+// BEGIN SIDEBPANEL
+nav.page-sidebar(data-pages='sidebar')
+  // BEGIN SIDEBAR MENU HEADER
+  .sidebar-header
+    img.brand(src='libs/pages/assets/img/logo_white.png', alt='logo', data-src='libs/pages/assets/img/logo_white.png', data-src-retina='libs/pages/assets/img/logo_white_2x.png', width='78', height='22')
+    .sidebar-header-controls
+      button.btn.btn-link.visible-lg-inline(type='button', data-toggle-pin='sidebar')
+        i.fa.fs-12
+  // END SIDEBAR MENU HEADER
+  // START SIDEBAR MENU
+  .sidebar-menu
+    // BEGIN SIDEBAR MENU ITEMS
+    ul.menu-items
+      li.m-t-30
+        a.detailed(href='/admin/')
+          span.title Dashboard
+          span.details 12 New Updates
+        span.bg-success.icon-thumbnail
+          i.pg-home
+      li
+        a.detailed(href='/admin/cms')
+          span.title CMS
+          span.details Gestion des pages
+        span.icon-thumbnail W
+      li
+        a.detailed(href='/admin/blocks')
+          span.title Blocks
+          span.details Gestions des blocks
+        span.icon-thumbnail
+          i.pg-mail
+      li
+        a(href='javascript:;')
+          span.title Modules
+          span.arrow
+        span.icon-thumbnail
+          i.pg-calender
+        ul.sub-menu
+          li
+            a(href='calendar.html') Slider
+            span.icon-thumbnail c
+          li
+            a(href='calendar_lang.html') Languages
+            span.icon-thumbnail L
+      li
+        a(href='/admin/pref')
+          span.title Préférences
+        span.icon-thumbnail
+          i.pg-social
+    .clearfix
+  // END SIDEBAR MENU
+// END SIDEBAR

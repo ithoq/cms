@@ -1,0 +1,41 @@
+.header
+  .container-fluid.relative
+    .pull-left.full-height.visible-sm.visible-xs
+      .header-inner
+        a.btn-link.toggle-sidebar.visible-sm-inline-block.visible-xs-inline-block.padding-5(href='#', data-toggle='sidebar')
+          span.icon-set.menu-hambuger
+    .pull-center.hidden-md.hidden-lg
+      .header-inner
+        .brand.inline
+          img(src='libs/pages/assets/img/logo.png', alt='logo', data-src='libs/pages/assets/img/logo.png', data-src-retina='libs/pages/assets/img/logo_2x.png', width='78', height='22')
+    .pull-right.full-height.visible-sm.visible-xs
+      .header-inner
+        a.btn-link.visible-sm-inline-block.visible-xs-inline-block(href='#', data-toggle='quickview', data-toggle-element='#quickview')
+          span.icon-set.menu-hambuger-plus
+  .pull-left.sm-table.hidden-xs.hidden-sm
+    .header-inner
+      .brand.inline
+        img(src='libs/pages/assets/img/logo.png', alt='logo', data-src='libs/pages/assets/img/logo.png', data-src-retina='libs/pages/assets/img/logo_2x.png', width='78', height='22')
+  .pull-right
+    .visible-lg.visible-md.m-t-10
+      .pull-left.p-r-10.p-t-10.fs-16.font-heading
+        span.semi-bold David
+        span.text-master Nest
+      .dropdown.pull-right
+        button.profile-dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+          span.thumbnail-wrapper.d32.circular.inline.m-t-5
+            img(src='libs/pages/assets/img/profiles/avatar.jpg', alt='', data-src='libs/pages/assets/img/profiles/avatar.jpg', data-src-retina='libs/pages/assets/img/profiles/avatar_small2x.jpg', width='32', height='32')
+        ul.dropdown-menu.profile-dropdown(role='menu')
+          li
+            a(href='#')
+              i.pg-settings_small
+              |  Settings
+          li
+            a(href='#')
+              i.pg-signals
+              |  Help
+          li.bg-master-lighter
+            a.clearfix(href='#')
+              span.pull-left Logout
+              span.pull-right
+                i.pg-power

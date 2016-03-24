@@ -1,0 +1,21 @@
+<!-- BEGIN SIDEBPANEL-->
+<nav data-pages="sidebar" class="page-sidebar">
+    <!-- BEGIN SIDEBAR MENU HEADER-->
+    <div class="sidebar-header"><img src="/resources/admin/img/logo-white.png" alt="logo" data-src="/resources/admin/img/logo-white.png" data-src-retina="/resources/admin/img/logo-white-2x.png" width="78" height="22" class="brand">
+        <div class="sidebar-header-controls">
+            <button type="button" data-toggle-pin="sidebar" class="btn btn-link visible-lg-inline"><i class="fa fs-12"></i></button>
+        </div>
+    </div>
+    <!-- END SIDEBAR MENU HEADER-->
+    <!-- START SIDEBAR MENU-->
+    <div class="sidebar-menu">
+        <!-- BEGIN SIDEBAR MENU ITEMS-->
+        <ul class="menu-items">
+            <li class="m-t-30"><a href="/admin/cms" class="detailed"><span class="title">CMS</span><span class="details">{{ message('admin.pagesManagement') }}</span></a><span class="icon-thumbnail">cms</span></li>
+            <li><a href="/admin/block" class="detailed"><span class="title">{{ message('admin.blocks') | capitalize }}</span><span class="details">{{ message('admin.blocksManagement') }}</span></a><span class="icon-thumbnail"><i class="fa fa-th-large"></i></span></li>
+        </ul>
+        <div class="clearfix"></div>
+    </div>
+    <!-- END SIDEBAR MENU-->
+</nav>
+<!-- END SIDEBAR-->

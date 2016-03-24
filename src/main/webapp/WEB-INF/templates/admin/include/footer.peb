@@ -1,0 +1,7 @@
+<div class="container-fluid container-fixed-lg footer">
+    <div class="copyright sm-text-center">
+        <p class="small no-margin pull-left sm-pull-reset"><span class="hint-text">Copyright © 2016 </span><span class="font-montserrat">TTime</span>. <span class="hint-text">{{ message('allRightsReserved') }}. </span></p>
+        <p class="small no-margin pull-right sm-pull-reset"><span>{{ message('admin.handCrafted') }} </span><span class="hint-text">& {{ message('admin.madeWithLove') }} ®</span></p>
+        <div class="clearfix"></div>
+    </div>
+</div>

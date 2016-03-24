@@ -1,0 +1,91 @@
+span.fancytree-icon,
+span.fancytree-expander
+{
+    position: relative;
+    top: 2px;
+}
+span.fancytree-selected span.fancytree-title,
+span.fancytree-active span.fancytree-title,
+.fancytree-treefocus span.fancytree-selected span.fancytree-title,
+.fancytree-treefocus span.fancytree-active span.fancytree-title
+{
+    color: black;
+    background-color: #f7f7f7;
+}
+
+ul.fancytree-container
+{
+    font-family: inherit;
+    font-size: 12px;
+
+    border: 1px dotted #e4e4e4;
+}
+.fancytree-title
+{
+    line-height: 20px;
+}
+.fancytree-expander
+{
+    width: 11px;
+}
+ul.fancytree-container ul
+{
+    padding: 0 0 0 12px;
+}
+
+span.fancytree-focused span.fancytree-title
+{
+    outline: 1px dotted #e4e4e4;
+}
+
+#matches.label
+{
+    font-size: 9px;
+
+    position: relative;
+    top: -1px;
+
+    margin-left: 10px;
+    padding: 2px 5px;
+
+    text-transform: none;
+}
+
+.tree-search:after
+{
+    display: table;
+    clear: both;
+
+    content: '';
+}
+.tree-search .tree-search-input
+{
+    margin-right: 40px;
+}
+.tree-search-btn-reset
+{
+    .btn
+    {
+        font-size: 10px;
+        line-height: 1;
+
+        display: block;
+        float: right;
+
+        width: 30px;
+        padding: 8px 11px;
+    }
+}
+
+ul
+{
+    outline: none;
+}
+
+.fancytree-ext-childcounter span.fancytree-childcounter,
+.fancytree-ext-filter span.fancytree-childcounter
+{
+    line-height: 2px;
+
+    padding: 6px 4px;
+}

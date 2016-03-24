@@ -1,0 +1,48 @@
+doctype html
+html
+  head
+    link(href='libs/fancytree/dist/skin-fab/ui.fancytree.css', rel='stylesheet', type='text/css', media='screen')
+    link(href='libs/pages/assets/plugins/jquery-datatable/media/css/dataTables.bootstrap.min.css', rel='stylesheet', type='text/css')
+    link(href='libs/pages/assets/plugins/jquery-datatable/extensions/FixedColumns/css/dataTables.fixedColumns.min.css', rel='stylesheet', type='text/css')
+    link(href='libs/pages/assets/plugins/datatables-responsive/css/datatables.responsive.css', rel='stylesheet', type='text/css', media='screen')
+    include shared/head.jade
+
+  body.fixed-header
+    include shared/nav.jade
+    .page-container
+      include shared/header.jade
+      .page-content-wrapper
+      
+        include shared/breadcrumb.jade
+        .container-fluid.container-fixed-lg
+          .row
+            .col-sm-3
+              .panel.panel-default.panel-tree
+                .panel-heading
+                  .panel-title 
+                    span Tree
+                    span.label.label-info#matches
+                    button#btnCreatePage.btn.btn-success.m-t-5.pull-right(type='button')
+                      i.fa.fa-plus-circle
+                    hr.section
+                  .tree-search
+                    .tree-search-btn-reset       
+                      button.btn.btn-default#btnResetSearch X    
+                    .tree-search-input                    
+                      input(placeholder="search")#searchTree.light-input
+  
+                .panel-body
+                  .fc-switch
+                      input#checkbox1(type='checkbox', name='checkbox1', checked='')
+                      label(for='checkbox1', data-off='off', data-on='on')
+
+
+        include shared/footer.jade
+    include shared/bottom.jade
+    script(src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js')
+    script(src='libs/fancytree/dist/jquery.fancytree-all.min.js')
+    script(src='libs/pages/assets/plugins/jquery-datatable/media/js/jquery.dataTables.min.js')
+    script(src='libs/pages/assets/plugins/jquery-datatable/extensions/TableTools/js/dataTables.tableTools.min.js')
+    script(src='libs/pages/assets/plugins/jquery-datatable/media/js/dataTables.bootstrap.js')
+    script(src='libs/pages/assets/plugins/jquery-datatable/extensions/Bootstrap/jquery-datatable-bootstrap.js')
+    script(src='libs/pages/assets/plugins/datatables-responsive/js/datatables.responsive.js')

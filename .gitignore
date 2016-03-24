@@ -1,0 +1,17 @@
+*.DS_Store
+.classpath
+.project
+.settings
+.idea
+.gradle
+*.iml
+build/
+out/
+gulp/admin/node_modules
+gulp/admin/public
+gulp/admin/src/lib
+gulp/admin/src/img
+gulp/admin/src/fonts
+gulp/admin/src/icons
+gulp/admin/src/static
+gulp/admin/sass-cache

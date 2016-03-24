@@ -1,0 +1,54 @@
+/* Le bouton pour fixer le bouton qui fixe la sidebar car il était décallé  */
+.sidebar-header-controls
+{
+    margin-left: 48px;
+}
+.page-container .page-content-wrapper .content
+{
+    padding-bottom: 0;
+}
+/* Bug si overflow alors que la div est en absolute */
+.table-responsive
+{
+    min-width: .01%;
+}
+
+/* Bug le contenu va sur le footer qui est en pos abs. */
+.page-content-wrapper
+{
+    padding-bottom: 80px;
+}
+
+/* Formulaire des pages pour ajouter un tooltip */
+.form-group.form-group-default
+{
+    overflow: inherit;
+}
+.form-group.form-group-default i
+{
+    display: inline-block;
+
+    margin-left: 4px;
+
+    color: #626262;
+}
+.form-group.form-group-default label
+{
+    display: inline-block;
+}
+.form-group.form-group-default.focused i
+{
+    opacity: .5;
+}
+.nav-tabs-simple > li:after
+{
+    background: #10cfbd;
+}
+
+.mark,
+mark
+{
+    padding: .2em;
+
+    background-color: #a4fff6;
+}
