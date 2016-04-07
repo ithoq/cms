@@ -1,7 +1,7 @@
 package be.ttime.core.controller;
 
 import be.ttime.core.error.ResourceNotFoundException;
-import be.ttime.core.persistence.dao.FileEntity;
+import be.ttime.core.persistence.model.FileEntity;
 import be.ttime.core.persistence.service.IFileService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,6 @@ import java.io.InputStream;
 @Controller
 @RequestMapping(value = "/download")
 public class FileDownloadController {
-
 
     @Autowired
     private Environment env;

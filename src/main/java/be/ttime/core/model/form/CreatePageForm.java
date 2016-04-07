@@ -1,6 +1,6 @@
 package be.ttime.core.model.form;
 
-import be.ttime.core.persistence.dao.PageEntity;
+import be.ttime.core.persistence.model.PageEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;

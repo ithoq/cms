@@ -8,9 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 public class FilesEmptyValidator implements ConstraintValidator<FilesEmpty, MultipartFile[]> {
 
     @Override
-    public void initialize(FilesEmpty constraintAnnotation) {
-
-    }
+    public void initialize(FilesEmpty constraintAnnotation) {}
 
     @Override
     public boolean isValid(MultipartFile[] values, ConstraintValidatorContext context) {

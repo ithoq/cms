@@ -1,6 +1,6 @@
 package be.ttime.core.persistence.repository;
 
-import be.ttime.core.persistence.dao.PageEntity;
+import be.ttime.core.persistence.model.PageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;

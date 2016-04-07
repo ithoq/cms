@@ -1,7 +1,7 @@
 package be.ttime.core;
 
 import com.mitchellbosecke.pebble.extension.AbstractExtension;
-import com.mitchellbosecke.pebble.spring.context.Beans;
+import com.mitchellbosecke.pebble.spring4.context.Beans;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;

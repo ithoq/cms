@@ -1,6 +1,6 @@
 package be.ttime.core.persistence.service;
 
-import be.ttime.core.persistence.dao.FileEntity;
+import be.ttime.core.persistence.model.FileEntity;
 import be.ttime.core.persistence.repository.IFileRepository;
 import be.ttime.core.util.FileExtensionUtils;
 import org.apache.commons.io.FileUtils;

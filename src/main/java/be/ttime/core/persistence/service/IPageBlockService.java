@@ -1,6 +1,6 @@
 package be.ttime.core.persistence.service;
 
-import be.ttime.core.persistence.dao.PageBlockEntity;
+import be.ttime.core.persistence.model.PageBlockEntity;
 
 import java.util.List;
 

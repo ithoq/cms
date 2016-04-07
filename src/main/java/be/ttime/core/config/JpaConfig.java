@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -21,27 +23,15 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement // Active les transactions par annotations
-@EnableJpaRepositories(basePackageClasses = Application.class)
-        // Active le JPA repositories. Il va scanner le package de la class configuré pour le Spring Datarepositories by default.
+@EnableJpaRepositories(basePackageClasses = Application.class) // Active le JPA repositories. Il va scanner le package de la class configuré pour le Spring Datarepositories by default.
 class JpaConfig implements TransactionManagementConfigurer {
-
 
     @Value("${page.file.directory}")
     private String filepath;
-    @Value("${dataSource.driverClassName}")
-    private String driver;
-    @Value("${dataSource.url}")
-    private String url;
-    @Value("${dataSource.username}")
-    private String username;
-    @Value("${dataSource.password}")
-    private String password;
-    @Value("${hibernate.dialect}")
-    private String dialect;
-    @Value("${hibernate.hbm2ddl.auto}")
-    private String hbm2ddlAuto;
     @Autowired
     private FileInterceptor fileInterceptor;
+    @Autowired
+    private Environment env;
 
     /**
      * HikariCP is  used as default connection pool in the generated application. The default configuration is used
@@ -51,15 +41,15 @@ class JpaConfig implements TransactionManagementConfigurer {
     @Bean
     public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
-        config.setDriverClassName(driver);
-        config.setJdbcUrl(url);
-        config.setUsername(username);
-        config.setPassword(password);
+        config.setDriverClassName(env.getProperty("dataSource.driverClassName"));
+        config.setJdbcUrl(env.getProperty("dataSource.url"));
+        config.setUsername(env.getProperty("dataSource.username"));
+        config.setPassword(env.getProperty("dataSource.password"));
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
-        config.setMaximumPoolSize(2); // for a little website
+        config.setMaximumPoolSize(3); // for a little website
         // maybe interseting : config.setIdleTimeout();
 
         return new HikariDataSource(config);
@@ -71,10 +61,10 @@ class JpaConfig implements TransactionManagementConfigurer {
         entityManagerFactoryBean.setDataSource(dataSource());
         entityManagerFactoryBean.setPackagesToScan("be.ttime");
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-
+        String test= env.getProperty("hibernate.dialect");
         Properties jpaProperties = new Properties();
-        jpaProperties.put(org.hibernate.cfg.Environment.DIALECT, dialect);
-        jpaProperties.put(org.hibernate.cfg.Environment.HBM2DDL_AUTO, hbm2ddlAuto); // create drop all , update, update ;)
+        jpaProperties.put(org.hibernate.cfg.Environment.DIALECT, env.getProperty("hibernate.dialect"));
+        jpaProperties.put(org.hibernate.cfg.Environment.HBM2DDL_AUTO, env.getProperty("hibernate.hbm2ddl.auto")); // create drop all , update, update ;)
         jpaProperties.put(org.hibernate.cfg.Environment.USE_SECOND_LEVEL_CACHE, "false");
         jpaProperties.put(org.hibernate.cfg.Environment.USE_QUERY_CACHE, "false");
         // jpaProperties.put("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory");

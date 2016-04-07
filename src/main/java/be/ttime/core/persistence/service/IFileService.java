@@ -1,7 +1,7 @@
 package be.ttime.core.persistence.service;
 
 
-import be.ttime.core.persistence.dao.FileEntity;
+import be.ttime.core.persistence.model.FileEntity;
 
 import java.util.List;
 

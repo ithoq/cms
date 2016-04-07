@@ -1,6 +1,6 @@
 package be.ttime.core.model.field;
 
-import be.ttime.core.persistence.dao.PageBlockEntity;
+import be.ttime.core.persistence.model.PageBlockEntity;
 import be.ttime.core.persistence.service.IPageBlockService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;

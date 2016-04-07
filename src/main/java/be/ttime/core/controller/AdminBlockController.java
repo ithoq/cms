@@ -1,6 +1,6 @@
 package be.ttime.core.controller;
 
-import be.ttime.core.persistence.dao.PageBlockEntity;
+import be.ttime.core.persistence.model.PageBlockEntity;
 import be.ttime.core.persistence.service.IPageBlockService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

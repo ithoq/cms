@@ -1,6 +1,8 @@
 package be.ttime.core.persistence.service;
 
-import be.ttime.core.persistence.dao.PageEntity;
+import be.ttime.core.persistence.model.PageContentEntity;
+import be.ttime.core.persistence.model.PageEntity;
+import sun.jvm.hotspot.debugger.Page;
 
 import java.util.List;
 
@@ -23,4 +25,11 @@ public interface IPageService {
     void delete(Long id) throws Exception;
 
     PageEntity findWithChildren(Long id);
+
+    List<PageContentEntity> saveContents(List<PageContentEntity> contents);
+
+    PageContentEntity saveContent(PageContentEntity content);
+
+    PageContentEntity findContentById(Long id);
+
 }

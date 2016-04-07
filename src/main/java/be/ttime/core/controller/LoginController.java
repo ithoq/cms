@@ -1,7 +1,7 @@
 package be.ttime.core.controller;
 
 
-import be.ttime.core.persistence.dao.PageBlockEntity;
+import be.ttime.core.persistence.model.PageBlockEntity;
 import be.ttime.core.persistence.service.IPageBlockService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
@@ -41,6 +41,7 @@ public class LoginController {
         model.put("attr", CmsUtils.getAttributes(request));
         model.put("get", CmsUtils.getParameters(request));
         model.put("csrf", CmsUtils.getCsrfInput(request));
+        model.put("session", request.getSession());
         model.put("title", "login");
         model.put("main", pebbleUtils.parseBlock(login, model));
         return pebbleUtils.parseBlock(master, model);

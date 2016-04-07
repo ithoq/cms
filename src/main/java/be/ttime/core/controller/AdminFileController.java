@@ -1,8 +1,8 @@
 package be.ttime.core.controller;
 
 import be.ttime.core.model.form.AdminFileUploadForm;
-import be.ttime.core.persistence.dao.FileEntity;
-import be.ttime.core.persistence.dao.PageEntity;
+import be.ttime.core.persistence.model.FileEntity;
+import be.ttime.core.persistence.model.PageEntity;
 import be.ttime.core.persistence.service.IFileService;
 import be.ttime.core.util.FileTypeDetector;
 import com.github.slugify.Slugify;

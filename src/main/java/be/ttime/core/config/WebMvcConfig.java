@@ -1,6 +1,7 @@
 package be.ttime.core.config;
 
 import be.ttime.Application;
+import be.ttime.core.config.security.AuthenticationFailureHandler;
 import be.ttime.core.handler.AddModelParamsInterceptor;
 import be.ttime.core.handler.ForceLocalUrlFilter;
 import be.ttime.core.handler.UrlLocaleChangeInterceptor;
@@ -11,9 +12,10 @@ import com.google.gson.GsonBuilder;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.loader.Loader;
 import com.mitchellbosecke.pebble.loader.ServletLoader;
-import com.mitchellbosecke.pebble.spring.PebbleViewResolver;
-import com.mitchellbosecke.pebble.spring.extension.SpringExtension;
+import com.mitchellbosecke.pebble.spring4.PebbleViewResolver;
+import com.mitchellbosecke.pebble.spring4.extension.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +33,7 @@ import org.springframework.http.converter.feed.RssChannelHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -44,7 +47,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.servlet.ServletContext;
-import javax.xml.transform.Source;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,7 +57,7 @@ import java.util.Locale;
  * We exclude controller from ComponentScan because they are Servlet Contect class
  */
 @Configuration
-@ComponentScan(basePackageClasses = Application.class, includeFilters = @Filter(Controller.class), useDefaultFilters = false)
+@ComponentScan(basePackageClasses = Application.class, includeFilters = @Filter({Controller.class}), useDefaultFilters = false)
 class WebMvcConfig extends WebMvcConfigurationSupport {
 
     private static final String VIEWS = "/WEB-INF/templates/";
@@ -64,6 +66,9 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
 
     @Autowired
     private ServletContext servletContext;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Value("${app.mode}")
     private String appMode;
@@ -76,9 +81,6 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
 
     @Value("${locale.force.url.except.default}")
     private boolean forceUrlExceptDefault;
-
-    @Autowired
-    private Environment env;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
@@ -125,8 +127,8 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
         converters.add(new AllEncompassingFormHttpMessageConverter());
 
         // Rome Tools
-        converters.add(new AtomFeedHttpMessageConverter());
-        converters.add(new RssChannelHttpMessageConverter());
+        //converters.add(new AtomFeedHttpMessageConverter());
+        //converters.add(new RssChannelHttpMessageConverter());
 
         // Gson with Exclude Fields Annotation
         converters.add(createGsonHttpMessageConverter());
@@ -150,16 +152,6 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
         requestMappingHandlerMapping.setUseSuffixPatternMatch(false); /* if true, "/users" also matches to "/users.*" */
         requestMappingHandlerMapping.setUseTrailingSlashMatch(false); // if false, "/user" != "/user/"
         return requestMappingHandlerMapping;
-    }
-
-    @Bean(name = "messageSource")
-    public MessageSource messageSource() {
-        return new DatabaseMessageSourceBase();
-    }
-
-    @Bean
-    public ForceLocalUrlFilter forceLocalUrlFilter() {
-        return new ForceLocalUrlFilter();
     }
 
     @Bean
@@ -186,7 +178,7 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
      * [localeChangeInterceptor] précédent crée un cookie encapsulant la locale. La ligne 39 donne le nom [lang] à ce cookie.
      * Le cookie est également utilisé pour changer la locale ;
     */
-    @Bean
+    @Bean(name="localeResolver")
     public UrlLocaleResolver localeResolver() {
         UrlLocaleResolver localeResolver = new UrlLocaleResolver();
         localeResolver.setCookieName("lang");
@@ -224,7 +216,7 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     public Validator getValidator() {
         LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
-        validator.setValidationMessageSource(messageSource());
+        validator.setValidationMessageSource(messageSource);
         return validator;
     }
 
@@ -233,6 +225,7 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
         if (appMode.equals("PRODUCTION")) {
             registry.addResourceHandler(RESOURCES_HANDLER).addResourceLocations(RESOURCES_LOCATION).setCachePeriod(365 * 24 * 60 * 60); // 1 year
         } else {

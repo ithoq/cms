@@ -1,6 +1,6 @@
 package be.ttime.core.persistence.interceptor;
 
-import be.ttime.core.persistence.dao.FileEntity;
+import be.ttime.core.persistence.model.FileEntity;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;

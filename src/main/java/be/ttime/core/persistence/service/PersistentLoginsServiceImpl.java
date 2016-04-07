@@ -1,6 +1,6 @@
 package be.ttime.core.persistence.service;
 
-import be.ttime.core.persistence.dao.PersistentLoginsEntity;
+import be.ttime.core.persistence.model.PersistentLoginsEntity;
 import be.ttime.core.persistence.repository.IPersistentLoginsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.authentication.rememberme.PersistentRememberMeToken;

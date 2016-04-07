@@ -1,6 +1,6 @@
 package be.ttime.core.persistence.service;
 
-import be.ttime.core.persistence.dao.PageTemplateEntity;
+import be.ttime.core.persistence.model.PageTemplateEntity;
 import be.ttime.core.persistence.repository.IPageTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

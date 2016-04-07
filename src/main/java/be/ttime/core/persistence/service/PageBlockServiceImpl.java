@@ -1,7 +1,7 @@
 package be.ttime.core.persistence.service;
 
-import be.ttime.core.persistence.dao.PageBlockEntity;
-import be.ttime.core.persistence.dao.UserEntity;
+import be.ttime.core.persistence.model.PageBlockEntity;
+import be.ttime.core.persistence.model.UserEntity;
 import be.ttime.core.persistence.repository.IPageBlockRepository;
 import be.ttime.core.util.PebbleUtils;
 import com.mitchellbosecke.pebble.error.PebbleException;

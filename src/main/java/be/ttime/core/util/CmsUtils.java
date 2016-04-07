@@ -1,6 +1,6 @@
 package be.ttime.core.util;
 
-import be.ttime.core.persistence.dao.UserEntity;
+import be.ttime.core.persistence.model.UserEntity;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

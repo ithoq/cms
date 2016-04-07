@@ -1,6 +1,11 @@
 package be.ttime.core.config;
 
 import be.ttime.core.handler.ForceLocalUrlFilter;
+import be.ttime.core.persistence.service.IApplicationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -21,6 +26,7 @@ import javax.servlet.ServletRegistration;
  * is one of those. It registers a ContextLoaderlistener (optionally) and a DispatcherServlet and allows you to easily add configuration
  * classes to load for both classes and to apply filters to the DispatcherServlet and to provide the servlet mapping.
  */
+
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
@@ -53,8 +59,6 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         characterEncodingFilter.setEncoding("UTF-8");
         characterEncodingFilter.setForceEncoding(true);
-
-        //ForceLocalUrlFilter urlFilter = new ForceLocalUrlFilter();
         return new Filter[]{characterEncodingFilter};
     }
 
