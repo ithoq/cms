@@ -1,6 +1,6 @@
 package be.ttime.core.registration;
+
 import be.ttime.core.persistence.model.UserEntity;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;

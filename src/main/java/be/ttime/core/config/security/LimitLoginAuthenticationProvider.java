@@ -1,8 +1,6 @@
 package be.ttime.core.config.security;
 
 
-import java.util.Date;
-
 import be.ttime.core.persistence.model.UserAttemptsEntity;
 import be.ttime.core.persistence.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 @Component("authenticationProvider")
 public class LimitLoginAuthenticationProvider extends DaoAuthenticationProvider {

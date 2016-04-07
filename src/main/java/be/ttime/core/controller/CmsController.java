@@ -12,7 +12,6 @@ import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,9 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
-import java.net.URL;
-import java.text.MessageFormat;
 
 @RestController
 @Slf4j
@@ -37,7 +33,7 @@ public class CmsController {
     @Autowired
     private PebbleUtils pebbleUtils;
 
-    @RequestMapping(method = RequestMethod.GET, headers = "Accept=text/html", produces = "text/html;charset=UTF-8")
+    @RequestMapping(method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String page(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         final String path = request.getRequestURI();

@@ -1,16 +1,25 @@
 package be.ttime.controller;
 
-import be.ttime.core.persistence.model.*;
-import be.ttime.core.persistence.service.*;
-import org.apache.commons.lang3.LocaleUtils;
+import be.ttime.core.persistence.model.ApplicationLanguageEntity;
+import be.ttime.core.persistence.model.MessageEntity;
+import be.ttime.core.persistence.model.MessageTranslationsEntity;
+import be.ttime.core.persistence.model.PageContentEntity;
+import be.ttime.core.persistence.service.IApplicationService;
+import be.ttime.core.persistence.service.IMessageService;
+import be.ttime.core.persistence.service.IPageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 @RestController
 public class TestController {

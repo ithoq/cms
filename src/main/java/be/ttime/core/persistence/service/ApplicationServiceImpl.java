@@ -7,7 +7,6 @@ import be.ttime.core.persistence.repository.IApplicationConfigRepository;
 import be.ttime.core.persistence.repository.IApplicationLanguageRepository;
 import org.apache.commons.lang3.LocaleUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

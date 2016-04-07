@@ -1,7 +1,5 @@
 package be.ttime.core.registration.listener;
 
-import java.util.UUID;
-
 import be.ttime.core.persistence.model.UserEntity;
 import be.ttime.core.persistence.service.IUserService;
 import be.ttime.core.registration.OnRegistrationCompleteEvent;
@@ -12,6 +10,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @Component
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {

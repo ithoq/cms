@@ -1,12 +1,9 @@
 package be.ttime.core.config;
 
 import be.ttime.Application;
-import be.ttime.core.config.security.AuthenticationFailureHandler;
 import be.ttime.core.handler.AddModelParamsInterceptor;
-import be.ttime.core.handler.ForceLocalUrlFilter;
 import be.ttime.core.handler.UrlLocaleChangeInterceptor;
 import be.ttime.core.handler.UrlLocaleResolver;
-import be.ttime.core.model.DatabaseMessageSourceBase;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mitchellbosecke.pebble.PebbleEngine;
@@ -15,7 +12,6 @@ import com.mitchellbosecke.pebble.loader.ServletLoader;
 import com.mitchellbosecke.pebble.spring4.PebbleViewResolver;
 import com.mitchellbosecke.pebble.spring4.extension.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -23,28 +19,23 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.Environment;
+import org.springframework.core.Ordered;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.feed.AtomFeedHttpMessageConverter;
-import org.springframework.http.converter.feed.RssChannelHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import javax.servlet.ServletContext;
 import java.util.List;
@@ -109,6 +100,7 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
      * HandlerMappings. That will be the case if you use or alternatively if you are setting up your own customized HandlerMapping instance be sure to set
      * its order property to a value lower than that of the DefaultServletHttpRequestHandler, which is Integer.MAX_VALUE.
      */
+
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
@@ -151,6 +143,7 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
         RequestMappingHandlerMapping requestMappingHandlerMapping = super.requestMappingHandlerMapping();
         requestMappingHandlerMapping.setUseSuffixPatternMatch(false); /* if true, "/users" also matches to "/users.*" */
         requestMappingHandlerMapping.setUseTrailingSlashMatch(false); // if false, "/user" != "/user/"
+        //requestMappingHandlerMapping.setDefaultHandler(new CmsController());
         return requestMappingHandlerMapping;
     }
 
@@ -226,11 +219,18 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
+        registry
+            .addResourceHandler(RESOURCES_HANDLER)
+            .addResourceLocations(RESOURCES_LOCATION)
+            .resourceChain(true)
+            .addResolver(new PathResourceResolver());
+        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        /*
         if (appMode.equals("PRODUCTION")) {
             registry.addResourceHandler(RESOURCES_HANDLER).addResourceLocations(RESOURCES_LOCATION).setCachePeriod(365 * 24 * 60 * 60); // 1 year
         } else {
             registry.addResourceHandler(RESOURCES_HANDLER).addResourceLocations(RESOURCES_LOCATION);
-        }
+        }*/
     }
 
     /**
@@ -243,4 +243,12 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
             return "forward:/resources/images/favicon.ico";
         }
     }
+
+    @Override
+    protected void configureContentNegotiation(final ContentNegotiationConfigurer configurer) {
+        // Turn off suffix-based content negotiation
+        configurer.favorPathExtension(false);
+    }
+
+
 }

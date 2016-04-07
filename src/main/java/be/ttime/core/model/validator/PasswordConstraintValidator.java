@@ -1,13 +1,11 @@
 package be.ttime.core.model.validator;
 
-import java.util.Arrays;
+import com.google.common.base.Joiner;
+import org.passay.*;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import org.passay.*;
-
-import com.google.common.base.Joiner;
+import java.util.Arrays;
 
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
 

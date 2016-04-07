@@ -1,21 +1,17 @@
 package be.ttime.core.error;
 
-import be.ttime.core.persistence.model.FileEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.text.MessageFormat;
 
 @RestController
 public class ErrorController {
 
-    @RequestMapping(value = "/errorController", method = RequestMethod.POST)
+    @RequestMapping(value = "/errorController")
     public String handleError(ModelMap model, HttpServletRequest request) throws Exception {
 
         Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");

@@ -1,32 +1,12 @@
 package be.ttime.core.error;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.ConversionNotSupportedException;
-import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.mail.MailAuthenticationException;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingPathVariableException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.NoHandlerFoundException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
-import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,27 +63,27 @@ class GlobalExceptionController {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html; charset=UTF-8");
             if (ex instanceof ResourceNotFoundException) {
-                log.debug(ex.getMessage());
+                log.debug(request.getRequestURI() + " - " + ex.getMessage()+ " - " + ex.getCause());
                 return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_404, "error.notFound");
             }
             else if(ex instanceof UserNotFoundException) {
-                log.debug(ex.getMessage());
+                log.debug(request.getRequestURI() + " - " + ex.getMessage()+ " - " + ex.getCause());
                 return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.auth.userNotFound");
             }
             else if(ex instanceof UserAlreadyExistException) {
-                log.debug(ex.getMessage());
+                log.debug(request.getRequestURI() + " - " + ex.getMessage()+ " - " + ex.getCause());
                 return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.auth.userExist");
             }
             else if(ex instanceof InvalidOldPasswordException) {
-                log.debug(ex.getMessage());
+                log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
                 return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.auth.invalidOldPassword");
             }
             else if(ex instanceof MailAuthenticationException) {
-                log.debug(ex.getMessage());
+                log.debug(request.getRequestURI() + " - " + ex.getMessage()+ " - " + ex.getCause());
                 return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.mail.config");
             }
             else{
-                log.debug(ex.getMessage());
+                log.debug(request.getRequestURI() + " - " + ex.getMessage()+ " - " + ex.getCause());
                 return handleException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, request, response, VIEW_GENERAL, "error.general");
             }
         }
