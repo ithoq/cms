@@ -23,10 +23,16 @@ import java.util.Properties;
 
 @Configuration
 @ComponentScan(basePackageClasses = Application.class, excludeFilters = @Filter({Controller.class, Configuration.class}))
-@PropertySource(value = {"classpath:application.properties",
-                         "classpath:persistence.properties",
-                         "classpath:email.properties"})
-class ApplicationConfig {
+@PropertySource(value = {"classpath:application.properties", 
+						 "classpath:persistence.properties",
+						 "classpath:email.properties",
+})
+@PropertySource(value = {"file:config/application.properties",
+						 "file:config/persistence.properties",
+						 "file:config/email.properties"
+						 
+}, ignoreResourceNotFound=true)
+public class ApplicationConfig {
 
     @Value("${app.mode}")
     private String appMode;

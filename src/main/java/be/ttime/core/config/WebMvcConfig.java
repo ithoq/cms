@@ -4,6 +4,7 @@ import be.ttime.Application;
 import be.ttime.core.handler.AddModelParamsInterceptor;
 import be.ttime.core.handler.UrlLocaleChangeInterceptor;
 import be.ttime.core.handler.UrlLocaleResolver;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mitchellbosecke.pebble.PebbleEngine;
@@ -11,6 +12,7 @@ import com.mitchellbosecke.pebble.loader.Loader;
 import com.mitchellbosecke.pebble.loader.ServletLoader;
 import com.mitchellbosecke.pebble.spring4.PebbleViewResolver;
 import com.mitchellbosecke.pebble.spring4.extension.SpringExtension;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -18,7 +20,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
@@ -38,6 +40,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import javax.servlet.ServletContext;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -49,7 +52,7 @@ import java.util.Locale;
  */
 @Configuration
 @ComponentScan(basePackageClasses = Application.class, includeFilters = @Filter({Controller.class}), useDefaultFilters = false)
-class WebMvcConfig extends WebMvcConfigurationSupport {
+public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletContextAware{
 
     private static final String VIEWS = "/WEB-INF/templates/";
     private static final String RESOURCES_LOCATION = "/resources/";
@@ -72,11 +75,12 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
 
     @Value("${locale.force.url.except.default}")
     private boolean forceUrlExceptDefault;
-
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
+ //org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+    
+//    @Bean
+//    public static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
+//        return new PropertySourcesPlaceholderConfigurer();
+//    }
 
     @Bean
     @Override
