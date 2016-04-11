@@ -76,12 +76,10 @@ dependencies {
     compile('org.hibernate:hibernate-entitymanager:5.0.7.Final')
     compile('org.hibernate:hibernate-core:5.0.7.Final')
     compile('org.hibernate:hibernate-validator:5.2.4.Final')
-    //compile('org.hibernate:hibernate-ehcache:5.1.0.Final')
     compile('org.freemarker:freemarker:2.3.23')
     compile('com.rometools:rome:1.5.1')
     compile('org.springframework.data:spring-data-releasetrain:Dijkstra-SR6')
     compile('org.springframework.data:spring-data-jpa')
-    //compile('org.springframework:spring-core')
     compile('org.springframework:spring-webmvc')
     compile('org.springframework:spring-orm')
     compile('org.springframework.security:spring-security-web')
@@ -98,12 +96,12 @@ dependencies {
     compile('p6spy:p6spy:2.1.+')
     compile('net.sf.ehcache:ehcache:2.10.1')
     compile('org.glassfish:javax.json:1.0.4')
-    compile ('com.mitchellbosecke:pebble-spring4:2.2.1')
-    compile ('javax.mail:javax.mail-api:1.5.5')
-    compile ('org.passay:passay:1.1.0')
+    compile('com.mitchellbosecke:pebble-spring4:2.2.1')
+    compile('javax.mail:javax.mail-api:1.5.5')
+    compile('org.passay:passay:1.1.0')
     compile('org.aspectj:aspectjweaver:1.8.9')
-    providedCompile('org.projectlombok:lombok:1.16.8')
     compile('mysql:mysql-connector-java:5.1.38')
+    providedCompile('org.projectlombok:lombok:1.16.8')
     providedCompile('javax.servlet:javax.servlet-api:3.1.0')
     
 }
@@ -118,21 +116,19 @@ war {
 	
 }
 
-task deployTar(type: Tar) {
-	from('deploy/release-files')
+task deployTar(type: Tar, group: 'deploy') {
+	from('deploy/production')
 	from('build/libs/'+war.baseName+'-'+war.version+'.war')
 	baseName = war.baseName
-	destinationDir = file('deploy/release')
+	destinationDir = file('deploy')
 	extension = 'tar.gz'
 	compression = Compression.GZIP
 }
 
-task deploy(type: Zip) {
-	from('deploy/release-files')
+task deploy(type: Zip,  group: 'deploy') {
+	from('deploy/production')
 	from('build/libs/'+war.baseName+'-'+war.version+'.war')
 	baseName = war.baseName
-	destinationDir = file('deploy/release')
+	destinationDir = file('deploy')
 	extension = 'zip'
-	
 }
-

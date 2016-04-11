@@ -6,6 +6,7 @@
 .gradle
 *.iml
 build/
+deploy/
 out/
 gulp/admin/node_modules
 gulp/admin/public

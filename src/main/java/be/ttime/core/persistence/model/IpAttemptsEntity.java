@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "user_attempts", schema = "cognosco")
+@Table(name = "ip_attempts", schema = "cognosco")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "attempts", "lastModified"})
