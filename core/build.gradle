@@ -1,6 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'spring-boot'
 
+bootRepackage {
+    enabled = false
+}
+
 configurations {
     querydslapt
     providedCompile
@@ -46,9 +50,13 @@ dependencies {
     compile('org.springframework.data:spring-data-jpa')
     compile('org.springframework:spring-orm')
     compile('org.springframework:spring-context-support')
+    compile('org.springframework.security:spring-security-config')
     compile('org.apache.tika:tika-core:1.11')
+    compile('commons-io:commons-io:2.4')
     compile('commons-beanutils:commons-beanutils:1.9.2')
+    compile('org.glassfish:javax.json:1.0.4')
     compile('com.google.code.gson:gson:2.6.2')
+    compile('org.passay:passay:1.1.0')
     compile('com.zaxxer:HikariCP:2.4.3')
     compile('com.mysema.querydsl:querydsl-apt:3.6.9') // bug with v 3.6.7
     compile('com.mysema.querydsl:querydsl-jpa:3.6.9')
