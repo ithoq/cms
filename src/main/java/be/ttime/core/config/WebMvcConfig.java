@@ -2,9 +2,9 @@ package be.ttime.core.config;
 
 import be.ttime.Application;
 import be.ttime.core.handler.AddModelParamsInterceptor;
+import be.ttime.core.handler.ForceLocalUrlFilter;
 import be.ttime.core.handler.UrlLocaleChangeInterceptor;
 import be.ttime.core.handler.UrlLocaleResolver;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mitchellbosecke.pebble.PebbleEngine;
@@ -12,9 +12,9 @@ import com.mitchellbosecke.pebble.loader.Loader;
 import com.mitchellbosecke.pebble.loader.ServletLoader;
 import com.mitchellbosecke.pebble.spring4.PebbleViewResolver;
 import com.mitchellbosecke.pebble.spring4.extension.SpringExtension;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,13 +34,16 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import javax.servlet.ServletContext;
-
 import java.util.List;
 import java.util.Locale;
 
@@ -52,7 +55,7 @@ import java.util.Locale;
  */
 @Configuration
 @ComponentScan(basePackageClasses = Application.class, includeFilters = @Filter({Controller.class}), useDefaultFilters = false)
-public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletContextAware{
+public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletContextAware {
 
     private static final String VIEWS = "/WEB-INF/templates/";
     private static final String RESOURCES_LOCATION = "/resources/";
@@ -75,8 +78,8 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
 
     @Value("${locale.force.url.except.default}")
     private boolean forceUrlExceptDefault;
- //org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-    
+    //org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+
 //    @Bean
 //    public static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
 //        return new PropertySourcesPlaceholderConfigurer();
@@ -175,7 +178,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
      * [localeChangeInterceptor] précédent crée un cookie encapsulant la locale. La ligne 39 donne le nom [lang] à ce cookie.
      * Le cookie est également utilisé pour changer la locale ;
     */
-    @Bean(name="localeResolver")
+    @Bean(name = "localeResolver")
     public UrlLocaleResolver localeResolver() {
         UrlLocaleResolver localeResolver = new UrlLocaleResolver();
         localeResolver.setCookieName("lang");
@@ -224,10 +227,10 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         registry
-            .addResourceHandler(RESOURCES_HANDLER)
-            .addResourceLocations(RESOURCES_LOCATION)
-            .resourceChain(true)
-            .addResolver(new PathResourceResolver());
+                .addResourceHandler(RESOURCES_HANDLER)
+                .addResourceLocations(RESOURCES_LOCATION)
+                .resourceChain(true)
+                .addResolver(new PathResourceResolver());
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
         /*
         if (appMode.equals("PRODUCTION")) {
@@ -254,5 +257,12 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
         configurer.favorPathExtension(false);
     }
 
+    @Bean
+    public FilterRegistrationBean forceLocalUrlFilterRegistrationBean(final ForceLocalUrlFilter filter) {
+        final FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        registrationBean.setFilter(filter);
+        registrationBean.setEnabled(false);
+        return registrationBean;
+    }
 
 }
