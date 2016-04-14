@@ -27,7 +27,7 @@ import java.util.Properties;
         entityManagerFactoryRef = "primaryEntityManagerFactory",
         transactionManagerRef = "primaryTransactionManager"
 )
-class JpaConfig implements TransactionManagementConfigurer {
+public class JpaConfig implements TransactionManagementConfigurer {
 
     //    @Value("${page.file.directory}")
     //    private String filepath;
