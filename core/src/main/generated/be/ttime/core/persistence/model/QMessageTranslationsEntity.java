@@ -1,15 +1,13 @@
 package be.ttime.core.persistence.model;
 
-import com.mysema.query.types.Path;
+import static com.mysema.query.types.PathMetadataFactory.*;
+
+import com.mysema.query.types.path.*;
+
 import com.mysema.query.types.PathMetadata;
-import com.mysema.query.types.path.EntityPathBase;
-import com.mysema.query.types.path.NumberPath;
-import com.mysema.query.types.path.PathInits;
-import com.mysema.query.types.path.StringPath;
-
 import javax.annotation.Generated;
-
-import static com.mysema.query.types.PathMetadataFactory.forVariable;
+import com.mysema.query.types.Path;
+import com.mysema.query.types.path.PathInits;
 
 
 /**
@@ -27,8 +25,6 @@ public class QMessageTranslationsEntity extends EntityPathBase<MessageTranslatio
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QApplicationLanguageEntity language;
-
-    public final StringPath locale = createString("locale");
 
     public final QMessageEntity message;
 

@@ -1,15 +1,13 @@
 package be.ttime.core.persistence.model;
 
-import com.mysema.query.types.Path;
+import static com.mysema.query.types.PathMetadataFactory.*;
+
+import com.mysema.query.types.path.*;
+
 import com.mysema.query.types.PathMetadata;
-import com.mysema.query.types.path.BooleanPath;
-import com.mysema.query.types.path.EntityPathBase;
-import com.mysema.query.types.path.NumberPath;
-import com.mysema.query.types.path.PathInits;
-
 import javax.annotation.Generated;
-
-import static com.mysema.query.types.PathMetadataFactory.forVariable;
+import com.mysema.query.types.Path;
+import com.mysema.query.types.path.PathInits;
 
 
 /**
@@ -24,7 +22,9 @@ public class QApplicationConfigEntity extends EntityPathBase<ApplicationConfigEn
 
     public static final QApplicationConfigEntity applicationConfigEntity = new QApplicationConfigEntity("applicationConfigEntity");
 
-    public final QApplicationLanguageEntity defaultLang;
+    public final QApplicationLanguageEntity defaultAdminLang;
+
+    public final QApplicationLanguageEntity defaultPublicLang;
 
     public final BooleanPath forcedLangInUrl = createBoolean("forcedLangInUrl");
 
@@ -50,7 +50,8 @@ public class QApplicationConfigEntity extends EntityPathBase<ApplicationConfigEn
 
     public QApplicationConfigEntity(Class<? extends ApplicationConfigEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.defaultLang = inits.isInitialized("defaultLang") ? new QApplicationLanguageEntity(forProperty("defaultLang")) : null;
+        this.defaultAdminLang = inits.isInitialized("defaultAdminLang") ? new QApplicationLanguageEntity(forProperty("defaultAdminLang")) : null;
+        this.defaultPublicLang = inits.isInitialized("defaultPublicLang") ? new QApplicationLanguageEntity(forProperty("defaultPublicLang")) : null;
     }
 
 }
