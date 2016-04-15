@@ -4,6 +4,6 @@ import java.util.Map;
 
 public interface CmsModule {
 
-    String render(final Map<String, Object> model) throws ModuleRenderingException;
+    String render(final Map<String, ?> model) throws ModuleRenderingException;
 
 }

@@ -19,7 +19,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Component("fooCmsModule")
 public class FooCmsModule implements CmsModule {
 
     private static final Logger LOG = LoggerFactory.getLogger(FooCmsModule.class);
@@ -31,7 +31,7 @@ public class FooCmsModule implements CmsModule {
     private PebbleTemplate template;
 
     @Override
-    public String render(final Map<String, Object> model) throws ModuleRenderingException {
+    public String render(final Map<String, ?> model) throws ModuleRenderingException {
         final Writer writer = new StringWriter();
         final Map<String, Object> context = new HashMap<>();
 

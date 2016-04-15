@@ -49,20 +49,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     protected void configure(HttpSecurity http) throws Exception {
+        http.csrf()
+                .ignoringAntMatchers("/plugin/**");
 
-            http.authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority("READ_PRIVILEGE")
                 .anyRequest().permitAll()
                 .and()
-            .formLogin()
+                .formLogin()
                 .loginPage("/login")
                 .defaultSuccessUrl("/")
                 .failureUrl("/login?error=true")
-                //.successHandler(authenticationSuccessHandler)
+                        //.successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
                 .and()
-            //.exceptionHandling().accessDeniedHandler(accessDeniedHandler)
-            .rememberMe()
+                        //.exceptionHandling().accessDeniedHandler(accessDeniedHandler)
+                .rememberMe()
                 .tokenRepository(tokenRepository)
                 .tokenValiditySeconds(15 * 24 * 60 * 60); // 15 days
     }
