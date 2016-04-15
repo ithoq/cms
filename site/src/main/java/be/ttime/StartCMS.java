@@ -2,9 +2,7 @@ package be.ttime;
 
 import be.ttime.core.config.ApplicationConfig;
 import be.ttime.core.config.CachingConfig;
-import be.ttime.core.config.PluginsConfig;
 import be.ttime.core.config.SecurityConfig;
-import be.ttime.core.config.ServicesConfig;
 import be.ttime.core.config.WebMvcConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,9 +15,7 @@ import org.springframework.context.annotation.Import;
         ApplicationConfig.class,
         CachingConfig.class,
         SecurityConfig.class,
-        ServicesConfig.class,
-        WebMvcConfig.class,
-        PluginsConfig.class
+        WebMvcConfig.class
 })
 public class StartCMS extends SpringBootServletInitializer {
 
@@ -30,6 +26,6 @@ public class StartCMS extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(StartCMS.class, args);
-
     }
+
 }

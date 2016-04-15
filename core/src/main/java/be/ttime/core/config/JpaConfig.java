@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -17,25 +18,28 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Configuration
-// Active les transactions par annotations
 @EnableTransactionManagement
-// Active le JPA repositories. Il va scanner le package de la class configuré pour le Spring Datarepositories by default.
 @EnableJpaRepositories(
         basePackages = "be.ttime.core.persistence.repository",
-        entityManagerFactoryRef = "primaryEntityManagerFactory",
-        transactionManagerRef = "primaryTransactionManager"
+        entityManagerFactoryRef = "entityManagerFactory",
+        transactionManagerRef = "transactionManager"
 )
+@Import({
+        EntitiesBasePackagesConfig.class
+})
 public class JpaConfig {
 
-    //    @Value("${page.file.directory}")
-    //    private String filepath;
-    //    @Autowired
-    //    private FileInterceptor fileInterceptor;
     @Autowired
     private Environment env;
+
+    @Autowired
+    private Set<EntitiesBasePackages> entitiesBasePackages;
 
     /**
      * HikariCP is used as default connection pool in the generated application. The default configuration is used
@@ -58,7 +62,7 @@ public class JpaConfig {
         return new HikariDataSource(config);
     }
 
-    @Bean(name = "primaryJpaProperties")
+    @Bean(name = "jpaProperties")
     public Properties jpaProperties() {
         final Properties jpaProperties = new Properties();
         jpaProperties.put(org.hibernate.cfg.Environment.DIALECT, env.getProperty("hibernate.dialect"));
@@ -70,13 +74,17 @@ public class JpaConfig {
     }
 
     @Primary
-    @Bean(name = "primaryEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(final @Qualifier("primaryJpaProperties") Properties jpaProperties,
+    @Bean(name = "entityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(final @Qualifier("jpaProperties") Properties jpaProperties,
                                                                        final @Qualifier("dataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setPersistenceUnitName("core");
-        entityManagerFactoryBean.setPackagesToScan("be.ttime.core.persistence.model");
+        final Set<String> packages = entitiesBasePackages
+                .stream()
+                .flatMap(entitiesPackageConfig -> Arrays.asList(entitiesPackageConfig.getBasePackages()).stream())
+                .collect(Collectors.toSet());
+        entityManagerFactoryBean.setPackagesToScan(packages.toArray(new String[packages.size()]));
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         //        String test = env.getProperty("hibernate.dialect");
         //        jpaProperties.put("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory");
@@ -86,8 +94,8 @@ public class JpaConfig {
     }
 
     @Primary
-    @Bean(name = "primaryTransactionManager")
-    public PlatformTransactionManager transactionManager(final @Qualifier("primaryEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager transactionManager(final @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 

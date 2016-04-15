@@ -18,6 +18,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -55,6 +56,10 @@ import java.util.Locale;
         "be.ttime.core.error",
         "be.ttime.core.filter"
 })
+@Import({
+        ServicesConfig.class,
+        JpaConfig.class
+})
 public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletContextAware {
 
     private static final String VIEWS = "/WEB-INF/templates/";
@@ -78,12 +83,6 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
 
     @Value("${locale.force.url.except.default}")
     private boolean forceUrlExceptDefault;
-    //org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-
-//    @Bean
-//    public static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
-//        return new PropertySourcesPlaceholderConfigurer();
-//    }
 
     @Bean
     @Override
