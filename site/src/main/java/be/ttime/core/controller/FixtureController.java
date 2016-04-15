@@ -1,59 +1,51 @@
-package be.ttime.controller;
+package be.ttime.core.controller;
 
-import be.ttime.core.persistence.model.ApplicationLanguageEntity;
-import be.ttime.core.persistence.model.MessageEntity;
-import be.ttime.core.persistence.model.MessageTranslationsEntity;
-import be.ttime.core.persistence.model.PageContentEntity;
-import be.ttime.core.persistence.service.IApplicationService;
-import be.ttime.core.persistence.service.IMessageService;
-import be.ttime.core.persistence.service.IPageService;
+import be.ttime.core.persistence.model.*;
+import be.ttime.core.persistence.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
-@RestController
-public class TestController {
+@Controller
+public class FixtureController {
 
     @Autowired
     private IPageService pageService;
-
     @Autowired
     private IApplicationService applicationService;
-
+    @Autowired
+    private IPageBlockService pageBlockService;
+    @Autowired
+    private IAuthorityService authorityService;
+    @Autowired
+    private IUserService userService;
+    @Autowired
+    private IPageTemplateService pageTemplateService;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private IMessageService messageService;
 
-    @Autowired
-    private MessageSource messages;
-
-    @RequestMapping(value = "/2", method = RequestMethod.GET)
+    @RequestMapping(value = "/install", method = RequestMethod.GET)
     @ResponseBody
-    public String test2(ModelMap model, HttpServletRequest request, Locale localeRequest) {
-
-        PageContentEntity content = pageService.findContentById(1L);
-
-        String locale = content.getLanguage().getLocale();
-
-        boolean result = content.getLanguage().isEnabledForAdmin();
-
-        String result2 = Boolean.toString(result);
-        return "ok";
-    }
+    public String dbinsert(ModelMap model, HttpServletRequest request) {
 
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    @ResponseBody
-    public String test(ModelMap model, HttpServletRequest request, Locale locale) {
+        PageBlockEntity entity = pageBlockService.findByNameAndBlockType("master", PageBlockEntity.BlockType.System);
+
+        if (entity != null) {
+            return "The installation was already done!";
+        }
 
         ApplicationLanguageEntity appLanguageEN = new ApplicationLanguageEntity();
         appLanguageEN.setEnabledForAdmin(true);
@@ -70,15 +62,179 @@ public class TestController {
         applicationService.saveApplicationLanguage(appLanguageEN);
         applicationService.saveApplicationLanguage(appLanguageFR);
 
+        ApplicationConfigEntity appConfig = new ApplicationConfigEntity();
+        appConfig.setForcedLangInUrl(false);
+        appConfig.setIsoTwoLetter(true);
+        appConfig.setDefaultAdminLang(appLanguageEN);
+        appConfig.setDefaultPublicLang(appLanguageFR);
+
+        applicationService.saveApplicationConfig(appConfig);
+
+        UserEntity user = new UserEntity();
+        user.setUsername("user");
+        user.setEmail("user@email.com");
+        user.setCreatedDate(new Date());
+        user.setPassword(bCryptPasswordEncoder.encode("pass"));
+
+        // on ajoute un utilisateur
+
+        // == create initial privileges
+        final PrivilegeEntity readPrivilege = authorityService.createPrivilegeIfNotFound("READ_PRIVILEGE");
+        final PrivilegeEntity writePrivilege = authorityService.createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+
+        // == create initial roles
+        final List<PrivilegeEntity> adminPrivileges = Arrays.asList(readPrivilege, writePrivilege);
+
+        authorityService.createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
+        authorityService.createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
+
+        final RoleEntity adminRole = authorityService.findRoleByName("ROLE_ADMIN");
+        user.setRoles(Arrays.asList(adminRole));
+
+        userService.save(user);
+
+        PageBlockEntity pageTemplateContent = new PageBlockEntity();
+        pageTemplateContent.setName("template1");
+        pageTemplateContent.setDynamic(true);
+        pageTemplateContent.setCacheable(false);
+        pageTemplateContent.setContent("<div class=\"Template\"><h1>testTemplate</h1><h2>content</h2>{{data.mainContent_tiny | raw}}<h2>youtube link</h2>{{data.yt_txt}}</div>");
+        pageTemplateContent.setBlockType(PageBlockEntity.BlockType.PageTemplate);
+        pageBlockService.save(pageTemplateContent);
+
+        PageTemplateEntity pTemplate = new PageTemplateEntity();
+        pTemplate.setName("video");
+        pTemplate.setFields("[ { \"namespace\":\"mainContent\", \"name\":\"Main Content\", \"description\":\"\", \"blockName\":\"tinymce\", \"inputs\":[ { \"title\":\"Main Content\", \"subtitle\":\"This is the main content\", \"name\":\"tiny\", \"required\":false, \"validation\":\"\", \"defaultValue\":\"\", \"hint\":\"\", \"type\":\"\" } ] }, { \"namespace\":\"yt\", \"name\":\"Youtube Link\", \"description\":\"desc\", \"blockName\":\"text\", \"inputs\":[ { \"title\":\"Youtube Link\", \"subtitle\":\"\", \"name\":\"txt\", \"required\":true, \"validation\":\"\", \"defaultValue\":\"empty!\", \"hint\":\"Indique le contenu\", \"type\":\"\" } ] } ]");
+        pTemplate.setPageBlock(pageTemplateContent);
+        pageTemplateService.save(pTemplate);
+
+        PageEntity p1 = new PageEntity();
+        p1.setCreatedDate(new Date());
+        p1.setName("Home");
+        p1.setPageTemplate(pTemplate);
+        p1.setLevel(0);
+        p1.setOrder(0);
+        p1.setSlug("/");
+
+        pageService.save(p1);
+
+        PageBlockEntity fieldText = new PageBlockEntity();
+        fieldText.setName("text");
+        fieldText.setDynamic(true);
+        fieldText.setContent("{% set fieldName = np + '_' + input.name %}\n" +
+                "<div class=\"form-group form-group-default required\">\n" +
+                "    <label>{{input.title}}</label>{% if input.hint is not empty %} <i data-placement=\"right\" title=\"\" data-toggle=\"tooltip\" data-original-title=\"{{input.hint}}\" class=\"fa fa-info-circle txt-transform-reset\"></i>{% endif %}\n" +
+                "    <input type=\"text\" class=\"form-control\" name=\"{{fieldName}}\" id=\"{{fieldName}}\" value=\"{{data[fieldName]}}\">\n" +
+                "</div>"
+        );
+        fieldText.setBlockType(PageBlockEntity.BlockType.FieldSet);
+        fieldText.setDeletable(false);
+
+        PageBlockEntity fieldTinyMce = new PageBlockEntity();
+        fieldTinyMce.setName("tinymce");
+        fieldTinyMce.setDynamic(true);
+        fieldTinyMce.setContent("{% set fieldName = np + '_' + input.name %}\n" +
+                "<h3 class=\"like-label\">{{input.title}}</h3>{% if input.hint is not empty %} <i data-placement=\"right\" title=\"\" data-toggle=\"tooltip\" data-original-title=\"{{input.hint}}\" class=\"fa fa-info-circle txt-transform-reset\"></i>{% endif %}\n" +
+                "{% if input.subtitle is not empty %}\n" +
+                "<p>{{input.subtitle}}</p>\n" +
+                "{% endif %}\n" +
+                "<div class=\"form-group\">\n" +
+                "    <textarea data-editor=\"tinymce\" class=\"tinymce\" id=\"{{fieldName}}\" name=\"{{fieldName}}\">{{data[fieldName]}}</textarea>\n" +
+                "</div>\n");
+        fieldTinyMce.setBlockType(PageBlockEntity.BlockType.FieldSet);
+        fieldTinyMce.setDeletable(false);
+
+        PageBlockEntity masterTemplate = new PageBlockEntity();
+        masterTemplate.setName("master");
+        masterTemplate.setContent("<!DOCTYPE html>\n" +
+                "<html\n" +
+                "<head>\n" +
+                "    <title>{% if title is not empty %}{{title}}{% else %}Default title{% endif %}</title>\n" +
+                "    <meta names=\"description\" content=\"{% if description is not empty %}{{description}}{% else %}Default Description{% endif %}\">\n" +
+                "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n" +
+                "    <meta names=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1\">\n" +
+                "    {{ include_top }}\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    \n" +
+                "    {{ main | raw }}\n" +
+                "\n" +
+                "    <script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js\"></script>\n" +
+                "    {{ include_bottom }}\n" +
+                "</body>\n" +
+                "</html>");
+        masterTemplate.setDynamic(true);
+        masterTemplate.setDeletable(false);
+        masterTemplate.setCacheable(false);
+        masterTemplate.setBlockType(PageBlockEntity.BlockType.System);
+
+        PageBlockEntity loginPage = new PageBlockEntity();
+        loginPage.setContent("<div class=\"l-container\">\n" +
+                "    <div class=\"row\">\n" +
+                "        <div class=\"col-md-12\">\n" +
+                "            <div class=\"content-container\">\n" +
+                "                <div class=\"row\">\n" +
+                "                    <div class=\"col-md-12\">\n" +
+                "                        <form action=\"/login\" method=\"post\">\n" +
+                "                            <fieldset>\n" +
+                "                                <legend>Please Login</legend>\n" +
+                "                                <!-- use param.error assuming FormLoginConfigurer#failureUrl contains the query parameter error -->\n" +
+                "                                {% if get.error is not null %}\n" +
+                "                                    <div>\n" +
+                "                                        Failed to login.\n" +
+                "                                        Reason: {{session.getAttribute(\"SPRING_SECURITY_LAST_EXCEPTION\").message}}\n" +
+                "                                    </div>\n" +
+                "                                {% endif %}\n" +
+                "                                <!-- the configured LogoutConfigurer#logoutSuccessUrl is /login?logout and contains the query param logout -->\n" +
+                "                                {% if get.logout is not null %}\n" +
+                "                                    <div>\n" +
+                "                                        You have been logged out.\n" +
+                "                                    </div>\n" +
+                "                                {% endif %}\n" +
+                "                                <p>\n" +
+                "                                    <label for=\"username\">Username</label>\n" +
+                "                                    <input type=\"text\" id=\"username\" name=\"username\"/>\n" +
+                "                                </p>\n" +
+                "                                <p>\n" +
+                "                                    <label for=\"password\">Password</label>\n" +
+                "                                    <input type=\"password\" id=\"password\" name=\"password\"/>\n" +
+                "                                </p>\n" +
+                "                                <!-- if using RememberMeConfigurer make sure remember-me matches RememberMeConfigurer#rememberMeParameter -->\n" +
+                "                                <p>\n" +
+                "                                    <label for=\"remember-me\">Remember Me?</label>\n" +
+                "                                    <input type=\"checkbox\" id=\"remember-me\" name=\"remember-me\"/>\n" +
+                "                                </p>\n" +
+                "                                <div>\n" +
+                "                                    <button type=\"submit\" class=\"btn\">Log in</button>\n" +
+                "                                </div>\n" +
+                "                                {{ csrf | raw }}\n" +
+                "                            </fieldset>\n" +
+                "                        </form>\n" +
+                "                    </div>\n" +
+                "                </div>\n" +
+                "            </div>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "</div>\n");
+        loginPage.setName("login");
+        loginPage.setDynamic(true);
+        loginPage.setDeletable(false);
+        loginPage.setCacheable(false);
+        loginPage.setBlockType(PageBlockEntity.BlockType.System);
+
+        pageBlockService.save(fieldText);
+        pageBlockService.save(fieldTinyMce);
+        pageBlockService.save(masterTemplate);
+        pageBlockService.save(loginPage);
+
         List<MessageEntity> msgs = new ArrayList<>();
         MessageEntity m;
         List<MessageTranslationsEntity> list;
 
+        // admin messages
         m = new MessageEntity("admin.dropFilesHere", "admin");
         list = Arrays.asList(new MessageTranslationsEntity(appLanguageFR, "déposez vos fichiers ici", m), new MessageTranslationsEntity(appLanguageEN, "drop files here", m));
         m.setTranslations(list);
         msgs.add(m);
-
 
         m = new MessageEntity("admin.handCrafted", "admin");
         list = Arrays.asList(new MessageTranslationsEntity(appLanguageFR, "à la main", m), new MessageTranslationsEntity(appLanguageEN, "hand-crafted", m));
@@ -221,7 +377,6 @@ public class TestController {
         list = Arrays.asList(new MessageTranslationsEntity(appLanguageFR, "Cette ip est bloqué pendant 24 heures", m), new MessageTranslationsEntity(appLanguageEN, "This ip is blocked for 24 hours", m));
         m.setTranslations(list);
         msgs.add(m);
-
 
         // success messages
         m = new MessageEntity("success.general", "general");
@@ -415,7 +570,9 @@ public class TestController {
         m.setTranslations(list);
         msgs.add(m);
 
+
         messageService.save(msgs);
-        return "ok";
+
+        return "The data has been added successfully!";
     }
 }

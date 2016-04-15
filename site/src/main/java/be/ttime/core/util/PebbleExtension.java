@@ -1,22 +1,20 @@
-package be.ttime.core;
+package be.ttime.core.util;
 
 import com.mitchellbosecke.pebble.extension.AbstractExtension;
 import com.mitchellbosecke.pebble.spring4.context.Beans;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
 
 import javax.servlet.ServletContext;
-
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class PebbleExtension extends AbstractExtension implements ServletContextAware{
+public class PebbleExtension extends AbstractExtension implements ServletContextAware {
 
-//    @Autowired
+    //    @Autowired
     private ServletContext servletContext;
 
     @Autowired
@@ -30,8 +28,8 @@ public class PebbleExtension extends AbstractExtension implements ServletContext
         return map;
     }
 
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 }

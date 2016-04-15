@@ -1,5 +1,6 @@
-package be.ttime.core.handler;
+package be.ttime.core.filter;
 
+import be.ttime.core.handler.UrlLocaleResolver;
 import be.ttime.core.persistence.model.ApplicationConfigEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import lombok.extern.slf4j.Slf4j;

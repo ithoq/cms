@@ -1,4 +1,4 @@
-package be.ttime.core;
+package be.ttime.core.util;
 
 import com.mitchellbosecke.pebble.extension.Function;
 import org.springframework.security.web.csrf.CsrfToken;

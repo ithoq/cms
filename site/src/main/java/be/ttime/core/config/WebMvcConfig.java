@@ -1,8 +1,7 @@
 package be.ttime.core.config;
 
-import be.ttime.Application;
+import be.ttime.core.filter.ForceLocalUrlFilter;
 import be.ttime.core.handler.AddModelParamsInterceptor;
-import be.ttime.core.handler.ForceLocalUrlFilter;
 import be.ttime.core.handler.UrlLocaleChangeInterceptor;
 import be.ttime.core.handler.UrlLocaleResolver;
 import com.google.gson.Gson;
@@ -18,7 +17,6 @@ import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
@@ -28,10 +26,8 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -54,7 +50,11 @@ import java.util.Locale;
  * We exclude controller from ComponentScan because they are Servlet Contect class
  */
 @Configuration
-@ComponentScan(basePackageClasses = Application.class, includeFilters = @Filter({Controller.class}), useDefaultFilters = false)
+@ComponentScan(basePackages = {
+        "be.ttime.core.controller",
+        "be.ttime.core.error",
+        "be.ttime.core.filter"
+})
 public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletContextAware {
 
     private static final String VIEWS = "/WEB-INF/templates/";
@@ -238,17 +238,6 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
         } else {
             registry.addResourceHandler(RESOURCES_HANDLER).addResourceLocations(RESOURCES_LOCATION);
         }*/
-    }
-
-    /**
-     * Handles favicon.ico requests assuring no <code>404 Not Found</code> error is returned.
-     */
-    @Controller
-    static class FaviconController {
-        @RequestMapping("favicon.ico")
-        String favicon() {
-            return "forward:/resources/images/favicon.ico";
-        }
     }
 
     @Override

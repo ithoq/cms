@@ -1,7 +1,6 @@
 package be.ttime.core.config;
 
-import be.ttime.Application;
-import be.ttime.core.PebbleExtension;
+import be.ttime.core.util.PebbleExtension;
 import be.ttime.core.model.DatabaseMessageSourceBase;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.loader.StringLoader;
@@ -10,28 +9,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Controller;
 
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackageClasses = Application.class, excludeFilters = @Filter({Controller.class, Configuration.class}))
-@PropertySource(value = {"classpath:application.properties", 
-						 "classpath:persistence.properties",
-						 "classpath:email.properties",
+@PropertySource(value = {
+        "classpath:application.properties",
+        "classpath:persistence.properties",
+        "classpath:email.properties",
 })
-@PropertySource(value = {"file:config/application.properties",
-						 "file:config/persistence.properties",
-						 "file:config/email.properties"
-						 
-}, ignoreResourceNotFound=true)
+@PropertySource(value = {
+        "file:config/application.properties",
+        "file:config/persistence.properties",
+        "file:config/email.properties"
+
+}, ignoreResourceNotFound = true)
 public class ApplicationConfig {
 
     @Value("${app.mode}")

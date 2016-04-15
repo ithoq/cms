@@ -1,4 +1,4 @@
-package be.ttime.core.config;
+package be.ttime.core.config.security;
 
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 import org.springframework.web.multipart.support.MultipartFilter;

@@ -2,16 +2,11 @@ package be.ttime.core.util;
 
 
 import be.ttime.core.persistence.model.PageBlockEntity;
-
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.ServletContextAware;
-
-import javax.servlet.ServletContext;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -20,13 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class PebbleUtils implements ServletContextAware{
+public class PebbleUtils {
 
     @Autowired
     public PebbleEngine pebbleStringEngine;
-
-    @Autowired
-    private ServletContext servletContext;
 
     public String parseString(String content, Map<String, Object> model) throws IOException, PebbleException {
         PebbleTemplate compiledTemplate = pebbleStringEngine.getTemplate(content);
@@ -66,9 +58,5 @@ public class PebbleUtils implements ServletContextAware{
     public PebbleTemplate getCompiledTemplate(String content) throws PebbleException {
         return pebbleStringEngine.getTemplate(content);
     }
-    
-    @Override
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
+
 }
