@@ -24,7 +24,7 @@ sourceSets {
 
 idea {
     module {
-        sourceDirs = ['src/main/generated']
+        sourceDirs += file('src/main/generated')
     }
 }
 
@@ -60,9 +60,8 @@ dependencies {
     compile('ch.qos.logback:logback-classic:1.1.5')
     compile('org.apache.commons:commons-lang3:3.4')
     compile('org.apache.commons:commons-collections4:4.1')
-    compile('cz.jirutka.validator:validator-collection:2.1.+')
+    compile('cz.jirutka.validator:validator-collection:2.1.6')
     compile('org.slf4j:slf4j-api:1.7.14')
-    compile 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final'
     compile('org.hibernate:hibernate-entitymanager:5.0.7.Final')
     compile('org.hibernate:hibernate-core:5.0.7.Final')
     compile('org.hibernate:hibernate-validator:5.2.4.Final')
@@ -79,7 +78,7 @@ dependencies {
     compile('org.passay:passay:1.1.0')
     compile('com.zaxxer:HikariCP:2.4.3')
     compile('com.mysema.querydsl:querydsl-jpa:3.6.9')
-    compile('p6spy:p6spy:2.1.+')
+    compile('p6spy:p6spy:2.1.4')
     compile('net.sf.ehcache:ehcache:2.10.1')
     compile('org.aspectj:aspectjweaver:1.8.9')
     compile('mysql:mysql-connector-java:5.1.38')

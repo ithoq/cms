@@ -8,6 +8,9 @@
 classes/
 build/
 deploy/
+node_modules/
+src/generated/
+src/main/generated/
 out/
 gulp/admin/node_modules
 gulp/admin/public
