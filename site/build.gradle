@@ -8,6 +8,7 @@ war {
 }
 
 configurations {
+    providedCompile
     providedRuntime
     executableWarDeps
 }
@@ -26,7 +27,7 @@ dependencies {
     compile('com.mitchellbosecke:pebble-spring4:2.2.1')
     compile('javax.mail:javax.mail-api:1.5.5')
     providedCompile('org.projectlombok:lombok:1.16.8')
-    providedCompile('javax.servlet:javax.servlet-api:3.1.0')
+    providedRuntime('javax.servlet:javax.servlet-api:3.1.0')
 }
 
 war {
