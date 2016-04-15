@@ -3,6 +3,7 @@ package be.ttime.core.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -13,8 +14,8 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -27,7 +28,7 @@ import java.util.Properties;
         entityManagerFactoryRef = "primaryEntityManagerFactory",
         transactionManagerRef = "primaryTransactionManager"
 )
-public class JpaConfig implements TransactionManagementConfigurer {
+public class JpaConfig {
 
     //    @Value("${page.file.directory}")
     //    private String filepath;
@@ -51,26 +52,33 @@ public class JpaConfig implements TransactionManagementConfigurer {
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
-        config.setMaximumPoolSize(3); // for a little website
+        config.setMaximumPoolSize(10); // for a little website
         // maybe interseting : config.setIdleTimeout();
 
         return new HikariDataSource(config);
     }
 
-    @Primary
-    @Bean(name = "primaryEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-        entityManagerFactoryBean.setDataSource(dataSource());
-        entityManagerFactoryBean.setPackagesToScan("be.ttime.core.persistence.model");
-        entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-//        String test = env.getProperty("hibernate.dialect");
-        Properties jpaProperties = new Properties();
+    @Bean(name = "primaryJpaProperties")
+    public Properties jpaProperties() {
+        final Properties jpaProperties = new Properties();
         jpaProperties.put(org.hibernate.cfg.Environment.DIALECT, env.getProperty("hibernate.dialect"));
         jpaProperties.put(org.hibernate.cfg.Environment.HBM2DDL_AUTO, env.getProperty("hibernate.hbm2ddl.auto")); // create drop all , update, update ;)
         jpaProperties.put(org.hibernate.cfg.Environment.USE_SECOND_LEVEL_CACHE, "false");
         jpaProperties.put(org.hibernate.cfg.Environment.USE_QUERY_CACHE, "false");
-        // jpaProperties.put("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory");
+
+        return jpaProperties;
+    }
+
+    @Primary
+    @Bean(name = "primaryEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(final @Qualifier("primaryJpaProperties") Properties jpaProperties,
+                                                                       final @Qualifier("dataSource") DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+        entityManagerFactoryBean.setDataSource(dataSource);
+        entityManagerFactoryBean.setPackagesToScan("be.ttime.core.persistence.model");
+        entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        //        String test = env.getProperty("hibernate.dialect");
+        //        jpaProperties.put("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory");
         entityManagerFactoryBean.setJpaProperties(jpaProperties);
 
         return entityManagerFactoryBean;
@@ -78,12 +86,8 @@ public class JpaConfig implements TransactionManagementConfigurer {
 
     @Primary
     @Bean(name = "primaryTransactionManager")
-    public PlatformTransactionManager transactionManager() {
-        return new JpaTransactionManager();
+    public PlatformTransactionManager transactionManager(final @Qualifier("primaryEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
     }
 
-    @Bean
-    public PlatformTransactionManager annotationDrivenTransactionManager() {
-        return transactionManager();
-    }
 }

@@ -7,4 +7,6 @@ bootRepackage {
 
 dependencies {
     compile project(':core')
+    compile('org.springframework:spring-webmvc')
+    compile('com.mitchellbosecke:pebble-spring4:2.2.1')
 }
