@@ -75,6 +75,7 @@ public class JpaConfig {
                                                                        final @Qualifier("dataSource") DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource);
+        entityManagerFactoryBean.setPersistenceUnitName("core");
         entityManagerFactoryBean.setPackagesToScan("be.ttime.core.persistence.model");
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         //        String test = env.getProperty("hibernate.dialect");

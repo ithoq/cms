@@ -28,6 +28,7 @@ public class FooJpaConfig {
                                                                        final @Qualifier("dataSource") DataSource dataSource) {
         final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource);
+        entityManagerFactoryBean.setPersistenceUnitName("foo");
         entityManagerFactoryBean.setPackagesToScan("be.ttime.modules.foo.model");
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         entityManagerFactoryBean.setJpaProperties(jpaProperties);
