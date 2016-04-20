@@ -22,6 +22,8 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
 
     public static final QFileEntity fileEntity = new QFileEntity("fileEntity");
 
+    public final QPageContentEntity content;
+
     public final StringPath description = createString("description");
 
     public final BooleanPath enabled = createBoolean("enabled");
@@ -33,8 +35,6 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
     public final StringPath mimeType = createString("mimeType");
 
     public final StringPath name = createString("name");
-
-    public final QPageEntity page;
 
     public final SetPath<PrivilegeEntity, QPrivilegeEntity> privileges = this.<PrivilegeEntity, QPrivilegeEntity>createSet("privileges", PrivilegeEntity.class, QPrivilegeEntity.class, PathInits.DIRECT2);
 
@@ -62,7 +62,7 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
 
     public QFileEntity(Class<? extends FileEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.page = inits.isInitialized("page") ? new QPageEntity(forProperty("page"), inits.get("page")) : null;
+        this.content = inits.isInitialized("content") ? new QPageContentEntity(forProperty("content"), inits.get("content")) : null;
     }
 
 }

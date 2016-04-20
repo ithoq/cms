@@ -10,6 +10,8 @@ import java.util.List;
 public interface IApplicationLanguageRepository extends JpaRepository<ApplicationLanguageEntity, String>, QueryDslPredicateExecutor<ApplicationLanguageEntity> {
 
     List<ApplicationLanguageEntity> findByEnabledForAdminTrue();
+
     List<ApplicationLanguageEntity> findByEnabledForPublicTrue();
+
     List<ApplicationLanguageEntity> findByEnabledForPublicTrueOrEnabledForAdminTrue();
 }

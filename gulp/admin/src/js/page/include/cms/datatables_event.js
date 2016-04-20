@@ -9,10 +9,11 @@ $pageForm.on('click', '#tabFileBtn', function () {
 });
 
 function initDataTable(id, $tableFiles) {
+  var $contentId = $('#currentContentId');
   $.Cms.initDataTableWithSearch({
     tableJqueryElement: $tableFiles,
     searchElement: '#search-table-files',
-    ajax: '/admin/file/getJson/' + id,
+    ajax: '/admin/file/getJson/' + $contentId.val(),
     appendOperationColumns: 'double',
     columnDefs: [
       { // name

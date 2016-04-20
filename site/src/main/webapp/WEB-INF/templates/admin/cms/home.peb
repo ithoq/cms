@@ -1,9 +1,10 @@
 {% extends 'admin/master' %}
 {% set activeNav = 'cms' %}
-{% set title =  message('pagesManagement') %}
+{% set title =  message('admin.pagesManagement') %}
 
 {% block head %}
-    <link href="/resources/admin/libs/fancytree/dist/skin-fab/ui.fancytree.css" rel="stylesheet" type="text/css" media="screen">
+    <link href="/resources/admin/libs/fancytree/dist/skin-fab/ui.fancytree.css" rel="stylesheet" type="text/css"
+          media="screen">
     <script src="/resources/admin/libs/fancytree/dist/jquery.fancytree-all.min.js"></script>
     <script src="/resources/admin/libs/jqUpload/js/jquery.iframe-transport.js"></script>
     <script src="/resources/admin/libs/jqUpload/js/jquery.fileupload.js"></script>
@@ -17,7 +18,8 @@
             <div class="modal-content-wrapper">
                 <div class="modal-content">
                     <div class="modal-header clearfix text-left p-b-25">
-                        <button type="button" data-dismiss="modal" aria-hidden="true" class="close"><i class="pg-close fs-14"></i></button>
+                        <button type="button" data-dismiss="modal" aria-hidden="true" class="close"><i
+                                    class="pg-close fs-14"></i></button>
                         <h4>{{ message('admin.newPage') }}</h4>
                         <hr class="section">
                     </div>
@@ -39,7 +41,8 @@
 
                             <div class="form-group form-group-default form-group-default-select2 required">
                                 <label for="selectType">{{ message('type') }}</label>
-                                <select id="selectType" name="type" data-init-plugin="select2" data-disable-search="true" class="full-width">
+                                <select id="selectType" name="type" data-init-plugin="select2"
+                                        data-disable-search="true" class="full-width">
                                     <option value="Page">{{ message('page') }}</option>
                                     <option value="Link">{{ message('link') }}</option>
                                 </select>
@@ -47,11 +50,12 @@
                             <div class="form-group form-group-default form-group-default-select2 required js-page">
                                 <label for="selectTemplate">{{ message('template') }}</label>
 
-                                <select id="selectTemplate" name="templateId" data-placeholder="Select Country" data-init-plugin="select2" class="full-width">
+                                <select id="selectTemplate" name="templateId" data-placeholder="Select Country"
+                                        data-init-plugin="select2" class="full-width">
                                     {% for t in templates %}
-                                    <option value="{{ t.id }}">{{ t.name }}</option>
+                                        <option value="{{ t.id }}">{{ t.name }}</option>
                                     {% else %}
-                                    <option value="-1"></option>
+                                        <option value="-1"></option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -59,10 +63,12 @@
                         <hr class="section m-t-5 light">
                         <div class="row">
                             <div class="col-sm-6">
-                                <button type="button" data-dismiss="modal" class="btn btn-danger btn-block m-t-5">{{ message('cancel') }}</button>
+                                <button type="button" data-dismiss="modal"
+                                        class="btn btn-danger btn-block m-t-5">{{ message('cancel') }}</button>
                             </div>
                             <div class="col-sm-6">
-                                <button type="button" id="btnFormCeatePage" class="btn btn-success btn-block m-t-5">{{ message('save') }}</button>
+                                <button type="button" id="btnFormCeatePage"
+                                        class="btn btn-success btn-block m-t-5">{{ message('save') }}</button>
                             </div>
                         </div>
                     </div>
@@ -75,14 +81,19 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content-wrapper">
                 <div class="modal-content">
-                    <button type="button" data-dismiss="modal" aria-hidden="true" class="close"><i class="pg-close fs-14"></i></button>
+                    <button type="button" data-dismiss="modal" aria-hidden="true" class="close"><i
+                                class="pg-close fs-14"></i></button>
                     <div class="container-xs-height full-height">
                         <div class="row-xs-height">
                             <div class="modal-body col-xs-height col-middle text-center">
-                                <h5 class="text-primary"><span class="semi-bold">{{ message('warning') }}</span> {{ message('admin.pageDeleteMessage') }}</h5><br>
-                                <button id="btnDeletePage" type="button" data-dismiss="modal" class="btn btn-success btn-block">{{ message('delete') }}
+                                <h5 class="text-primary"><span
+                                            class="semi-bold">{{ message('warning') }}</span> {{ message('admin.pageDeleteMessage') }}
+                                </h5><br>
+                                <button id="btnDeletePage" type="button" data-dismiss="modal"
+                                        class="btn btn-success btn-block">{{ message('delete') }}
                                 </button>
-                                <button type="button" data-dismiss="modal" class="btn btn-danger btn-block">{{ message('cancel') }}
+                                <button type="button" data-dismiss="modal"
+                                        class="btn btn-danger btn-block">{{ message('cancel') }}
                                 </button>
                             </div>
                         </div>
@@ -100,7 +111,8 @@
         <div class="col-sm-3">
             <div class="panel panel-default panel-tree">
                 <div class="panel-heading">
-                    <div class="panel-title"><span>{{ message('admin.tree') }}</span><span id="matches" class="label label-info"></span>
+                    <div class="panel-title"><span>{{ message('admin.tree') }}</span><span id="matches"
+                                                                                           class="label label-info"></span>
                         <button id="btnCreatePage" type="button" class="btn btn-success m-t-5 pull-right"><i
                                     class="fa fa-plus-circle"></i></button>
                         <hr class="section">

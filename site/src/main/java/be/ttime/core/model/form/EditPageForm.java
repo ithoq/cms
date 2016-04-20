@@ -8,7 +8,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Setter
 public class EditPageForm {
 
-    private Long id;
+    private Long pageId;
+    private Long contentId;
     @NotEmpty
     private String name;
     @NotEmpty

@@ -1,27 +1,42 @@
 <div class="header">
     <div class="container-fluid relative">
         <div class="pull-left full-height visible-sm visible-xs">
-            <div class="header-inner"><a href="#" data-toggle="sidebar" class="btn-link toggle-sidebar visible-sm-inline-block visible-xs-inline-block padding-5"><span class="icon-set menu-hambuger"></span></a></div>
+            <div class="header-inner"><a href="#" data-toggle="sidebar"
+                                         class="btn-link toggle-sidebar visible-sm-inline-block visible-xs-inline-block padding-5"><span
+                            class="icon-set menu-hambuger"></span></a></div>
         </div>
         <div class="pull-center hidden-md hidden-lg">
             <div class="header-inner">
-                <div class="brand inline"><img src="/resources/admin/img/logo-dark.png" alt="logo" data-src="/resources/admin/img/logo-dark.png" data-src-retina="/resources/admin/img/logo-dark-2x.png" width="78" height="22"></div>
+                <div class="brand inline"><img src="/resources/admin/img/logo-dark.png" alt="logo"
+                                               data-src="/resources/admin/img/logo-dark.png"
+                                               data-src-retina="/resources/admin/img/logo-dark-2x.png" width="78"
+                                               height="22"></div>
             </div>
         </div>
     </div>
     <div class="pull-left sm-table hidden-xs hidden-sm">
         <div class="header-inner">
-            <div class="brand inline"><img src="/resources/admin/img/logo-dark.png" alt="logo" data-src="/resources/admin/img/logo-dark.png" data-src-retina="/resources/admin/img/logo-dark-2x.png" width="78" height="22"></div>
+            <div class="brand inline"><img src="/resources/admin/img/logo-dark.png" alt="logo"
+                                           data-src="/resources/admin/img/logo-dark.png"
+                                           data-src-retina="/resources/admin/img/logo-dark-2x.png" width="78"
+                                           height="22"></div>
         </div>
     </div>
     <div class="pull-right">
         <div class="visible-lg visible-md m-t-10">
             <div class="pull-left p-r-10 p-t-10 fs-16 font-heading"><span class="semi-bold">{{ user.username }}</div>
             <div class="dropdown pull-right">
-                <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="profile-dropdown-toggle"><span class="thumbnail-wrapper d32 circular inline m-t-5"><img src="/resources/admin/img/avatar/avatar_small-men.png" alt="" data-src="/resources/admin/img/avatar/avatar_small-men.png" data-src-retina="/resources/admin/img/avatar/avatar_small2x-men.png" width="32" height="32"></span></button>
+                <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        class="profile-dropdown-toggle"><span class="thumbnail-wrapper d32 circular inline m-t-5"><img
+                                src="/resources/admin/img/avatar/avatar_small-men.png" alt=""
+                                data-src="/resources/admin/img/avatar/avatar_small-men.png"
+                                data-src-retina="/resources/admin/img/avatar/avatar_small2x-men.png" width="32"
+                                height="32"></span></button>
                 <ul role="menu" class="dropdown-menu profile-dropdown">
                     <li><a href="#"><i class="pg-settings_small"></i> {{ message('settings') }}</a></li>
-                    <li class="bg-master-lighter"><a href="/logout" class="clearfix"><span class="pull-left">{{ message('logout') }}</span><span class="pull-right"><i class="pg-power"></i></span></a></li>
+                    <li class="bg-master-lighter"><a href="/logout" class="clearfix"><span
+                                    class="pull-left">{{ message('logout') }}</span><span class="pull-right"><i
+                                        class="pg-power"></i></span></a></li>
                 </ul>
             </div>
         </div>

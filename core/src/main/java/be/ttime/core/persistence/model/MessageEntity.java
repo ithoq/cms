@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 //@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "message", schema = "cognosco", indexes = {
+@Table(name = "message", indexes = {
         @Index(name = "idx_messageKey", columnList = "messageKey", unique = true)})
 @Getter
 @Setter
@@ -30,9 +30,10 @@ public class MessageEntity {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<MessageTranslationsEntity> translations;
 
-    public MessageEntity() {}
+    public MessageEntity() {
+    }
 
-    public MessageEntity(String messageKey, String domain){
+    public MessageEntity(String messageKey, String domain) {
         this.messageKey = messageKey;
         this.domain = domain;
     }

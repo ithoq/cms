@@ -6,6 +6,7 @@
 .gradle
 *.iml
 classes/
+webdata/
 build/
 deploy/
 node_modules/

@@ -1,5 +1,5 @@
 package be.ttime.core.config.security;
-
+/*
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -18,4 +18,4 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
             throws IOException, ServletException {
         response.sendRedirect("/my-error-page");
     }
-}
+}*/

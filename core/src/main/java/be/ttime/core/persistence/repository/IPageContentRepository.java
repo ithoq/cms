@@ -7,4 +7,5 @@ import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
 public interface IPageContentRepository extends JpaRepository<PageContentEntity, Long>, QueryDslPredicateExecutor<PageContentEntity> {
 
+    PageContentEntity findByComputedSlugAndLanguageLocale(String slug, String id);
 }

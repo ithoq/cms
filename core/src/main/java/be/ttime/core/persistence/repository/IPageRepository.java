@@ -22,16 +22,6 @@ public interface IPageRepository extends JpaRepository<PageEntity, Long>, QueryD
 
     PageEntity findFirstByPageParentOrderByOrderDesc(PageEntity parent);
 
-    @Query("SELECT p from PageEntity p LEFT JOIN FETCH p.pageFiles WHERE p.slug = :slug ")
-    PageEntity findBySlug(@Param("slug") String slug);
-
-    @Query("SELECT p from PageEntity p LEFT JOIN FETCH p.pageFiles LEFT JOIN FETCH p.pageTemplate WHERE p.id = :id ")
+    @Query("SELECT p from PageEntity p LEFT JOIN FETCH p.pageContents WHERE p.id = :id ")
     PageEntity findOne(@Param("id") Long id);
-
 }
-
-    /*
-        @Query(value = "SELECT p FROM Place p LEFT JOIN FETCH p.author LEFT JOIN FETCH p.city c LEFT JOIN FETCH c.state where p.id = :id")
-    Place findById(@Param("id") int id);
-
-     */

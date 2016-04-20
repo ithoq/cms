@@ -1,0 +1,180 @@
+/* ==========================================================================
+   Gestion fieldset
+   ========================================================================== */
+/* PAGE */
+
+
+
+/* modal */
+
+.modalScroll
+{
+    overflow: auto;
+}
+
+.container-block,
+.container-fieldset
+{
+    margin: 5px 0;
+    padding: 10px;
+}
+
+.blockTitle,
+.fieldsetTitle
+{
+    padding-bottom: 5px;
+
+    border-bottom: 1px solid #e6e6e6;
+}
+
+/* INPUT CONTAINER GENERAL */
+.inputs-container
+{
+    overflow: hidden;
+
+    padding: 10px;
+
+    background-color: rgb(245,245,245);
+}
+
+/* INPUT ADD CONTAINER */
+.inputs-container ul.inputsAddContainer
+{
+    overflow: auto;
+
+    max-height: 180px;
+    margin: 0;
+    padding: 0;
+
+    background-color: rgb(255,255,255);
+}
+.inputs-container ul li.input-li
+{
+    position: relative;
+
+    width: 200px;
+    margin: 10px;
+    padding: 10px;
+
+    list-style-type: none;
+
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.inputs-container ul li:active
+{
+    border-bottom: 1px solid #10cfbd;
+}
+
+.removeField
+{
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+
+    display: inline-block;
+
+    width: 20px;
+    height: 20px;
+
+    text-align: center;
+
+    color: #10cfbd;
+
+    i
+    {
+        vertical-align: center;
+    }
+}
+
+.input-li:hover
+{
+    cursor: pointer;
+}
+
+.activeInput
+{
+    display: block;
+
+    color: #10cfbd;
+    border-left: 2px solid #10cfbd;
+}
+
+/* INPUT EDIT CONTAINER */
+
+.input-div
+{
+    display: none;
+
+    min-height: 175px;
+    padding: 10px 20px;
+
+    background-color: rgb(255,255,255);
+}
+
+.inputsEditContainer input
+{
+    margin: 5px 0;
+}
+
+.inputsEditContainer
+{
+    margin-top: 40px;
+    padding: 5px 20px;
+}
+
+.inputTitleh2
+{
+    margin: 0;
+    margin-bottom: 8px;
+
+    color: #777;
+}
+
+.inputGrey
+{
+    color: #aaa;
+}
+
+.inputGrey.typeName
+{
+    line-height: 35px;
+
+    margin-left: 15px;
+}
+
+.fc-switch.typeButton
+{
+    margin-top: 5px;
+    margin-left: 65px;
+}
+
+.inputArrayContainer
+{
+    height: 35px;
+}
+
+.noBorder
+{
+    border: none;
+}
+
+
+/* BUTTON */
+
+.btnCreateFieldset
+{
+    margin-top: 12px;
+}
+
+.addBtnInputs
+{
+    margin: 5px 0;
+}
+
+.fieldsetAddBtn
+{
+    font-size: 17px;
+
+    vertical-align: middle;
+}

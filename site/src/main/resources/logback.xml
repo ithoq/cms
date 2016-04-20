@@ -2,8 +2,9 @@
 <configuration>
 
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-
-    <property name="LOG_HOME" value="webdata/logs/cognosco" />
+    <logger name="org.hibernate.type" level="ERROR" />
+    <logger name="org.hibernate" level="ERROR" />
+    <property name="LOG_HOME" value="webdata/logs/cognosco"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
@@ -62,10 +63,10 @@
     <logger name="be.ttime" level="debug"
             additivity="false">
         <!--<appender-ref ref="FILE-AUDIT" />-->
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </logger>
 
     <root level="error">
-        <appender-ref ref="FILE-ERROR" />
+        <appender-ref ref="FILE-ERROR"/>
     </root>
 </configuration>

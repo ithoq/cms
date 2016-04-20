@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Import;
         "be.ttime.core.persistence",
         "be.ttime.core.registration",
         "be.ttime.core.util",
+        "be.ttime.core.setup"
 })
 @Import({
         PluginsConfig.class

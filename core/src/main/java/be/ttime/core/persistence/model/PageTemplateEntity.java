@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "page_template", schema = "cognosco")
+@Table(name = "page_template")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "name", "active"})

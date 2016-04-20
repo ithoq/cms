@@ -1,19 +1,20 @@
 package be.ttime.core.persistence.model;
 
+import be.ttime.core.persistence.converter.BlockTypeConverter;
 import com.google.gson.annotations.Expose;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 
 @Entity
-@Table(name = "page_block", schema = "cognosco")
+@Table(name = "page_block")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "name"})
+@NoArgsConstructor
+@AllArgsConstructor
 public class PageBlockEntity {
 
     @Expose
@@ -41,8 +42,8 @@ public class PageBlockEntity {
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '0'")
     private boolean dynamic = false;
     @Expose
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('Content', 'Navigation', 'PageTemplate', 'FieldSet', 'System' )", nullable = false)
+    @Convert(converter = BlockTypeConverter.class)
+    @Column(nullable = false, length = 1)
     private BlockType blockType = BlockType.Content;
     @OneToMany(mappedBy = "pageBlock")
     private List<PageTemplateEntity> pageTemplates;

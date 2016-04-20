@@ -1,0 +1,8 @@
+{% set fieldName = np + '_' + input.name %}
+<h3 class="like-label">{{input.title}}</h3>{% if input.hint is not empty %} <i data-placement="right" title="" data-toggle="tooltip" data-original-title="{{input.hint}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
+{% if input.subtitle is not empty %}
+    <p>{{input.subtitle}}</p>
+{% endif %}
+<div class="form-group">
+    <textarea data-editor="tinymce" class="tinymce" id="{{fieldName}}" name="{{fieldName}}">{{data[fieldName]}}</textarea>
+</div>

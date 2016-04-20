@@ -22,6 +22,8 @@ public class QApplicationConfigEntity extends EntityPathBase<ApplicationConfigEn
 
     public static final QApplicationConfigEntity applicationConfigEntity = new QApplicationConfigEntity("applicationConfigEntity");
 
+    public final BooleanPath alreadyInstall = createBoolean("alreadyInstall");
+
     public final QApplicationLanguageEntity defaultAdminLang;
 
     public final QApplicationLanguageEntity defaultPublicLang;
@@ -31,6 +33,10 @@ public class QApplicationConfigEntity extends EntityPathBase<ApplicationConfigEn
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final BooleanPath isoTwoLetter = createBoolean("isoTwoLetter");
+
+    public final StringPath sitename = createString("sitename");
+
+    public final StringPath url = createString("url");
 
     public QApplicationConfigEntity(String variable) {
         this(ApplicationConfigEntity.class, forVariable(variable), INITS);

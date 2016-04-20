@@ -7,10 +7,10 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "user_attempts", schema = "cognosco")
+@Table(name = "user_attempts")
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id", "username", "attempts", "lastModified"})
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserAttemptsEntity {

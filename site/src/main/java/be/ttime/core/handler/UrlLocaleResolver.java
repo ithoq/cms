@@ -1,12 +1,20 @@
 package be.ttime.core.handler;
 
+import be.ttime.core.persistence.model.ApplicationConfigEntity;
+import be.ttime.core.persistence.service.IApplicationService;
+import org.apache.commons.lang3.LocaleUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.util.CookieGenerator;
+import org.springframework.web.util.WebUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * {@link LocaleResolver} implementation that uses a cookie sent back to the user
@@ -23,85 +31,119 @@ public class UrlLocaleResolver extends CookieGenerator implements LocaleResolver
 
     /**
      * The name of the request attribute that holds the locale.
-     * <p>Only used for overriding a cookie value if the locale has been
-     * changed in the course of the current request! Use
-     * {@link org.springframework.web.servlet.support.RequestContext#getLocale}
-     * to retrieve the current locale in controllers or views.
      *
      * @see org.springframework.web.servlet.support.RequestContext#getLocale
      */
     public static final String LOCALE_REQUEST_ATTRIBUTE_NAME = UrlLocaleResolver.class.getName() + ".LOCALE";
-
     /**
      * The default cookie name used if none is explicitly set.
      */
-    public static final String DEFAULT_COOKIE_NAME = "lang"; //UrlLocaleResolver.class.getNames() + ".LOCALE";
+    public static final String DEFAULT_COOKIE_PUBLIC_NAME = "lang";
+    public static final String DEFAULT_COOKIE_ADMIN_NAME = "admin-lang";
+    @Autowired
+    private IApplicationService appService;
+    private boolean isAdmin;
+    private ApplicationConfigEntity appConfig;
+    private Map<String, Locale> langMap;
+    private Locale defautLocale;
 
 
-    private Locale defaultLocale;
-
-
-    /**
-     * Creates a new instance of the {@link CookieLocaleResolver} class
-     * using the {@link #DEFAULT_COOKIE_NAME default cookie name}.
-     */
     public UrlLocaleResolver() {
-        setCookieName(DEFAULT_COOKIE_NAME);
     }
 
-    /**
-     * Return the fixed Locale that this resolver will return if no cookie found,
-     * if any.
-     */
-    protected Locale getDefaultLocale() {
-        return this.defaultLocale;
-    }
-
-    /**
-     * Set a fixed Locale that this resolver will return if no cookie found.
-     */
-    public void setDefaultLocale(Locale defaultLocale) {
-        this.defaultLocale = defaultLocale;
+    private void initResolver(HttpServletRequest request) {
+        isAdmin = request.getRequestURI().startsWith("/admin/");
+        this.setCookieName(isAdmin ? DEFAULT_COOKIE_ADMIN_NAME : DEFAULT_COOKIE_PUBLIC_NAME);
+        appConfig = appService.getApplicationConfig();
+        langMap = (isAdmin ? appService.getAdminlanguagesMap() : appService.getSiteLanguagesMap());
+        if (isAdmin) {
+            defautLocale = LocaleUtils.toLocale(appConfig.getDefaultAdminLang().getLocale());
+        } else {
+            defautLocale = LocaleUtils.toLocale(appConfig.getDefaultPublicLang().getLocale());
+        }
     }
 
     public Locale resolveLocale(HttpServletRequest request) {
+        initResolver(request);
         // Check request for pre-parsed or preset locale.
         Locale locale = (Locale) request.getAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME);
-        if (locale != null) {
+        if (locale != null && langMap.containsKey(locale.toString())) {
             return locale;
         }
 
-        return determineDefaultLocale(request);
+        return determineLocale(request);
     }
 
     public void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
-        if (locale != null) {
+        initResolver(request);
+
+        if (locale != null && langMap.containsKey(locale.toString())) {
             // Set request attribute and add cookie.
             request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, locale);
             addCookie(response, locale.toString());
         } else {
             // Set request attribute to fallback locale and remove cookie.
-            request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, determineDefaultLocale(request));
+            request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, defautLocale);
             removeCookie(response);
         }
     }
 
-    /**
-     * Determine the default locale for the given request,
-     * Called if no locale cookie has been found.
-     * <p>The default implementation returns the specified default locale,
-     * if any, else falls back to the request's accept-header locale.
-     *
-     * @param request the request to resolve the locale for
-     * @return the default locale (never <code>null</code>)
-     * @see #setDefaultLocale
-     * @see javax.servlet.http.HttpServletRequest#getLocale()
-     */
-    protected Locale determineDefaultLocale(HttpServletRequest request) {
-        Locale defaultLocale = getDefaultLocale();
-        if (defaultLocale == null) {
-            defaultLocale = request.getLocale();
+    protected Locale determineLocale(HttpServletRequest request) {
+
+        Locale locale;
+
+        locale = getCookieLocale(request);
+
+        // check if locale is in session
+        if (locale == null) {
+            locale = getSessionLocale(request);
         }
-        return defaultLocale;
+
+        // check the browser locale
+        if (locale == null) {
+            locale = getRequestLocale(request);
+        }
+
+        // set the default locale
+        if (locale == null) {
+            locale = defautLocale;
+        }
+        request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, locale);
+        return locale;
+    }
+
+    private Locale getCookieLocale(HttpServletRequest request) {
+        // Retrieve and parse cookie value.
+        Cookie cookie = WebUtils.getCookie(request, this.getCookieName());
+        if (cookie != null) {
+            Locale l = StringUtils.parseLocaleString(cookie.getValue());
+            if (langMap.containsKey(l.toString()))
+                return l;
+            // remove wrong cookie
+            //cookie.setPath("/");
+            //cookie.setValue(null);
+            //cookie.setMaxAge(0);
+            //response.addCookie(cookie);
+        }
+        return null;
+    }
+
+
+    private Locale getRequestLocale(HttpServletRequest request) {
+        return (langMap.containsKey(request.getLocale().toString())) ? request.getLocale() : null;
+    }
+
+    private Locale getSessionLocale(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object langSession = session.getAttribute(this.getCookieName());
+            if (langSession != null) {
+                String langStr = (String) langSession;
+                if (langMap.containsKey(langStr)) {
+                    return LocaleUtils.toLocale(langStr);
+                }
+            }
+        }
+        return null;
     }
 }

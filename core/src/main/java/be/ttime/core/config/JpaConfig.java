@@ -1,7 +1,9 @@
 package be.ttime.core.config;
 
+import be.ttime.core.persistence.interceptor.FileInterceptor;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.hibernate.EmptyInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -69,6 +71,12 @@ public class JpaConfig {
         jpaProperties.put(org.hibernate.cfg.Environment.HBM2DDL_AUTO, env.getProperty("hibernate.hbm2ddl.auto")); // create drop all , update, update ;)
         jpaProperties.put(org.hibernate.cfg.Environment.USE_SECOND_LEVEL_CACHE, "false");
         jpaProperties.put(org.hibernate.cfg.Environment.USE_QUERY_CACHE, "false");
+        jpaProperties.put(org.hibernate.cfg.Environment.SHOW_SQL, "false");
+        jpaProperties.put(org.hibernate.cfg.Environment.FORMAT_SQL, "true");
+        jpaProperties.put(org.hibernate.cfg.Environment.USE_SQL_COMMENTS, "true");
+        jpaProperties.put("org.hibernate.type", "TRACE");
+
+        jpaProperties.put("hibernate.ejb.interceptor", hibernateInterceptor());
 
         return jpaProperties;
     }
@@ -97,6 +105,11 @@ public class JpaConfig {
     @Bean(name = "transactionManager")
     public PlatformTransactionManager transactionManager(final @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
+    }
+
+    @Bean
+    public EmptyInterceptor hibernateInterceptor() {
+        return new FileInterceptor();
     }
 
 }

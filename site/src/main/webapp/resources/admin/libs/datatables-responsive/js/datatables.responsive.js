@@ -188,9 +188,9 @@ ResponsiveDatatablesHelper.prototype.initBreakpoints = function () {
 
         // Add the default breakpoint which shows all (has no upper limit).
         breakpointsSorted.push({
-            name         : 'always',
-            lowerLimit   : lowerLimit,
-            upperLimit   : Infinity,
+            name: 'always',
+            lowerLimit: lowerLimit,
+            upperLimit: Infinity,
             columnsToHide: []
         });
 
@@ -259,7 +259,7 @@ ResponsiveDatatablesHelper.prototype.initBreakpoints = function () {
  *
  * @param {Boolean} bindFlag
  */
-ResponsiveDatatablesHelper.prototype.setWindowsResizeHandler = function(bindFlag) {
+ResponsiveDatatablesHelper.prototype.setWindowsResizeHandler = function (bindFlag) {
     if (bindFlag === undefined) {
         bindFlag = true;
     }
@@ -512,7 +512,7 @@ ResponsiveDatatablesHelper.prototype.showRowDetail = function (responsiveDatatab
             // Copy td class to new li.
             var tdClass = $(td).attr('class');
             if (tdClass !== 'undefined' && tdClass !== false && tdClass !== '') {
-                      li.addClass(tdClass)
+                li.addClass(tdClass)
             }
 
             ul.append(li);
@@ -527,7 +527,7 @@ ResponsiveDatatablesHelper.prototype.showRowDetail = function (responsiveDatatab
     tr.after(newTr);
 
     // call the showDetail function if needbe
-    if (responsiveDatatablesHelperInstance.options.showDetail){
+    if (responsiveDatatablesHelperInstance.options.showDetail) {
         responsiveDatatablesHelperInstance.options.showDetail(newTr);
     }
 };
@@ -542,7 +542,7 @@ ResponsiveDatatablesHelper.prototype.hideRowDetail = function (responsiveDatatab
     // If the value of an input has changed while in row detail, we need to copy its state back
     // to the DataTables object so that value will persist when the tr.row-detail is removed.
     var rowDetail = tr.next('.row-detail');
-    if (responsiveDatatablesHelperInstance.options.hideDetail){
+    if (responsiveDatatablesHelperInstance.options.hideDetail) {
         responsiveDatatablesHelperInstance.options.hideDetail(rowDetail);
     }
     rowDetail.find('li').each(function () {

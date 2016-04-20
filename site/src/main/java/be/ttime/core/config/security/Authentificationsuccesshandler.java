@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Collection;
-
+/*
 @Slf4j
 @Component("myAuthenticationSuccessHandler")
 public class Authentificationsuccesshandler implements AuthenticationSuccessHandler {
@@ -40,7 +40,9 @@ public class Authentificationsuccesshandler implements AuthenticationSuccessHand
         redirectStrategy.sendRedirect(request, response, targetUrl);
     }
 
-    /** Builds the target URL according to the logic defined in the main class Javadoc. */
+    /**
+     * Builds the target URL according to the logic defined in the main class Javadoc.
+     *
     protected String determineTargetUrl(Authentication authentication) {
         boolean isUser = false;
         boolean isAdmin = false;
@@ -72,10 +74,12 @@ public class Authentificationsuccesshandler implements AuthenticationSuccessHand
         session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
     }
 
-    public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
-        this.redirectStrategy = redirectStrategy;
-    }
     protected RedirectStrategy getRedirectStrategy() {
         return redirectStrategy;
     }
+
+    public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
+        this.redirectStrategy = redirectStrategy;
+    }
 }
+        */

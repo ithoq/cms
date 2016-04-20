@@ -4,7 +4,8 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8">
     <meta charset="utf-8">
     <title>TTime - administration</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <link rel="apple-touch-icon" href="/resources/admin/img/ico/favicon-60x60.png">
     <link rel="apple-touch-icon" sizes="76x76" href="/resources/admin/img/ico/favicon-76x76.png">
     <link rel="apple-touch-icon" sizes="120x120" href="/resources/admin/img/ico/favicon-120x120.png">
@@ -17,12 +18,16 @@
     <link href="/resources/admin/libs/pace/pace-theme-flash.css" rel="stylesheet" type="text/css">
     <link href="/resources/admin/libs/boostrapv3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="/resources/admin/libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="/resources/admin/libs/jquery-scrollbar/jquery.scrollbar.css" rel="stylesheet" type="text/css" media="screen">
+    <link href="/resources/admin/libs/jquery-scrollbar/jquery.scrollbar.css" rel="stylesheet" type="text/css"
+          media="screen">
     <link href="/resources/admin/libs/bootstrap-select2/select2.css" rel="stylesheet" type="text/css" media="screen">
     <link href="/resources/admin/libs/switchery/css/switchery.min.css" rel="stylesheet" type="text/css" media="screen">
-    <link href="/resources/admin/libs/datatable/media/css/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="/resources/admin/libs/datatable/extensions/FixedColumns/css/fixedColumns.dataTables.min.css" rel="stylesheet" type="text/css">
-    <link href="/resources/admin/libs/datatables-responsive/css/datatables.responsive.css" rel="stylesheet" type="text/css" media="screen">
+    <link href="/resources/admin/libs/datatable/media/css/dataTables.bootstrap.min.css" rel="stylesheet"
+          type="text/css">
+    <link href="/resources/admin/libs/datatable/extensions/FixedColumns/css/fixedColumns.dataTables.min.css"
+          rel="stylesheet" type="text/css">
+    <link href="/resources/admin/libs/datatables-responsive/css/datatables.responsive.css" rel="stylesheet"
+          type="text/css" media="screen">
     <link href="/resources/admin/libs/switchery/css/switchery.min.css" rel="stylesheet" type="text/css" media="screen">
     <link href="/resources/admin/libs/bootstrap-select2/select2.css" rel="stylesheet" type="text/css" media="screen">
 
@@ -74,7 +79,7 @@
                                 <p>{{ title }}</p>
                             </li>
                             {% if subtitle is not empty %}
-                            <li><a href="#" class="active">{{ subtitle }}</a></li>
+                                <li><a href="#" class="active">{{ subtitle }}</a></li>
                             {% endif %}
                         </ul>
                     </div>

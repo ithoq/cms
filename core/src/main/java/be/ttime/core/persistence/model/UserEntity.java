@@ -1,8 +1,7 @@
 package be.ttime.core.persistence.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import be.ttime.core.persistence.converter.UserGenderConverter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,10 +13,12 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "user", schema = "cognosco")
+@Table(name = "user")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "username", "password"})
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserEntity implements UserDetails {
 
     @Id
@@ -32,6 +33,7 @@ public class UserEntity implements UserDetails {
     private String firstName;
     private String lastName;
     private String userTitle;
+    @Column(unique = true)
     private String email;
     private String street;
     private String city;
@@ -46,8 +48,8 @@ public class UserEntity implements UserDetails {
     private Date createdDate;
     @Temporal(TemporalType.DATE)
     private Date passwordModifiedDate;
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('MALE', 'FEMALE')")
+    @Convert(converter = UserGenderConverter.class)
+    @Column(length = 1)
     private Gender gender;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean enabled = true;
@@ -58,14 +60,11 @@ public class UserEntity implements UserDetails {
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean credentialsNonExpired = true;
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id") , inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id") )
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Collection<RoleEntity> roles;
 
-
-    public enum Gender { MALE, FEMALE }
-
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities(){
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return getGrantedAuthorities(getPrivileges(roles));
     }
 
@@ -88,4 +87,6 @@ public class UserEntity implements UserDetails {
         }
         return authorities;
     }
+
+    public enum Gender {MALE, FEMALE}
 }

@@ -21,4 +21,6 @@ public interface IUserRepository extends JpaRepository<UserEntity, Long>, QueryD
 
     UserEntity findByEmail(String email);
 
+    UserEntity findByEmailOrUsername(String email, String username);
+
 }

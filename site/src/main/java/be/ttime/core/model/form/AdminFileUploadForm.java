@@ -1,9 +1,9 @@
 package be.ttime.core.model.form;
 
-import be.ttime.core.model.validator.FilesEmpty;
-import be.ttime.core.model.validator.FilesExtension;
-import be.ttime.core.model.validator.FilesSize;
 import be.ttime.core.util.FileTypeDetector;
+import be.ttime.core.validator.FilesEmpty;
+import be.ttime.core.validator.FilesExtension;
+import be.ttime.core.validator.FilesSize;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;

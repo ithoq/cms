@@ -24,12 +24,6 @@ public class QPageEntity extends EntityPathBase<PageEntity> {
 
     public final DatePath<java.util.Date> createdDate = createDate("createdDate", java.util.Date.class);
 
-    public final StringPath data = createString("data");
-
-    public final StringPath devIncludeBot = createString("devIncludeBot");
-
-    public final StringPath devIncludeTop = createString("devIncludeTop");
-
     public final BooleanPath enabled = createBoolean("enabled");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -48,23 +42,13 @@ public class QPageEntity extends EntityPathBase<PageEntity> {
 
     public final ListPath<PageEntity, QPageEntity> pageChildren = this.<PageEntity, QPageEntity>createList("pageChildren", PageEntity.class, QPageEntity.class, PathInits.DIRECT2);
 
-    public final ListPath<FileEntity, QFileEntity> pageFiles = this.<FileEntity, QFileEntity>createList("pageFiles", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
+    public final ListPath<PageContentEntity, QPageContentEntity> pageContents = this.<PageContentEntity, QPageContentEntity>createList("pageContents", PageContentEntity.class, QPageContentEntity.class, PathInits.DIRECT2);
 
     public final QPageEntity pageParent;
 
     public final QPageTemplateEntity pageTemplate;
 
     public final SetPath<PrivilegeEntity, QPrivilegeEntity> privileges = this.<PrivilegeEntity, QPrivilegeEntity>createSet("privileges", PrivilegeEntity.class, QPrivilegeEntity.class, PathInits.DIRECT2);
-
-    public final StringPath seoDescription = createString("seoDescription");
-
-    public final StringPath seoH1 = createString("seoH1");
-
-    public final StringPath seoTag = createString("seoTag");
-
-    public final StringPath seoTitle = createString("seoTitle");
-
-    public final StringPath slug = createString("slug");
 
     public final EnumPath<PageEntity.Type> type = createEnum("type", PageEntity.Type.class);
 

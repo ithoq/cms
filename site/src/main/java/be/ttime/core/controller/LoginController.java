@@ -14,9 +14,12 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
 
 @Controller
 public class LoginController {
@@ -31,12 +34,8 @@ public class LoginController {
     @ResponseBody
     public String home(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 
-
         PageBlockEntity master = pageBlockService.findByNameAndBlockType("master", PageBlockEntity.BlockType.System);
         PageBlockEntity login = pageBlockService.findByNameAndBlockType("login", PageBlockEntity.BlockType.System);
-        if (master == null || login == null) {
-            throw new Exception("Template master and Login must exist");
-        }
 
         model.put("attr", CmsUtils.getAttributes(request));
         model.put("get", CmsUtils.getParameters(request));
@@ -44,16 +43,26 @@ public class LoginController {
         model.put("session", request.getSession());
         model.put("title", "login");
         model.put("main", pebbleUtils.parseBlock(login, model));
+        response.setContentType("text/html");
         return pebbleUtils.parseBlock(master, model);
+
+    }
+
+    @RequestMapping(value = "/loginAdmin", method = RequestMethod.GET)
+    public String home(ModelMap model) {
+        return "admin/login";
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+    public RedirectView logoutPage(HttpServletRequest request, HttpServletResponse response, RedirectAttributes ra) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        return "redirect:/login?logout";
+
+        RedirectView redirect = new RedirectView("/login?logout");
+        redirect.setExposeModelAttributes(false);
+        return redirect;
     }
 
 }

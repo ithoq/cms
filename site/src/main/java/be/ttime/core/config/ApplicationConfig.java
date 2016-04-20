@@ -1,7 +1,7 @@
 package be.ttime.core.config;
 
-import be.ttime.core.util.PebbleExtension;
 import be.ttime.core.model.DatabaseMessageSourceBase;
+import be.ttime.core.pebble.ext.PebbleExtension;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.loader.StringLoader;
 import com.mitchellbosecke.pebble.spring4.extension.SpringExtension;

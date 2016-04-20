@@ -2,5 +2,5 @@
 Pages Chrome Fixes
 ------------------------------------------------------------------ */
 body, p, .btn {
-	-webkit-text-stroke:0.2px;
+    -webkit-text-stroke: 0.2px;
 }

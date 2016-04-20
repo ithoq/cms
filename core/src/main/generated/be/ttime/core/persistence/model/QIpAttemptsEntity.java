@@ -19,13 +19,11 @@ public class QIpAttemptsEntity extends EntityPathBase<IpAttemptsEntity> {
 
     public static final QIpAttemptsEntity ipAttemptsEntity = new QIpAttemptsEntity("ipAttemptsEntity");
 
-    public final NumberPath<Integer> attempts = createNumber("attempts", Integer.class);
+    public final DateTimePath<java.util.Date> date = createDateTime("date", java.util.Date.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath ip = createString("ip");
-
-    public final DatePath<java.util.Date> lastModified = createDate("lastModified", java.util.Date.class);
 
     public QIpAttemptsEntity(String variable) {
         super(IpAttemptsEntity.class, forVariable(variable));

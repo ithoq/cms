@@ -2,25 +2,25 @@
  * Pages Social
  * ============================================================ */
 
-(function($) {
+(function ($) {
 
     'use strict';
 
     // SOCIAL CLASS DEFINITION
     // ======================
 
-    var Social = function(element, options) {
+    var Social = function (element, options) {
         this.$element = $(element);
         this.options = $.extend(true, {}, $.fn.social.defaults, options);
         this.$day =
             this.resizeTimeout =
-            this.columns =
-            this.colWidth = null;
+                this.columns =
+                    this.colWidth = null;
         this.init();
     }
     Social.VERSION = "1.0.0";
 
-    Social.prototype.init = function() {
+    Social.prototype.init = function () {
         this.$cover = this.$element.find(this.options.cover);
         this.$day = this.$element.find(this.options.day);
         this.$item = this.$element.find(this.options.item);
@@ -30,11 +30,11 @@
         var _this = this;
 
         // TODO: transition disabled for mobile (animation starts after touch end)
-    
+
         // Dependency: stepsForm 
         if (typeof stepsForm != 'undefined') {
             this.$status.length && new stepsForm(this.$status.get(0), {
-                onSubmit: function(form) {
+                onSubmit: function (form) {
                     _this.$status.find('.status-form-inner').addClass('hide');
                     // form.submit()
                     // show success message
@@ -45,12 +45,12 @@
 
         }
         // Prevent 'vh' bug on iOS7
-        if($.Pages.getUserAgent() == 'mobile'){
+        if ($.Pages.getUserAgent() == 'mobile') {
             //var wh = $(window).height();
             this.$cover.length && this.$cover.css('height', 400);
         }
-       
-        setTimeout(function() {
+
+        setTimeout(function () {
             this.$day.length && this.$day.isotope({
                 "itemSelector": this.options.item,
                 "masonry": {
@@ -65,7 +65,7 @@
 
     // Set container width in order to align it horizontally. 
 
-    Social.prototype.setContainerWidth = function() {
+    Social.prototype.setContainerWidth = function () {
         var currentColumns = Math.floor(($('body').width() - 100) / this.colWidth);
         if (currentColumns !== this.columns) {
             // set new column count
@@ -80,7 +80,7 @@
     // =======================
 
     function Plugin(option) {
-        return this.each(function() {
+        return this.each(function () {
             var $this = $(this);
             var data = $this.data('pg.social');
             var options = typeof option == 'object' && option;
@@ -106,7 +106,7 @@
     // SOCIAL NO CONFLICT
     // ====================
 
-    $.fn.social.noConflict = function() {
+    $.fn.social.noConflict = function () {
         $.fn.social = old;
         return this;
     }
@@ -114,25 +114,25 @@
     // SOCIAL DATA API
     //===================
 
-    $(window).on('load', function() {
-        $('[data-pages="social"]').each(function() {
+    $(window).on('load', function () {
+        $('[data-pages="social"]').each(function () {
             var $social = $(this);
             $social.social($social.data());
 
-            setTimeout(function() {
+            setTimeout(function () {
                 $social.find('[data-social="status"] li.current input').focus();
             }, 1000);
 
         })
     })
 
-    $(window).on('resize', function() {
-        $('[data-pages="social"]').each(function() {
+    $(window).on('resize', function () {
+        $('[data-pages="social"]').each(function () {
             var $social = $(this);
 
             clearTimeout($social.data('pg.social').resizeTimeout);
 
-            $social.data('pg.social').resizeTimeout = setTimeout(function() {
+            $social.data('pg.social').resizeTimeout = setTimeout(function () {
                 // $social.data('pg.social').setContainerWidth();
                 $social.data('pg.social').$day.isotope('layout');
             }, 300);

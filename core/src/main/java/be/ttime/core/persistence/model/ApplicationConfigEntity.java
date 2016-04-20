@@ -7,7 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "application_config", schema = "cognosco")
+@Table(name = "application_config")
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -29,4 +29,12 @@ public class ApplicationConfigEntity {
     private boolean forcedLangInUrl = false;
 
     private boolean isoTwoLetter = true;
+
+    private boolean alreadyInstall = false;
+
+    private String sitename;
+
+    private String url;
+
+
 }

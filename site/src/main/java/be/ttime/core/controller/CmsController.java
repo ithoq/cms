@@ -3,7 +3,7 @@ package be.ttime.core.controller;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.model.field.PageData;
 import be.ttime.core.persistence.model.PageBlockEntity;
-import be.ttime.core.persistence.model.PageEntity;
+import be.ttime.core.persistence.model.PageContentEntity;
 import be.ttime.core.persistence.service.IPageBlockService;
 import be.ttime.core.persistence.service.IPageService;
 import be.ttime.core.util.CmsUtils;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 
 @RestController
 @Slf4j
@@ -34,17 +35,17 @@ public class CmsController {
     private PebbleUtils pebbleUtils;
 
     @RequestMapping(method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    public String page(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public String page(ModelMap model, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
 
         final String path = request.getRequestURI();
-        PageEntity page = pageService.findBySlug(path);
-        if (page == null) {
+        PageContentEntity content = pageService.findBySlug(path, locale);
+        if (content == null) {
             throw new ResourceNotFoundException();
         }
 
-        if (!StringUtils.isEmpty(page.getData())) {
+        if (!StringUtils.isEmpty(content.getData())) {
             Gson gson = new Gson();
-            PageData pageData = gson.fromJson(page.getData(), PageData.class);
+            PageData pageData = gson.fromJson(content.getData(), PageData.class);
             model.put("data", pageData.getData());
             model.put("dataArray", pageData.getDataArray());
         }
@@ -54,11 +55,11 @@ public class CmsController {
         model.put("attr", CmsUtils.getAttributes(request));
         model.put("get", CmsUtils.getParameters(request));
         model.put("csrf", CmsUtils.getCsrfInput(request));
-        model.put("title", page.getSeoTitle());
-        model.put("main", pebbleUtils.parseBlock(page.getPageTemplate().getPageBlock(), model));
+        model.put("title", content.getSeoTitle());
+        model.put("main", pebbleUtils.parseBlock(content.getPage().getPageTemplate().getPageBlock(), model));
         return pebbleUtils.parseBlock(master, model);
     }
-
+  
     /*
     @RequestMapping(method = RequestMethod.POST)
     public String pagePost(ModelMap model, HttpServletRequest request) throws Exception {

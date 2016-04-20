@@ -1,5 +1,6 @@
 package be.ttime.core.persistence.model;
 
+import be.ttime.core.persistence.converter.PageTypeConverter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,10 +12,10 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "page", schema = "cognosco")
+@Table(name = "page")
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id", "name", "slug", "createdDate"})
+@EqualsAndHashCode(of = {"id", "name", "createdDate"})
 public class PageEntity {
 
     @Id
@@ -27,41 +28,30 @@ public class PageEntity {
     private Date createdDate;
     @Temporal(TemporalType.DATE)
     private Date modifiedDate;
-    @Lob
-    @Column(name = "data")
-    private String data;
-    @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean enabled = true;
     @Column(name = "pos", nullable = false)
     private int order = -1;
     @Column(nullable = false, unique = true)
     private String name;
-    @Column(unique = true)
-    private String slug;
-    private String seoTitle;
-    private String seoTag;
-    private String seoDescription;
-    private String seoH1;
-    private String devIncludeTop;
-    private String devIncludeBot;
     @Column(columnDefinition = "TINYINT(1) default '1'")
     private boolean menuItemLink = true;
     @Column(nullable = false, columnDefinition = "SMALLINT(2) default '-1'")
     private int level = -1;
     @Column(columnDefinition = "TINYINT(1) default '1'")
     private boolean menuItem = true;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", columnDefinition = "ENUM('Page', 'Link', 'Module')")
+    @Convert(converter = PageTypeConverter.class)
+    @Column(name = "type", length = 1)
     private Type type = Type.Page;
     @ManyToOne
     private PageEntity pageParent;
     @OneToMany(mappedBy = "pageParent")
     private List<PageEntity> pageChildren;
+    @OneToMany(mappedBy = "page", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE, org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    private List<PageContentEntity> pageContents;
     @ManyToOne
     private PageTemplateEntity pageTemplate;
-    @OneToMany(mappedBy = "page", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<FileEntity> pageFiles;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Lazy for now (not used in the current version)
     @JoinTable(
             name = "page_privilege",

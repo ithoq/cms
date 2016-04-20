@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html
+<head>
+    <title>{% if title is not empty %}{{title}}{% else %}Default title{% endif %}</title>
+    <meta names="description" content="{% if description is not empty %}{{description}}{% else %}Default Description{% endif %}">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta names="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+    {{ include_top }}
+</head>
+<body>
+
+{{ main | raw }}
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+{{ include_bottom }}
+</body>
+</html>

@@ -19,33 +19,40 @@ function updatePagePosition(pagesToUpdate, parentId) {
   });
 }
 
-function reloadPage(id) {
-  $.Cms.ajax({
-    url: '/admin/cms/page/' + id,
-    type: 'GET',
-    formReset: false,
-    showSuccessMessage: false,
-    onSuccess: function (data) {
-      // remove TinyMce Plugin
-      $.Cms.removeAllTinyMce();
-      var $tableFiles = $('#tableFiles');
+function reloadPage(id, _locale) {
+  var options = {
+      url: '/admin/cms/page/' + id,
+      type: 'GET',
+      formReset: false,
+      showSuccessMessage: false,
+      onSuccess: function (data) {
+        // remove TinyMce Plugin
+        $.Cms.removeAllTinyMce();
+        var $tableFiles = $('#tableFiles');
 
-      // remove DataTable Plugin and YesNo
-      if ($tableFiles) {
-        $tableFiles.DataTable().destroy();
-        $.Cms.destroyTabSwitchYesNo();
-      }
+        // remove DataTable Plugin and YesNo
+        if ($tableFiles) {
+          $tableFiles.DataTable().destroy();
 
-      // remove Jquery Upload Plugin
-      $('#fileupload').fileupload('destroy');
+          //$.Cms.destroyTabSwitchYesNo();
+        }
 
-      $pageForm.html(data);
-      initFileUpload();
+        // remove Jquery Upload Plugin
+        $('#fileupload').fileupload('destroy');
 
-      $pageForm.find('[data-toggle="tooltip"]').tooltip();
-      $pageForm.find('[data-editor="tinymce"]').each(function (index, element) {
-        $.Cms.initTinyMce({ selector: '#' + element.id });
-      });
-    },
-  });
+        $pageForm.html(data);
+        initFileUpload();
+
+        $pageForm.find('[data-toggle="tooltip"]').tooltip();
+        $pageForm.find('[data-editor="tinymce"]').each(function (index, element) {
+          $.Cms.initTinyMce({ selector: '#' + element.id });
+        });
+      },
+    };
+
+  if (_locale) {
+    options.data = { locale: _locale };
+  }
+
+  $.Cms.ajax(options);
 }

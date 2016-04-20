@@ -1,7 +1,9 @@
 package be.ttime.core.config.security;
 
+import be.ttime.core.error.IpLockedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -18,9 +20,6 @@ public class AuthenticationFailureHandler extends SimpleUrlAuthenticationFailure
     @Autowired
     private MessageSource messages;
 
-    //@Autowired
-    //private LocaleResolver localeResolver;
-
     @Override
     public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException exception) throws IOException, ServletException {
         setDefaultFailureUrl("/login?error=true");
@@ -29,14 +28,14 @@ public class AuthenticationFailureHandler extends SimpleUrlAuthenticationFailure
 
         //final Locale locale = localeResolver.resolveLocale(request);
 
-        String errorMessage = messages.getMessage("message.badCredentials", null, request.getLocale());
+        String errorMessage = null;
 
-        if (exception.getMessage().equalsIgnoreCase("User is disabled")) {
-            errorMessage = messages.getMessage("auth.message.disabled", null, request.getLocale());
-        } else if (exception.getMessage().equalsIgnoreCase("User account has expired")) {
-            errorMessage = messages.getMessage("auth.message.expired", null, request.getLocale());
-        } else if (exception.getMessage().equalsIgnoreCase("blocked")) {
-            errorMessage = messages.getMessage("auth.message.blocked", null, request.getLocale());
+        if (exception instanceof LockedException) {
+            errorMessage = messages.getMessage("error.auth.disabled", null, request.getLocale());
+        } else if (exception instanceof IpLockedException) {
+            errorMessage = messages.getMessage("error.auth.ipBlocked", null, request.getLocale());
+        } else {
+            errorMessage = messages.getMessage("error.auth.badCredentials", null, request.getLocale());
         }
 
         request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, errorMessage);

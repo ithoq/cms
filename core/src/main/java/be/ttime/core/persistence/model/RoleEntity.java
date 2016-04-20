@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "role", schema = "cognosco")
+@Table(name = "role")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "name"})
@@ -24,7 +24,7 @@ public class RoleEntity {
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "roles_privileges", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id") , inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id") )
+    @JoinTable(name = "roles_privileges", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
     private Collection<PrivilegeEntity> privileges;
 
     @ManyToMany(mappedBy = "roles")

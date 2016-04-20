@@ -1,4 +1,5 @@
-<input id="currentPageId" type="hidden" name="id" value="{{ page.id }}" />
+<input id="currentPageId" type="hidden" name="pageId" value="{{ page.id }}"/>
+<input id="currentContentId" type="hidden" name="contentId" value="{{ content.id }}"/>
 <div class="panel panel-transparent">
     <ul class="nav nav-tabs nav-tabs-simple nav-tabs-right bg-white">
         <li class="active"><a data-toggle="tab" href="#tabGeneral">{{ message('general') }}</a></li>
@@ -8,25 +9,47 @@
     </ul>
     <div class="tab-content bg-white">
         <div class="panel-heading clearfix">
+            <div class="select-country">
+                <select id="selectLanguage" name="selectLanguage">
+                    {% for lang in beans.applicationService.getSiteLanguages() %}
+                        <option id="{{ lang.getLanguage() }}" value="{{ lang.getLanguage() }}"
+                                {% if lang.toString() == contentLocale %}selected{% endif %}>{{ lang.getDisplayLanguage() }}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <div class="operation-box">
-                {%  if page.pageChildren is empty  %}
-                <button type="button" data-toggle="modal" data-target="#modalSlideLeft" class="btn btn-default btn-delete"><i class="fa fa-trash-o"></i></button>
+                {% if page.pageChildren is empty %}
+                    <button type="button" data-toggle="modal" data-target="#modalSlideLeft"
+                            class="btn btn-default btn-delete"><i class="fa fa-trash-o"></i></button>
                 {% else %}
-                <button type="button"class="btn disabled" style="opacity: 0.3;pointer-events: auto;" data-toggle="tooltip" data-placement="bottom" title="Impossible de supprimer une page ayant des enfants" ><i class="fa fa-trash-o"></i></button>
-                {%  endif %}
-                <button id="savePageBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i></button>
+                    <button type="button" class="btn disabled" style="opacity: 0.3;pointer-events: auto;"
+                            data-toggle="tooltip" data-placement="bottom"
+                            title="Impossible de supprimer une page ayant des enfants"><i class="fa fa-trash-o"></i>
+                    </button>
+                {% endif %}
+                <button id="savePageBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i>
+                </button>
             </div>
             <span class="thumbnail-wrapper d100 circular inline m-t-5">{{ page.pageTemplate.name }}</span>
             <div class="panel-page-title">
-                <input type="text" required name="name" id="pageName" value="{{ page.name }}" class="page-title light-input">
+                <input type="text" required name="name" id="pageName" value="{{ page.name }}"
+                       class="page-title light-input">
                 <div class="title-page-sub">
                     <div class="checkbox check-success checkbox-circle">
-                        <input id="checkbox_enabled" name="enabled" type="checkbox" {% if page.enabled%}checked{% endif %} />
-                        <label for="checkbox_enabled">{{ message('menu') }} <i data-placement="bottom" title="" data-toggle="tooltip" type="button" data-original-title="Affiche la page dans le menu" class="fa fa-info-circle"></i></label>
+                        <input id="checkbox_enabled" name="enabled" type="checkbox"
+                               {% if page.enabled %}checked{% endif %} />
+                        <label for="checkbox_enabled">{{ message('menu') }} <i data-placement="bottom" title=""
+                                                                               data-toggle="tooltip" type="button"
+                                                                               data-original-title="Affiche la page dans le menu"
+                                                                               class="fa fa-info-circle"></i></label>
                     </div>
                     <div class="checkbox check-success checkbox-circle">
-                        <input id="checkbox_menuItem" name="menuItem" type="checkbox" {% if page.menuItem%}checked{% endif %} />
-                        <label for="checkbox_menuItem">{{ message('active') }} <i data-placement="bottom" title="" data-toggle="tooltip" type="button" data-original-title="Page activée" class="fa fa-info-circle"> </i></label>
+                        <input id="checkbox_menuItem" name="menuItem" type="checkbox"
+                               {% if page.menuItem %}checked{% endif %} />
+                        <label for="checkbox_menuItem">{{ message('active') }} <i data-placement="bottom" title=""
+                                                                                  data-toggle="tooltip" type="button"
+                                                                                  data-original-title="Page activée"
+                                                                                  class="fa fa-info-circle"> </i></label>
                     </div>
                 </div>
             </div>
@@ -34,46 +57,52 @@
         <hr class="section">
         <div id="tabGeneral" class="tab-pane active">
             <div class="form-group form-group-default required">
-                <label>Slug </label><i data-placement="right" title="" data-toggle="tooltip" type="button" data-original-title="Label unique, pour identifier un élément. Exemple : http://www.exemple.com/blog/le-titre-de-mon-article où la chaîne de caractères le-titre-de-mon-article est le slug" class="fa fa-info-circle"></i>
-                <input required type="text" id="pageSlug" name="slug" value="{{ page.slug }}" class="form-control">
+                <label>{{ message('admin.pageTitle') }}</label>
+                <input type="text" class="form-control" name="seoTitle" value="{{ content.seoTitle }}">
+            </div>
+            <div class="form-group form-group-default required">
+                <label>Slug </label><i data-placement="right" title="" data-toggle="tooltip" type="button"
+                                       data-original-title="Label unique, pour identifier un élément. Exemple : http://www.exemple.com/blog/le-titre-de-mon-article où la chaîne de caractères le-titre-de-mon-article est le slug"
+                                       class="fa fa-info-circle"></i>
+                <input required type="text" id="pageSlug" name="slug" value="{{ content.slug }}" class="form-control">
             </div>
 
             {% for field in fields %}
-                {{ beans.dynamicField.renderField(field, pageData) | raw  }}
+                {{ beans.dynamicField.renderField(field, pageData) | raw }}
             {% endfor %}
 
         </div>
         <div id="tabSeo" class="tab-pane">
             <div class="form-group form-group-default required">
-                <label>{{ message('admin.pageTitle') }}</label>
-                <input type="text" class="form-control" name="seoTitle" value="{{ page.seoTitle }}">
-            </div>
-            <div class="form-group form-group-default required">
                 <label>H1</label>
-                <input type="text" class="form-control" name="seoH1" value="{{ page.seoH1 }}">
+                <input type="text" class="form-control" name="seoH1" value="{{ content.seoH1 }}">
             </div>
             <div class="form-group form-group-default">
                 <label>Tag </label>
-                <input type="text" class="form-control" name="seoTag" value="{{ page.seoTag }}">
+                <input type="text" class="form-control" name="seoTag" value="{{ content.seoTag }}">
             </div>
             <div class="form-group">
                 <label for="comment">{{ message('description') }}</label>
-                <textarea id="comment" rows="5" name="seoDescription" class="form-control">{{ page.seoDescription }}</textarea>
+                <textarea id="comment" rows="5" name="seoDescription"
+                          class="form-control">{{ content.seoDescription }}</textarea>
             </div>
         </div>
         <div id="tabDev" class="tab-pane">
             <div class="form-group">
                 <label for="comment">Include top:</label>
-                <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop" class="form-control">{{ page.devIncludeTop }}</textarea>
+                <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
+                          class="form-control">{{ content.devIncludeTop }}</textarea>
             </div>
             <div class="form-group">
                 <label for="comment">Include bottom:</label>
-                <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot" class="form-control">{{ page.devIncludeBot }}</textarea>
+                <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
+                          class="form-control">{{ content.devIncludeBot }}</textarea>
             </div>
         </div>
         <div id="tabFile" class="tab-pane">
 
-            <input style="display:none" id="fileupload" type="file" name="files[]" data-url="/admin/file/upload/{{ page.id }}" multiple>
+            <input style="display:none" id="fileupload" type="file" name="files[]"
+                   data-url="/admin/file/upload/{{ content.id }}" multiple>
 
             <div id="dropzone" class="dropzone">
                 <div class="dropzone-container">
@@ -91,7 +120,7 @@
             <table id="tableFiles" class="table table-small-pad">
                 <thead>
                 <tr role="row">
-                    <th style="width:230px" >{{ message('name') }}</th>
+                    <th style="width:230px">{{ message('name') }}</th>
                     <th style="min-width:230px" class="no-sort">{{ message('description') }}</th>
                     <th style="width:50px" class="center">{{ message('active') }}</th>
                     <th style="width:50px" class="no-sort center">{{ message('type') }}</th>
@@ -105,3 +134,20 @@
         </div>
     </div>
 </div>
+<script>
+    $(function () {
+
+        var renderSelectLanguage = function (data) {
+            var $state = $(
+                    '<span><img src="/resources/admin/img/flags/' + data.id.toLowerCase() + '.png" class="img-flag" /> ' + data.text + '</span>'
+            );
+            return $state;
+        };
+
+        $('#selectLanguage').select2({
+            minimumResultsForSearch: -1,
+            formatSelection: renderSelectLanguage,
+            formatResult: renderSelectLanguage,
+        });
+    });
+</script>

@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name = "file", schema = "cognosco")
+@Table(name = "file")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "name", "description", "serverName"})
@@ -34,7 +34,7 @@ public class FileEntity {
     @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
     private long size;
     @ManyToOne
-    private PageEntity page;
+    private PageContentEntity content;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean enabled = true;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // lazy because not used for now !

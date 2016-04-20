@@ -9,17 +9,15 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.async.WebAsyncManager;
 import org.springframework.web.context.request.async.WebAsyncUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.*;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
@@ -41,20 +39,18 @@ import java.util.regex.Pattern;
 @Component
 public class ForceLocalUrlFilter implements Filter {
 
+    public static final String ALREADY_FILTERED_ATTRIBUTE = ".FILTERED";
     /**
      * Default name of the locale specification parameter: "locale".
      */
     private static final Pattern LOCALE_PATTERN_ISO_639_1 = Pattern.compile("^/([a-z]{2})\\b");
     private static final Pattern LOCALE_PATTERN_LOCALE = Pattern.compile("^/([a-z]{2})\\b");
-    private static final String LANG_PARAM_NAME = UrlLocaleResolver.DEFAULT_COOKIE_NAME;
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private LocaleResolver localeResolver;
     private ServletContext sc;
     private Map<String, Locale> langMap;
     private ApplicationContext appContext;
     private IApplicationService appService;
-    private ApplicationConfigEntity appConfig;
-
-    public static final String ALREADY_FILTERED_ATTRIBUTE = ".FILTERED";
 
     private static boolean isAjax(HttpServletRequest request) {
         return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
@@ -64,8 +60,8 @@ public class ForceLocalUrlFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         sc = filterConfig.getServletContext();
         appContext = WebApplicationContextUtils.getWebApplicationContext(sc);
-        appService = (IApplicationService)appContext.getBean("applicationService");
-        appConfig = appService.getApplicationConfig();
+        appService = (IApplicationService) appContext.getBean("applicationService");
+        localeResolver = (LocaleResolver) appContext.getBean("localeResolver");
     }
 
     @Override
@@ -73,6 +69,15 @@ public class ForceLocalUrlFilter implements Filter {
 
     }
 
+    /**
+     * Force only one filter per request
+     *
+     * @param request
+     * @param response
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     public final void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -88,14 +93,12 @@ public class ForceLocalUrlFilter implements Filter {
         if (hasAlreadyFilteredAttribute || skipDispatch(httpRequest)) {
             // Proceed without invoking this filter...
             filterChain.doFilter(request, response);
-        }
-        else {
+        } else {
             // Do invoke this filter...
             request.setAttribute(ALREADY_FILTERED_ATTRIBUTE, Boolean.TRUE);
             try {
                 doFilterInternal(httpRequest, httpResponse, filterChain);
-            }
-            finally {
+            } finally {
                 // Remove the "already filtered" request attribute for this request.
                 request.removeAttribute(ALREADY_FILTERED_ATTRIBUTE);
             }
@@ -104,139 +107,70 @@ public class ForceLocalUrlFilter implements Filter {
 
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
+        Locale locale = null;
         final String requestURI = request.getRequestURI();
-        langMap = appService.getLanguagesMap();
-        if(requestURI.startsWith("/resources/") || requestURI.equals("/favicon.ico") || langMap.isEmpty()){
+
+        // remove resources URL
+        if (requestURI.startsWith("/resources/") || requestURI.equals("/favicon.ico")) {
             chain.doFilter(request, response);
             return;
         }
 
+        // Check if it's an administration URL
         boolean isAdmin = requestURI.startsWith("/admin/");
-        Locale locale = null;
+        langMap = (isAdmin ? appService.getAdminlanguagesMap() : appService.getSiteLanguagesMap());
+
+        // Check the lang parameter
+        String lang = request.getParameter("lang");
+        if (lang != null) {
+            if (langMap.containsKey(lang)) {
+                locale = langMap.get(lang);
+                localeResolver.setLocale(request, response, locale);
+            }
+        }
 
         // Check if locale is in the url
-        if (requestURI != null && !isAdmin) {
+        if (!langMap.isEmpty() && requestURI != null && !isAdmin && "GET".equals(request.getMethod())) {
 
             // Check if locale is in the url
             Matcher matcher = matchLocalePattern(requestURI);
             String urlLocale = (matcher != null) ? matcher.group(1) : null;
             if (urlLocale != null && langMap.containsKey(urlLocale)) {
-                locale = langMap.get(urlLocale);
+                request.setAttribute(UrlLocaleResolver.LOCALE_REQUEST_ATTRIBUTE_NAME, langMap.get(urlLocale));
             } else {
                 // redirection
-                if(appConfig.isForcedLangInUrl() && !isAdmin && isredirectablePath(requestURI)) {
-                    // Redirection if is not ajax
-                    if (!isAjax(request) && "GET".equals(request.getMethod())) {
-                        String redirectUrl = "/" +
-                                getDefaultLocaleUrlString(isAdmin) +
-                                requestURI;
+                if (appService.getApplicationConfig().isForcedLangInUrl() && !isAjax(request) && isredirectablePath(requestURI)) {
 
-                        redirectStrategy.sendRedirect(request, response, redirectUrl);
-                        return;
-                    }
+                    String localeUrl = (locale != null) ? getLocaleUrlString(locale) : getDefaultLocaleUrlString(isAdmin);
+                    String redirectUrl = "/" + localeUrl + requestURI;
+                    redirectStrategy.sendRedirect(request, response, redirectUrl);
+                    return;
                 }
             }
         }
-        // check if locale is in param
-        if (locale == null){
-            String langParam = request.getParameter(LANG_PARAM_NAME);
-            if(langParam != null && langMap.containsKey(langParam)){
-                locale = langMap.get(langParam);
-            }
-        }
-
-        // check if locale is in session
-        if (locale == null){
-            locale = getSessionLocale(request);
-        }
-
-        // check if locale is in cookie
-        if (locale == null){
-            locale = getCookieLocale(request, response);
-        }
-
-        // check the browser locale
-        if (locale == null){
-            locale = getRequestLocale(request);
-        }
-
-        // set the default locale
-        if (locale == null) {
-            locale = getDefaultLocale(isAdmin);
-        }
-
-        request.setAttribute(UrlLocaleResolver.LOCALE_REQUEST_ATTRIBUTE_NAME, locale);
-
         chain.doFilter(request, response);
     }
 
     private boolean isredirectablePath(String requestURI) {
-        if(requestURI.startsWith("/logout")
-            || requestURI.startsWith("/download")
-        ) { return false; }
+        if (requestURI.startsWith("/logout")
+                || requestURI.startsWith("/download")
+                ) {
+            return false;
+        }
         return true;
     }
 
     private Matcher matchLocalePattern(String requestURI) {
 
         Pattern localePattern;
-        localePattern = appConfig.isIsoTwoLetter() ? LOCALE_PATTERN_ISO_639_1 : LOCALE_PATTERN_LOCALE;
-        final Matcher matcher = localePattern.matcher(requestURI) ;
+        localePattern = appService.getApplicationConfig().isIsoTwoLetter() ? LOCALE_PATTERN_ISO_639_1 : LOCALE_PATTERN_LOCALE;
+        final Matcher matcher = localePattern.matcher(requestURI);
         if (matcher.find()) {
             return matcher;
         } else {
             log.debug("Could not match {} against {}", localePattern, requestURI);
         }
 
-        return null;
-    }
-
-    private Locale getRequestLocale(HttpServletRequest request) {
-        return (langMap.containsKey(request.getLocale().toString())) ? request.getLocale() : null;
-    }
-
-    private Locale getSessionLocale(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if(session != null){
-            Object langSession = session.getAttribute(LANG_PARAM_NAME);
-            if(langSession != null){
-                String langStr = (String)langSession;
-                if(langMap.containsKey(langStr)){
-                    return LocaleUtils.toLocale(langStr);
-                }
-            }
-        }
-        return null;
-    }
-
-    private Locale getDefaultLocale(boolean isAdmin){
-        Locale locale;
-        if (isAdmin) {
-            locale = LocaleUtils.toLocale(appConfig.getDefaultAdminLang().getLocale());
-        } else {
-            locale = LocaleUtils.toLocale(appConfig.getDefaultPublicLang().getLocale());
-        }
-        return locale;
-    }
-
-    private String getDefaultLocaleUrlString(boolean isAdmin){
-        Locale locale = getDefaultLocale(isAdmin);
-        return appConfig.isIsoTwoLetter() ? locale.getLanguage() : locale.toString();
-    }
-
-    private Locale getCookieLocale(HttpServletRequest request, HttpServletResponse response) {
-        // Retrieve and parse cookie value.
-        Cookie cookie = WebUtils.getCookie(request, UrlLocaleResolver.DEFAULT_COOKIE_NAME);
-        if (cookie != null) {
-            Locale l = StringUtils.parseLocaleString(cookie.getValue());
-            if (langMap.containsKey(l.toString()))
-                return l;
-            // remove wrong cookie
-            cookie.setPath("/");
-            cookie.setValue(null);
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        }
         return null;
     }
 
@@ -255,12 +189,31 @@ public class ForceLocalUrlFilter implements Filter {
      * in Servlet 3.0 means a filter can be invoked in more than one thread over
      * the course of a single request. This method returns {@code true} if the
      * filter is currently executing within an asynchronous dispatch.
+     *
      * @param request the current request
-     * @since 3.2
      * @see WebAsyncManager#hasConcurrentResult()
+     * @since 3.2
      */
     protected boolean isAsyncDispatch(HttpServletRequest request) {
         return WebAsyncUtils.getAsyncManager(request).hasConcurrentResult();
     }
 
+    private String getDefaultLocaleUrlString(boolean isAdmin) {
+        Locale locale = determineDefaultLocale(isAdmin);
+        return appService.getApplicationConfig().isIsoTwoLetter() ? locale.getLanguage() : locale.toString();
+    }
+
+    private String getLocaleUrlString(Locale locale) {
+        return appService.getApplicationConfig().isIsoTwoLetter() ? locale.getLanguage() : locale.toString();
+    }
+
+    private Locale determineDefaultLocale(boolean isAdmin) {
+        Locale locale;
+        if (isAdmin) {
+            locale = LocaleUtils.toLocale(appService.getApplicationConfig().getDefaultAdminLang().getLocale());
+        } else {
+            locale = LocaleUtils.toLocale(appService.getApplicationConfig().getDefaultPublicLang().getLocale());
+        }
+        return locale;
+    }
 }

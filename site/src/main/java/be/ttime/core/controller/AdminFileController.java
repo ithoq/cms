@@ -2,16 +2,16 @@ package be.ttime.core.controller;
 
 import be.ttime.core.model.form.AdminFileUploadForm;
 import be.ttime.core.persistence.model.FileEntity;
+import be.ttime.core.persistence.model.PageContentEntity;
 import be.ttime.core.persistence.model.PageEntity;
 import be.ttime.core.persistence.service.IFileService;
 import be.ttime.core.util.FileTypeDetector;
 import com.github.slugify.Slugify;
 import com.google.common.collect.Iterators;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -36,10 +36,9 @@ import java.util.*;
  * Handles requests for the application file upload requests
  */
 @Controller
+@Slf4j
 @RequestMapping(value = "/admin/file")
 public class AdminFileController {
-
-    private static final Logger logger = LoggerFactory.getLogger(AdminFileController.class);
 
     @Value("${page.file.directory}")
     private String fileDirectory;
@@ -98,10 +97,13 @@ public class AdminFileController {
     }
 
 
-    @RequestMapping(value = "/upload/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/upload/{id}", method = RequestMethod.POST, produces="application/json")
     public
     @ResponseBody
-    String upload(@PathVariable("id") Long urlId, MultipartHttpServletRequest request, HttpServletResponse response) throws IOException {
+    String upload(@PathVariable("id") Long urlId, MultipartHttpServletRequest request, HttpServletResponse response, Long contentId) throws IOException {
+        String jsonError = "{\"status\": \"error\"}";
+        String jsonSuccess = "{\"status\": \"success\"}";
+
         Iterator<String> itr = request.getFileNames();
         int size = Iterators.size(itr);
         if (size > 0) {
@@ -135,7 +137,7 @@ public class AdminFileController {
                 for (ObjectError objectError : errors.getAllErrors()) {
                     sb.append(objectError.getCode()).append(" ").append(objectError.getDefaultMessage());
                 }
-                return sb.toString();
+                //return sb.toString();
             }
 
             Slugify slg = new Slugify();
@@ -165,30 +167,35 @@ public class AdminFileController {
                         pageFile.setExtension(ext);
                         pageFile.setSize(Math.round(file.getSize()));
                         pageFile.setMimeType(uploadForm.getMimeTypes()[i]);
+                        if(contentId != null){
+                            PageContentEntity c = new PageContentEntity();
+                            c.setId(contentId);
+                            pageFile.setContent(c);
+                        }
                         if (uploadForm.getPageId() != null) {
                             PageEntity p = new PageEntity();
                             p.setId(uploadForm.getPageId());
-                            pageFile.setPage(p);
+                            //pageFile.setPage(p);
                         }
                         pageFiles.add(pageFile);
-                        logger.info("Server File Location="
-                                + serverFile.getAbsolutePath());
+                        log.debug("Server File Location=" + serverFile.getAbsolutePath());
 
                         // st.append("You successfully uploaded file=" + name + 'n');
                     } catch (Exception e) {
-                        //return "You failed to upload " + name + " => " + e.getMessage();
-                        return null;
+                        log.error("You failed to upload " + name + " => " + e.getMessage());
+                        return jsonError;
                     }
                 } else {
-                    //("You failed to upload because the file was empty.");
-                    return null;
+                    log.info("You failed to upload because the file was empty");
+                    return jsonError;
                 }
             }
 
             pageFileService.save(pageFiles);
+            return jsonSuccess;
             //return getMetaFilesList(pageFiles);
-            return "OK";
         }
-        return null;
+        response.setStatus(500);
+        return jsonError;
     }
 }

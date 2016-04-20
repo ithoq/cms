@@ -2,12 +2,15 @@ package be.ttime.core.persistence.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-@Table(name = "page_content", schema = "cognosco")
+@Table(name = "page_content", indexes = {
+        @Index(name = "idx_slug", columnList = "computedSlug,language_locale", unique = true)})
 @Getter
 @Setter
 public class PageContentEntity {
@@ -17,7 +20,6 @@ public class PageContentEntity {
     @Access(AccessType.PROPERTY)
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
     private long id;
-
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
     private Date createdDate;
@@ -25,7 +27,6 @@ public class PageContentEntity {
     private Date modifiedDate;
     @Lob
     private String data;
-
     private String test;
     private String slug;
     private String computedSlug;
@@ -34,6 +35,11 @@ public class PageContentEntity {
     private String seoDescription;
     private String seoH1;
 
+    @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private List<FileEntity> pageFiles;
+    @ManyToOne
+    private PageEntity page;
     @ManyToOne(fetch = FetchType.LAZY)
     private ApplicationLanguageEntity language;
 }

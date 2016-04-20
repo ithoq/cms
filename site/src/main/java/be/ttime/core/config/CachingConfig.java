@@ -29,6 +29,7 @@ public class CachingConfig extends CachingConfigurerSupport {
         config.addCache(cacheConfig("blockByName", null, true, null, null));
         config.addCache(cacheConfig("navBlock", null, true, null, null));
         config.addCache(cacheConfig("renderedBlock", null, true, null, null));
+        config.addCache(cacheConfig("locale", null , true, null, null));
         config.addCache(cacheConfig("page", "10M", true, null, null));
         config.addCache(cacheConfig("user", "5M", true, null, null));
         config.addCache(cacheConfig("persistentLogin", "5M", true, null, null));

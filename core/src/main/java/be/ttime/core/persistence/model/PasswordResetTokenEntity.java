@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Entity
-@Table(name = "password_reset", schema = "cognosco")
+@Table(name = "password_reset")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "token", "expiryDate"})

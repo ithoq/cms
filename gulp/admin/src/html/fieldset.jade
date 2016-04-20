@@ -1,0 +1,150 @@
+doctype html
+html
+  head
+    include shared/head.jade
+
+  body.fixed-header
+    include shared/nav.jade
+    .page-container
+      include shared/header.jade
+      .page-content-wrapper
+        - var pageName = 'Page Fieldset'
+        #modalCreateNewFieldset.modal.fade.slide-up.modalScroll(tabindex='-1', role='dialog', aria-hidden='true')
+          .modal-dialog.modal-lg
+            .modal-content-wrapper
+              .modal-content
+                .modal-header.clearfix.text-left
+                  button.close(type='button', data-dismiss='modal', aria-hidden='true')
+                    i.pg-close.fs-14
+                  h4
+                    | Créer un nouveau fieldset
+                  hr.section
+                .modal-body.modalScroll          
+                  .container-fieldset
+                    form(id="fieldsetForm", action='valider')
+                      h5.fieldsetTitle
+                        | Fieldset :
+                      .form-group.form-group-default.m-b-20.required
+                        label Nom 
+                        input#fieldsetName.form-control(type='text', name='name', value='')
+                      .form-group.form-group-default.m-b-20.required
+                        label Description
+                        textarea#fieldsetDescription.form-control(type='text', name='desc', value='description', rows='5')
+                        input#inputsJsonResult(type='hidden', name='inputs', value='Name')
+                      .inputs-container
+                        .row  
+                          .col-sm-4
+                            button#addBtnInputs.btn.btn-success.addBtnInputs(type='button', name='addBtnInputs') Ajouter des inputs
+                            ul#inputsAddContainer.inputsAddContainer
+                          .col-sm-8
+                            #inputsEditContainer.inputsEditContainer
+                  hr.section
+                  .container-fieldset
+                    h5.blockTitle
+                      | Block :
+                    form(role='form')
+                        .form-group.form-group-default.m-b-20.required
+                          label Nom du block
+                          input#blockName.form-control(type='text')
+                        .form-group.form-group-default.m-b-20.required
+                          label Content
+                          input#blockContent.form-control(type='text')
+                  .row
+                    .col-sm-6
+                      button.btn.btn-danger.btn-block.m-t-5(type='button', data-dismiss='modal') Annuler   
+                    .col-sm-6
+                      button#submit.btn.btn-success.btn-block.m-t-5(type='button') Enregister  
+
+          
+        include shared/breadcrumb.jade
+        .container-fluid.container-fixed-lg
+          .row
+            .col-sm-8
+              .panel.panel-default
+                .panel-heading
+                  .panel-block-title.m-b-30
+                    h2.inline Gestion des fieldset 
+                    button#btnCreateFieldset.btn.btn-success.pull-right.btnCreateFieldset(type='button')
+                      i.fa.fa-plus-circle.fieldsetAddBtn
+                .panel-body
+                  form(role='form')
+                    .panel.panel-transparent                          
+                      
+                      .panel-body  
+                        input#search-table.form-control.pull-right(type='text', placeholder='Search')
+                        table#tableWithSearch.table.table-hover
+                          thead
+                            tr
+                              th.center(style='width: 20%;') Nom
+                              th.center(style='width: 20%;') Description
+                              th.center(style='width: 20%;') Block
+                              th.center(style='width: 15%;') Edit
+                              th.center.no-sort(style="width:15%") Opération
+                          tbody
+                            tr(data-id="2")
+                              td.center.semi-bold
+                                p Mon super nom
+                              td.center
+                                p WYSIWYG
+                              td.center
+                                p block
+                              td.center
+                                button#btnModalEditFieldset.btn.btn-default.btn-modal-edit(type='button', data-id="2")
+                                  i.fa.fa-pencil
+                              td.center
+                                .op-table-slider-wrapper
+                                  .op-table-slide-container(data-id='1')
+                                    .op-table-slide-item
+                                      button#js-show-controls.btn.btn-default.button.js-move(type='button')
+                                        i.fa.fa-trash-o 
+                                    .op-table-slide-item
+                                      | <button type="button" class="btn btn-danger js-move operation"><i class="fa fa-times"></i></button><button type="button" class="btn btn-success js-op-ajax operation"> <i class="fa fa-check"></i></button>
+                            tr(data-id="3")
+                              td.center.semi-bold
+                                p Mon super nom
+                              td.center
+                                p WYSIWYG
+                              td.center
+                                p block
+                              td.center
+                                button#btnModalEditFieldset.btn.btn-default.btn-modal-edit(type='button', data-id="1")
+                                  i.fa.fa-pencil
+                              td.center
+                                .op-table-slider-wrapper
+                                  .op-table-slide-container(data-id='2')
+                                    .op-table-slide-item
+                                      button#js-show-controls.btn.btn-default.button.js-move(type='button')
+                                        i.fa.fa-trash-o 
+                                    .op-table-slide-item
+                                      | <button type="button" class="btn btn-danger js-move operation"><i class="fa fa-times"></i></button><button type="button" class="btn btn-success js-op-ajax operation"> <i class="fa fa-check"></i></button>
+                                  
+        
+        include shared/footer.jade
+    include shared/bottom.jade
+    script(src='/js/page/fieldset.js')
+    //inputEdit template
+    script(type='text/template' id="inputsTemplate").
+      <div id="input-{{id}}" class="input-div">
+        <input type="text" data-id={{id}} id="name-{{id}}" class="js-input-name light-input page-title" name="name" value="{{name}}" required="" aria-required="true">
+        <div class="form-group-attached  m-t-20">
+          <div class="row clearfix">
+            <div class="col-sm-6">
+              <div class="form-group form-group-default input-group noBorder">
+                <label class="inline">Array</label>
+                <span class="input-group-addon bg-transparent">
+                  <div class="fc-switch typeButton">
+                    <input id="checkbox-{{id}}" type="checkbox" name="checkbox-{{id}}" value="{{array}}" checked="{{array}}"/>
+                    <label for="checkbox-{{id}}" data-off="No" data-on="Yes"></label>
+                  </div>
+                </span>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group form-group-default required" aria-required="true">
+                <label>Validation</label>
+                <input type="text" name="validation" value="{{validation}}" class="form-control inputGrey " required="" aria-required="true">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

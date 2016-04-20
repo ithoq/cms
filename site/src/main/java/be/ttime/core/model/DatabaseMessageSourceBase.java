@@ -25,7 +25,7 @@ public class DatabaseMessageSourceBase extends AbstractMessageSource {
         String result = null;
         if (codeMap != null) {
             result = codeMap.get(locale.toString());
-            if(result == null){
+            if (result == null) {
                 result = codeMap.get(locale.getLanguage());
             }
         }

@@ -28,6 +28,11 @@ $pageForm.on('click', '#savePageBtn', function () {
   });
 });
 
+// change language
+$pageForm.on('change', '#selectLanguage', function () {
+  reloadPage($('#currentPageId').val(), this.value);
+});
+
 // Create Page
 $('#btnFormCeatePage').click(function () {
   $.Cms.ajax({
@@ -62,7 +67,6 @@ $('#btnCreatePage').click(function () {
 });
 
 $selectType.on('change', function () {
-
   var $selector = $modalCreateNewPage.find('selectHide');
   var anim = 200;
   if (this.value === 'Page') {
@@ -74,4 +78,9 @@ $selectType.on('change', function () {
   } else {
     $selector.hide(anim);
   }
+});
+
+$('#fileupload').bind('fileuploadsubmit', function (e, data) {
+  var $input = $('#currentContentId');
+  data.formData = { contentId: $input.val() };
 });

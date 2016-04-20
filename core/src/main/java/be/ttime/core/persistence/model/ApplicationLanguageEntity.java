@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "application_language", schema = "cognosco")
+@Table(name = "application_language")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"locale"})

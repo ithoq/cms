@@ -19,13 +19,17 @@ import org.springframework.context.annotation.Import;
 })
 public class StartCMS extends SpringBootServletInitializer {
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(StartCMS.class);
+    public StartCMS() {
+        super();
+        //setRegisterErrorPageFilter(false);
     }
 
     public static void main(String[] args) {
         SpringApplication.run(StartCMS.class, args);
     }
 
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(StartCMS.class);
+    }
 }

@@ -34,6 +34,10 @@ public class QPageContentEntity extends EntityPathBase<PageContentEntity> {
 
     public final DatePath<java.util.Date> modifiedDate = createDate("modifiedDate", java.util.Date.class);
 
+    public final QPageEntity page;
+
+    public final ListPath<FileEntity, QFileEntity> pageFiles = this.<FileEntity, QFileEntity>createList("pageFiles", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
+
     public final StringPath seoDescription = createString("seoDescription");
 
     public final StringPath seoH1 = createString("seoH1");
@@ -65,6 +69,7 @@ public class QPageContentEntity extends EntityPathBase<PageContentEntity> {
     public QPageContentEntity(Class<? extends PageContentEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
         this.language = inits.isInitialized("language") ? new QApplicationLanguageEntity(forProperty("language")) : null;
+        this.page = inits.isInitialized("page") ? new QPageEntity(forProperty("page"), inits.get("page")) : null;
     }
 
 }

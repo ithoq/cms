@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Entity
-@Table(name = "verification_token", schema = "cognosco")
+@Table(name = "verification_token")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "token", "expiryDate"})

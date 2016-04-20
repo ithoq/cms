@@ -12,5 +12,5 @@ public interface IUsersAttemptsRepository extends JpaRepository<UserAttemptsEnti
 
     @Modifying
     @Query("update UserAttemptsEntity u set u.attempts = 0, u.lastModified = null where u.username = :username")
-    void resetAttempts(@Param("username")String username);
+    void resetAttempts(@Param("username") String username);
 }

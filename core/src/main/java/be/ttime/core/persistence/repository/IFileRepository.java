@@ -9,5 +9,5 @@ import java.util.List;
 public interface IFileRepository extends JpaRepository<FileEntity, Long>, QueryDslPredicateExecutor<FileEntity> {
     FileEntity findByServerName(String serverName);
 
-    List<FileEntity> findByPageId(Long id);
+    List<FileEntity> findByContentId(Long id);
 }

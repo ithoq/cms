@@ -11,7 +11,7 @@
                                 {% if get.error is not null %}
                                     <div>
                                         Failed to login.
-                                        Reason: {{session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION").message}}
+                                        Reason: {{ session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION").message }}
                                     </div>
                                 {% endif %}
                                 <!-- the configured LogoutConfigurer#logoutSuccessUrl is /login?logout and contains the query param logout -->

@@ -2,58 +2,73 @@
   "root": {
     "src": "./src",
     "dest": "./public",
-    "destProd": "../../src/main/webapp/resources/admin"
+    "destProd": "../../site/src/main/webapp/resources/admin"
   },
-
   "tasks": {
     "browserSync": {
       "server": {
         "baseDir": "public"
       }
     },
-
     "static": {
       "src": "static",
       "dest": "./",
-      "extensions": ["*"]
+      "extensions": [
+        "*"
+      ]
     },
-
     "js": {
       "src": "js",
       "dest": "js",
-      "extensions": ["js"],
-      "excludeFolders": ["include", "data"]
+      "extensions": [
+        "js"
+      ],
+      "excludeFolders": [
+        "include",
+        "data"
+      ]
     },
-
     "css": {
       "src": "css",
       "srcSass": "css/sass",
       "srcPostcss": "css/postcss",
       "dest": "css",
       "autoprefixer": {
-        "browsers": ["last 2 version", "> 3%"]
+        "browsers": [
+          "last 2 version",
+          "> 3%"
+        ]
       },
       "sass": {
         "indentedSyntax": false
       },
-      "extensions": ["sass", "scss", "css"]
+      "extensions": [
+        "sass",
+        "scss",
+        "css"
+      ]
     },
-
     "postcss": {
       "src": "css/postcss",
       "dest": "css",
-      "extensions": ["sass", "scss", "css"]
+      "extensions": [
+        "sass",
+        "scss",
+        "css"
+      ]
     },
-
     "sass": {
       "src": "css/sass",
       "dest": "css",
       "sass": {
         "indentedSyntax": false
       },
-      "extensions": ["sass", "scss", "css"]
+      "extensions": [
+        "sass",
+        "scss",
+        "css"
+      ]
     },
-
     "html": {
       "src": "html",
       "dest": "./",
@@ -61,39 +76,68 @@
       "htmlmin": {
         "collapseWhitespace": true
       },
-      "extensions": ["jade", "json"],
-      "excludeFolders": ["layouts", "shared", "macros", "data"]
+      "extensions": [
+        "jade",
+        "json"
+      ],
+      "excludeFolders": [
+        "layouts",
+        "shared",
+        "macros",
+        "data"
+      ]
     },
-
     "images": {
       "src": "img",
       "dest": "img",
-      "extensions": ["jpg", "png", "svg", "gif"]
+      "extensions": [
+        "jpg",
+        "png",
+        "svg",
+        "gif"
+      ]
     },
-
     "fonts": {
       "src": "fonts",
       "dest": "fonts",
-      "extensions": ["woff2", "woff", "eot", "ttf", "svg"]
+      "extensions": [
+        "woff2",
+        "woff",
+        "eot",
+        "ttf",
+        "svg"
+      ]
     },
-
     "libs": {
       "src": "libs",
       "dest": "libs",
-      "extensions": ["js", "css", "jpg", "png", "svg", "gif"]
+      "extensions": [
+        "js",
+        "css",
+        "jpg",
+        "png",
+        "svg",
+        "gif"
+      ]
     },
-
     "iconFont": {
       "src": "icons",
       "dest": "fonts",
       "sassDest": "generated",
-      "extensions": ["woff2", "woff", "eot", "ttf", "svg"]
+      "extensions": [
+        "woff2",
+        "woff",
+        "eot",
+        "ttf",
+        "svg"
+      ]
     },
-
     "svgSprite": {
       "src": "sprites",
       "dest": "images",
-      "extensions": ["svg"]
+      "extensions": [
+        "svg"
+      ]
     }
   }
 }

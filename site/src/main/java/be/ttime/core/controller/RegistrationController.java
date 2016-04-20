@@ -1,10 +1,10 @@
 package be.ttime.core.controller;
 
+import be.ttime.core.error.EmailExistsException;
 import be.ttime.core.error.InvalidOldPasswordException;
 import be.ttime.core.error.UserAlreadyExistException;
 import be.ttime.core.error.UserNotFoundException;
-import be.ttime.core.model.dto.UserDto;
-import be.ttime.core.model.validator.EmailExistsException;
+import be.ttime.core.persistence.dto.UserDto;
 import be.ttime.core.persistence.model.PasswordResetTokenEntity;
 import be.ttime.core.persistence.model.UserEntity;
 import be.ttime.core.persistence.model.VerificationTokenEntity;
@@ -119,7 +119,7 @@ public class RegistrationController {
     @RequestMapping(value = "/user/resetPassword", method = RequestMethod.POST)
     @ResponseBody
     public String resetPassword(final HttpServletRequest request, @RequestParam("email") final String userEmail) {
-        final UserEntity user = userService.findUserByEmail(userEmail);
+        final UserEntity user = userService.findByUsernameOrEmail(userEmail);
         if (user == null) {
             throw new UserNotFoundException();
         }
@@ -169,7 +169,7 @@ public class RegistrationController {
     @PreAuthorize("hasRole('READ_PRIVILEGE')")
     @ResponseBody
     public String changeUserPassword(final Locale locale, @RequestParam("password") final String password, @RequestParam("oldpassword") final String oldPassword) {
-        final UserEntity user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        final UserEntity user = userService.findByUsernameOrEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (!userService.checkIfValidOldPassword(user, oldPassword)) {
             throw new InvalidOldPasswordException();
         }

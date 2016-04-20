@@ -7,7 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "translation", schema = "cognosco")
+@Table(name = "translation")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "message"})
@@ -25,9 +25,10 @@ public class MessageTranslationsEntity {
     @ManyToOne
     private ApplicationLanguageEntity language;
 
-    public MessageTranslationsEntity(){}
+    public MessageTranslationsEntity() {
+    }
 
-    public MessageTranslationsEntity(ApplicationLanguageEntity language, String value, MessageEntity message){
+    public MessageTranslationsEntity(ApplicationLanguageEntity language, String value, MessageEntity message) {
         this.language = language;
         this.value = value;
         this.message = message;

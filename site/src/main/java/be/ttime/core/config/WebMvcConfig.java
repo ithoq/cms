@@ -1,8 +1,7 @@
 package be.ttime.core.config;
 
-import be.ttime.core.filter.ForceLocalUrlFilter;
+import be.ttime.core.config.condition.H2Condition;
 import be.ttime.core.handler.AddModelParamsInterceptor;
-import be.ttime.core.handler.UrlLocaleChangeInterceptor;
 import be.ttime.core.handler.UrlLocaleResolver;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,15 +10,14 @@ import com.mitchellbosecke.pebble.loader.Loader;
 import com.mitchellbosecke.pebble.loader.ServletLoader;
 import com.mitchellbosecke.pebble.spring4.PebbleViewResolver;
 import com.mitchellbosecke.pebble.spring4.extension.SpringExtension;
+import org.h2.server.web.WebServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.Environment;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
@@ -31,18 +29,13 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import javax.servlet.ServletContext;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * We can use the tag @EnableWebMvc, this tag add the configuration of WebMvcConfigurationSupport.
@@ -74,15 +67,6 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
 
     @Value("${app.mode}")
     private String appMode;
-
-    @Value("${locale.default}")
-    private String defaultLocale;
-
-    @Value("${locale.force.url}")
-    private boolean forceUrl;
-
-    @Value("${locale.force.url.except.default}")
-    private boolean forceUrlExceptDefault;
 
     @Bean
     @Override
@@ -158,15 +142,9 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
         return new AddModelParamsInterceptor();
     }
 
-    @Bean
-    public UrlLocaleChangeInterceptor urlLocaleChangeInterceptor() {
-        return new UrlLocaleChangeInterceptor();
-    }
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
-        registry.addInterceptor(urlLocaleChangeInterceptor());
         registry.addInterceptor(currentUserInterceptor());
     }
 
@@ -179,10 +157,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
     */
     @Bean(name = "localeResolver")
     public UrlLocaleResolver localeResolver() {
-        UrlLocaleResolver localeResolver = new UrlLocaleResolver();
-        localeResolver.setCookieName("lang");
-        localeResolver.setDefaultLocale(new Locale(defaultLocale));
-        return localeResolver;
+        return new UrlLocaleResolver();
     }
 
     @Bean
@@ -245,12 +220,21 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
         configurer.favorPathExtension(false);
     }
 
+    /*
     @Bean
     public FilterRegistrationBean forceLocalUrlFilterRegistrationBean(final ForceLocalUrlFilter filter) {
         final FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(filter);
         registrationBean.setEnabled(false);
         return registrationBean;
-    }
+    }*/
 
+    @Bean
+    @Conditional(H2Condition.class)
+    public ServletRegistrationBean h2servletRegistration() {
+        ServletRegistrationBean registration = new ServletRegistrationBean(new WebServlet());
+        registration.addUrlMappings("/h2-console/*");
+        registration.addInitParameter("webAllowOthers", "true");
+        return registration;
+    }
 }

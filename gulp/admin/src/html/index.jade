@@ -143,6 +143,13 @@ html
                       a(data-toggle='tab', href='#tabSeo') SEO
                   .tab-content.bg-white
                     .panel-heading.clearfix
+                      .select-country
+                        select#selectLanguage
+                          option#en(value='en') EN
+                          option#fr(value='fr') FR
+                          option#de(value='de') DE
+                          option#es(value='es') ES
+  
                       .operation-box
                         button.btn.btn-default.btn-delete(type='button', data-toggle='modal', data-target='#modalSlideLeft')
                           i.fa.fa-trash-o
@@ -152,14 +159,28 @@ html
                       .panel-page-title
                         input.light-input.page-title(type="text", value="Nom de la page")
                         .title-page-sub
-                          .checkbox.check-success.checkbox-circle
+                          .checkbox.check-success.checkbox-circle.menuEnabled
                             input#checkbox8(type='checkbox', value='1')
                             label(for='checkbox8') Menu 
                               i.fa.fa-info-circle(data-placement='bottom', title='', data-toggle='tooltip', type='button', data-original-title='Affiche la page dans le menu')
-                          .checkbox.check-success.checkbox-circle
-                            input#checkbox9(type='checkbox', value='1')
-                            label(for='checkbox9') Enabled 
-                              i.fa.fa-info-circle(data-placement='bottom', title='', data-toggle='tooltip', type='button', data-original-title='Page activée') 
+                          .language-container
+                            h6.enabledLanguageTitle Enabled language
+                            #languageWrap.languageWrap
+                              ul
+                                li
+                                  .checkbox.check-success.checkbox-circle.languageEnable
+                                    input#checkbox10(type='checkbox', value='1', name='enableLanguage')
+                                    label(for='checkbox10')
+                                      img.img-flag(src="/images/country-flags/en.png")
+                                      a(href='#en') EN
+
+                                li 
+                                  .checkbox.check-success.checkbox-circle.languageEnable
+                                    input#checkbox11(type='checkbox', value='1', name='enableLanguage')
+                                    label(for='checkbox11') 
+                                      img.img-flag(src="/images/country-flags/fr.png")
+                                      a(href='#fr') FR
+
                     hr.section
 
                     #tabGeneral.tab-pane.active
@@ -222,7 +243,7 @@ html
                                 input#checkbox3(type='checkbox', value='1')
                                 label(for='checkbox3')
                             td.center
-                              img.imgType(src='images/flat-icons/Image.png', alt='')
+                              | Image
                             td.center  {{ file.sizeKb }}
                             td.center
                               .op-table-slider-wrapper
@@ -245,7 +266,7 @@ html
                                 input#checkbox4(type='checkbox', value='1')
                                 label(for='checkbox4')
                             td.center
-                              img.imgType(src='images/flat-icons/Image.png', alt='')
+                              | Image
                             td.center  {{ file.sizeKb }}
                             td.center
                               .op-table-slider-wrapper
@@ -265,7 +286,45 @@ html
 
         include shared/footer.jade
     include shared/bottom.jade
+    script.
+      $(function(){
+        
+        var renderSelectLanguage = function(data){
+          var $state = $(
+              '<span><img src="images/country-flags/' + data.id.toLowerCase( )  + '.png" class="img-flag" /> ' + data.text + '</span>'
+            );
+          return $state;
+        };
+        
+        $('#selectLanguage').select2({
+          minimumResultsForSearch: -1,
+          formatSelection: renderSelectLanguage,
+          formatResult: renderSelectLanguage,
+        });
+      });
+      
+    script.
+      $(function() {
+        
+          var $li = $('.languageWrap ul li');
+          var $languageWrap = $('.languageWrap');
+          var liSize = $li.length;
 
+          if (liSize < 3 || liSize == 3 ){
+            $li.addClass('languageLiLine');
+            $languageWrap.addClass('languageWrapline'); 
+          } else {
+            $li.addClass('languageLiBlock');
+            $languageWrap.addClass('languageWrapBlock');
+            $('.enabledLanguageTitle').addClass('btn-title-language');
+          }
+          
+          if ( $('input[name=enableLanguage]').attr('checked')){
+            $li.addClass('greyBack');
+          }
+           
+      });
+              
     script.
       var initFilesTab = function() {
         var table = $('#tableFiles');
@@ -456,3 +515,4 @@ html
         // active le file datatable
         initFilesTab();
       });
+      

@@ -7,12 +7,14 @@ import be.ttime.core.model.field.PageData;
 import be.ttime.core.model.form.CreatePageForm;
 import be.ttime.core.model.form.EditPageForm;
 import be.ttime.core.model.form.EditPagePositionForm;
+import be.ttime.core.persistence.model.ApplicationLanguageEntity;
+import be.ttime.core.persistence.model.PageContentEntity;
 import be.ttime.core.persistence.model.PageEntity;
 import be.ttime.core.persistence.model.PageTemplateEntity;
+import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IPageService;
 import be.ttime.core.persistence.service.IPageTemplateService;
 import be.ttime.core.util.ControllerUtils;
-import be.ttime.core.util.PebbleUtils;
 import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,7 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,7 +48,7 @@ public class AdminCmsController {
     @Autowired
     private IPageTemplateService pageTemplateService;
     @Autowired
-    private PebbleUtils pebbleUtils;
+    private IApplicationService applicationService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String home(ModelMap model) {
@@ -62,19 +63,41 @@ public class AdminCmsController {
     }
 
     @RequestMapping(value = "/page/{id}", method = RequestMethod.GET)
-    public String getPage(ModelMap model, @PathVariable("id") Long id) {
+    public String getPage(ModelMap model, @PathVariable("id") Long id, String locale) throws Exception {
 
         if (id == null)
             throw new ResourceNotFoundException();
 
         PageEntity page = pageService.findWithChildren(id);
+
+        ApplicationLanguageEntity appLanguage = applicationService.getSiteApplicationLanguageMap().get(locale);
+        if(appLanguage == null){
+            appLanguage = applicationService.getDefaultSiteApplicationLanguage();
+        }
+
+        PageContentEntity content = null;
+
+        for (PageContentEntity c : page.getPageContents()) {
+            if (c.getLanguage().getLocale().equals(appLanguage.getLocale())) {
+                content = c;
+            }
+        }
+
+        if (content == null) {
+            content = new PageContentEntity();
+            content.setCreatedDate(new Date());
+            content.setPage(page);
+            content.setLanguage(appLanguage);
+            pageService.saveContent(content);
+        }
+
         Gson gson = new Gson();
         if (page == null)
             throw new ResourceNotFoundException();
 
-        if (!StringUtils.isEmpty(page.getData())) {
+        if (!StringUtils.isEmpty(content.getData())) {
             try {
-                PageData pageData = gson.fromJson(page.getData(), PageData.class);
+                PageData pageData = gson.fromJson(content.getData(), PageData.class);
                 model.put("pageData", pageData);
             } catch (Exception e) {
                 log.error(e.toString());
@@ -90,6 +113,8 @@ public class AdminCmsController {
         }
 
         model.put("page", page);
+        model.put("content", content);
+        model.put("contentLocale", appLanguage.getLocale());
 
         return VIEWPATH + "page";
     }
@@ -128,11 +153,19 @@ public class AdminCmsController {
                 PageEntity page = new PageEntity();
                 page.setName(form.getName());
                 page.setCreatedDate(new Date());
-                String slug = slg.slugify(form.getName());
+
+                Locale defLocale = applicationService.getDefaultSiteLocale();
+                String lang = applicationService.getDefaultSiteLang();
+                String pageTitle = form.getName() + '-' + lang;
+                String slug = slg.slugify(pageTitle);
+                PageContentEntity content = new PageContentEntity();
+                content.setLanguage(applicationService.getDefaultSiteApplicationLanguage());
+                content.setSeoTitle(pageTitle);
+                content.setSlug("/" + slug);
                 PageEntity parent;
                 if (form.getParentId() == -1) {
                     page.setLevel(0);
-                    page.setSlug("/" + slug);
+                    content.setComputedSlug(content.getSlug());
                 } else {
                     parent = pageService.find(form.getParentId());
                     if (parent == null) {
@@ -140,7 +173,19 @@ public class AdminCmsController {
                     }
                     page.setLevel(parent.getLevel() + 1);
                     page.setPageParent(parent);
-                    page.setSlug(parent.getSlug() + '/' + slug);
+
+                    List<PageContentEntity> contents = page.getPageContents();
+                    PageContentEntity parentContent = null;
+                    for (PageContentEntity c : contents) {
+                        if (c.getLanguage() == applicationService.getDefaultSiteApplicationLanguage()) {
+                            parentContent = c;
+                        }
+                    }
+
+                    if (parentContent == null)
+                        throw new Exception("Parent with id : " + parent.getId() + " don't have a default content");
+
+                    content.setComputedSlug(parentContent.getComputedSlug() + '/' + content.getSlug());
                 }
 
                 if (form.getTemplateId() != -1) {
@@ -148,7 +193,7 @@ public class AdminCmsController {
                     template.setId(form.getTemplateId());
                     page.setPageTemplate(template);
                 }
-                pageService.save(page);
+                pageService.savePage(page);
             } catch (Exception e) {
                 // Logger
                 response.setStatus(500);
@@ -163,10 +208,9 @@ public class AdminCmsController {
     public String postPage(@PathVariable("id") Long urlId, @Valid EditPageForm form, BindingResult result, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         PageEntity page;
-        Long id = form.getId();
-        if (!Objects.equals(urlId, form.getId())) {
-            result.addError(new ObjectError("id", "error in the id"));
-        }
+        PageContentEntity content;
+
+        Long id = form.getPageId();
 
         // des erreurs ?
         if (result.hasErrors()) {
@@ -174,10 +218,17 @@ public class AdminCmsController {
             return ControllerUtils.getValidationErrorsInUl(result.getFieldErrors());
         } else {
 
-            page = pageService.find(id);
-            if (page == null) {
-                throw new Exception();
+            page = pageService.find(form.getPageId());
+            content = pageService.findContentById(form.getContentId());
+            if (page == null || content == null) {
+                throw new Exception("Page or Content can't by null");
             }
+
+            ApplicationLanguageEntity appLanguage = applicationService.getSiteApplicationLanguageMap().get(content.getLanguage().getLocale());
+            if (appLanguage == null) {
+                appLanguage = applicationService.getDefaultSiteApplicationLanguage();
+            }
+
 
             Type listType = new TypeToken<ArrayList<Field>>() {
             }.getType();
@@ -199,18 +250,22 @@ public class AdminCmsController {
             Gson gson = new GsonBuilder().disableHtmlEscaping().create();
             String json = gson.toJson(pageData);
 
-            page.setData(json);
 
             page.setModifiedDate(new Date());
             page.setName(form.getName());
-            page.setSlug(form.getSlug());
+
             page.setMenuItem(form.isMenuItem());
             page.setEnabled(form.isEnabled());
-            page.setSeoDescription(form.getSeoDescription());
-            page.setSeoH1(form.getSeoH1());
-            page.setSeoTag(form.getSeoTag());
-            page.setSeoTitle(form.getSeoTitle());
-            pageService.save(page);
+
+            content.setData(json);
+            content.setSlug(form.getSlug());
+            content.setSeoDescription(form.getSeoDescription());
+            content.setSeoH1(form.getSeoH1());
+            content.setSeoTag(form.getSeoTag());
+            content.setSeoTitle(form.getSeoTitle());
+            content.setModifiedDate(new Date());
+            pageService.savePage(page);
+            pageService.saveContent(content);
         }
 
         return "OK";
@@ -252,7 +307,7 @@ public class AdminCmsController {
             pages.add(p);
         }
 
-        pageService.save(pages);
+        pageService.savePage(pages);
         return "Ok";
     }
 }

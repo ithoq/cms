@@ -9,7 +9,7 @@ function initFileUpload(params) {
   var $fileProgress = $('#file-progress');
   var jqMultiUploadConf = {
     dataType: 'json',
-    stop: function (e, data) {
+    stop: function () {
       // $('tr:has(td)').remove();
       $tableFiles.DataTable().ajax.reload();
       $fileProgress.find('.progress-bar').css('width', 0 + '%');
@@ -23,7 +23,7 @@ function initFileUpload(params) {
       );
     },
 
-    error: function (e, data) {
+    error: function () {
       $.Cms.notif({
         type: 'error',
         message: this.genericErrorMessage,

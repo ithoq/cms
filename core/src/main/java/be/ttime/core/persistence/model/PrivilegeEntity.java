@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "privilege", schema = "cognosco")
+@Table(name = "privilege")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "name"})
