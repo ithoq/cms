@@ -1,18 +1,20 @@
 package be.ttime.core.error;
 
+import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.MessageFormat;
 
-@RestController
-public class CustomErrorController {
+@Controller
+public class CustomErrorController implements ErrorController {
 
     @RequestMapping(value = "/error")
-    public String handleError(ModelMap model, HttpServletRequest request) throws Exception {
+    public String handleError(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
         Throwable throwable = (Throwable) request.getAttribute("javax.servlet.error.exception");
@@ -29,6 +31,9 @@ public class CustomErrorController {
         );
 
         throw new Exception(message);
+
+        //return GlobalExceptionController.doResolveException(request, response, new Exception(message));
+        //return GlobalExceptionController.VIEW_GENERAL;
     }
 
     private String getExceptionMessage(Throwable throwable, Integer statusCode) {
@@ -37,5 +42,10 @@ public class CustomErrorController {
         }
         HttpStatus httpStatus = HttpStatus.valueOf(statusCode);
         return httpStatus.getReasonPhrase();
+    }
+
+    @Override
+    public String getErrorPath() {
+        return "/error";
     }
 }
