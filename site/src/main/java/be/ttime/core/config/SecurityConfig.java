@@ -1,6 +1,8 @@
 package be.ttime.core.config;
 
 import be.ttime.core.config.security.AuthenticationFailureHandler;
+import be.ttime.core.config.security.CustomLoginAuthenticationEntryPoint;
+import be.ttime.core.config.security.CustomUrlLogoutSuccessHandler;
 import be.ttime.core.persistence.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,7 +21,6 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Pattern;
 
@@ -43,6 +44,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
+
+    @Autowired
+    private CustomLoginAuthenticationEntryPoint loginEntryPoint;
+
+    @Autowired
+    private CustomUrlLogoutSuccessHandler logoutSuccessHandler;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -68,6 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoringAntMatchers("/plugin/**");
 
         http.authorizeRequests()
+                .antMatchers("/admin/login").permitAll()
                 .antMatchers("/admin/**").hasAuthority("READ_PRIVILEGE")
                 .anyRequest().permitAll()
             .and()
@@ -81,7 +89,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 .rememberMe()
                 .tokenRepository(tokenRepository)
-                .tokenValiditySeconds(15 * 24 * 60 * 60); // 15 days
+                .tokenValiditySeconds(15 * 24 * 60 * 60) // 15 days
+            .and()
+                .exceptionHandling().authenticationEntryPoint(loginEntryPoint)
+            .and()
+                .logout().logoutSuccessHandler(logoutSuccessHandler);
+
 
         if(dataSourceUrl.contains(":h2")) {
             http.headers().frameOptions().disable();
