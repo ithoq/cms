@@ -1,0 +1,47 @@
+doctype html
+html
+  head
+    include shared/head.jade
+
+  body.fixed-header
+    .page-container
+      include shared/header.jade
+      .page-content-wrapper
+        .content
+          .container-fluid.container-fixed-lg
+            .row
+              h1 Installation
+                form
+                  .panel.panel-default
+                    .panel-heading
+                      .panel-title
+                        | Option #two
+                    .panel-body
+                      h5
+                        | Traditional Standard Style
+                      form(role='form')
+                        .form-group
+                          label Your name
+                          span.help e.g. "Mona Lisa Portrait"
+                          input.form-control(type='email', required='')
+                        .form-group
+                          label Password
+                          span.help e.g. "Mona Lisa Portrait"
+                          input.form-control(type='password', required='')
+                        .form-group
+                          label Email
+                          span.help e.g. "some@example.com"
+                          input.form-control(type='email', placeholder='ex: some@example.com', required='')
+                        .form-group
+                          label Placeholder
+                          span.help e.g. "some@example.com"
+                          input.form-control(type='email', placeholder='ex: some@example.com', required='')
+                        .form-group
+                          label Disabled
+                          span.help e.g. "some@example.com"
+                          input.form-control(type='email', value='You can put anything here', disabled='')
+
+      include shared/footer.jade
+    include shared/bottom.jade
+
+      

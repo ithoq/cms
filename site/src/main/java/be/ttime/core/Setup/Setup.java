@@ -36,13 +36,11 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
     EntityManager entityManager;
 
     @Override
-
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
         if(applicationService.getApplicationConfig() == null) {
             try {
-
                 // Db basics
                 CmsUtils.executeResourceFileScript(entityManager, INSTALLATION_SCRIPT);
 

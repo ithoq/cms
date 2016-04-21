@@ -1,0 +1,9 @@
+<h1>Install</h1>
+
+<ul>
+{% for locale in locales %}
+    <li>{{ locale.getDisplayCountry() }} --  {{ locale.getDisplayLanguage() }}</li>
+{% endfor %}
+</ul>
+
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab autem beatae consequatur dicta enim eos ex, exercitationem fuga fugiat id magnam nemo, nobis omnis optio quidem repellat tempora voluptatem voluptatum.</p>

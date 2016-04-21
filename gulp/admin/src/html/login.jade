@@ -1,0 +1,49 @@
+doctype html
+html
+  head
+    include shared/head.jade
+  body.fixed-header
+    .login-wrapper
+       // START Login Background Pic Wrapper
+       .bg-pic
+         // START Background Pic
+         img.lazy(src='/img/admin/ny-wallpaper.jpg', data-src='/img/admin/ny-wallpaper.jpg', alt='')
+         // END Background Pic
+         // START Background Caption
+         .bg-caption.pull-bottom.sm-pull-bottom.text-white.p-l-20.m-b-20
+           h2.semi-bold.text-white
+             | Administration login page
+           p.small
+             | Be careful, your IP will be blocked after too much unsuccessful attempts
+         // END Background Caption
+       // END Login Background Pic Wrapper
+       // START Login Right Container
+       .login-container.bg-white
+         .p-l-50.m-l-20.p-r-50.m-r-20.p-t-50.m-t-30.sm-p-l-15.sm-p-r-15.sm-p-t-40
+           img(src='/img/logo-dark.png', alt='logo', data-src='/img/logo-dark.png', data-src-retina='assets/img/logo_2x.png', width='78', height='22')
+           p.p-t-35 Sign into your account
+           // START Login Form
+           form#form-login.p-t-15(role='form', action='index.html')
+             // START Form Control
+             .form-group.form-group-default
+               label Login
+               .controls
+                 input.form-control(type='text', name='username', placeholder='User Name', required='')
+             // END Form Control
+             // START Form Control
+             .form-group.form-group-default
+               label Password
+               .controls
+                 input.form-control(type='password', name='password', placeholder='Credentials', required='')
+             // START Form Control
+             .row
+               .col-md-6.no-padding
+                 .checkbox
+                   input#checkbox1(type='checkbox', value='1')
+                   label(for='checkbox1') Keep Me Signed in
+               .col-md-6.text-right
+                 a.text-info.small(href='#') Help? Contact Support
+             // END Form Control
+             button.btn.btn-primary.btn-cons.m-t-10(type='submit') Sign in
+
+    include shared/bottom.jade
