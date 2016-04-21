@@ -1,9 +1,11 @@
 package be.ttime.core.controller;
 
+import be.ttime.core.error.CmsNotInstalledException;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.model.field.PageData;
 import be.ttime.core.persistence.model.PageBlockEntity;
 import be.ttime.core.persistence.model.PageContentEntity;
+import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IPageBlockService;
 import be.ttime.core.persistence.service.IPageService;
 import be.ttime.core.util.CmsUtils;
@@ -27,6 +29,9 @@ public class CmsController {
 
     @Autowired
     private IPageService pageService;
+
+    @Autowired
+    private IApplicationService applicationService;
 
     @Autowired
     private IPageBlockService pageBlockService;
