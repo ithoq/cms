@@ -14,6 +14,8 @@ public interface IApplicationService {
 
     List<Locale> getSiteLanguages();
 
+    Map<String, ApplicationLanguageEntity> getApplicationLanguagesMap();
+
     Map<String, Locale> getSiteLanguagesMap();
 
     Map<String, ApplicationLanguageEntity> getSiteApplicationLanguageMap();
@@ -31,6 +33,8 @@ public interface IApplicationService {
     ApplicationConfigEntity saveApplicationConfig(ApplicationConfigEntity appConfig);
 
     ApplicationLanguageEntity saveApplicationLanguage(ApplicationLanguageEntity lang);
+
+    List<ApplicationLanguageEntity> saveApplicationLanguage(List<ApplicationLanguageEntity> langs);
 
     void deleteApplicationLanguage(ApplicationLanguageEntity lang);
 

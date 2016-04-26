@@ -33,7 +33,10 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
     private static final String INSTALLATION_SCRIPT = "setup/script.sql";
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
+
+    @Autowired
+    net.sf.ehcache.CacheManager cacheManager;
 
     @Override
     @Transactional
@@ -51,7 +54,7 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
                 blocks.add(new PageBlockEntity(3, "master", CmsUtils.getResourceFileContent("setup/master.twig"), true, false, false, true, PageBlockEntity.BlockType.System, null, null));
                 blocks.add(new PageBlockEntity(4, "login", CmsUtils.getResourceFileContent("setup/login.twig"), true, false, true, true, PageBlockEntity.BlockType.System, null, null));
                 pageBlockService.save(blocks);
-
+                cacheManager.clearAll();
             } catch(Exception e){
                 log.error("Error during db initialisation " + e.toString());
             }

@@ -28,9 +28,7 @@ public class QApplicationLanguageEntity extends EntityPathBase<ApplicationLangua
 
     public final ListPath<PageBlockEntity, QPageBlockEntity> pageBlocks = this.<PageBlockEntity, QPageBlockEntity>createList("pageBlocks", PageBlockEntity.class, QPageBlockEntity.class, PathInits.DIRECT2);
 
-    public final ListPath<PageContentEntity, QPageContentEntity> pageContents = this.<PageContentEntity, QPageContentEntity>createList("pageContents", PageContentEntity.class, QPageContentEntity.class, PathInits.DIRECT2);
-
-    public final BooleanPath rtl = createBoolean("rtl");
+    public final ListPath<ContentEntity, QPageContentEntity> pageContents = this.<ContentEntity, QPageContentEntity>createList("pageContents", ContentEntity.class, QPageContentEntity.class, PathInits.DIRECT2);
 
     public final ListPath<MessageTranslationsEntity, QMessageTranslationsEntity> translations = this.<MessageTranslationsEntity, QMessageTranslationsEntity>createList("translations", MessageTranslationsEntity.class, QMessageTranslationsEntity.class, PathInits.DIRECT2);
 

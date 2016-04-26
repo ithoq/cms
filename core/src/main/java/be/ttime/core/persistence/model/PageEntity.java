@@ -48,7 +48,7 @@ public class PageEntity {
     private List<PageEntity> pageChildren;
     @OneToMany(mappedBy = "page", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.DELETE, org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private List<PageContentEntity> pageContents;
+    private List<ContentEntity> pageContents;
     @ManyToOne
     private PageTemplateEntity pageTemplate;
 

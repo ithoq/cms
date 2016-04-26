@@ -18,19 +18,7 @@ public class ApplicationLanguageEntity {
     @Access(AccessType.PROPERTY)
     private String locale;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '0'")
-    private boolean rtl = false;
-    @Column(nullable = false, columnDefinition = "TINYINT(1) default '0'")
     private boolean enabledForAdmin = false;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '0'")
     private boolean enabledForPublic = false;
-
-    @OneToMany(mappedBy = "language")
-    private List<PageContentEntity> pageContents;
-
-    @OneToMany(mappedBy = "language")
-    private List<PageBlockEntity> pageBlocks;
-
-    @OneToMany(mappedBy = "language")
-    private List<MessageTranslationsEntity> translations;
-
 }

@@ -14,7 +14,7 @@ import com.mysema.query.types.path.PathInits;
  * QPageContentEntity is a Querydsl query type for PageContentEntity
  */
 @Generated("com.mysema.query.codegen.EntitySerializer")
-public class QPageContentEntity extends EntityPathBase<PageContentEntity> {
+public class QPageContentEntity extends EntityPathBase<ContentEntity> {
 
     private static final long serialVersionUID = 1701115330L;
 
@@ -51,10 +51,10 @@ public class QPageContentEntity extends EntityPathBase<PageContentEntity> {
     public final StringPath test = createString("test");
 
     public QPageContentEntity(String variable) {
-        this(PageContentEntity.class, forVariable(variable), INITS);
+        this(ContentEntity.class, forVariable(variable), INITS);
     }
 
-    public QPageContentEntity(Path<? extends PageContentEntity> path) {
+    public QPageContentEntity(Path<? extends ContentEntity> path) {
         this(path.getType(), path.getMetadata(), path.getMetadata().isRoot() ? INITS : PathInits.DEFAULT);
     }
 
@@ -63,10 +63,10 @@ public class QPageContentEntity extends EntityPathBase<PageContentEntity> {
     }
 
     public QPageContentEntity(PathMetadata<?> metadata, PathInits inits) {
-        this(PageContentEntity.class, metadata, inits);
+        this(ContentEntity.class, metadata, inits);
     }
 
-    public QPageContentEntity(Class<? extends PageContentEntity> type, PathMetadata<?> metadata, PathInits inits) {
+    public QPageContentEntity(Class<? extends ContentEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
         this.language = inits.isInitialized("language") ? new QApplicationLanguageEntity(forProperty("language")) : null;
         this.page = inits.isInitialized("page") ? new QPageEntity(forProperty("page"), inits.get("page")) : null;

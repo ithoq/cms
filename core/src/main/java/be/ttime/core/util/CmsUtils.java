@@ -115,4 +115,8 @@ public class CmsUtils {
     public static Date LocalDateTimeToDate(LocalDateTime date){
         return Date.from(date.atZone(ZoneId.systemDefault()).toInstant());
     }
+
+    public static boolean isAjax(HttpServletRequest request) {
+        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+    }
 }

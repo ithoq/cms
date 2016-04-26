@@ -1,7 +1,7 @@
 package be.ttime.core.persistence.service;
 
 import be.ttime.core.error.ResourceNotFoundException;
-import be.ttime.core.persistence.model.PageContentEntity;
+import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.model.PageEntity;
 import be.ttime.core.persistence.repository.IPageContentRepository;
 import be.ttime.core.persistence.repository.IPageRepository;
@@ -31,7 +31,7 @@ public class PageServiceImpl implements IPageService {
     }
 
     @Override
-    public PageContentEntity findBySlug(String slug, Locale locale) {
+    public ContentEntity findBySlug(String slug, Locale locale) {
         return pageContentRepository.findByComputedSlugAndLanguageLocale(slug, locale.toString());
     }
 
@@ -154,17 +154,17 @@ public class PageServiceImpl implements IPageService {
     }
 
     @Override
-    public List<PageContentEntity> saveContents(List<PageContentEntity> contents) {
+    public List<ContentEntity> saveContents(List<ContentEntity> contents) {
         return pageContentRepository.save(contents);
     }
 
     @Override
-    public PageContentEntity saveContent(PageContentEntity content) {
+    public ContentEntity saveContent(ContentEntity content) {
         return pageContentRepository.save(content);
     }
 
     @Override
-    public PageContentEntity findContentById(Long id) {
+    public ContentEntity findContentById(Long id) {
         return pageContentRepository.findOne(id);
     }
 }

@@ -15,7 +15,7 @@ public class ApplicationConfigEntity {
     @Id
     @Access(AccessType.PROPERTY)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
+    @Column(columnDefinition = "SMALLINT(11) UNSIGNED")
     private long id;
 
     @OneToOne(targetEntity = ApplicationLanguageEntity.class, fetch = FetchType.EAGER)
@@ -28,13 +28,11 @@ public class ApplicationConfigEntity {
 
     private boolean forcedLangInUrl = false;
 
-    private boolean isoTwoLetter = true;
-
     private boolean alreadyInstall = false;
 
-    private String sitename;
+    private String siteName;
 
     private String url;
 
-
+    private String seoDescription;
 }

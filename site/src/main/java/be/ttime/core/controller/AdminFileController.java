@@ -2,7 +2,7 @@ package be.ttime.core.controller;
 
 import be.ttime.core.model.form.AdminFileUploadForm;
 import be.ttime.core.persistence.model.FileEntity;
-import be.ttime.core.persistence.model.PageContentEntity;
+import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.model.PageEntity;
 import be.ttime.core.persistence.service.IFileService;
 import be.ttime.core.util.FileTypeDetector;
@@ -168,7 +168,7 @@ public class AdminFileController {
                         pageFile.setSize(Math.round(file.getSize()));
                         pageFile.setMimeType(uploadForm.getMimeTypes()[i]);
                         if(contentId != null){
-                            PageContentEntity c = new PageContentEntity();
+                            ContentEntity c = new ContentEntity();
                             c.setId(contentId);
                             pageFile.setContent(c);
                         }

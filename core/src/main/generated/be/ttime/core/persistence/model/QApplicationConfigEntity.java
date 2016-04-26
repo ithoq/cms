@@ -32,9 +32,9 @@ public class QApplicationConfigEntity extends EntityPathBase<ApplicationConfigEn
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final BooleanPath isoTwoLetter = createBoolean("isoTwoLetter");
+    public final StringPath seoDescription = createString("seoDescription");
 
-    public final StringPath sitename = createString("sitename");
+    public final StringPath siteName = createString("siteName");
 
     public final StringPath url = createString("url");
 

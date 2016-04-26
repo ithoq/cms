@@ -3,6 +3,7 @@ package be.ttime.core.filter;
 import be.ttime.core.handler.UrlLocaleResolver;
 import be.ttime.core.persistence.model.ApplicationConfigEntity;
 import be.ttime.core.persistence.service.IApplicationService;
+import be.ttime.core.util.CmsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.LocaleUtils;
 import org.springframework.context.ApplicationContext;
@@ -43,18 +44,13 @@ public class ForceLocalUrlFilter implements Filter {
     /**
      * Default name of the locale specification parameter: "locale".
      */
-    private static final Pattern LOCALE_PATTERN_ISO_639_1 = Pattern.compile("^/([a-z]{2})\\b");
-    private static final Pattern LOCALE_PATTERN_LOCALE = Pattern.compile("^/([a-z]{2})\\b");
+    private static final Pattern localePattern = Pattern.compile("^/([a-z]{2}(?:_[A-Z]{2})?)\\b");
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private LocaleResolver localeResolver;
     private ServletContext sc;
     private Map<String, Locale> langMap;
     private ApplicationContext appContext;
     private IApplicationService appService;
-
-    private static boolean isAjax(HttpServletRequest request) {
-        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
-    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -130,7 +126,7 @@ public class ForceLocalUrlFilter implements Filter {
         }
 
         // Check if locale is in the url
-        if (!langMap.isEmpty() && requestURI != null && !isAdmin && "GET".equals(request.getMethod())) {
+        if (appService.getApplicationConfig().isForcedLangInUrl() &&  !langMap.isEmpty() && requestURI != null && !isAdmin && "GET".equals(request.getMethod())) {
 
             // Check if locale is in the url
             Matcher matcher = matchLocalePattern(requestURI);
@@ -139,9 +135,9 @@ public class ForceLocalUrlFilter implements Filter {
                 request.setAttribute(UrlLocaleResolver.LOCALE_REQUEST_ATTRIBUTE_NAME, langMap.get(urlLocale));
             } else {
                 // redirection
-                if (appService.getApplicationConfig().isForcedLangInUrl() && !isAjax(request) && isredirectablePath(requestURI)) {
+                if (appService.getApplicationConfig().isForcedLangInUrl() && !CmsUtils.isAjax(request) && isredirectablePath(requestURI)) {
 
-                    String localeUrl = (locale != null) ? getLocaleUrlString(locale) : getDefaultLocaleUrlString(isAdmin);
+                    String localeUrl = (locale != null) ? locale.toString() : getDefaultLocaleUrlString(isAdmin);
                     String redirectUrl = "/" + localeUrl + requestURI;
                     redirectStrategy.sendRedirect(request, response, redirectUrl);
                     return;
@@ -162,8 +158,6 @@ public class ForceLocalUrlFilter implements Filter {
 
     private Matcher matchLocalePattern(String requestURI) {
 
-        Pattern localePattern;
-        localePattern = appService.getApplicationConfig().isIsoTwoLetter() ? LOCALE_PATTERN_ISO_639_1 : LOCALE_PATTERN_LOCALE;
         final Matcher matcher = localePattern.matcher(requestURI);
         if (matcher.find()) {
             return matcher;
@@ -199,12 +193,7 @@ public class ForceLocalUrlFilter implements Filter {
     }
 
     private String getDefaultLocaleUrlString(boolean isAdmin) {
-        Locale locale = determineDefaultLocale(isAdmin);
-        return appService.getApplicationConfig().isIsoTwoLetter() ? locale.getLanguage() : locale.toString();
-    }
-
-    private String getLocaleUrlString(Locale locale) {
-        return appService.getApplicationConfig().isIsoTwoLetter() ? locale.getLanguage() : locale.toString();
+        return determineDefaultLocale(isAdmin).toString();
     }
 
     private Locale determineDefaultLocale(boolean isAdmin) {

@@ -42,7 +42,7 @@ public class QPageEntity extends EntityPathBase<PageEntity> {
 
     public final ListPath<PageEntity, QPageEntity> pageChildren = this.<PageEntity, QPageEntity>createList("pageChildren", PageEntity.class, QPageEntity.class, PathInits.DIRECT2);
 
-    public final ListPath<PageContentEntity, QPageContentEntity> pageContents = this.<PageContentEntity, QPageContentEntity>createList("pageContents", PageContentEntity.class, QPageContentEntity.class, PathInits.DIRECT2);
+    public final ListPath<ContentEntity, QPageContentEntity> pageContents = this.<ContentEntity, QPageContentEntity>createList("pageContents", ContentEntity.class, QPageContentEntity.class, PathInits.DIRECT2);
 
     public final QPageEntity pageParent;
 

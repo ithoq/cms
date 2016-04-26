@@ -1,6 +1,6 @@
 package be.ttime.core.persistence.service;
 
-import be.ttime.core.persistence.model.PageContentEntity;
+import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.model.PageEntity;
 
 import java.util.List;
@@ -24,12 +24,12 @@ public interface IPageService {
 
     PageEntity findWithChildren(Long id);
 
-    List<PageContentEntity> saveContents(List<PageContentEntity> contents);
+    List<ContentEntity> saveContents(List<ContentEntity> contents);
 
-    PageContentEntity saveContent(PageContentEntity content);
+    ContentEntity saveContent(ContentEntity content);
 
-    PageContentEntity findContentById(Long id);
+    ContentEntity findContentById(Long id);
 
-    PageContentEntity findBySlug(String slug, Locale locale);
+    ContentEntity findBySlug(String slug, Locale locale);
 
 }

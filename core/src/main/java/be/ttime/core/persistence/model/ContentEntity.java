@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
         @Index(name = "idx_slug", columnList = "computedSlug,language_locale", unique = true)})
 @Getter
 @Setter
-public class PageContentEntity {
+public class ContentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +28,6 @@ public class PageContentEntity {
     private Date modifiedDate;
     @Lob
     private String data;
-    private String test;
     private String slug;
     private String computedSlug;
     private String seoTitle;
@@ -42,4 +42,6 @@ public class PageContentEntity {
     private PageEntity page;
     @ManyToOne(fetch = FetchType.LAZY)
     private ApplicationLanguageEntity language;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ResourceTypeEntity resourceType;
 }

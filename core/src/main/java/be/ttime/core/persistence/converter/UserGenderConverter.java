@@ -11,6 +11,8 @@ public class UserGenderConverter implements AttributeConverter<UserEntity.Gender
 
     @Override
     public String convertToDatabaseColumn(UserEntity.Gender attribute) {
+        if(attribute == null)
+            return null;
         switch (attribute){
             case MALE:
                 return "M";

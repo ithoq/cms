@@ -2,6 +2,7 @@ package be.ttime.core.persistence.model;
 
 import be.ttime.core.persistence.converter.UserGenderConverter;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,14 +27,13 @@ public class UserEntity implements UserDetails {
     @Access(AccessType.PROPERTY)
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
     private long id;
-    @Column(nullable = false)
     private String username;
     @Column(nullable = false)
     private String password;
     private String firstName;
     private String lastName;
     private String userTitle;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
     private String street;
     private String city;

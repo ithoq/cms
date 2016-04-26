@@ -34,7 +34,7 @@ public class FileEntity {
     @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
     private long size;
     @ManyToOne
-    private PageContentEntity content;
+    private ContentEntity content;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean enabled = true;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // lazy because not used for now !

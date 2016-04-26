@@ -54,6 +54,7 @@ public class UrlLocaleResolver extends CookieGenerator implements LocaleResolver
     private void initResolver(HttpServletRequest request) {
         isAdmin = request.getRequestURI().startsWith("/admin/");
         this.setCookieName(isAdmin ? DEFAULT_COOKIE_ADMIN_NAME : DEFAULT_COOKIE_PUBLIC_NAME);
+
         appConfig = appService.getApplicationConfig();
         langMap = (isAdmin ? appService.getAdminlanguagesMap() : appService.getSiteLanguagesMap());
         if (isAdmin) {
@@ -61,6 +62,7 @@ public class UrlLocaleResolver extends CookieGenerator implements LocaleResolver
         } else {
             defautLocale = LocaleUtils.toLocale(appConfig.getDefaultPublicLang().getLocale());
         }
+
     }
 
     public Locale resolveLocale(HttpServletRequest request) {

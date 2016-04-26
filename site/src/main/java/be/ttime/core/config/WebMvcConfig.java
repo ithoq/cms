@@ -65,6 +65,9 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private AddModelParamsInterceptor paramsInterceptor;
+
     @Value("${app.mode}")
     private String appMode;
 
@@ -137,15 +140,10 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
         return requestMappingHandlerMapping;
     }
 
-    @Bean
-    public AddModelParamsInterceptor currentUserInterceptor() {
-        return new AddModelParamsInterceptor();
-    }
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
-        registry.addInterceptor(currentUserInterceptor());
+        registry.addInterceptor(paramsInterceptor);
     }
 
     /*

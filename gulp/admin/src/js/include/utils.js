@@ -53,3 +53,13 @@ Cms.prototype.transitionEndEventName = function () {
 
   return null;
 };
+
+Cms.prototype.limitText = function (field, maxChar) {
+  var $ref = $(field);
+  var val = $ref.val();
+  if (val.length >= maxChar) {
+    $ref.val(function () {
+      return val.substr(0, maxChar);
+    });
+  }
+};

@@ -8,7 +8,7 @@ import be.ttime.core.model.form.CreatePageForm;
 import be.ttime.core.model.form.EditPageForm;
 import be.ttime.core.model.form.EditPagePositionForm;
 import be.ttime.core.persistence.model.ApplicationLanguageEntity;
-import be.ttime.core.persistence.model.PageContentEntity;
+import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.model.PageEntity;
 import be.ttime.core.persistence.model.PageTemplateEntity;
 import be.ttime.core.persistence.service.IApplicationService;
@@ -75,16 +75,16 @@ public class AdminCmsController {
             appLanguage = applicationService.getDefaultSiteApplicationLanguage();
         }
 
-        PageContentEntity content = null;
+        ContentEntity content = null;
 
-        for (PageContentEntity c : page.getPageContents()) {
+        for (ContentEntity c : page.getPageContents()) {
             if (c.getLanguage().getLocale().equals(appLanguage.getLocale())) {
                 content = c;
             }
         }
 
         if (content == null) {
-            content = new PageContentEntity();
+            content = new ContentEntity();
             content.setCreatedDate(new Date());
             content.setPage(page);
             content.setLanguage(appLanguage);
@@ -158,7 +158,7 @@ public class AdminCmsController {
                 String lang = applicationService.getDefaultSiteLang();
                 String pageTitle = form.getName() + '-' + lang;
                 String slug = slg.slugify(pageTitle);
-                PageContentEntity content = new PageContentEntity();
+                ContentEntity content = new ContentEntity();
                 content.setLanguage(applicationService.getDefaultSiteApplicationLanguage());
                 content.setSeoTitle(pageTitle);
                 content.setSlug("/" + slug);
@@ -174,9 +174,9 @@ public class AdminCmsController {
                     page.setLevel(parent.getLevel() + 1);
                     page.setPageParent(parent);
 
-                    List<PageContentEntity> contents = page.getPageContents();
-                    PageContentEntity parentContent = null;
-                    for (PageContentEntity c : contents) {
+                    List<ContentEntity> contents = page.getPageContents();
+                    ContentEntity parentContent = null;
+                    for (ContentEntity c : contents) {
                         if (c.getLanguage() == applicationService.getDefaultSiteApplicationLanguage()) {
                             parentContent = c;
                         }
@@ -208,7 +208,7 @@ public class AdminCmsController {
     public String postPage(@PathVariable("id") Long urlId, @Valid EditPageForm form, BindingResult result, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         PageEntity page;
-        PageContentEntity content;
+        ContentEntity content;
 
         Long id = form.getPageId();
 

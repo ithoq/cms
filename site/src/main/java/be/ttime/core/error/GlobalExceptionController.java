@@ -1,7 +1,11 @@
 package be.ttime.core.error;
 
+import be.ttime.core.persistence.service.IApplicationService;
+import be.ttime.core.util.CmsUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailAuthenticationException;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -9,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.*;
 
 /**
  * General error handler for the application.
@@ -20,6 +25,8 @@ class GlobalExceptionController {
 
     public final static String VIEW_GENERAL = "error/general";
     private final static String VIEW_404 = "error/notFound";
+    @Autowired
+    IApplicationService applicationService;
 
     public static ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Exception ex) {
 
@@ -59,6 +66,32 @@ class GlobalExceptionController {
         ModelAndView mv = new ModelAndView(view);
         mv.addObject("msg", messageCode);
         return mv;
+    }
+
+    @ExceptionHandler({CmsNotInstalledException.class})
+    public String notInstalled(HttpServletResponse response, HttpServletRequest request, Model model){
+
+        try {
+            Locale[] locales = Arrays.copyOfRange(Locale.getAvailableLocales(), 1, Locale.getAvailableLocales().length);
+            Arrays.sort(locales, (l1, l2) -> l1.getDisplayName().compareTo(l2.getDisplayName()));
+
+            List<Locale> result = new ArrayList<>();
+
+            // remove special locale
+            for (Locale locale : locales) {
+                if(locale.toString().length() <= 5){
+                    result.add(locale);
+                }
+            }
+
+            model.addAttribute("locales", result);
+            model.addAttribute("csrf", CmsUtils.getCsrfInput(request));
+            model.addAttribute("adminLocales", applicationService.getAdminlanguages());
+        }
+        catch(Exception e){
+            log.error(e.toString());
+        }
+        return "install";
     }
 
     @ExceptionHandler({ResourceNotFoundException.class})

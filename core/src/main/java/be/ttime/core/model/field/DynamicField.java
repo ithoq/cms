@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
 /*
     Render a dynamic field in CMS Page administration.
  */
+@Component
 public class DynamicField {
 
     private static final String FIELD_VIEW_PATH = "/WEB-INF/views/admin/field/";

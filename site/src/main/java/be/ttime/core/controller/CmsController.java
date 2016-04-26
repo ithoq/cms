@@ -1,10 +1,9 @@
 package be.ttime.core.controller;
 
-import be.ttime.core.error.CmsNotInstalledException;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.model.field.PageData;
 import be.ttime.core.persistence.model.PageBlockEntity;
-import be.ttime.core.persistence.model.PageContentEntity;
+import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IPageBlockService;
 import be.ttime.core.persistence.service.IPageService;
@@ -43,7 +42,7 @@ public class CmsController {
     public String page(ModelMap model, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
 
         final String path = request.getRequestURI();
-        PageContentEntity content = pageService.findBySlug(path, locale);
+        ContentEntity content = pageService.findBySlug(path, locale);
         if (content == null) {
             throw new ResourceNotFoundException();
         }

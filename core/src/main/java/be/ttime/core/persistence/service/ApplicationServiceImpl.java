@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service(value = "applicationService")
 @Transactional
@@ -35,6 +36,11 @@ public class ApplicationServiceImpl implements IApplicationService {
     @Cacheable(value = "locale")
     public List<Locale> getSiteLanguages() {
         return toLocale(applicationLanguageRepository.findByEnabledForPublicTrue());
+    }
+
+    @Override
+    public Map<String, ApplicationLanguageEntity> getApplicationLanguagesMap() {
+        return langListToLangEntityeMap(applicationLanguageRepository.findAll());
     }
 
     @Override
@@ -97,14 +103,18 @@ public class ApplicationServiceImpl implements IApplicationService {
      */
     @Override
     public String getDefaultSiteLang() {
-        Locale l = getDefaultSiteLocale();
-        return getApplicationConfig().isIsoTwoLetter() ? l.getLanguage() : l.toString();
+        return getDefaultSiteLocale().toString();
     }
 
     @Override
     @CacheEvict(value = "locale", allEntries = true)
     public ApplicationLanguageEntity saveApplicationLanguage(ApplicationLanguageEntity lang) {
         return applicationLanguageRepository.save(lang);
+    }
+
+    @Override
+    public List<ApplicationLanguageEntity> saveApplicationLanguage(List<ApplicationLanguageEntity> langs) {
+        return applicationLanguageRepository.save(langs);
     }
 
     @Override
@@ -127,31 +137,22 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     private Map<String, Locale> langListToLocaleMap(List<ApplicationLanguageEntity> list) {
         Map<String, Locale> map = new HashMap<>();
-        Locale locale;
         for (ApplicationLanguageEntity l : list) {
-            locale = LocaleUtils.toLocale(l.getLocale());
-            map.put(l.getLocale(), locale);
-            map.put(locale.getLanguage(), locale);
+            map.put(l.getLocale(), LocaleUtils.toLocale(l.getLocale()));
         }
         return map;
     }
 
     private Map<String, ApplicationLanguageEntity> langListToLangEntityeMap(List<ApplicationLanguageEntity> list) {
         Map<String, ApplicationLanguageEntity> map = new HashMap<>();
-        Locale locale;
         for (ApplicationLanguageEntity l : list) {
-            locale = LocaleUtils.toLocale(l.getLocale());
             map.put(l.getLocale(), l);
-            map.put(locale.getLanguage(), l);
         }
         return map;
     }
 
     private List<Locale> toLocale(List<ApplicationLanguageEntity> list) {
-        List<Locale> result = new ArrayList<>();
-        for (ApplicationLanguageEntity l : list) {
-            result.add(LocaleUtils.toLocale(l.getLocale()));
-        }
+        List<Locale> result = list.stream().map(l -> LocaleUtils.toLocale(l.getLocale())).collect(Collectors.toList());
         return result;
     }
 }

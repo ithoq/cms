@@ -1,5 +1,6 @@
 package be.ttime.core.model;
 
+import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;
@@ -13,6 +14,7 @@ public class DatabaseMessageSourceBase extends AbstractMessageSource {
     @Autowired
     private IMessageService messageService;
 
+
     @Override
     protected MessageFormat resolveCode(String code, Locale locale) {
 
@@ -25,7 +27,7 @@ public class DatabaseMessageSourceBase extends AbstractMessageSource {
         String result = null;
         if (codeMap != null) {
             result = codeMap.get(locale.toString());
-            if (result == null) {
+            if (result == null && locale.toString().length() > 2) {
                 result = codeMap.get(locale.getLanguage());
             }
         }
