@@ -1,12 +1,14 @@
 package be.ttime.core.persistence.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "block_type")
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 @Getter
 @Setter
 public class BlockTypeEntity {

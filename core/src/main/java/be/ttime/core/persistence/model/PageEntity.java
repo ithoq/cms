@@ -50,7 +50,7 @@ public class PageEntity {
     @Cascade({org.hibernate.annotations.CascadeType.DELETE, org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<ContentEntity> pageContents;
     @ManyToOne
-    private PageTemplateEntity pageTemplate;
+    private ContentTemplateEntity pageTemplate;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Lazy for now (not used in the current version)
     @JoinTable(

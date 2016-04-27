@@ -1,5 +1,6 @@
 package be.ttime.core.persistence.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.Collection;
 @Table(name = "resource")
 @Getter
 @Setter
+@EqualsAndHashCode
 public class ResourceEntity {
 
     @Id

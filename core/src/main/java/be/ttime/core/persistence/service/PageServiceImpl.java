@@ -3,7 +3,7 @@ package be.ttime.core.persistence.service;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.model.PageEntity;
-import be.ttime.core.persistence.repository.IPageContentRepository;
+import be.ttime.core.persistence.repository.IContentRepository;
 import be.ttime.core.persistence.repository.IPageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class PageServiceImpl implements IPageService {
     @Autowired
     private IPageRepository pageRepository;
     @Autowired
-    private IPageContentRepository pageContentRepository;
+    private IContentRepository contentRepository;
 
     @Override
 
@@ -32,7 +32,7 @@ public class PageServiceImpl implements IPageService {
 
     @Override
     public ContentEntity findBySlug(String slug, Locale locale) {
-        return pageContentRepository.findByComputedSlugAndLanguageLocale(slug, locale.toString());
+        return contentRepository.findByComputedSlugAndLanguageLocale(slug, locale.toString());
     }
 
     @Override
@@ -68,7 +68,7 @@ public class PageServiceImpl implements IPageService {
             throw new ResourceNotFoundException();
         // No children
         if (current.getPageChildren().size() > 0)
-            throw new Exception("Page with id = " + id + " has children !");
+            throw new Exception("Page with name = " + id + " has children !");
         // delete
         pageRepository.delete(id);
 
@@ -155,16 +155,16 @@ public class PageServiceImpl implements IPageService {
 
     @Override
     public List<ContentEntity> saveContents(List<ContentEntity> contents) {
-        return pageContentRepository.save(contents);
+        return contentRepository.save(contents);
     }
 
     @Override
     public ContentEntity saveContent(ContentEntity content) {
-        return pageContentRepository.save(content);
+        return contentRepository.save(content);
     }
 
     @Override
     public ContentEntity findContentById(Long id) {
-        return pageContentRepository.findOne(id);
+        return contentRepository.findOne(id);
     }
 }

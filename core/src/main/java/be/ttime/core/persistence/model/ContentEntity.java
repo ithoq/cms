@@ -1,5 +1,6 @@
 package be.ttime.core.persistence.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
@@ -10,10 +11,11 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "page_content", indexes = {
+@Table(name = "content", indexes = {
         @Index(name = "idx_slug", columnList = "computedSlug,language_locale", unique = true)})
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"id", "slug"})
 public class ContentEntity {
 
     @Id

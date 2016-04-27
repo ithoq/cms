@@ -1,14 +1,14 @@
 package be.ttime.core.persistence.service;
 
-import be.ttime.core.persistence.model.PageTemplateEntity;
+import be.ttime.core.persistence.model.ContentTemplateEntity;
 
 import java.util.List;
 
 public interface IPageTemplateService {
 
-    List<PageTemplateEntity> findAll();
+    List<ContentTemplateEntity> findAll();
 
-    PageTemplateEntity find(Long id);
+    ContentTemplateEntity find(Long id);
 
-    PageTemplateEntity save(PageTemplateEntity pageTemplate);
+    ContentTemplateEntity save(ContentTemplateEntity contentTemplate);
 }

@@ -1,6 +1,5 @@
 package be.ttime.core.persistence.model;
 
-import be.ttime.core.persistence.converter.BlockTypeConverter;
 import com.google.gson.annotations.Expose;
 import lombok.*;
 
@@ -12,20 +11,19 @@ import java.util.List;
 @Table(name = "page_block")
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id", "name"})
+@EqualsAndHashCode(of = {"name", "displayName"})
 @NoArgsConstructor
 @AllArgsConstructor
-public class PageBlockEntity {
+public class BlockEntity {
 
     @Expose
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Access(AccessType.PROPERTY)
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
-    private long id;
+    private String name;
     @Expose
     @Column(nullable = false, unique = true)
-    private String name;
+    private String displayName;
     @Expose
     @Lob
     private String content;
@@ -42,29 +40,8 @@ public class PageBlockEntity {
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '0'")
     private boolean dynamic = false;
     @Expose
-    @Convert(converter = BlockTypeConverter.class)
-    @Column(nullable = false, length = 1)
-    private BlockType blockType = BlockType.Content;
-    @OneToMany(mappedBy = "pageBlock")
-    private List<PageTemplateEntity> pageTemplates;
+    @ManyToOne
+    private BlockTypeEntity blockType;
     @ManyToOne
     private ApplicationLanguageEntity language;
-
-    public enum BlockType {
-        Content("Content"),
-        Navigation("Navigation"),
-        PageTemplate("PageTemplate"),
-        System("System"),
-        FieldSet("FieldSet");
-
-        private String name;
-
-        BlockType(String name) {
-            this.name = name;
-        }
-
-        public String getBlockType() {
-            return this.name;
-        }
-    }
 }

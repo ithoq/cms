@@ -31,7 +31,12 @@ import java.util.Map;
 @Slf4j
 public class CmsUtils {
 
-    public final String csrfParameterName = "_csrf";
+    //public final String csrfParameterName = "_csrf";
+    public final static String BLOCKTYPE_CONTENT = "CONTENT";
+    public final static String BLOCKTYPE_NAVIGATION = "NAVIGATION";
+    public final static String BLOCKTYPE_PAGE_TEMPLATE = "'PAGE_TEMPLATE'";
+    public final static String BLOCKTYPE_SYSTEM = "SYSTEM";
+    public final static String BLOCKTYPE_FIELDSET= "FIELDSET";
 
     public static String getCsrfInput(HttpServletRequest request) {
         Object param = request.getAttribute("_csrf");

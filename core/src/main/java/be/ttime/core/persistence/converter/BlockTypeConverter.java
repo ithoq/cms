@@ -1,5 +1,5 @@
 package be.ttime.core.persistence.converter;
-
+/*
 import be.ttime.core.persistence.model.PageBlockEntity;
 
 import javax.persistence.AttributeConverter;
@@ -47,3 +47,4 @@ public class BlockTypeConverter implements AttributeConverter<PageBlockEntity.Bl
 
     }
 }
+*/

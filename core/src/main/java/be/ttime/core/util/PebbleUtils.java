@@ -1,7 +1,7 @@
 package be.ttime.core.util;
 
 
-import be.ttime.core.persistence.model.PageBlockEntity;
+import be.ttime.core.persistence.model.BlockEntity;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
@@ -38,7 +38,7 @@ public class PebbleUtils {
         compiledTemplate.evaluate(writer, model);
     }
 
-    public String parseBlock(PageBlockEntity block, Map<String, Object> model) throws IOException, PebbleException {
+    public String parseBlock(BlockEntity block, Map<String, Object> model) throws IOException, PebbleException {
         if (model == null) {
             model = new HashMap<>(10);
         }

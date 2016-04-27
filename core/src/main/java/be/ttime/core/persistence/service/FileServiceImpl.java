@@ -54,9 +54,9 @@ public class FileServiceImpl implements IFileService {
 
         for (FileEntity file : files) {
             row = Json.createObjectBuilder();
-            //row.add("DT_RowId", "x"); // add an id
+            //row.add("DT_RowId", "x"); // add an name
             //row.add("DT_RowClass", "x"); // add a class
-            row.add("DT_RowData", Json.createObjectBuilder().add("id", file.getId()));
+            row.add("DT_RowData", Json.createObjectBuilder().add("name", file.getId()));
             row.add("name", file.getName());
             row.add("description", file.getDescription() != null ? file.getDescription() : "");
             row.add("active", file.isEnabled());

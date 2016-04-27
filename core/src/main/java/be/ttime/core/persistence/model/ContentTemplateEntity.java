@@ -6,18 +6,19 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "page_template")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "name", "active"})
-public class PageTemplateEntity {
+public class ContentTemplateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Access(AccessType.PROPERTY)
-    @Column(name = "id", nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
+    @Column(name = "name", nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
     private long id;
     @Column(nullable = false)
     private String name;
@@ -28,6 +29,9 @@ public class PageTemplateEntity {
     @OneToMany(mappedBy = "pageTemplate")
     private List<PageEntity> pageEntities;
     @ManyToOne
-    private PageBlockEntity pageBlock;
+    private BlockEntity pageBlock;
+
+    @OneToMany(mappedBy = "contentTemplate")
+    private Set<ContentTemplateFieldsetEntity> contentTemplateFieldset;
 
 }

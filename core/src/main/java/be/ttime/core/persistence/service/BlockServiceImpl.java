@@ -1,8 +1,8 @@
 package be.ttime.core.persistence.service;
 
-import be.ttime.core.persistence.model.PageBlockEntity;
+import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.model.UserEntity;
-import be.ttime.core.persistence.repository.IPageBlockRepository;
+import be.ttime.core.persistence.repository.IBlockRepository;
 import be.ttime.core.util.PebbleUtils;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
@@ -28,18 +28,18 @@ import java.util.Map;
 @Service
 @Transactional
 @Slf4j
-public class PageBlockServiceImpl implements IPageBlockService {
+public class BlockServiceImpl implements IBlockService {
 
     @Autowired
     private PebbleUtils pebbleUtils;
     @Autowired
-    private IPageBlockRepository pageBlockRepository;
+    private IBlockRepository blockRepository;
 
     @Override
     @Cacheable(value = "block", key = "#id")
-    public PageBlockEntity find(Long id) {
+    public BlockEntity find(Long id) {
 
-        return pageBlockRepository.findOne(id);
+        return blockRepository.findOne(id);
     }
 
     @Override
@@ -51,15 +51,15 @@ public class PageBlockServiceImpl implements IPageBlockService {
             @CacheEvict(value = "navBlock", key = "#id"),
     })
     public void delete(Long id) throws Exception {
-        PageBlockEntity block = pageBlockRepository.findOne(id);
+        BlockEntity block = blockRepository.findOne(id);
         if (block == null) {
-            throw new Exception("Block with id " + id + " is not found!");
+            throw new Exception("Block with name " + id + " is not found!");
         } else if (!block.isDeletable()) {
-            String message = "Block with id \" + id + \" is not deletable!";
+            String message = "Block with name \" + name + \" is not deletable!";
             log.error(message);
             throw new Exception(message);
         }
-        pageBlockRepository.delete(id);
+        blockRepository.delete(id);
     }
 
     @Override
@@ -70,29 +70,29 @@ public class PageBlockServiceImpl implements IPageBlockService {
             @CacheEvict(value = "renderedBlock", key = "#block.id"),
             @CacheEvict(value = "navBlock", key = "#block.id"),
     })
-    public PageBlockEntity save(PageBlockEntity block) {
-        return pageBlockRepository.save(block);
+    public BlockEntity save(BlockEntity block) {
+        return blockRepository.save(block);
     }
 
     @Override
-    public List<PageBlockEntity> save(List<PageBlockEntity> blocks) {
-        return pageBlockRepository.save(blocks);
+    public List<BlockEntity> save(List<BlockEntity> blocks) {
+        return blockRepository.save(blocks);
     }
 
     @Override
-    public List<PageBlockEntity> findAll() {
-        return pageBlockRepository.findAll();
+    public List<BlockEntity> findAll() {
+        return blockRepository.findAll();
     }
 
 
     @Override
     public String render(Long id) throws Exception {
 
-        PageBlockEntity block = pageBlockRepository.findOne(id);
+        BlockEntity block = blockRepository.findOne(id);
         if (block == null) {
-            throw new Exception("Block not found, with id : " + id);
+            throw new Exception("Block not found, with name : " + id);
         }
-        if (block.getBlockType() == PageBlockEntity.BlockType.Navigation) {
+        if (block.getBlockType().getName().equals("NAVIGATION")) {
             return renderNavigationBlock(block);
         } else {
             if (block.isDynamic()) {
@@ -108,20 +108,20 @@ public class PageBlockServiceImpl implements IPageBlockService {
     }
 
     @Cacheable(value = "renderedBlock", key = "#block.id")
-    private String renderCachableBlock(PageBlockEntity block) throws IOException, PebbleException {
+    private String renderCachableBlock(BlockEntity block) throws IOException, PebbleException {
         Map<String, Object> map = new HashMap<>();
         return pebbleUtils.parseBlock(block, map);
     }
 
     @Cacheable(value = "renderedBlock", key = "#block.id")
-    private String renderNavigationBlock(PageBlockEntity block) throws IOException, PebbleException {
+    private String renderNavigationBlock(BlockEntity block) throws IOException, PebbleException {
         Map<String, Object> map = new HashMap<>();
         return pebbleUtils.parseBlock(block, map);
 
     }
 
     @Cacheable(value = "navBlock", key = "#block.id")
-    private String renderUncacheableBlock(PageBlockEntity block) throws IOException, PebbleException {
+    private String renderUncacheableBlock(BlockEntity block) throws IOException, PebbleException {
         Map<String, Object> map = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
@@ -140,7 +140,7 @@ public class PageBlockServiceImpl implements IPageBlockService {
      * @throws PebbleException
      */
     @Cacheable(value = "renderedBlock", key = "#block.id")
-    private PebbleTemplate getUncachableBlockCompiledTemplate(PageBlockEntity block) throws PebbleException {
+    private PebbleTemplate getUncachableBlockCompiledTemplate(BlockEntity block) throws PebbleException {
         return pebbleUtils.getCompiledTemplate(block.getContent());
     }
 
@@ -149,16 +149,16 @@ public class PageBlockServiceImpl implements IPageBlockService {
     @Cacheable(value = "block", key = "'json'")
     public String jsonBlockArray() {
 
-        List<PageBlockEntity> blocks = pageBlockRepository.findAll();
+        List<BlockEntity> blocks = blockRepository.findAll();
         JsonArrayBuilder data = Json.createArrayBuilder();
         JsonObjectBuilder row;
         // reload tree like this : table.ajax.reload()
-        for (PageBlockEntity block : blocks) {
+        for (BlockEntity block : blocks) {
             row = Json.createObjectBuilder();
-            //row.add("DT_RowId", "x"); // add an id
+            //row.add("DT_RowId", "x"); // add an name
             //row.add("DT_RowClass", "x"); // add a class
-            row.add("DT_RowData", Json.createObjectBuilder().add("id", block.getId()));
-            row.add("name", block.getName());
+            row.add("DT_RowData", Json.createObjectBuilder().add("name", block.getName()));
+            row.add("name", block.getDisplayName());
             row.add("type", block.getBlockType().toString());
             row.add("dynamic", block.isDynamic());
             row.add("cacheable", block.isCacheable());
@@ -171,7 +171,7 @@ public class PageBlockServiceImpl implements IPageBlockService {
 
     @Override
     @Cacheable(value = "blockByName", key = "#name")
-    public PageBlockEntity findByNameAndBlockType(String name, PageBlockEntity.BlockType type) {
-        return pageBlockRepository.findByNameAndBlockType(name, type);
+    public BlockEntity findByNameAndBlockType(String name, String blockTypeName) {
+        return blockRepository.findByNameAndBlockTypeName(name, blockTypeName);
     }
 }

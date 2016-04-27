@@ -1,7 +1,7 @@
 package be.ttime.core.model.field;
 
-import be.ttime.core.persistence.model.PageBlockEntity;
-import be.ttime.core.persistence.service.IPageBlockService;
+import be.ttime.core.persistence.model.BlockEntity;
+import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import com.google.gson.Gson;
@@ -23,7 +23,7 @@ public class DynamicField {
     @Autowired
     private PebbleUtils pebbleUtils;
     @Autowired
-    private IPageBlockService blockService;
+    private IBlockService blockService;
 
     public static boolean isJSONValid(String JSON_STRING) {
         try {
@@ -36,7 +36,7 @@ public class DynamicField {
 
     public String renderField(Field field, PageData pageData) throws Exception {
 
-        PageBlockEntity block = blockService.findByNameAndBlockType(field.getBlockName(), PageBlockEntity.BlockType.FieldSet);
+        BlockEntity block = blockService.findByNameAndBlockType(field.getBlockName(), "FIELDSET");
 
         if (block == null) {
             return CmsUtils.alert("danger", "unable to find the block named " + field.getBlockName(), "Block name error");
