@@ -1,8 +1,8 @@
 package be.ttime.core.controller;
 
 
-import be.ttime.core.persistence.model.PageBlockEntity;
-import be.ttime.core.persistence.service.IPageBlockService;
+import be.ttime.core.persistence.model.BlockEntity;
+import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +19,12 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
 
 @Controller
 public class LoginController {
 
     @Autowired
-    private IPageBlockService pageBlockService;
+    private IBlockService blockService;
 
     @Autowired
     private PebbleUtils pebbleUtils;
@@ -34,8 +33,8 @@ public class LoginController {
     @ResponseBody
     public String home(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 
-        PageBlockEntity master = pageBlockService.findByNameAndBlockType("master", PageBlockEntity.BlockType.System);
-        PageBlockEntity login = pageBlockService.findByNameAndBlockType("login", PageBlockEntity.BlockType.System);
+        BlockEntity master = blockService.findByNameAndBlockType("master", CmsUtils.BLOCKTYPE_SYSTEM);
+        BlockEntity login = blockService.findByNameAndBlockType("login", CmsUtils.BLOCKTYPE_SYSTEM);
 
         model.put("attr", CmsUtils.getAttributes(request));
         model.put("get", CmsUtils.getParameters(request));

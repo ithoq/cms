@@ -349,13 +349,13 @@ INSERT INTO `roles_privileges` (`role_id`, `privilege_id`) VALUES
 (3, 3),
 (3, 4);
 
-INSERT INTO `resourceType` (`name`) VALUES
-(1, 'NEWS'),
-(2, 'ARTICLE');
+INSERT INTO `resource_type` (`name`) VALUES
+('NEWS'),
+('ARTICLE');
 
 INSERT INTO `block_type` (`name`) VALUES
-(1, 'CONTENT'),
-(2, 'NAVIGATION'),
-(3, 'PAGE_TEMPLATE'),
-(4, 'SYSTEM'),
-(5, 'FIELDSET');
+('CONTENT'),
+('NAVIGATION'),
+('PAGE_TEMPLATE'),
+('SYSTEM'),
+('FIELDSET');

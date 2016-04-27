@@ -1,7 +1,9 @@
 package be.ttime.core.controller;
 
-import be.ttime.core.persistence.model.PageBlockEntity;
-import be.ttime.core.persistence.service.IPageBlockService;
+import be.ttime.core.persistence.model.BlockEntity;
+import be.ttime.core.persistence.model.BlockTypeEntity;
+import be.ttime.core.persistence.repository.IBlockTypeRepository;
+import be.ttime.core.persistence.service.IBlockService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -21,7 +23,10 @@ public class AdminBlockController {
     private final static String VIEWPATH = "admin/block/";
 
     @Autowired
-    private IPageBlockService pageBlockRepository;
+    private IBlockService pageBlockRepository;
+
+    @Autowired
+    private IBlockTypeRepository blockTypeRepository;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String home(ModelMap model) {
@@ -45,7 +50,7 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
-    public void addBlock(PageBlockEntity block, HttpServletResponse response) {
+    public void addBlock(BlockEntity block, HttpServletResponse response) {
         pageBlockRepository.save(block);
     }
 
@@ -59,9 +64,9 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public PageBlockEntity getBlock(@PathVariable("id") Long id, HttpServletResponse response) {
+    public BlockEntity getBlock(@PathVariable("id") Long id, HttpServletResponse response) {
 
-        PageBlockEntity block = pageBlockRepository.find(id);
+        BlockEntity block = pageBlockRepository.find(id);
         if (block == null) {
             response.setStatus(500);
             return null;
@@ -71,9 +76,16 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ResponseBody
-    public String setBlock(Long id, String name, String content, PageBlockEntity.BlockType blockType, boolean cacheable, HttpServletResponse response) {
+    public String setBlock(Long id, String name, String content, String blockType, boolean cacheable, HttpServletResponse response) throws Exception {
 
-        PageBlockEntity page = pageBlockRepository.find(id);
+        BlockEntity page = pageBlockRepository.find(id);
+
+        BlockTypeEntity blockTypeEntity = blockTypeRepository.findOne(blockType);
+
+        if(blockTypeEntity == null){
+            throw new Exception("blockType " + blockType + " not found!");
+        }
+
 
         if (page == null || StringUtils.isEmpty(name)) {
             response.setStatus(200);
@@ -81,11 +93,11 @@ public class AdminBlockController {
         }
         page.setName(name);
         page.setContent(content);
-        if (page.getBlockType() != PageBlockEntity.BlockType.System
-                && page.getBlockType() != PageBlockEntity.BlockType.PageTemplate
-                && page.getBlockType() != PageBlockEntity.BlockType.FieldSet) {
-            page.setBlockType(blockType);
-        }
+        //if (page.getBlockType() != PageBlockEntity.BlockType.System
+        //       && page.getBlockType() != PageBlockEntity.BlockType.PageTemplate
+        //        && page.getBlockType() != PageBlockEntity.BlockType.FieldSet) {
+            page.setBlockType(blockTypeEntity);
+        //}
         page.setCacheable(cacheable);
         pageBlockRepository.save(page);
         return "OK";
@@ -93,9 +105,9 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/toggle/dynamic", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public PageBlockEntity setType(long id, HttpServletResponse response) {
+    public BlockEntity setType(long id, HttpServletResponse response) {
 
-        PageBlockEntity page = pageBlockRepository.find(id);
+        BlockEntity page = pageBlockRepository.find(id);
         if (page == null) {
             response.setStatus(200);
             return null;

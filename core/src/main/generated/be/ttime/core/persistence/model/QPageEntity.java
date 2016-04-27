@@ -42,11 +42,11 @@ public class QPageEntity extends EntityPathBase<PageEntity> {
 
     public final ListPath<PageEntity, QPageEntity> pageChildren = this.<PageEntity, QPageEntity>createList("pageChildren", PageEntity.class, QPageEntity.class, PathInits.DIRECT2);
 
-    public final ListPath<ContentEntity, QPageContentEntity> pageContents = this.<ContentEntity, QPageContentEntity>createList("pageContents", ContentEntity.class, QPageContentEntity.class, PathInits.DIRECT2);
+    public final ListPath<ContentEntity, QContentEntity> pageContents = this.<ContentEntity, QContentEntity>createList("pageContents", ContentEntity.class, QContentEntity.class, PathInits.DIRECT2);
 
     public final QPageEntity pageParent;
 
-    public final QPageTemplateEntity pageTemplate;
+    public final QContentTemplateEntity pageTemplate;
 
     public final SetPath<PrivilegeEntity, QPrivilegeEntity> privileges = this.<PrivilegeEntity, QPrivilegeEntity>createSet("privileges", PrivilegeEntity.class, QPrivilegeEntity.class, PathInits.DIRECT2);
 
@@ -71,7 +71,7 @@ public class QPageEntity extends EntityPathBase<PageEntity> {
     public QPageEntity(Class<? extends PageEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
         this.pageParent = inits.isInitialized("pageParent") ? new QPageEntity(forProperty("pageParent"), inits.get("pageParent")) : null;
-        this.pageTemplate = inits.isInitialized("pageTemplate") ? new QPageTemplateEntity(forProperty("pageTemplate"), inits.get("pageTemplate")) : null;
+        this.pageTemplate = inits.isInitialized("pageTemplate") ? new QContentTemplateEntity(forProperty("pageTemplate"), inits.get("pageTemplate")) : null;
     }
 
 }

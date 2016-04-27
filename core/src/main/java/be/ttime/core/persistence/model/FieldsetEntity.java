@@ -27,4 +27,7 @@ public class FieldsetEntity {
     @OneToMany(mappedBy = "fieldset")
     private Set<ContentTemplateFieldsetEntity> contentTemplateFieldset;
 
+    @OneToMany(mappedBy = "fieldset")
+   private Set<InputDefinitionEntity> stockDailyRecords;
+
 }

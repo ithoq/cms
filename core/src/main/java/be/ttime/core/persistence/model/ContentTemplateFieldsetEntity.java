@@ -19,6 +19,9 @@ public class ContentTemplateFieldsetEntity {
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
     private long id;
 
+    @Column(nullable = false)
+    private String namespace;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "page_template_id")
     private ContentTemplateEntity contentTemplate;

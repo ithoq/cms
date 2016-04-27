@@ -2,10 +2,10 @@ package be.ttime.core.controller;
 
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.model.field.PageData;
-import be.ttime.core.persistence.model.PageBlockEntity;
+import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.service.IApplicationService;
-import be.ttime.core.persistence.service.IPageBlockService;
+import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IPageService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
@@ -33,7 +33,7 @@ public class CmsController {
     private IApplicationService applicationService;
 
     @Autowired
-    private IPageBlockService pageBlockService;
+    private IBlockService blockService;
 
     @Autowired
     private PebbleUtils pebbleUtils;
@@ -54,7 +54,7 @@ public class CmsController {
             model.put("dataArray", pageData.getDataArray());
         }
 
-        PageBlockEntity master = pageBlockService.findByNameAndBlockType("master", PageBlockEntity.BlockType.System);
+        BlockEntity master = blockService.findByNameAndBlockType("master", CmsUtils.BLOCKTYPE_SYSTEM);
 
         model.put("attr", CmsUtils.getAttributes(request));
         model.put("get", CmsUtils.getParameters(request));

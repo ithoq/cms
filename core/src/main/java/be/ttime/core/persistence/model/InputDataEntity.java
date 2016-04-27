@@ -25,4 +25,10 @@ public class InputDataEntity {
     private String title;
 
     private String hint;
+
+    @ManyToOne
+    private InputDefinitionEntity inputDefinition;
+
+    @ManyToOne
+    private ContentTemplateEntity contentTemplateEntity;
 }

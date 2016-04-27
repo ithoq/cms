@@ -1,9 +1,9 @@
 package be.ttime.core.setup;
 
-import be.ttime.core.persistence.model.PageBlockEntity;
+import be.ttime.core.persistence.model.BlockEntity;
+import be.ttime.core.persistence.model.BlockTypeEntity;
 import be.ttime.core.persistence.service.IApplicationService;
-
-import be.ttime.core.persistence.service.IPageBlockService;
+import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.util.CmsUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +28,7 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
     private IApplicationService applicationService;
 
     @Autowired
-    private IPageBlockService pageBlockService;
+    private IBlockService blockService;
 
     private static final String INSTALLATION_SCRIPT = "setup/script.sql";
 
@@ -48,12 +48,12 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
                 CmsUtils.executeResourceFileScript(entityManager, INSTALLATION_SCRIPT);
 
                 // base blocks
-                List<PageBlockEntity> blocks = new ArrayList<>();
-                blocks.add(new PageBlockEntity(1, "text", CmsUtils.getResourceFileContent("setup/field_text.twig"), true, false, false, true, PageBlockEntity.BlockType.FieldSet, null, null));
-                blocks.add(new PageBlockEntity(2, "tinymce", CmsUtils.getResourceFileContent("setup/field_tinymce.twig"), true, false, false, true, PageBlockEntity.BlockType.FieldSet, null, null));
-                blocks.add(new PageBlockEntity(3, "master", CmsUtils.getResourceFileContent("setup/master.twig"), true, false, false, true, PageBlockEntity.BlockType.System, null, null));
-                blocks.add(new PageBlockEntity(4, "login", CmsUtils.getResourceFileContent("setup/login.twig"), true, false, true, true, PageBlockEntity.BlockType.System, null, null));
-                pageBlockService.save(blocks);
+                List<BlockEntity> blocks = new ArrayList<>();
+                blocks.add(new BlockEntity("field_text", "text", CmsUtils.getResourceFileContent("setup/field_text.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_FIELDSET), null));
+                blocks.add(new BlockEntity("field_tinymce", "tinymce", CmsUtils.getResourceFileContent("setup/field_tinymce.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_FIELDSET), null));
+                blocks.add(new BlockEntity("page_master", "master", CmsUtils.getResourceFileContent("setup/master.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_SYSTEM), null));
+                blocks.add(new BlockEntity("page_login", "login", CmsUtils.getResourceFileContent("setup/login.twig"), true, false, true, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_SYSTEM), null));
+                blockService.save(blocks);
                 cacheManager.clearAll();
             } catch(Exception e){
                 log.error("Error during db initialisation " + e.toString());

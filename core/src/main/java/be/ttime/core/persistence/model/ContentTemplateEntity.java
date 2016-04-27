@@ -18,7 +18,7 @@ public class ContentTemplateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Access(AccessType.PROPERTY)
-    @Column(name = "name", nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
+    @Column(columnDefinition = "SMALLINT(11) UNSIGNED")
     private long id;
     @Column(nullable = false)
     private String name;

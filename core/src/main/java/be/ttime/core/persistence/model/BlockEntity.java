@@ -19,7 +19,6 @@ public class BlockEntity {
     @Expose
     @Id
     @Access(AccessType.PROPERTY)
-    @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
     private String name;
     @Expose
     @Column(nullable = false, unique = true)

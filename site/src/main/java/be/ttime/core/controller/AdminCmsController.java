@@ -9,8 +9,8 @@ import be.ttime.core.model.form.EditPageForm;
 import be.ttime.core.model.form.EditPagePositionForm;
 import be.ttime.core.persistence.model.ApplicationLanguageEntity;
 import be.ttime.core.persistence.model.ContentEntity;
+import be.ttime.core.persistence.model.ContentTemplateEntity;
 import be.ttime.core.persistence.model.PageEntity;
-import be.ttime.core.persistence.model.PageTemplateEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IPageService;
 import be.ttime.core.persistence.service.IPageTemplateService;
@@ -189,7 +189,7 @@ public class AdminCmsController {
                 }
 
                 if (form.getTemplateId() != -1) {
-                    PageTemplateEntity template = new PageTemplateEntity();
+                    ContentTemplateEntity template = new ContentTemplateEntity();
                     template.setId(form.getTemplateId());
                     page.setPageTemplate(template);
                 }

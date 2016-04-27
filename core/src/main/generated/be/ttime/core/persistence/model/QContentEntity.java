@@ -11,16 +11,16 @@ import com.mysema.query.types.path.PathInits;
 
 
 /**
- * QPageContentEntity is a Querydsl query type for PageContentEntity
+ * QContentEntity is a Querydsl query type for ContentEntity
  */
 @Generated("com.mysema.query.codegen.EntitySerializer")
-public class QPageContentEntity extends EntityPathBase<ContentEntity> {
+public class QContentEntity extends EntityPathBase<ContentEntity> {
 
-    private static final long serialVersionUID = 1701115330L;
+    private static final long serialVersionUID = 1948760721L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QPageContentEntity pageContentEntity = new QPageContentEntity("pageContentEntity");
+    public static final QContentEntity contentEntity = new QContentEntity("contentEntity");
 
     public final StringPath computedSlug = createString("computedSlug");
 
@@ -38,6 +38,8 @@ public class QPageContentEntity extends EntityPathBase<ContentEntity> {
 
     public final ListPath<FileEntity, QFileEntity> pageFiles = this.<FileEntity, QFileEntity>createList("pageFiles", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
 
+    public final QResourceTypeEntity resourceType;
+
     public final StringPath seoDescription = createString("seoDescription");
 
     public final StringPath seoH1 = createString("seoH1");
@@ -48,28 +50,27 @@ public class QPageContentEntity extends EntityPathBase<ContentEntity> {
 
     public final StringPath slug = createString("slug");
 
-    public final StringPath test = createString("test");
-
-    public QPageContentEntity(String variable) {
+    public QContentEntity(String variable) {
         this(ContentEntity.class, forVariable(variable), INITS);
     }
 
-    public QPageContentEntity(Path<? extends ContentEntity> path) {
+    public QContentEntity(Path<? extends ContentEntity> path) {
         this(path.getType(), path.getMetadata(), path.getMetadata().isRoot() ? INITS : PathInits.DEFAULT);
     }
 
-    public QPageContentEntity(PathMetadata<?> metadata) {
+    public QContentEntity(PathMetadata<?> metadata) {
         this(metadata, metadata.isRoot() ? INITS : PathInits.DEFAULT);
     }
 
-    public QPageContentEntity(PathMetadata<?> metadata, PathInits inits) {
+    public QContentEntity(PathMetadata<?> metadata, PathInits inits) {
         this(ContentEntity.class, metadata, inits);
     }
 
-    public QPageContentEntity(Class<? extends ContentEntity> type, PathMetadata<?> metadata, PathInits inits) {
+    public QContentEntity(Class<? extends ContentEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
         this.language = inits.isInitialized("language") ? new QApplicationLanguageEntity(forProperty("language")) : null;
         this.page = inits.isInitialized("page") ? new QPageEntity(forProperty("page"), inits.get("page")) : null;
+        this.resourceType = inits.isInitialized("resourceType") ? new QResourceTypeEntity(forProperty("resourceType")) : null;
     }
 
 }

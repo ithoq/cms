@@ -7,7 +7,6 @@ import com.mysema.query.types.path.*;
 import com.mysema.query.types.PathMetadata;
 import javax.annotation.Generated;
 import com.mysema.query.types.Path;
-import com.mysema.query.types.path.PathInits;
 
 
 /**
@@ -25,12 +24,6 @@ public class QApplicationLanguageEntity extends EntityPathBase<ApplicationLangua
     public final BooleanPath enabledForPublic = createBoolean("enabledForPublic");
 
     public final StringPath locale = createString("locale");
-
-    public final ListPath<PageBlockEntity, QPageBlockEntity> pageBlocks = this.<PageBlockEntity, QPageBlockEntity>createList("pageBlocks", PageBlockEntity.class, QPageBlockEntity.class, PathInits.DIRECT2);
-
-    public final ListPath<ContentEntity, QPageContentEntity> pageContents = this.<ContentEntity, QPageContentEntity>createList("pageContents", ContentEntity.class, QPageContentEntity.class, PathInits.DIRECT2);
-
-    public final ListPath<MessageTranslationsEntity, QMessageTranslationsEntity> translations = this.<MessageTranslationsEntity, QMessageTranslationsEntity>createList("translations", MessageTranslationsEntity.class, QMessageTranslationsEntity.class, PathInits.DIRECT2);
 
     public QApplicationLanguageEntity(String variable) {
         super(ApplicationLanguageEntity.class, forVariable(variable));
