@@ -68,7 +68,7 @@ public class PageServiceImpl implements IPageService {
             throw new ResourceNotFoundException();
         // No children
         if (current.getPageChildren().size() > 0)
-            throw new Exception("Page with name = " + id + " has children !");
+            throw new Exception("Page with id = " + id + " has children !");
         // delete
         pageRepository.delete(id);
 
