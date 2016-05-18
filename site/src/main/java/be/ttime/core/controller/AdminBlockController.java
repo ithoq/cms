@@ -36,7 +36,7 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public void deleteBlock(@PathVariable("id") Long id, HttpServletResponse response) {
+    public void deleteBlock(@PathVariable("id") String id, HttpServletResponse response) {
 
         if (id == null) {
             response.setStatus(500);
@@ -64,7 +64,7 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public BlockEntity getBlock(@PathVariable("id") Long id, HttpServletResponse response) {
+    public BlockEntity getBlock(@PathVariable("id") String id, HttpServletResponse response) {
 
         BlockEntity block = pageBlockRepository.find(id);
         if (block == null) {
@@ -76,7 +76,7 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ResponseBody
-    public String setBlock(Long id, String name, String content, String blockType, boolean cacheable, HttpServletResponse response) throws Exception {
+    public String setBlock(String id, String name, String content, String blockType, boolean cacheable, HttpServletResponse response) throws Exception {
 
         BlockEntity page = pageBlockRepository.find(id);
 
@@ -105,16 +105,16 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/toggle/dynamic", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public BlockEntity setType(long id, HttpServletResponse response) {
+    public BlockEntity setType(String id, HttpServletResponse response) {
 
-        BlockEntity page = pageBlockRepository.find(id);
-        if (page == null) {
+        BlockEntity block = pageBlockRepository.find(id);
+        if (block == null) {
             response.setStatus(200);
             return null;
         }
 
-        page.setDynamic(!page.isDynamic());
-        pageBlockRepository.save(page);
-        return page;
+        block.setDynamic(!block.isDynamic());
+        pageBlockRepository.save(block);
+        return block;
     }
 }

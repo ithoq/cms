@@ -1,13 +1,14 @@
 package be.ttime.core.handler;
 
 import be.ttime.core.error.CmsNotInstalledException;
-import be.ttime.core.persistence.model.ApplicationConfigEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.util.CmsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,11 +38,17 @@ public class AddModelParamsInterceptor extends HandlerInterceptorAdapter {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         super.postHandle(request, response, handler, modelAndView);
 
-        if (modelAndView != null) { // When we use @RequestBody, modelAndView == null
-            modelAndView.addObject("user", CmsUtils.getCurrentUser());
-            modelAndView.addObject("attr", CmsUtils.getAttributes(request));
-            modelAndView.addObject("get", CmsUtils.getParameters(request));
-            modelAndView.addObject("csrf", CmsUtils.getCsrfInput(request));
+        boolean isRedirectView = modelAndView.getView() instanceof RedirectView;
+        boolean viewNameStartsWithRedirect = (modelAndView.getViewName() == null ? false : modelAndView.getViewName().startsWith(UrlBasedViewResolver.REDIRECT_URL_PREFIX));
+
+        if (modelAndView.hasView() && !isRedirectView && !viewNameStartsWithRedirect) {
+
+            if (modelAndView != null) { // When we use @RequestBody, modelAndView == null
+                modelAndView.addObject("user", CmsUtils.getCurrentUser());
+                modelAndView.addObject("attr", CmsUtils.getAttributes(request));
+                modelAndView.addObject("get", CmsUtils.getParameters(request));
+                modelAndView.addObject("csrf", CmsUtils.getCsrfInput(request));
+            }
         }
     }
 }

@@ -119,12 +119,12 @@
             <div class="changeTypeContainer">
                 {% verbatim %}{{#dynamic}}{% endverbatim %}
                 <span class="label label-success">{{ message('dynamic') }}</span>
-                <span id="changeType" class="label changeType" data-dynamic="true" data-id="{{ id }}">Statique</span>
+                <span id="changeType" class="label changeType" data-dynamic="true" {% verbatim %}data-id="{{ name }}"{% endverbatim %}>Statique</span>
                 {% verbatim %}
             {{/dynamic}}
             {{^ dynamic}}
             {% endverbatim %}
-                <span id="changeType" class="label changeType" data-dynamic="false" data-id="{{ id }}">Dynamique</span>
+                <span id="changeType" class="label changeType" data-dynamic="false" {% verbatim %}data-id="{{ name }}"{% endverbatim %}>Dynamique</span>
                 <span class="label label-success">{{ message('static') }}</span>
                 {% verbatim %}{{/dynamic}}{% endverbatim %}
             </div>

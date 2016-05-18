@@ -1,6 +1,7 @@
 package be.ttime.core.persistence.model;
 
 
+import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,17 +19,20 @@ public class InputDataEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Access(AccessType.PROPERTY)
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
-    private long id;
-
-    private String validation;
-
-    private String title;
-
-    private String hint;
+    @Expose private long id;
+    @Expose private String validation;
+    @Expose private String title;
+    @Expose private String hint;
 
     @ManyToOne
-    private InputDefinitionEntity inputDefinition;
+    @Expose private InputDefinitionEntity inputDefinition;
 
     @ManyToOne
-    private ContentTemplateEntity contentTemplateEntity;
+    private FieldsetEntity fieldset;
+
+    /*@ManyToOne
+    private ContentTemplateEntity contentTemplateEntity;*/
+
+    @ManyToOne
+    private ContentTemplateFieldsetEntity contentTemplateFieldsetEntity;
 }

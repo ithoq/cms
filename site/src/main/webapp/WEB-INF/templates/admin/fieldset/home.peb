@@ -3,17 +3,13 @@
 {% set title = message('admin.fieldsetManagement') %}
 
 {% block head %}
-    <script src="/resources/admin/libs/mustache/mustache.min.js" type="text/javascript"></script>
-    <script src="/resources/admin/libs/ace/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+
 {% endblock head %}
 
-{% block modal %}
-
-{% endblock modal %}
 
 {% block content %}
     <div class="row">
-        <div class="col-sm-8">
+        <div class="col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="panel-block-title m-b-30">
@@ -97,5 +93,6 @@
 {% endblock content %}
 {% block bottom %}
 
-    <script src="/resources/admin/js/fieldset.js"></script>
+
+
 {% endblock bottom %}

@@ -10,5 +10,7 @@ public interface IContentTemplateService {
 
     ContentTemplateEntity find(Long id);
 
+    ContentTemplateEntity findWithFieldsetAndData(Long id);
+
     ContentTemplateEntity save(ContentTemplateEntity contentTemplate);
 }

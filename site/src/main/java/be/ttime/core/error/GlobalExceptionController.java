@@ -33,6 +33,7 @@ class GlobalExceptionController {
         try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html; charset=UTF-8");
+            log.error(ex.getStackTrace().toString());
             if (ex instanceof ResourceNotFoundException) {
                 log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
                 return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_404, "error.notFound");
@@ -48,9 +49,13 @@ class GlobalExceptionController {
             } else if (ex instanceof MailAuthenticationException) {
                 log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
                 return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.mail.config");
-            } else {
+            }  else if (response.getStatus() == 403) {
                 log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
-                return handleException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, request, response, VIEW_GENERAL, "error.general");
+                return handleException(HttpServletResponse.SC_FORBIDDEN, request, response, VIEW_GENERAL, "error.forbidden");
+            }
+            else {
+                log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex);
+                return handleException(response.getStatus(), request, response, VIEW_GENERAL, "error.general");
             }
         } catch (Exception handlerException) {
             log.error("Handling of [" + ex.getClass().getName() + "] resulted in Exception", handlerException);
@@ -62,7 +67,7 @@ class GlobalExceptionController {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
         response.setStatus(sc);
-        response.setStatus(200);
+        response.setStatus(response.getStatus());
         ModelAndView mv = new ModelAndView(view);
         mv.addObject("msg", messageCode);
         return mv;

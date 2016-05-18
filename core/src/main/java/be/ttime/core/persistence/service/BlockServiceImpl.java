@@ -8,9 +8,6 @@ import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,40 +33,36 @@ public class BlockServiceImpl implements IBlockService {
     private IBlockRepository blockRepository;
 
     @Override
-    @Cacheable(value = "block", key = "#id")
-    public BlockEntity find(Long id) {
+    public BlockEntity find(String name) {
 
-        return blockRepository.findOne(id);
+        return findByNameAndBlockType(name, null);
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "block", key = "#id"),
-            @CacheEvict(value = "block", key = "'json'"),
-            @CacheEvict(value = "blockByName", allEntries = true),
-            @CacheEvict(value = "renderedBlock", key = "#id"),
-            @CacheEvict(value = "navBlock", key = "#id"),
-    })
-    public void delete(Long id) throws Exception {
-        BlockEntity block = blockRepository.findOne(id);
+    //@Cacheable(value = "blockByName", key = "#name")
+    public BlockEntity findByNameAndBlockType(String name, String blockTypeName) {
+        if(blockTypeName == null) {
+            return blockRepository.findOne(name);
+        } else {
+            return blockRepository.findByNameAndBlockTypeName(name, blockTypeName);
+        }
+
+    }
+
+    @Override
+    public void delete(String name) throws Exception {
+        BlockEntity block = blockRepository.findOne(name);
         if (block == null) {
-            throw new Exception("Block with name " + id + " is not found!");
+            throw new Exception("Block with name " + name + " is not found!");
         } else if (!block.isDeletable()) {
             String message = "Block with name \" + name + \" is not deletable!";
             log.error(message);
             throw new Exception(message);
         }
-        blockRepository.delete(id);
+        blockRepository.delete(name);
     }
 
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "block", key = "#block.id"),
-            @CacheEvict(value = "block", key = "'json'"),
-            @CacheEvict(value = "blockByName", allEntries = true),
-            @CacheEvict(value = "renderedBlock", key = "#block.id"),
-            @CacheEvict(value = "navBlock", key = "#block.id"),
-    })
     public BlockEntity save(BlockEntity block) {
         return blockRepository.save(block);
     }
@@ -86,11 +79,11 @@ public class BlockServiceImpl implements IBlockService {
 
 
     @Override
-    public String render(Long id) throws Exception {
+    public String render(String name) throws Exception {
 
-        BlockEntity block = blockRepository.findOne(id);
+        BlockEntity block = blockRepository.findOne(name);
         if (block == null) {
-            throw new Exception("Block not found, with name : " + id);
+            throw new Exception("Block not found, with name : " + name);
         }
         if (block.getBlockType().getName().equals("NAVIGATION")) {
             return renderNavigationBlock(block);
@@ -107,20 +100,17 @@ public class BlockServiceImpl implements IBlockService {
         }
     }
 
-    @Cacheable(value = "renderedBlock", key = "#block.id")
     private String renderCachableBlock(BlockEntity block) throws IOException, PebbleException {
         Map<String, Object> map = new HashMap<>();
         return pebbleUtils.parseBlock(block, map);
     }
 
-    @Cacheable(value = "renderedBlock", key = "#block.id")
     private String renderNavigationBlock(BlockEntity block) throws IOException, PebbleException {
         Map<String, Object> map = new HashMap<>();
         return pebbleUtils.parseBlock(block, map);
 
     }
 
-    @Cacheable(value = "navBlock", key = "#block.id")
     private String renderUncacheableBlock(BlockEntity block) throws IOException, PebbleException {
         Map<String, Object> map = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -139,14 +129,13 @@ public class BlockServiceImpl implements IBlockService {
      * @return
      * @throws PebbleException
      */
-    @Cacheable(value = "renderedBlock", key = "#block.id")
     private PebbleTemplate getUncachableBlockCompiledTemplate(BlockEntity block) throws PebbleException {
         return pebbleUtils.getCompiledTemplate(block.getContent());
     }
 
 
     @Override
-    @Cacheable(value = "block", key = "'json'")
+    //@Cacheable(value = "block", key = "'json'")
     public String jsonBlockArray() {
 
         List<BlockEntity> blocks = blockRepository.findAll();
@@ -157,9 +146,9 @@ public class BlockServiceImpl implements IBlockService {
             row = Json.createObjectBuilder();
             //row.add("DT_RowId", "x"); // add an name
             //row.add("DT_RowClass", "x"); // add a class
-            row.add("DT_RowData", Json.createObjectBuilder().add("name", block.getName()));
+            row.add("DT_RowData", Json.createObjectBuilder().add("id", block.getName()));
             row.add("name", block.getDisplayName());
-            row.add("type", block.getBlockType().toString());
+            row.add("type", block.getBlockType().getName());
             row.add("dynamic", block.isDynamic());
             row.add("cacheable", block.isCacheable());
             row.add("deletable", block.isDeletable());
@@ -167,11 +156,5 @@ public class BlockServiceImpl implements IBlockService {
         }
 
         return Json.createObjectBuilder().add("data", data).build().toString();
-    }
-
-    @Override
-    @Cacheable(value = "blockByName", key = "#name")
-    public BlockEntity findByNameAndBlockType(String name, String blockTypeName) {
-        return blockRepository.findByNameAndBlockTypeName(name, blockTypeName);
     }
 }

@@ -24,15 +24,17 @@ public class QContentTemplateEntity extends EntityPathBase<ContentTemplateEntity
 
     public final BooleanPath active = createBoolean("active");
 
-    public final SetPath<ContentTemplateFieldsetEntity, QContentTemplateFieldsetEntity> contentTemplateFieldset = this.<ContentTemplateFieldsetEntity, QContentTemplateFieldsetEntity>createSet("contentTemplateFieldset", ContentTemplateFieldsetEntity.class, QContentTemplateFieldsetEntity.class, PathInits.DIRECT2);
+    public final QBlockEntity block;
+
+    public final ListPath<ContentTemplateFieldsetEntity, QContentTemplateFieldsetEntity> contentTemplateFieldset = this.<ContentTemplateFieldsetEntity, QContentTemplateFieldsetEntity>createList("contentTemplateFieldset", ContentTemplateFieldsetEntity.class, QContentTemplateFieldsetEntity.class, PathInits.DIRECT2);
+
+    public final StringPath description = createString("description");
 
     public final StringPath fields = createString("fields");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath name = createString("name");
-
-    public final QBlockEntity pageBlock;
 
     public final ListPath<PageEntity, QPageEntity> pageEntities = this.<PageEntity, QPageEntity>createList("pageEntities", PageEntity.class, QPageEntity.class, PathInits.DIRECT2);
 
@@ -54,7 +56,7 @@ public class QContentTemplateEntity extends EntityPathBase<ContentTemplateEntity
 
     public QContentTemplateEntity(Class<? extends ContentTemplateEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.pageBlock = inits.isInitialized("pageBlock") ? new QBlockEntity(forProperty("pageBlock"), inits.get("pageBlock")) : null;
+        this.block = inits.isInitialized("block") ? new QBlockEntity(forProperty("block"), inits.get("block")) : null;
     }
 
 }

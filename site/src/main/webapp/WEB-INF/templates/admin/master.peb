@@ -26,7 +26,7 @@
     <link href="/resources/admin/libs/datatables-responsive/css/datatables.responsive.css" rel="stylesheet" type="text/css" media="screen">
     <link href="/resources/admin/libs/switchery/css/switchery.min.css" rel="stylesheet" type="text/css" media="screen">
     <link href="/resources/admin/libs/bootstrap-select2/select2.css" rel="stylesheet" type="text/css" media="screen">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" type="text/css">
     <script src="/resources/admin/libs/tinymce/tinymce.min.js"></script>
     <script src="/resources/admin/libs/pace/pace.min.js"></script>
     <script src="/resources/admin/libs/jQuery/jquery-2.2.1.min.js"></script>
@@ -59,19 +59,19 @@
 </head>
 <body class="fixed-header">
 
-{% if not noSidebar %}
+{% if noSidebar == null or not noSidebar %}
     {% include 'admin/include/sidebar' %}
 {% endif %}
 
 <div class="page-container {{ pageContentClass }}">
-    {% if not noHeader %}
+    {% if noHeader == null or not noHeader %}
         {% include 'admin/include/header' %}
     {% endif %}
 
     <div class="page-content-wrapper">
         {% block modal %}
         {% endblock modal %}
-        {% if not noBreadCrumb %}
+        {% if noBreadCrumb == null or not noBreadCrumb %}
         <div class="content">
             <div data-pages="parallax" class="jumbotron">
                 <div class="container-fluid container-fixed-lg sm-p-l-20 sm-p-r-20">
@@ -94,7 +94,7 @@
             {% endblock content %}
         </div>
     </div>
-    {% if not noFooter %}
+    {% if noFooter == null or not noFooter %}
     {% include 'admin/include/footer' %}
     {% endif %}
 

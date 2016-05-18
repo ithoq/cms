@@ -36,7 +36,7 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
     private EntityManager entityManager;
 
     @Autowired
-    net.sf.ehcache.CacheManager cacheManager;
+    private net.sf.ehcache.CacheManager cacheManager;
 
     @Override
     @Transactional
@@ -49,10 +49,10 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
 
                 // base blocks
                 List<BlockEntity> blocks = new ArrayList<>();
-                blocks.add(new BlockEntity("field_text", "text", CmsUtils.getResourceFileContent("setup/field_text.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_FIELDSET), null));
-                blocks.add(new BlockEntity("field_tinymce", "tinymce", CmsUtils.getResourceFileContent("setup/field_tinymce.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_FIELDSET), null));
-                blocks.add(new BlockEntity("page_master", "master", CmsUtils.getResourceFileContent("setup/master.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_SYSTEM), null));
-                blocks.add(new BlockEntity("page_login", "login", CmsUtils.getResourceFileContent("setup/login.twig"), true, false, true, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_SYSTEM), null));
+                blocks.add(new BlockEntity(CmsUtils.BLOCK_FIELD_TEXT, "text", CmsUtils.getResourceFileContent("setup/field_text.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_FIELDSET), null));
+                blocks.add(new BlockEntity(CmsUtils.BLOCK_FIELD_TINYMCE, "tinymce", CmsUtils.getResourceFileContent("setup/field_tinymce.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_FIELDSET), null));
+                blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_MASTER, "master", CmsUtils.getResourceFileContent("setup/master.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_SYSTEM), null));
+                blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_LOGIN, "login", CmsUtils.getResourceFileContent("setup/login.twig"), true, false, true, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_SYSTEM), null));
                 blockService.save(blocks);
                 cacheManager.clearAll();
             } catch(Exception e){

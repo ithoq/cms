@@ -1,11 +1,12 @@
 package be.ttime.core.persistence.model;
 
+import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "fieldset")
@@ -18,16 +19,23 @@ public class FieldsetEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Access(AccessType.PROPERTY)
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
+    @Expose
     private long id;
-
+    @Expose
     private String name;
-
+    @Expose
     private String description;
+    @Expose
+    private String namespace;
 
-    @OneToMany(mappedBy = "fieldset")
-    private Set<ContentTemplateFieldsetEntity> contentTemplateFieldset;
+    @OneToMany(mappedBy = "fieldset", fetch = FetchType.EAGER)
+    private List<ContentTemplateFieldsetEntity> contentTemplateFieldset;
 
-    @OneToMany(mappedBy = "fieldset")
-   private Set<InputDefinitionEntity> stockDailyRecords;
+    @OneToMany(mappedBy = "fieldset", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Expose
+    private List<InputDefinitionEntity> inputs;
+
+    @OneToOne(targetEntity = BlockEntity.class, fetch = FetchType.EAGER)
+    private BlockEntity blockEntity;
 
 }

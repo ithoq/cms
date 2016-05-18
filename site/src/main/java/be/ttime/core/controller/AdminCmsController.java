@@ -13,7 +13,7 @@ import be.ttime.core.persistence.model.ContentTemplateEntity;
 import be.ttime.core.persistence.model.PageEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IPageService;
-import be.ttime.core.persistence.service.IPageTemplateService;
+import be.ttime.core.persistence.service.IContentTemplateService;
 import be.ttime.core.util.ControllerUtils;
 import com.github.slugify.Slugify;
 import com.google.gson.Gson;
@@ -46,7 +46,7 @@ public class AdminCmsController {
     @Autowired
     private IPageService pageService;
     @Autowired
-    private IPageTemplateService pageTemplateService;
+    private IContentTemplateService pageTemplateService;
     @Autowired
     private IApplicationService applicationService;
 

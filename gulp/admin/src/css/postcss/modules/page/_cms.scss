@@ -2,6 +2,29 @@
      Page "Gestion CMS"
    ========================================================================== */
 
+.container-fluid
+{
+    margin-left: 0;
+
+    transition: all .5s;
+    &.expanded
+    {
+        margin-left: -310px;
+    }
+}
+
+.pageContentContainer
+{
+    margin-left: 300px;
+}
+
+.btn-expand
+{
+    font-size: 13px;
+
+    margin: 6px 0 0 6px;
+    padding: 3px 15px;
+}
 /* Image template */
 .thumbnail-wrapper.d100
 {
@@ -44,14 +67,17 @@ input.page-title
 
 /* Select country */
 
+.lang-selector
+{
+    padding: 8px;
+
+    text-align: center;
+
+    background: #f3f3f3;
+}
 .select-country
 {
-    position: absolute;
-    top: -6px;
-    right: 110px;
-
-    width: 120px;
-    margin-left: 10px;
+    margin: 0 auto;
 }
 
 .select-country .select2-container
@@ -71,7 +97,7 @@ input.page-title
 .operation-box
 {
     position: absolute;
-    top: -8px;
+    top: 7px;
     right: 10px;
 
     button
@@ -127,6 +153,14 @@ input.page-title
 /* ==========================================================================
    Arbre
    ========================================================================== */
+
+.tree-container
+{
+    position: absolute;
+    z-index: 0;
+
+    width: 280px;
+}
 
 /* Alignement du titre et du bouton */
 .panel.panel-tree .panel-heading .panel-title

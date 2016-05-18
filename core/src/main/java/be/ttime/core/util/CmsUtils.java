@@ -5,7 +5,6 @@ import com.ibatis.common.jdbc.ScriptRunner;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
-import org.hibernate.jdbc.Work;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,8 +18,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -37,6 +34,11 @@ public class CmsUtils {
     public final static String BLOCKTYPE_PAGE_TEMPLATE = "'PAGE_TEMPLATE'";
     public final static String BLOCKTYPE_SYSTEM = "SYSTEM";
     public final static String BLOCKTYPE_FIELDSET= "FIELDSET";
+
+    public final static String BLOCK_PAGE_MASTER = "PAGE_MASTER";
+    public final static String BLOCK_PAGE_LOGIN = "PAGE_LOGIN";
+    public final static String BLOCK_FIELD_TEXT = "FIELD_TEXT";
+    public final static String BLOCK_FIELD_TINYMCE = "FIELD_TINYMCE";
 
     public static String getCsrfInput(HttpServletRequest request) {
         Object param = request.getAttribute("_csrf");

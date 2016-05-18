@@ -14,6 +14,11 @@ $('#btnDeletePage').click(function () {
   $.Cms.ajax(params);
 });
 
+// expand
+$pageForm.on('click', '#btn-expand', function () {
+  $('.container-fluid').toggleClass('expanded');
+});
+
 // Save a page
 $pageForm.on('click', '#savePageBtn', function () {
   var id = $('#currentPageId').val();

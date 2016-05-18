@@ -24,11 +24,17 @@ public class QContentTemplateFieldsetEntity extends EntityPathBase<ContentTempla
 
     public final QContentTemplateEntity contentTemplate;
 
+    public final ListPath<InputDataEntity, QInputDataEntity> dataEntities = this.<InputDataEntity, QInputDataEntity>createList("dataEntities", InputDataEntity.class, QInputDataEntity.class, PathInits.DIRECT2);
+
     public final QFieldsetEntity fieldset;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath name = createString("name");
+
     public final StringPath namespace = createString("namespace");
+
+    public final NumberPath<Integer> position = createNumber("position", Integer.class);
 
     public QContentTemplateFieldsetEntity(String variable) {
         this(ContentTemplateFieldsetEntity.class, forVariable(variable), INITS);
@@ -49,7 +55,7 @@ public class QContentTemplateFieldsetEntity extends EntityPathBase<ContentTempla
     public QContentTemplateFieldsetEntity(Class<? extends ContentTemplateFieldsetEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
         this.contentTemplate = inits.isInitialized("contentTemplate") ? new QContentTemplateEntity(forProperty("contentTemplate"), inits.get("contentTemplate")) : null;
-        this.fieldset = inits.isInitialized("fieldset") ? new QFieldsetEntity(forProperty("fieldset")) : null;
+        this.fieldset = inits.isInitialized("fieldset") ? new QFieldsetEntity(forProperty("fieldset"), inits.get("fieldset")) : null;
     }
 
 }

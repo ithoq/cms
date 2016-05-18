@@ -1,10 +1,12 @@
 package be.ttime.core.persistence.model;
 
+import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "content_template_fieldset")
@@ -17,17 +19,25 @@ public class ContentTemplateFieldsetEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Access(AccessType.PROPERTY)
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
-    private long id;
+    @Expose private long id;
 
     @Column(nullable = false)
-    private String namespace;
+    @Expose private String namespace;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @Column(nullable = false)
+    @Expose private int position;
+
+    @Column(nullable = false)
+    @Expose private String name;
+
+    @ManyToOne
     @JoinColumn(name = "page_template_id")
     private ContentTemplateEntity contentTemplate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "fieldset_id")
-    private FieldsetEntity fieldset;
+    @Expose private FieldsetEntity fieldset;
 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "contentTemplateFieldsetEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Expose private List<InputDataEntity> dataEntities;
 }

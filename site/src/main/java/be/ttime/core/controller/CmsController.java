@@ -54,13 +54,13 @@ public class CmsController {
             model.put("dataArray", pageData.getDataArray());
         }
 
-        BlockEntity master = blockService.findByNameAndBlockType("master", CmsUtils.BLOCKTYPE_SYSTEM);
+        BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCKTYPE_SYSTEM);
 
         model.put("attr", CmsUtils.getAttributes(request));
         model.put("get", CmsUtils.getParameters(request));
         model.put("csrf", CmsUtils.getCsrfInput(request));
         model.put("title", content.getSeoTitle());
-        model.put("main", pebbleUtils.parseBlock(content.getPage().getPageTemplate().getPageBlock(), model));
+        model.put("main", pebbleUtils.parseBlock(content.getPage().getPageTemplate().getBlock(), model));
         return pebbleUtils.parseBlock(master, model);
     }
   

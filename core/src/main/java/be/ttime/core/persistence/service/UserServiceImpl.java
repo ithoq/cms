@@ -6,7 +6,6 @@ import be.ttime.core.persistence.dto.UserDto;
 import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.repository.*;
 import be.ttime.core.util.CmsUtils;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;

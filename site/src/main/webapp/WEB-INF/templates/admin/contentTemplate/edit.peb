@@ -1,0 +1,129 @@
+{% extends 'admin/master' %}
+{% set activeNav = 'cms' %}
+{% set title = message('admin.editFielset') %}
+
+{% block head %}
+    <script src="/resources/admin/libs/mustache/mustache.min.js" type="text/javascript"></script>
+    <script src="/resources/admin/libs/ace/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+{% endblock head %}
+
+{% block content %}
+    {{ csrf | raw }}
+    <h4>Nouveau template</h4>
+    <hr class="section">
+
+    <input type="hidden" id="template-id" value="{{ contentTemplate.id }}">
+    <div class="form-group form-group-default input-group noBorder">
+        <label class="inline">Active</label>
+        <span class="input-group-addon bg-transparent">
+          <div class="fc-switch typeButton">
+            <input id="active" type="checkbox" value="1" {% if contentTemplate is null or contentTemplate.active %}checked{% endif %}>
+            <label for="active" data-off="No" data-on="Yes"></label>
+          </div>
+        </span>
+    </div>
+    <div class="form-group form-group-default m-b-20 required">
+        <label>Nom </label>
+        <input id="templateName" type="text" name="templateName" value="{{ contentTemplate.name }}" class="form-control">
+    </div>
+    <div class="inputs-container">
+        <input type="hidden" id="fieldsets" value="0"/>
+        <button id="addBtnInputs" type="button" name="addBtnInputs" class="btn btn-success addBtnInputs">Ajouter des inputs</button>
+        <div class="row">
+            <div class="col-sm-4">
+                <ul id="inputUl" class="inputUl">
+                    {% for input in inputs %}
+
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-sm-8">
+                <div id="inputContent" class="inputContent"></div>
+            </div>
+        </div>
+    </div>
+    <hr class="section">
+    <div class="row">
+        <div class="col-sm-6">
+            <button type="button" data-dismiss="modal" class="btn btn-danger btn-block m-t-5">Annuler</button>
+        </div>
+        <div class="col-sm-6">
+            <input id="submitBtn" type="submit" value="Enregister" class="btn btn-success btn-block m-t-5" />
+        </div>
+    </div>
+
+{% endblock content %}
+{% block bottom %}
+    {% verbatim %}
+    <script type="text/template" id="inputsTemplate">
+      <div class="tab-pane{{cssClass}}" id="{{counter}}">
+        <div class="row column-seperation">
+          <div class="col-md-12">
+            <div class="form-group-attached  m-t-20">
+              <div class="row clearfix">
+                <div class="col-sm-6">
+                  <div class="form-group form-group-default input-group noBorder">
+                    <label class="inline">Array</label>
+                    <input type="hidden" class="inputDefId" value="{{inputDefId}}">
+                    <input type="hidden" class="inputDataId" value="{{data.id}}">
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group form-group-default required" aria-required="true">
+                    <label>Validation</label>
+                    <input type="text" name="validation" value="{{data.validation}}" class="form-control input-valid" required="" aria-required="true">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group form-group-default required" aria-required="true">
+                    <label>title</label>
+                    <input type="text" name="title" value="{{data.title}}" class="form-control input-title" required="" aria-required="true">
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group form-group-default required" aria-required="true">
+                    <label>hint</label>
+                    <input type="text" name="hint" value="{{data.hint}}" class="form-control input-hint" required="" aria-required="true">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+    <script type="text/template" id="templateView">
+      <div id="input-{{counter}}" class="input-div" style="{{style}}">
+        <input class="fieldset-id" type="hidden" value="{{fieldsetId}}">
+        <input class="templateFieldsetId" type="hidden" value="{{templateFieldsetId}}">
+        <input type="text" data-id={{counter}} id="name-{{counter}}" class="js-input-name light-input page-title" name="name" value="{{name}}" required="" aria-required="true">
+        <div class="form-group form-group-default m-b-20 required">
+          <label>Namespace</label>
+          <input type="text" id="np-{{counter}}" name="name" value="{{np}}" class="form-control fieldset-np"/>
+        </div>
+        <div class="panel panel-transparent">
+          <ul class="nav nav-tabs nav-tabs-linetriangle" id="inputsTab" data-init-reponsive-tabs="dropdownfx">
+           {{{renderedLi}}}
+          </ul>
+          <div class="tab-content">
+            {{{renderedInputs}}}
+          </div>
+        </div>
+      </div>
+    </script>
+    {% endverbatim %}
+
+    {%  if jsonFields is not empty %}
+        <script>
+            var placeholder = 'select a fieldset';
+            var fieldsetDef = {{ jsonFields | raw }};
+            {%  if fieldsetData is not null %}
+                var fieldsetData = {{ fieldsetData | raw }};
+            {% endif %}
+
+        </script>
+    {% endif %}
+    <script src="/resources/admin/js/page/template.js"></script>
+{% endblock bottom %}

@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface IBlockService {
 
-    BlockEntity find(Long id);
+    BlockEntity find(String name);
 
     List<BlockEntity> findAll();
 
-    void delete(Long id) throws Exception;
+    void delete(String name) throws Exception;
 
-    String render(Long id) throws Exception;
+    String render(String name) throws Exception;
 
     BlockEntity save(BlockEntity block);
 

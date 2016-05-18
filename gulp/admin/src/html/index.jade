@@ -77,62 +77,110 @@ html
                       button.btn.btn-danger.btn-block(type='button', data-dismiss='modal') Cancel
 
         include shared/breadcrumb.jade
-        .container-fluid.container-fixed-lg
+        .container-fluid.container-fixed-lg.expanded
           .row
-            .col-sm-3
-              .panel.panel-default.panel-tree
-                .panel-heading
-                  .panel-title 
-                    span Tree
-                    span.label.label-info#matches
-                    button#btnCreatePage.btn.btn-success.m-t-5.pull-right(type='button')
-                      i.fa.fa-plus-circle
-                    hr.section
-                  .tree-search
-                    .tree-search-btn-reset       
-                      button.btn.btn-default#btnResetSearch X    
-                    .tree-search-input                    
-                      input(placeholder="search")#searchTree.light-input
-  
-                .panel-body
-                  #tree
-                    ul#treeData(style='display: none;')
-                      li(title='Look, a tool tip!', id="1")
-                        | Accueil 1
-                      li(id="2")
-                        | Contact 2
-                      li.folder(id="3")
-                        | Contenu 3
-                        ul
-                          li(id='4')
-                            | Assurance personnelle 4
-                            ul
-                              li(id='5')
-                                | maladie 5
-                              li(id='6')
-                                | décès 6
-                          li(id='8')
-                            | Assurance entreprise 8
-                            ul
-                              li(id='9')
-                                | accident 9
-                              li(id='10')
-                                | auto 10
-                      li(id='11')
-                        | Qui somme nous 11
-                        ul
-                          li(id='12')
-                            | Notre boite 12
-                            ul
-                              li(id='13')
-                                | Nos partenaires 13
-                              li(id='14')
-                                | Nos amis 14
+          .tree-container
+            .panel.panel-default.panel-tree
+              .panel-heading
+                .panel-title 
+                  span Tree
+                  span.label.label-info#matches
+                  button#btnCreatePage.btn.btn-success.m-t-5.pull-right(type='button')
+                    i.fa.fa-plus-circle
+                  hr.section
+                .tree-search
+                  .tree-search-btn-reset       
+                    button.btn.btn-default#btnResetSearch X    
+                  .tree-search-input                    
+                    input(placeholder="search")#searchTree.light-input
 
-            .col-sm-9#pageContentContainer
-              form(role='form')
-                .panel.panel-transparent
-                  ul#tab-3.nav.nav-tabs.nav-tabs-simple.nav-tabs-right.bg-white
+              .panel-body
+                #tree
+                  ul#treeData(style='display: none;')
+                    li(title='Look, a tool tip!', id="1")
+                      | Accueil 1
+                    li(id="2")
+                      | Contact 2
+                    li.folder(id="3")
+                      | Contenu 3
+                      ul
+                        li(id='4')
+                          | Assurance personnelle 4
+                          ul
+                            li(id='5')
+                              | maladie 5
+                            li(id='6')
+                              | décès 6
+                        li(id='8')
+                          | Assurance entreprise 8
+                          ul
+                            li(id='9')
+                              | accident 9
+                            li(id='10')
+                              | auto 10
+                    li(id='11')
+                      | Qui somme nous 11
+                      ul
+                        li(id='12')
+                          | Notre boite 12
+                          ul
+                            li(id='13')
+                              | Nos partenaires 13
+                            li(id='14')
+                              | Nos amis 14
+
+          #pageContentContainer.pageContentContainer
+            form(role='form')
+              .panel.panel-default
+                .button#btn-expand.btn.btn-expand
+                  i.fa.fa-expand(aria-hidden='true')
+                .panel-body  
+                  .operation-box
+                    button.btn.btn-default.btn-delete(type='button', data-toggle='modal', data-target='#modalSlideLeft')
+                      i.fa.fa-trash-o
+                    button#submitForm.btn.btn-default.btn-add(type='button', onclick='uploadForm()')
+                      i.fa.fa-save
+                  span.thumbnail-wrapper.d100.circular.inline.m-t-5 template
+                  .panel-page-title
+                    input.light-input.page-title(type="text", value="Nom de la page")
+                    .title-page-sub
+                      .checkbox.check-success.checkbox-circle.menuEnabled
+                        input#checkbox8(type='checkbox', value='1')
+                        label(for='checkbox8') Menu 
+                          i.fa.fa-info-circle(data-placement='bottom', title='', data-toggle='tooltip', type='button', data-original-title='Affiche la page dans le menu')
+                      .language-container
+                        h6.enabledLanguageTitle Enabled language
+                        #languageWrap.languageWrap
+                          ul
+                            li
+                              .checkbox.check-success.checkbox-circle.languageEnable
+                                input#checkbox10(type='checkbox', value='1', name='enableLanguage')
+                                label(for='checkbox10')
+                                  img.img-flag(src="/images/country-flags/en.png")
+                                  a(href='#en') EN
+
+                            li 
+                              .checkbox.check-success.checkbox-circle.languageEnable
+                                input#checkbox11(type='checkbox', value='1', name='enableLanguage')
+                                label(for='checkbox11') 
+                                  img.img-flag(src="/images/country-flags/fr.png")
+                                  a(href='#fr') FR
+
+              .panel.panel-default
+                .lang-selector
+                  .select-country
+                    select#selectLanguage
+                      option#en(value='en') EN
+                      option#fr(value='fr') FR
+                      option#de(value='de') DE
+                      option#es(value='es') ES
+                  .checkbox.check-success
+                    input#checkbox2(type='checkbox', checked='checked', value='1')
+                    label(for='checkbox2') Active
+
+
+                .panel-body
+                  ul#tab-3.nav.nav-tabs.nav-tabs-linetriangle.bg-white
                     li.active
                       a(data-toggle='tab', href='#tabGeneral') Général
                     li
@@ -142,46 +190,6 @@ html
                     li
                       a(data-toggle='tab', href='#tabSeo') SEO
                   .tab-content.bg-white
-                    .panel-heading.clearfix
-                      .select-country
-                        select#selectLanguage
-                          option#en(value='en') EN
-                          option#fr(value='fr') FR
-                          option#de(value='de') DE
-                          option#es(value='es') ES
-  
-                      .operation-box
-                        button.btn.btn-default.btn-delete(type='button', data-toggle='modal', data-target='#modalSlideLeft')
-                          i.fa.fa-trash-o
-                        button#submitForm.btn.btn-default.btn-add(type='button', onclick='uploadForm()')
-                          i.fa.fa-save
-                      span.thumbnail-wrapper.d100.circular.inline.m-t-5 template
-                      .panel-page-title
-                        input.light-input.page-title(type="text", value="Nom de la page")
-                        .title-page-sub
-                          .checkbox.check-success.checkbox-circle.menuEnabled
-                            input#checkbox8(type='checkbox', value='1')
-                            label(for='checkbox8') Menu 
-                              i.fa.fa-info-circle(data-placement='bottom', title='', data-toggle='tooltip', type='button', data-original-title='Affiche la page dans le menu')
-                          .language-container
-                            h6.enabledLanguageTitle Enabled language
-                            #languageWrap.languageWrap
-                              ul
-                                li
-                                  .checkbox.check-success.checkbox-circle.languageEnable
-                                    input#checkbox10(type='checkbox', value='1', name='enableLanguage')
-                                    label(for='checkbox10')
-                                      img.img-flag(src="/images/country-flags/en.png")
-                                      a(href='#en') EN
-
-                                li 
-                                  .checkbox.check-success.checkbox-circle.languageEnable
-                                    input#checkbox11(type='checkbox', value='1', name='enableLanguage')
-                                    label(for='checkbox11') 
-                                      img.img-flag(src="/images/country-flags/fr.png")
-                                      a(href='#fr') FR
-
-                    hr.section
 
                     #tabGeneral.tab-pane.active
                       .form-group.form-group-default.required

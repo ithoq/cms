@@ -19,11 +19,9 @@ html
                   h4
                     | Créer un nouveau fieldset
                   hr.section
-                .modal-body.modalScroll          
-                  .container-fieldset
-                    form(id="fieldsetForm", action='valider')
-                      h5.fieldsetTitle
-                        | Fieldset :
+                .modal-body.modalScroll    
+                  form(id="fieldsetForm", action='valider')      
+                    .container-fieldset
                       .form-group.form-group-default.m-b-20.required
                         label Nom 
                         input#fieldsetName.form-control(type='text', name='name', value='')
@@ -38,24 +36,26 @@ html
                             ul#inputsAddContainer.inputsAddContainer
                           .col-sm-8
                             #inputsEditContainer.inputsEditContainer
-                  hr.section
-                  .container-fieldset
-                    h5.blockTitle
-                      | Block :
-                    form(role='form')
-                        .form-group.form-group-default.m-b-20.required
-                          label Nom du block
-                          input#blockName.form-control(type='text')
-                        .form-group.form-group-default.m-b-20.required
-                          label Content
-                          input#blockContent.form-control(type='text')
+                    hr.section
+                    .container-fieldset
+                      h5.blockTitle
+                        | Block :
+                      form(role='form')
+                          .form-group.form-group-default.m-b-20.required
+                            label Id du block
+                            input#blockId.form-control(type='text')
+                          .form-group.form-group-default.m-b-20.required
+                            label Nom du block
+                            input#blockName.form-control(type='text')
+                          .form-group.form-group-default.m-b-20.required
+                            label Content
+                            input#blockContent.form-control(type='text')
                   .row
                     .col-sm-6
                       button.btn.btn-danger.btn-block.m-t-5(type='button', data-dismiss='modal') Annuler   
                     .col-sm-6
                       button#submit.btn.btn-success.btn-block.m-t-5(type='button') Enregister  
 
-          
         include shared/breadcrumb.jade
         .container-fluid.container-fixed-lg
           .row

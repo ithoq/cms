@@ -107,36 +107,35 @@
 
 {% block content %}
 
-    <div class="row">
-        <div class="col-sm-3">
-            <div class="panel panel-default panel-tree">
-                <div class="panel-heading">
-                    <div class="panel-title"><span>{{ message('admin.tree') }}</span><span id="matches"
-                                                                                           class="label label-info"></span>
-                        <button id="btnCreatePage" type="button" class="btn btn-success m-t-5 pull-right"><i
-                                    class="fa fa-plus-circle"></i></button>
-                        <hr class="section">
-                    </div>
-                    <div class="tree-search">
-                        <div class="tree-search-btn-reset">
-                            <button id="btnResetSearch" class="btn btn-default">X</button>
-                        </div>
-                        <div class="tree-search-input">
-                            <input placeholder="search" id="searchTree" class="light-input">
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div id="tree">
 
+    <div class="tree-container">
+        <div class="panel panel-default panel-tree">
+            <div class="panel-heading">
+                <div class="panel-title"><span>{{ message('admin.tree') }}</span><span id="matches"
+                                                                                       class="label label-info"></span>
+                    <button id="btnCreatePage" type="button" class="btn btn-success m-t-5 pull-right"><i
+                                class="fa fa-plus-circle"></i></button>
+                    <hr class="section">
+                </div>
+                <div class="tree-search">
+                    <div class="tree-search-btn-reset">
+                        <button id="btnResetSearch" class="btn btn-default">X</button>
+                    </div>
+                    <div class="tree-search-input">
+                        <input placeholder="search" id="searchTree" class="light-input">
                     </div>
                 </div>
             </div>
+            <div class="panel-body">
+                <div id="tree">
+
+                </div>
+            </div>
         </div>
-        <div id="pageContentContainer" class="col-sm-9">
-            <form role="form" id="pageForm" action="/admin/cms/edit/" enctype="multipart/form-data" method="post">
-            </form>
-        </div>
+    </div>
+    <div id="pageContentContainer" class="pageContentContainer">
+        <form role="form" id="pageForm" action="/admin/cms/edit/" enctype="multipart/form-data" method="post">
+        </form>
     </div>
 
 {% endblock content %}

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class ContentTemplateServiceImpl implements IPageTemplateService {
+public class ContentTemplateServiceImpl implements IContentTemplateService {
 
     @Autowired
     private IContentTemplateRepository contentTemplateRepository;
@@ -28,5 +28,10 @@ public class ContentTemplateServiceImpl implements IPageTemplateService {
     @Override
     public ContentTemplateEntity save(ContentTemplateEntity contentTemplate) {
         return contentTemplateRepository.save(contentTemplate);
+    }
+
+    @Override
+    public ContentTemplateEntity findWithFieldsetAndData(Long id) {
+        return contentTemplateRepository.findByIdWithFieldset(id);
     }
 }

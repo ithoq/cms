@@ -26,6 +26,6 @@ public class CustomLoginAuthenticationEntryPoint extends LoginUrlAuthenticationE
                                                      AuthenticationException exception) {
         String test = "testest";
         String test2 = request.getRequestURI();
-                     return "/login23";
+                     return "/login";
     }
 }

@@ -5,6 +5,7 @@ import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.model.PageEntity;
 import be.ttime.core.persistence.repository.IContentRepository;
 import be.ttime.core.persistence.repository.IPageRepository;
+import be.ttime.core.persistence.repository.ITagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ public class PageServiceImpl implements IPageService {
     private IPageRepository pageRepository;
     @Autowired
     private IContentRepository contentRepository;
+    private ITagRepository tagRepository;
 
     @Override
 

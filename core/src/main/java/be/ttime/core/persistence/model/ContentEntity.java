@@ -3,10 +3,8 @@ package be.ttime.core.persistence.model;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +36,6 @@ public class ContentEntity {
     private String seoH1;
 
     @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<FileEntity> pageFiles;
     @ManyToOne
     private PageEntity page;

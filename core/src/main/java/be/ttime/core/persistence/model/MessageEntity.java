@@ -4,7 +4,6 @@ package be.ttime.core.persistence.model;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.List;
@@ -26,8 +25,7 @@ public class MessageEntity {
     @Column(nullable = false, unique = true)
     private String messageKey;
     private String domain;
-    @OneToMany(mappedBy = "message", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToMany(mappedBy = "message", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MessageTranslationsEntity> translations;
 
     public MessageEntity() {

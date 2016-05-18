@@ -1,0 +1,106 @@
+{% extends 'admin/master' %}
+{% set activeNav = 'cms' %}
+{% set title = message('admin.editFielset') %}
+
+{% block head %}
+    <script src="/resources/admin/libs/mustache/mustache.min.js" type="text/javascript"></script>
+    <script src="/resources/admin/libs/ace/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+{% endblock head %}
+
+{% block content %}
+
+    <h4>Créer un nouveau fieldset</h4>
+    <hr class="section">
+    <form id="fieldsetForm" action="" method="POST">
+        {{ csrf | raw }}
+        <h5 class="fieldsetTitle">Fieldset :</h5>
+        <div class="form-group form-group-default m-b-20 required">
+            <label>Nom </label>
+            <input id="fieldsetName" type="text" name="fieldsetName" value="{{ fieldset.name }}" class="form-control">
+        </div>
+        <div class="form-group form-group-default m-b-20 required">
+            <label>Description</label>
+            <textarea id="fieldsetDescription" type="text" name="fieldsetDescription" rows="5" class="form-control">{{ fieldset.description }}</textarea>
+        </div>
+        <div class="inputs-container">
+            <button id="addBtnInputs" type="button" name="addBtnInputs" class="btn btn-success addBtnInputs">Ajouter des inputs</button>
+            <div class="row">
+                <div class="col-sm-4">
+                    <ul id="inputUl" class="inputUl">
+                        {% for input in inputs %}
+
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-sm-8">
+                    <div id="inputContent" class="inputContent"></div>
+                </div>
+            </div>
+        </div>
+        <hr class="section">
+        <h5 class="blockTitle">Block :</h5>
+        <div class="form-group form-group-default m-b-20 required">
+            <label>Id du block</label>
+            <input id="blockName" name="blockName" type="text" class="form-control" value="{{ fieldset.blockEntity.name }}">
+        </div>
+        <div class="form-group form-group-default m-b-20 required">
+            <label>Nom du block</label>
+            <input id="blockDisplayName" name="blockDisplayName" type="text" class="form-control" value="{{ fieldset.blockEntity.displayName }}">
+        </div>
+        <div class="form-group form-group-default m-b-20 required">
+            <label>Content</label>
+            <div class="ace-editor-container">
+                <div id="ace-editor">{{ fieldset.blockEntity.content }}</div>
+            </div>
+            <input type="hidden" id="editor" name="blockContent">
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <button type="button" data-dismiss="modal" class="btn btn-danger btn-block m-t-5">Annuler</button>
+            </div>
+            <div class="col-sm-6">
+                <input id="submitBtn" type="submit" value="Enregister" class="btn btn-success btn-block m-t-5">
+            </div>
+        </div>
+    </form>
+
+{% endblock content %}
+{% block bottom %}
+    {% verbatim %}
+<script type="text/template" id="inputsTemplate">
+    <div id="input-{{counter}}" class="input-div" style="{{style}}">
+        <input type="hidden" name="order">
+        <input type="hidden" name="inputDataId" value="{{id}}">
+        <input type="text" data-id={{counter}} id="name-{{counter}}" class="js-input-name light-input page-title" name="inputsName" value="{{name}}" required="" aria-required="true">
+        <div class="form-group-attached  m-t-20">
+            <div class="row clearfix">
+                <div class="col-sm-6">
+                    <div class="form-group form-group-default input-group noBorder">
+                        <label class="inline">Array</label>
+                        <span class="input-group-addon bg-transparent">
+                            <div class="fc-switch typeButton">
+                              <input id='checkbox-hidden-{{counter}}' type='hidden' value='off' name='inputsArray'>
+                              <input id="checkbox-{{counter}}" type="checkbox" class="checkbox-array" data-id="{{counter}}" name="inputsArray" {{#array}}checked{{/array}}/>
+                              <label for="checkbox-{{counter}}" data-off="No" data-on="Yes"></label>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group form-group-default required" aria-required="true">
+                        <label>Validation</label>
+                        <input type="text" name="inputsValidation" value="{{validation}}" class="form-control" aria-required="true">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+    {% endverbatim %}
+    {%  if inputsJson is not empty %}
+    <script>
+        var inputs = {{ inputsJson | raw }}
+    </script>
+    {% endif %}
+    <script src="/resources/admin/js/page/fieldset.js"></script>
+{% endblock bottom %}

@@ -1,15 +1,15 @@
 package be.ttime.core.persistence.model;
 
+import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
-@Table(name = "page_template")
+@Table(name = "content_template")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id", "name", "active"})
@@ -19,19 +19,24 @@ public class ContentTemplateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Access(AccessType.PROPERTY)
     @Column(columnDefinition = "SMALLINT(11) UNSIGNED")
+    @Expose
     private long id;
     @Column(nullable = false)
-    private String name;
+    @Expose private String name;
+    @Expose private String description;
     @Lob
     private String fields;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean active;
     @OneToMany(mappedBy = "pageTemplate")
     private List<PageEntity> pageEntities;
-    @ManyToOne
-    private BlockEntity pageBlock;
 
-    @OneToMany(mappedBy = "contentTemplate")
-    private Set<ContentTemplateFieldsetEntity> contentTemplateFieldset;
+    @OneToOne(targetEntity = BlockEntity.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private BlockEntity block;
+
+    @OneToMany(mappedBy = "contentTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Expose
+    private List<ContentTemplateFieldsetEntity> contentTemplateFieldset;
+
 
 }

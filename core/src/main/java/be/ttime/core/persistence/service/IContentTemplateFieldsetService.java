@@ -8,4 +8,5 @@ import java.util.List;
 public interface IContentTemplateFieldsetService {
     List<ContentTemplateFieldsetEntity> save(List<ContentTemplateFieldsetEntity> list);
     ContentTemplateFieldsetEntity save(ContentTemplateFieldsetEntity ctf);
+    ContentTemplateFieldsetEntity find(Long id);
 }

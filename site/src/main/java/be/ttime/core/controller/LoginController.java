@@ -33,8 +33,8 @@ public class LoginController {
     @ResponseBody
     public String home(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 
-        BlockEntity master = blockService.findByNameAndBlockType("master", CmsUtils.BLOCKTYPE_SYSTEM);
-        BlockEntity login = blockService.findByNameAndBlockType("login", CmsUtils.BLOCKTYPE_SYSTEM);
+        BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCKTYPE_SYSTEM);
+        BlockEntity login = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_LOGIN, CmsUtils.BLOCKTYPE_SYSTEM);
 
         model.put("attr", CmsUtils.getAttributes(request));
         model.put("get", CmsUtils.getParameters(request));

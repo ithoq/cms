@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/modules/foo")
+
 public class FooController {
 
     @Autowired
