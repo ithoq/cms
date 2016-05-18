@@ -1,6 +1,6 @@
 package be.ttime.modules.foo.controller;
 
-import be.ttime.modules.foo.model.Foo;
+import be.ttime.core.persistence.model.Foo;
 import be.ttime.modules.foo.service.FooService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
