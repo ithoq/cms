@@ -44,8 +44,24 @@
         <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40"><img src="/resources/admin/img/logo-dark.png" alt="logo" data-src="/resources/admin/img/logo-dark.png" data-src-retina="/resources/admin/img/logo-dark-2x.png" width="78" height="22">
             <p class="p-t-35">Sign into your account</p>
             <!-- START Login Form-->
-            <form id="form-login" role="form" action="index.html" class="p-t-15">
+            <form id="form-login" role="form" action="/login" class="p-t-15" method="post">
                 <!-- START Form Control-->
+                {{ csrf | raw }}
+                <div class="message">
+                    <!-- use param.error assuming FormLoginConfigurer#failureUrl contains the query parameter error -->
+                    {% if get.error is not null %}
+                        <div>
+                            Failed to login.
+                            Reason: {{ session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION").message }}
+                        </div>
+                    {% endif %}
+                    <!-- the configured LogoutConfigurer#logoutSuccessUrl is /login?logout and contains the query param logout -->
+                    {% if get.logout is not null %}
+                        <div>
+                            You have been logged out.
+                        </div>
+                    {% endif %}
+                </div>
                 <div class="form-group form-group-default">
                     <label>Login</label>
                     <div class="controls">
@@ -64,7 +80,7 @@
                 <div class="row">
                     <div class="col-md-6 no-padding">
                         <div class="checkbox">
-                            <input id="checkbox1" type="checkbox" value="1">
+                            <input id="checkbox1" type="checkbox" value="1" name="remember-me">
                             <label for="checkbox1">Keep Me Signed in</label>
                         </div>
                     </div>

@@ -38,16 +38,13 @@ public class AddModelParamsInterceptor extends HandlerInterceptorAdapter {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         super.postHandle(request, response, handler, modelAndView);
 
-        boolean isRedirectView = modelAndView.getView() instanceof RedirectView;
-        boolean viewNameStartsWithRedirect = (modelAndView.getViewName() == null ? false : modelAndView.getViewName().startsWith(UrlBasedViewResolver.REDIRECT_URL_PREFIX));
+        // When we use @RequestBody, modelAndView == null
+        if(modelAndView != null) {
+            boolean isRedirectView = modelAndView.getView() instanceof RedirectView;
+            boolean viewNameStartsWithRedirect = (modelAndView.getViewName() == null ? false : modelAndView.getViewName().startsWith(UrlBasedViewResolver.REDIRECT_URL_PREFIX));
 
-        if (modelAndView.hasView() && !isRedirectView && !viewNameStartsWithRedirect) {
-
-            if (modelAndView != null) { // When we use @RequestBody, modelAndView == null
-                modelAndView.addObject("user", CmsUtils.getCurrentUser());
-                modelAndView.addObject("attr", CmsUtils.getAttributes(request));
-                modelAndView.addObject("get", CmsUtils.getParameters(request));
-                modelAndView.addObject("csrf", CmsUtils.getCsrfInput(request));
+            if (modelAndView.hasView() && !isRedirectView && !viewNameStartsWithRedirect) {
+                    CmsUtils.fillModelAndView(modelAndView, request);
             }
         }
     }

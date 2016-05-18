@@ -70,10 +70,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
+        /*
         http.csrf()
                 .ignoringAntMatchers("/plugin/**");
-
+        */
         http.authorizeRequests()
                 .antMatchers("/admin/login").permitAll()
                 .antMatchers("/admin/install").permitAll()
@@ -81,7 +81,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll()
             .and()
                 .formLogin()
-                .loginPage("/login")
+                //.loginPage("/login")
                 .defaultSuccessUrl("/")
                 .failureUrl("/login?error=true")
                 //.successHandler(authenticationSuccessHandler)
@@ -92,10 +92,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenRepository(tokenRepository)
                 .tokenValiditySeconds(15 * 24 * 60 * 60) // 15 days
             .and()
-                .exceptionHandling().authenticationEntryPoint(loginEntryPoint)
-            .and()
+                .exceptionHandling().authenticationEntryPoint(loginEntryPoint);
+            /*.and()
                 .logout().logoutSuccessHandler(logoutSuccessHandler);
-
+*/
 
         if(dataSourceUrl.contains(":h2")) {
             http.headers().frameOptions().disable();

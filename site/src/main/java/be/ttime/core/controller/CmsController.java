@@ -56,9 +56,9 @@ public class CmsController {
 
         BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCKTYPE_SYSTEM);
 
-        model.put("attr", CmsUtils.getAttributes(request));
-        model.put("get", CmsUtils.getParameters(request));
-        model.put("csrf", CmsUtils.getCsrfInput(request));
+
+        CmsUtils.fillModelMap(model,request);
+
         model.put("title", content.getSeoTitle());
         model.put("main", pebbleUtils.parseBlock(content.getPage().getPageTemplate().getBlock(), model));
         return pebbleUtils.parseBlock(master, model);

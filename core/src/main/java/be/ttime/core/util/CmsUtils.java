@@ -9,6 +9,8 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +41,22 @@ public class CmsUtils {
     public final static String BLOCK_PAGE_LOGIN = "PAGE_LOGIN";
     public final static String BLOCK_FIELD_TEXT = "FIELD_TEXT";
     public final static String BLOCK_FIELD_TINYMCE = "FIELD_TINYMCE";
+
+    public static void fillModelMap(ModelMap model, HttpServletRequest request){
+        model.put("attr", CmsUtils.getAttributes(request));
+        model.put("get", CmsUtils.getParameters(request));
+        model.put("csrf", CmsUtils.getCsrfInput(request));
+        model.put("session", request.getSession(false));
+        model.put("user", CmsUtils.getCurrentUser());
+    }
+
+    public static void fillModelAndView(ModelAndView model, HttpServletRequest request){
+        model.addObject("attr", CmsUtils.getAttributes(request));
+        model.addObject("get", CmsUtils.getParameters(request));
+        model.addObject("csrf", CmsUtils.getCsrfInput(request));
+        model.addObject("session", request.getSession(false));
+        model.addObject("user", CmsUtils.getCurrentUser());
+    }
 
     public static String getCsrfInput(HttpServletRequest request) {
         Object param = request.getAttribute("_csrf");

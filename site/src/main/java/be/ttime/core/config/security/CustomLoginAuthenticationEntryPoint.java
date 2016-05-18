@@ -24,8 +24,9 @@ public class CustomLoginAuthenticationEntryPoint extends LoginUrlAuthenticationE
     @Override
     protected String determineUrlToUseForThisRequest(HttpServletRequest request, HttpServletResponse response,
                                                      AuthenticationException exception) {
-        String test = "testest";
-        String test2 = request.getRequestURI();
-                     return "/login";
+
+        String test = request.getRequestURI();
+        boolean isAdmin = request.getRequestURI().startsWith("/admin/");
+        return isAdmin ? "/admin/login" : "/login";
     }
 }

@@ -36,19 +36,20 @@ public class LoginController {
         BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCKTYPE_SYSTEM);
         BlockEntity login = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_LOGIN, CmsUtils.BLOCKTYPE_SYSTEM);
 
-        model.put("attr", CmsUtils.getAttributes(request));
-        model.put("get", CmsUtils.getParameters(request));
-        model.put("csrf", CmsUtils.getCsrfInput(request));
-        model.put("session", request.getSession());
+        CmsUtils.fillModelMap(model,request);
+
         model.put("title", "login");
         model.put("main", pebbleUtils.parseBlock(login, model));
         response.setContentType("text/html");
-        return pebbleUtils.parseBlock(master, model);
+        String result = pebbleUtils.parseBlock(master, model);
+        return result;
 
     }
 
-    @RequestMapping(value = "/loginAdmin", method = RequestMethod.GET)
-    public String home(ModelMap model) {
+    @RequestMapping(value = "/admin/login", method = RequestMethod.GET)
+    public String home(ModelMap model, HttpServletRequest request)
+    {
+        CmsUtils.fillModelMap(model,request);
         return "admin/login";
     }
 
