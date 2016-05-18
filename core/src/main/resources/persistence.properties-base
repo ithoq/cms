@@ -1,6 +1,0 @@
-dataSource.driverClassName=com.p6spy.engine.spy.P6SpyDriver
-dataSource.url=jdbc:p6spy:mysql://localhost:3306/cognosco
-dataSource.username=root
-dataSource.password=root
-hibernate.dialect=org.hibernate.dialect.MySQLDialect
-hibernate.hbm2ddl.auto=update
