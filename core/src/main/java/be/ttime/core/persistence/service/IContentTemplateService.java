@@ -4,7 +4,7 @@ import be.ttime.core.persistence.model.ContentTemplateEntity;
 
 import java.util.List;
 
-public interface IPageTemplateService {
+public interface IContentTemplateService {
 
     List<ContentTemplateEntity> findAll();
 
