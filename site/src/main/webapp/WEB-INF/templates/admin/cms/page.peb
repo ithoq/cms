@@ -51,7 +51,7 @@
                 </select>
                 <div class="checkbox check-success">
                     <input id="contentActive" type="checkbox" checked="checked" value="{{ content.active }}">
-                    <label for="contentActive">message('active') </label>
+                    <label for="contentActive">{{ message('active') }}</label>
                 </div>
             </div>
         </div>

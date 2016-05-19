@@ -24,7 +24,7 @@ public class AddModelParamsInterceptor extends HandlerInterceptorAdapter {
 
         boolean installationURL = false;
 
-        if(request.getMethod().equals("POST") && request.getRequestURI().equals("/admin/install")){
+        if(request.getRequestURI().equals("/admin/install")){
             installationURL = true;
         }
         if(!applicationService.getApplicationConfig().isAlreadyInstall() && !installationURL) {

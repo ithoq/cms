@@ -1,7 +1,6 @@
 package be.ttime.core.error;
 
 import be.ttime.core.persistence.service.IApplicationService;
-import be.ttime.core.util.CmsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailAuthenticationException;
@@ -13,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
 
 /**
  * General error handler for the application.
@@ -76,7 +74,7 @@ class GlobalExceptionController {
     @ExceptionHandler({CmsNotInstalledException.class})
     public String notInstalled(HttpServletResponse response, HttpServletRequest request, Model model){
 
-        try {
+      /*  try {
             Locale[] locales = Arrays.copyOfRange(Locale.getAvailableLocales(), 1, Locale.getAvailableLocales().length);
             Arrays.sort(locales, (l1, l2) -> l1.getDisplayName().compareTo(l2.getDisplayName()));
 
@@ -95,8 +93,8 @@ class GlobalExceptionController {
         }
         catch(Exception e){
             log.error(e.toString());
-        }
-        return "install";
+        }*/
+        return "redirect:/admin/install";
     }
 
     @ExceptionHandler({ResourceNotFoundException.class})

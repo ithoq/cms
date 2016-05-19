@@ -5,14 +5,17 @@ import be.ttime.core.persistence.model.ApplicationConfigEntity;
 import be.ttime.core.persistence.model.ApplicationLanguageEntity;
 import be.ttime.core.persistence.model.RoleEntity;
 import be.ttime.core.persistence.model.UserEntity;
-import be.ttime.core.persistence.service.*;
+import be.ttime.core.persistence.service.IApplicationService;
+import be.ttime.core.persistence.service.IRoleService;
+import be.ttime.core.persistence.service.IUserService;
+import be.ttime.core.util.CmsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -32,8 +35,27 @@ public class InstallController {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private  Map<String, ApplicationLanguageEntity> langMap;
 
+    @RequestMapping(value = "/admin/install", method = RequestMethod.GET)
+    public String installForm(ModelMap model, HttpServletRequest request){
+        Locale[] locales = Arrays.copyOfRange(Locale.getAvailableLocales(), 1, Locale.getAvailableLocales().length);
+        Arrays.sort(locales, (l1, l2) -> l1.getDisplayName().compareTo(l2.getDisplayName()));
+
+        List<Locale> result = new ArrayList<>();
+
+        // remove special locale
+        for (Locale locale : locales) {
+            if(locale.toString().length() <= 5){
+                result.add(locale);
+            }
+        }
+
+        model.addAttribute("locales", result);
+        model.addAttribute("csrf", CmsUtils.getCsrfInput(request));
+        model.addAttribute("adminLocales", applicationService.getAdminlanguages());
+        return "install";
+    }
+
     @RequestMapping(value = "/admin/install", method = RequestMethod.POST)
-    @ResponseBody
     public String install(@Valid InstallCmsForm form, BindingResult result, HttpServletRequest request) throws Exception {
 
         if(applicationService.getApplicationConfig().isAlreadyInstall()){
@@ -95,7 +117,7 @@ public class InstallController {
 
         userService.save(user);
 
-        return "installation";
+        return "redirect:/admin";
     }
 
     private ApplicationLanguageEntity publicLanguage(String locale){
