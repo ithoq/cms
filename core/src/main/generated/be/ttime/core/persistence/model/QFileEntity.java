@@ -22,13 +22,19 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
 
     public static final QFileEntity fileEntity = new QFileEntity("fileEntity");
 
-    public final QContentEntity content;
+    public final QContentDataEntity contentFile;
+
+    public final QContentDataEntity contentImage;
 
     public final StringPath description = createString("description");
+
+    public final BooleanPath directory = createBoolean("directory");
 
     public final BooleanPath enabled = createBoolean("enabled");
 
     public final StringPath extension = createString("extension");
+
+    public final QFileEntity fileParent;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -41,6 +47,8 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
     public final StringPath serverName = createString("serverName");
 
     public final NumberPath<Long> size = createNumber("size", Long.class);
+
+    public final ListPath<FileEntity, QFileEntity> taxonomyChildren = this.<FileEntity, QFileEntity>createList("taxonomyChildren", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
 
     public final DatePath<java.util.Date> uploadDate = createDate("uploadDate", java.util.Date.class);
 
@@ -62,7 +70,9 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
 
     public QFileEntity(Class<? extends FileEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.content = inits.isInitialized("content") ? new QContentEntity(forProperty("content"), inits.get("content")) : null;
+        this.contentFile = inits.isInitialized("contentFile") ? new QContentDataEntity(forProperty("contentFile"), inits.get("contentFile")) : null;
+        this.contentImage = inits.isInitialized("contentImage") ? new QContentDataEntity(forProperty("contentImage"), inits.get("contentImage")) : null;
+        this.fileParent = inits.isInitialized("fileParent") ? new QFileEntity(forProperty("fileParent"), inits.get("fileParent")) : null;
     }
 
 }

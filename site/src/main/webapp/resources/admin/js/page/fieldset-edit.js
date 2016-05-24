@@ -21,7 +21,19 @@ $(function () {
 
     var template = document.getElementById('inputsTemplate').innerHTML;
     var html = Mustache.render(template, input);
+
     $inputContent.append(html);
+
+    /*
+    if(input.type) {
+
+      var $select = $(".input-div[data-id=" + input.id + "]").find(".typeSelect");
+      $select.val(input.type);
+
+    }*/
+
+
+
   }
 
   function getInput(id) {
@@ -83,7 +95,6 @@ $(function () {
       if ($validation.val().trim() === '') {
         $validation.val('null');
       }
-
     });
 
     var checkbox = $('.checkbox-array').each(function () {

@@ -2,7 +2,6 @@ package be.ttime.core.persistence.model;
 
 import be.ttime.core.persistence.converter.UserGenderConverter;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,10 +34,12 @@ public class UserEntity implements UserDetails {
     private String userTitle;
     @Column(unique = true, nullable = false)
     private String email;
-    private String street;
+    private String street1;
+    private String street2;
+    private String street3;
     private String city;
     private String zip;
-    private String state;
+    private String countyCode;
     private String countryName;
     private String comment;
     @Temporal(TemporalType.DATE)
@@ -59,10 +60,13 @@ public class UserEntity implements UserDetails {
     private boolean accountNonLocked = true;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean credentialsNonExpired = true;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserCustomEntity> dictionaryList;
+    @ManyToOne
+    private CompanyEntity company;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Collection<RoleEntity> roles;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getGrantedAuthorities(getPrivileges(roles));

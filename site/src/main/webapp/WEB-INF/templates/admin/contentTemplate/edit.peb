@@ -43,6 +43,22 @@
         </div>
     </div>
     <hr class="section">
+    <h5 class="blockTitle">Block :</h5>
+    <div class="form-group form-group-default m-b-20 required">
+        <label>Id du block</label>
+        <input id="blockName" name="blockName" type="text" class="form-control" value="{{ contentTemplate.block.name }}">
+    </div>
+    <div class="form-group form-group-default m-b-20 required">
+        <label>Nom du block</label>
+        <input id="blockDisplayName" name="blockDisplayName" type="text" class="form-control" value="{{ contentTemplate.block.displayName }}">
+    </div>
+    <div class="form-group form-group-default m-b-20 required">
+        <label>Content</label>
+        <div class="ace-editor-container">
+            <div id="ace-editor">{{ contentTemplate.block.content }}</div>
+        </div>
+        <input type="hidden" id="editor" name="blockContent">
+    </div>
     <div class="row">
         <div class="col-sm-6">
             <button type="button" data-dismiss="modal" class="btn btn-danger btn-block m-t-5">Annuler</button>
@@ -61,11 +77,17 @@
           <div class="col-md-12">
             <div class="form-group-attached  m-t-20">
               <div class="row clearfix">
+                <input type="hidden" class="inputDefId" value="{{inputDefId}}">
+                <input type="hidden" class="inputDataId" value="{{data.id}}">
                 <div class="col-sm-6">
                   <div class="form-group form-group-default input-group noBorder">
                     <label class="inline">Array</label>
-                    <input type="hidden" class="inputDefId" value="{{inputDefId}}">
-                    <input type="hidden" class="inputDataId" value="{{data.id}}">
+                    <span class="input-group-addon bg-transparent">
+                        <div class="fc-switch typeButton">
+                          <input id="checkbox-{{counter}}" type="checkbox" class="checkbox-array" name="array" class="input-array" {{#data.array}}checked{{/data.array}}/>
+                          <label for="checkbox-{{counter}}" data-off="No" data-on="Yes"></label>
+                        </div>
+                    </span>
                   </div>
                 </div>
                 <div class="col-sm-6">
@@ -86,6 +108,12 @@
                   <div class="form-group form-group-default required" aria-required="true">
                     <label>hint</label>
                     <input type="text" name="hint" value="{{data.hint}}" class="form-control input-hint" required="" aria-required="true">
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group form-group-default required" aria-required="true">
+                    <label>Default value</label>
+                    <input type="text" name="defaultValue" value="{{data.defaultValue}}" class="form-control input-defaultValue" required="" aria-required="true">
                   </div>
                 </div>
               </div>

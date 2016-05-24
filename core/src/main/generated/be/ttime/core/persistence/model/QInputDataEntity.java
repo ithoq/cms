@@ -22,7 +22,11 @@ public class QInputDataEntity extends EntityPathBase<InputDataEntity> {
 
     public static final QInputDataEntity inputDataEntity = new QInputDataEntity("inputDataEntity");
 
+    public final BooleanPath array = createBoolean("array");
+
     public final QContentTemplateFieldsetEntity contentTemplateFieldsetEntity;
+
+    public final StringPath defaultValue = createString("defaultValue");
 
     public final QFieldsetEntity fieldset;
 

@@ -7,7 +7,7 @@ import be.ttime.core.persistence.model.BlockTypeEntity;
 import be.ttime.core.persistence.model.FieldsetEntity;
 import be.ttime.core.persistence.model.InputDefinitionEntity;
 import be.ttime.core.persistence.service.IBlockService;
-import be.ttime.core.persistence.service.IContentFieldService;
+import be.ttime.core.persistence.service.IFieldsetService;
 import be.ttime.core.util.CmsUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.List;
 public class AdminFieldsetController {
 
     @Autowired
-    private IContentFieldService contentFieldService;
+    private IFieldsetService fieldsetService;
     @Autowired
     private IBlockService blockService;
     private final static String VIEWPATH = "admin/fieldset/";
@@ -50,7 +51,7 @@ public class AdminFieldsetController {
     @RequestMapping(value= "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") Long id,ModelMap model) {
         if(id != null){
-            FieldsetEntity fieldset = contentFieldService.findFieldset(id);
+            FieldsetEntity fieldset = fieldsetService.findFieldset(id);
             if(fieldset == null){
                 throw new ResourceNotFoundException("FieldSet with id \" + id + \" not found!\"");
             }
@@ -64,16 +65,30 @@ public class AdminFieldsetController {
     }
 
 
-    @RequestMapping(value= "/test", method = RequestMethod.GET)
-    @ResponseBody
-    public String test(ModelMap model) {
-        return "Olalal hiho";
-    }
-
-
     @RequestMapping(value= "/edit", method = RequestMethod.POST)
     public String edit(ModelMap model, @Valid AdminFielsetForm form, BindingResult result) {
         return edit(null, model, form, result);
+    }
+
+    @RequestMapping(value = "/getJson", method = RequestMethod.GET)
+    @ResponseBody
+    public String getjson(HttpServletResponse response) {
+
+        return fieldsetService.jsonFieldset();
+    }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public void deleteFielset(@PathVariable("id") Long id, HttpServletResponse response) {
+
+        if (id == null) {
+            response.setStatus(500);
+        }
+        try {
+            fieldsetService.deleteFieldset(id);
+        } catch (Exception e) {
+            response.setStatus(500);
+        }
     }
 
     @RequestMapping(value= "/edit/{id}", method = RequestMethod.POST)
@@ -83,14 +98,18 @@ public class AdminFieldsetController {
         BlockEntity blockEntity;
         if(id == null) {
             fieldset = new FieldsetEntity();
-            blockEntity= new BlockEntity();
+            blockEntity = new BlockEntity();
         } else {
-            fieldset = contentFieldService.findFieldset(id);
+            fieldset = fieldsetService.findFieldset(id);
             if(fieldset == null){
                 throw new ResourceNotFoundException("FieldSet with id " + id + " not found!");
             }
             blockEntity = fieldset.getBlockEntity();
+            if(blockEntity == null) {
+                blockEntity = new BlockEntity();
+            }
         }
+
 
         List<InputDefinitionEntity> inputDefinitionEntityList = new ArrayList<>();
         for (int i = 0; i < form.getInputsName().length ; i++) {
@@ -118,7 +137,7 @@ public class AdminFieldsetController {
         fieldset.setName(form.getFieldsetName());
         fieldset.setInputs(inputDefinitionEntityList);
         fieldset.setBlockEntity(blockEntity);
-        fieldset = contentFieldService.saveFieldset(fieldset);
+        fieldset = fieldsetService.saveFieldset(fieldset);
 
 
         //return new RedirectView("/admin/fieldset/edit/" + fieldset.getId(), true, true , false);

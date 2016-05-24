@@ -18,6 +18,8 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
 
     private static final long serialVersionUID = -183829799L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QUserEntity userEntity = new QUserEntity("userEntity");
 
     public final BooleanPath accountNonExpired = createBoolean("accountNonExpired");
@@ -30,11 +32,17 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
 
     public final StringPath comment = createString("comment");
 
+    public final QCompanyEntity company;
+
     public final StringPath countryName = createString("countryName");
+
+    public final StringPath countyCode = createString("countyCode");
 
     public final DatePath<java.util.Date> createdDate = createDate("createdDate", java.util.Date.class);
 
     public final BooleanPath credentialsNonExpired = createBoolean("credentialsNonExpired");
+
+    public final ListPath<UserCustomEntity, QUserCustomEntity> dictionaryList = this.<UserCustomEntity, QUserCustomEntity>createList("dictionaryList", UserCustomEntity.class, QUserCustomEntity.class, PathInits.DIRECT2);
 
     public final StringPath email = createString("email");
 
@@ -54,9 +62,11 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
 
     public final CollectionPath<RoleEntity, QRoleEntity> roles = this.<RoleEntity, QRoleEntity>createCollection("roles", RoleEntity.class, QRoleEntity.class, PathInits.DIRECT2);
 
-    public final StringPath state = createString("state");
+    public final StringPath street1 = createString("street1");
 
-    public final StringPath street = createString("street");
+    public final StringPath street2 = createString("street2");
+
+    public final StringPath street3 = createString("street3");
 
     public final StringPath username = createString("username");
 
@@ -65,15 +75,24 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
     public final StringPath zip = createString("zip");
 
     public QUserEntity(String variable) {
-        super(UserEntity.class, forVariable(variable));
+        this(UserEntity.class, forVariable(variable), INITS);
     }
 
     public QUserEntity(Path<? extends UserEntity> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), path.getMetadata().isRoot() ? INITS : PathInits.DEFAULT);
     }
 
     public QUserEntity(PathMetadata<?> metadata) {
-        super(UserEntity.class, metadata);
+        this(metadata, metadata.isRoot() ? INITS : PathInits.DEFAULT);
+    }
+
+    public QUserEntity(PathMetadata<?> metadata, PathInits inits) {
+        this(UserEntity.class, metadata, inits);
+    }
+
+    public QUserEntity(Class<? extends UserEntity> type, PathMetadata<?> metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.company = inits.isInitialized("company") ? new QCompanyEntity(forProperty("company")) : null;
     }
 
 }

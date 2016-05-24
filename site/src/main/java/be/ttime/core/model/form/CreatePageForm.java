@@ -1,6 +1,5 @@
 package be.ttime.core.model.form;
 
-import be.ttime.core.persistence.model.PageEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -12,7 +11,7 @@ public class CreatePageForm {
     @NotEmpty
     private String name;
     private Long parentId = -1L;
-    private PageEntity.Type type;
+    private String type;
     private Long moduleId;
     private Long templateId;
     private String url;

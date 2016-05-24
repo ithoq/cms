@@ -1,11 +1,8 @@
 package be.ttime.core.controller;
 
-import be.ttime.core.persistence.model.ApplicationLanguageEntity;
-import be.ttime.core.persistence.model.MessageEntity;
-import be.ttime.core.persistence.model.MessageTranslationsEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IMessageService;
-import be.ttime.core.persistence.service.IPageService;
+import be.ttime.core.persistence.service.IContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -13,19 +10,15 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 @Controller
 public class TestController {
 
     @Autowired
-    private IPageService pageService;
+    private IContentService pageService;
 
     @Autowired
     private IApplicationService applicationService;

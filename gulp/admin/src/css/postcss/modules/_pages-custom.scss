@@ -72,3 +72,9 @@ mark
 {
     height: auto;
 }
+
+@media (max-width: 767px)
+.jumbotron, .container-fluid {
+    padding-left: 30px;
+    padding-right: 30px;
+}

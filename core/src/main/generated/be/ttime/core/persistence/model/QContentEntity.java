@@ -22,33 +22,39 @@ public class QContentEntity extends EntityPathBase<ContentEntity> {
 
     public static final QContentEntity contentEntity = new QContentEntity("contentEntity");
 
-    public final StringPath computedSlug = createString("computedSlug");
+    public final DatePath<java.util.Date> beginDate = createDate("beginDate", java.util.Date.class);
+
+    public final ListPath<ContentEntity, QContentEntity> contentChildren = this.<ContentEntity, QContentEntity>createList("contentChildren", ContentEntity.class, QContentEntity.class, PathInits.DIRECT2);
+
+    public final QContentEntity contentParent;
+
+    public final QContentTemplateEntity contentTemplate;
+
+    public final QContentTypeEntity contentType;
 
     public final DatePath<java.util.Date> createdDate = createDate("createdDate", java.util.Date.class);
 
-    public final StringPath data = createString("data");
+    public final ListPath<ContentDataEntity, QContentDataEntity> dataList = this.<ContentDataEntity, QContentDataEntity>createList("dataList", ContentDataEntity.class, QContentDataEntity.class, PathInits.DIRECT2);
+
+    public final ListPath<ContentDictionaryEntity, QContentDictionaryEntity> dictionaryList = this.<ContentDictionaryEntity, QContentDictionaryEntity>createList("dictionaryList", ContentDictionaryEntity.class, QContentDictionaryEntity.class, PathInits.DIRECT2);
+
+    public final BooleanPath enabled = createBoolean("enabled");
+
+    public final DatePath<java.util.Date> endDate = createDate("endDate", java.util.Date.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final QApplicationLanguageEntity language;
+    public final BooleanPath menuItem = createBoolean("menuItem");
 
     public final DatePath<java.util.Date> modifiedDate = createDate("modifiedDate", java.util.Date.class);
 
-    public final QPageEntity page;
+    public final StringPath name = createString("name");
 
-    public final ListPath<FileEntity, QFileEntity> pageFiles = this.<FileEntity, QFileEntity>createList("pageFiles", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
+    public final NumberPath<Integer> order = createNumber("order", Integer.class);
 
-    public final QResourceTypeEntity resourceType;
+    public final SetPath<PrivilegeEntity, QPrivilegeEntity> privileges = this.<PrivilegeEntity, QPrivilegeEntity>createSet("privileges", PrivilegeEntity.class, QPrivilegeEntity.class, PathInits.DIRECT2);
 
-    public final StringPath seoDescription = createString("seoDescription");
-
-    public final StringPath seoH1 = createString("seoH1");
-
-    public final StringPath seoTag = createString("seoTag");
-
-    public final StringPath seoTitle = createString("seoTitle");
-
-    public final StringPath slug = createString("slug");
+    public final ListPath<TaxonomyTermEntity, QTaxonomyTermEntity> taxonomyTermEntities = this.<TaxonomyTermEntity, QTaxonomyTermEntity>createList("taxonomyTermEntities", TaxonomyTermEntity.class, QTaxonomyTermEntity.class, PathInits.DIRECT2);
 
     public QContentEntity(String variable) {
         this(ContentEntity.class, forVariable(variable), INITS);
@@ -68,9 +74,9 @@ public class QContentEntity extends EntityPathBase<ContentEntity> {
 
     public QContentEntity(Class<? extends ContentEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.language = inits.isInitialized("language") ? new QApplicationLanguageEntity(forProperty("language")) : null;
-        this.page = inits.isInitialized("page") ? new QPageEntity(forProperty("page"), inits.get("page")) : null;
-        this.resourceType = inits.isInitialized("resourceType") ? new QResourceTypeEntity(forProperty("resourceType")) : null;
+        this.contentParent = inits.isInitialized("contentParent") ? new QContentEntity(forProperty("contentParent"), inits.get("contentParent")) : null;
+        this.contentTemplate = inits.isInitialized("contentTemplate") ? new QContentTemplateEntity(forProperty("contentTemplate"), inits.get("contentTemplate")) : null;
+        this.contentType = inits.isInitialized("contentType") ? new QContentTypeEntity(forProperty("contentType")) : null;
     }
 
 }

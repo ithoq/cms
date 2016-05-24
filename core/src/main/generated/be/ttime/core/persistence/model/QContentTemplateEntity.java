@@ -36,7 +36,7 @@ public class QContentTemplateEntity extends EntityPathBase<ContentTemplateEntity
 
     public final StringPath name = createString("name");
 
-    public final ListPath<PageEntity, QPageEntity> pageEntities = this.<PageEntity, QPageEntity>createList("pageEntities", PageEntity.class, QPageEntity.class, PathInits.DIRECT2);
+    public final ListPath<ContentEntity, QContentEntity> pageEntities = this.<ContentEntity, QContentEntity>createList("pageEntities", ContentEntity.class, QContentEntity.class, PathInits.DIRECT2);
 
     public QContentTemplateEntity(String variable) {
         this(ContentTemplateEntity.class, forVariable(variable), INITS);

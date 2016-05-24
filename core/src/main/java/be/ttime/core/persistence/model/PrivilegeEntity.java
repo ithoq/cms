@@ -26,7 +26,7 @@ public class PrivilegeEntity {
     @ManyToMany(mappedBy = "privileges")
     private Set<FileEntity> files;
     @ManyToMany(mappedBy = "privileges")
-    private Set<PageEntity> pages;
+    private Set<ContentEntity> pages;
 
     private String name;
 

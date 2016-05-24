@@ -31,7 +31,7 @@ class GlobalExceptionController {
         try {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html; charset=UTF-8");
-            log.error(ex.getStackTrace().toString());
+            log.error(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex);
             if (ex instanceof ResourceNotFoundException) {
                 log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
                 return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_404, "error.notFound");

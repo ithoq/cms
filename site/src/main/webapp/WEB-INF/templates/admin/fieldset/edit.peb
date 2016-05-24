@@ -76,7 +76,7 @@
             <div class="row clearfix">
                 <div class="col-sm-6">
                     <div class="form-group form-group-default input-group noBorder">
-                        <label class="inline">Array</label>
+                        <label class="inline">Can be an Array</label>
                         <span class="input-group-addon bg-transparent">
                             <div class="fc-switch typeButton">
                               <input id='checkbox-hidden-{{counter}}' type='hidden' value='off' name='inputsArray'>
@@ -102,5 +102,5 @@
         var inputs = {{ inputsJson | raw }}
     </script>
     {% endif %}
-    <script src="/resources/admin/js/page/fieldset.js"></script>
+    <script src="/resources/admin/js/page/fieldset-edit.js"></script>
 {% endblock bottom %}

@@ -57,7 +57,7 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/getJson", method = RequestMethod.GET)
     @ResponseBody
-    public String deleteBlock(HttpServletResponse response) {
+    public String getjson(HttpServletResponse response) {
 
         return pageBlockRepository.jsonBlockArray();
     }

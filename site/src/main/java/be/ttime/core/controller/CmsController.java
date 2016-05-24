@@ -3,10 +3,10 @@ package be.ttime.core.controller;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.model.field.PageData;
 import be.ttime.core.persistence.model.BlockEntity;
-import be.ttime.core.persistence.model.ContentEntity;
+import be.ttime.core.persistence.model.ContentDataEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IBlockService;
-import be.ttime.core.persistence.service.IPageService;
+import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import com.google.gson.Gson;
@@ -27,7 +27,7 @@ import java.util.Locale;
 public class CmsController {
 
     @Autowired
-    private IPageService pageService;
+    private IContentService pageService;
 
     @Autowired
     private IApplicationService applicationService;
@@ -42,14 +42,14 @@ public class CmsController {
     public String page(ModelMap model, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
 
         final String path = request.getRequestURI();
-        ContentEntity content = pageService.findBySlug(path, locale);
-        if (content == null) {
+        ContentDataEntity contentData = pageService.findBySlug(path, locale);
+        if (contentData == null) {
             throw new ResourceNotFoundException();
         }
 
-        if (!StringUtils.isEmpty(content.getData())) {
+        if (!StringUtils.isEmpty(contentData.getData())) {
             Gson gson = new Gson();
-            PageData pageData = gson.fromJson(content.getData(), PageData.class);
+            PageData pageData = gson.fromJson(contentData.getData(), PageData.class);
             model.put("data", pageData.getData());
             model.put("dataArray", pageData.getDataArray());
         }
@@ -59,8 +59,8 @@ public class CmsController {
 
         CmsUtils.fillModelMap(model,request);
 
-        model.put("title", content.getSeoTitle());
-        model.put("main", pebbleUtils.parseBlock(content.getPage().getPageTemplate().getBlock(), model));
+        //model.put("title", content.getSeoTitle());
+        model.put("main", pebbleUtils.parseBlock(contentData.getContent().getContentTemplate().getBlock(), model));
         return pebbleUtils.parseBlock(master, model);
     }
   

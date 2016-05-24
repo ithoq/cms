@@ -15,7 +15,7 @@
             {% endif %}
             <button id="savePageBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i></button>
         </div>
-        <span class="thumbnail-wrapper d100 circular inline m-t-5">{{ page.pageTemplate.name }}</span>
+        <span class="thumbnail-wrapper d100 circular inline m-t-5">{{ page.contentTemplate.name }}</span>
         <div class="panel-page-title">
             <input type="text" required name="name" id="pageName" value="{{ page.name }}"
                    class="page-title light-input">

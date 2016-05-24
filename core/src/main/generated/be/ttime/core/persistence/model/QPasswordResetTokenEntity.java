@@ -48,7 +48,7 @@ public class QPasswordResetTokenEntity extends EntityPathBase<PasswordResetToken
 
     public QPasswordResetTokenEntity(Class<? extends PasswordResetTokenEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.user = inits.isInitialized("user") ? new QUserEntity(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new QUserEntity(forProperty("user"), inits.get("user")) : null;
     }
 
 }

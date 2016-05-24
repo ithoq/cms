@@ -1,18 +1,15 @@
 package be.ttime.core.controller;
 
 import be.ttime.core.error.ForbiddenException;
-import be.ttime.core.persistence.model.ContentTemplateEntity;
-import be.ttime.core.persistence.model.ContentTemplateFieldsetEntity;
-import be.ttime.core.persistence.model.FieldsetEntity;
-import be.ttime.core.persistence.model.InputDataEntity;
+import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.service.IBlockService;
-import be.ttime.core.persistence.service.IContentFieldService;
-import be.ttime.core.persistence.service.IContentTemplateFieldsetService;
 import be.ttime.core.persistence.service.IContentTemplateService;
+import be.ttime.core.persistence.service.IFieldsetService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,11 +30,9 @@ import java.util.List;
 public class AdminContentTemplateController {
 
     @Autowired
-    private IContentFieldService contentFieldService;
-    @Autowired
     private IContentTemplateService contentTemplateService;
     @Autowired
-    private IContentTemplateFieldsetService contentTemplateFieldsetService;
+    private IFieldsetService fieldsetService;
     @Autowired
     private IBlockService blockService;
 
@@ -56,7 +52,7 @@ public class AdminContentTemplateController {
     @RequestMapping(value= "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") Long id, ModelMap model) {
 
-        List<FieldsetEntity> all = contentFieldService.findAll();
+        List<FieldsetEntity> all = fieldsetService.findAllFieldset();
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         String jsonFields =  gson.toJson(all);
         model.put("jsonFields", jsonFields);
@@ -73,7 +69,7 @@ public class AdminContentTemplateController {
 
     @RequestMapping(value= "/edit", method = RequestMethod.POST)
     @ResponseBody
-    public String edit(String names, String namespaces, String template, String fieldsets, String inputsData, String contentFieldsetId) {
+    public String edit(HttpServletResponse response, String names, String namespaces, String template, String fieldsets, String inputsData, String contentFieldsetId, String blockData) {
 
         // GET FORM VALUES
         Gson gson = new GsonBuilder().create();
@@ -89,17 +85,41 @@ public class AdminContentTemplateController {
         List<Long> contentFieldsetIdList = gson.fromJson(contentFieldsetId, longArrayType);
 
         ContentTemplateEntity contentForm =  gson.fromJson(template, ContentTemplateEntity.class);
+        BlockEntity blockPosted =  gson.fromJson(blockData, BlockEntity.class);
 
         ContentTemplateEntity content;
+        BlockEntity block = null;
+
         if(contentForm.getId() != 0){
             content = contentTemplateService.findWithFieldsetAndData(contentForm.getId());
             if(content == null){
+                response.setStatus(500);
                 throw new ForbiddenException("Invalid content id : " + contentForm.getId());
             }
+            if(StringUtils.isEmpty(blockPosted.getName())){
+                response.setStatus(500);
+                throw new ForbiddenException("Block name can't be null");
+            }
+
+            block = blockService.find(blockPosted.getName());
         } else {
             content = new ContentTemplateEntity();
         }
+        if(block == null){
+            block = new BlockEntity();
+            block.setName(blockPosted.getName());
+            // TO DO : block.setBlockType();
+        }
 
+        block.setCacheable(false);
+        block.setDynamic(true);
+        block.setEnabled(true);
+
+
+        block.setDisplayName(blockPosted.getDisplayName());
+        block.setContent(blockPosted.getContent());
+
+        content.setActive(contentForm.isActive());
         content.setName(contentForm.getName());
         content.setDescription(contentForm.getDescription());
         // save
@@ -112,8 +132,9 @@ public class AdminContentTemplateController {
         for (int i = 0; i < nameList.size() ; i++) {
             ContentTemplateFieldsetEntity cf;
             if(contentFieldsetIdList.get(i) != 0){
-                cf = contentTemplateFieldsetService.find(contentFieldsetIdList.get(i));
+                cf = fieldsetService.findContentTemplateFieldset(contentFieldsetIdList.get(i));
                 if(cf == null){
+                    response.setStatus(500);
                     throw new ForbiddenException("Invalid contentfieldset id : " + contentForm.getId());
                 }
             } else{
@@ -135,7 +156,9 @@ public class AdminContentTemplateController {
             contentfieldset.add(cf);
         }
 
-        contentfieldset = contentTemplateFieldsetService.save(contentfieldset);
+        block = blockService.save(block);
+        content.setBlock(block);
+        contentfieldset = fieldsetService.saveContentTemplateFieldset(contentfieldset);
         content.setContentTemplateFieldset(contentfieldset);
         content = contentTemplateService.save(content);
 

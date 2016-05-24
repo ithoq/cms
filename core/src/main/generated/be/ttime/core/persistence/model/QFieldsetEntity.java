@@ -26,6 +26,8 @@ public class QFieldsetEntity extends EntityPathBase<FieldsetEntity> {
 
     public final ListPath<ContentTemplateFieldsetEntity, QContentTemplateFieldsetEntity> contentTemplateFieldset = this.<ContentTemplateFieldsetEntity, QContentTemplateFieldsetEntity>createList("contentTemplateFieldset", ContentTemplateFieldsetEntity.class, QContentTemplateFieldsetEntity.class, PathInits.DIRECT2);
 
+    public final BooleanPath deletable = createBoolean("deletable");
+
     public final StringPath description = createString("description");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);

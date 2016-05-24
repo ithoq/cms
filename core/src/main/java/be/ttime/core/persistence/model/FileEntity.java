@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,8 +34,19 @@ public class FileEntity {
     private String serverName;
     @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
     private long size;
+
+    private boolean directory = false;
+
     @ManyToOne
-    private ContentEntity content;
+    private FileEntity fileParent;
+
+    @OneToMany(mappedBy = "fileParent")
+    private List<FileEntity> taxonomyChildren;
+
+    @ManyToOne
+    private ContentDataEntity contentFile;
+    @ManyToOne
+    private ContentDataEntity contentImage;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean enabled = true;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // lazy because not used for now !

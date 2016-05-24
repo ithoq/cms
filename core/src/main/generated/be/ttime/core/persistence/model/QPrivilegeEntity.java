@@ -26,7 +26,7 @@ public class QPrivilegeEntity extends EntityPathBase<PrivilegeEntity> {
 
     public final StringPath name = createString("name");
 
-    public final SetPath<PageEntity, QPageEntity> pages = this.<PageEntity, QPageEntity>createSet("pages", PageEntity.class, QPageEntity.class, PathInits.DIRECT2);
+    public final SetPath<ContentEntity, QContentEntity> pages = this.<ContentEntity, QContentEntity>createSet("pages", ContentEntity.class, QContentEntity.class, PathInits.DIRECT2);
 
     public final CollectionPath<RoleEntity, QRoleEntity> roles = this.<RoleEntity, QRoleEntity>createCollection("roles", RoleEntity.class, QRoleEntity.class, PathInits.DIRECT2);
 

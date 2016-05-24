@@ -1,17 +1,20 @@
 package be.ttime.core.persistence.model;
 
+import com.google.gson.annotations.Expose;
 import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "resource_type")
+@Table(name = "taxonomy_type")
 @Getter
 @Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-public class ResourceTypeEntity {
+public class TaxonomyTypeEntity {
+
+    @Expose
     @Id
     @Access(AccessType.PROPERTY)
     private String name;

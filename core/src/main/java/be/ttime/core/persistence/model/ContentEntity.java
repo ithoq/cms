@@ -7,13 +7,13 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "content", indexes = {
-        @Index(name = "idx_slug", columnList = "computedSlug,language_locale", unique = true)})
+@Table(name = "content")
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id", "slug"})
+@EqualsAndHashCode(of = {"id", "name", "createdDate"})
 public class ContentEntity {
 
     @Id
@@ -26,21 +26,37 @@ public class ContentEntity {
     private Date createdDate;
     @Temporal(TemporalType.DATE)
     private Date modifiedDate;
-    @Lob
-    private String data;
-    private String slug;
-    private String computedSlug;
-    private String seoTitle;
-    private String seoTag;
-    private String seoDescription;
-    private String seoH1;
-
-    @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FileEntity> pageFiles;
+    @Temporal(TemporalType.DATE)
+    private Date beginDate;
+    @Temporal(TemporalType.DATE)
+    private Date endDate;
+    private boolean enabled = true;
+    @Column(name = "pos", nullable = false)
+    private int order = -1;
+    @Column(nullable = false, unique = true)
+    private String name;
+    @Column(columnDefinition = "TINYINT(1) default '1'")
+    private boolean menuItem = true;
     @ManyToOne
-    private PageEntity page;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ApplicationLanguageEntity language;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ResourceTypeEntity resourceType;
+    private ContentEntity contentParent;
+    @OneToMany(mappedBy = "contentParent")
+    private List<ContentEntity> contentChildren;
+    @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ContentDataEntity> dataList;
+    @ManyToOne
+    private ContentTemplateEntity contentTemplate;
+    @ManyToOne
+    private ContentTypeEntity contentType;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Lazy for now (not used in the current version)
+    @JoinTable(
+            name = "content_privilege",
+            joinColumns = @JoinColumn(name = "content_id"),
+            inverseJoinColumns = @JoinColumn(name = "privilege_id")
+    )
+    private Set<PrivilegeEntity> privileges;
+
+    @ManyToMany(mappedBy = "contents")
+    private List<TaxonomyTermEntity> taxonomyTermEntities;
+    @OneToMany(mappedBy = "content", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ContentDictionaryEntity> dictionaryList;
 }

@@ -47,6 +47,7 @@ $(function () {
     for (var i = 0, s = fieldset.inputs.length; i < s; i++) {
 
       var inputcounter = counter + '' + i;
+      console.log(inputcounter);
       cssClass = '';
       if (i === 0) {
         cssClass = ' active';
@@ -60,9 +61,11 @@ $(function () {
 
       renderedInputs += Mustache.render(inputsTemplate, {
         cssClass: cssClass,
-        counter: counter,
+        counter: inputcounter,
         inputDefId: fieldset.inputs[i].id,
       });
+
+      console.log(renderedInputs);
     }
 
     var template = document.getElementById('templateView').innerHTML;
@@ -103,7 +106,7 @@ $(function () {
 
       renderedInputs += Mustache.render(inputsTemplate, {
         cssClass: cssClass,
-        counter: counter,
+        counter: inputcounter,
         inputDefId: templateFieldset.dataEntities[i].inputDefinition.id,
         data: templateFieldset.dataEntities[i],
       });
@@ -182,6 +185,8 @@ $(function () {
         iData.validation = $this.find('.input-valid').val();
         iData.title = $this.find('.input-title').val();
         iData.hint = $this.find('.input-hint').val();
+        iData.defaultValue = $this.find('.input-defaultValue').val();
+        iData.array = $this.find('.checkbox-array').is(':checked');
         var inputDefId = $this.find('.inputDefId').val();
         inputDefinition.id = (inputDefId ? inputDefId : 0);
         iData.inputDefinition = inputDefinition;
@@ -199,8 +204,14 @@ $(function () {
     pageTemplate.id = ($('#template-id').val()) ?  $('#template-id').val() : 0;
     pageTemplate.name = $('#templateName').val();
     pageTemplate.description = $('#fieldsetDescription').val();
+    pageTemplate.active = $('#active').is(':checked');
+    
+    var blockData = {}
+    blockData.name =  $('#blockName').val();
+    blockData.displayName = $('#blockDisplayName').val();
+    blockData.content = aceEditor.getSession().getValue().trim();
 
-    if (fieldsetList.length > 0) {
+   // if (fieldsetList.length > 0) {
       $.Cms.ajax({
         type: 'POST',
         url: '/admin/contentTemplate/edit',
@@ -211,13 +222,14 @@ $(function () {
           fieldsets: JSON.stringify(fieldsetList),
           inputsData: JSON.stringify(inputasDataList),
           contentFieldsetId: JSON.stringify(contentFieldsetId),
+          blockData : JSON.stringify(blockData),
         },
         successMessage: 'The template was saved successfully!',
         onSuccess: function (e) {
           document.location.href = '/admin/contentTemplate/edit/' + e;
         },
       });
-    }
+    //}
   });
 
   // Init
@@ -233,5 +245,7 @@ $(function () {
     data: data,
     placeholder: window.placeholder,
   });
+
+  aceEditor = $.Cms.initAceEditor();
 
 });

@@ -5,16 +5,15 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tag")
+@Table(name = "content_type")
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"name"})
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-public class TagEntity {
+public class ContentTypeEntity {
 
     @Id
     @Access(AccessType.PROPERTY)
     private String name;
-
 }

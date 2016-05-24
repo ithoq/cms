@@ -349,7 +349,8 @@ INSERT INTO `roles_privileges` (`role_id`, `privilege_id`) VALUES
 (3, 3),
 (3, 4);
 
-INSERT INTO `resource_type` (`name`) VALUES
+INSERT INTO `content_type` (`name`) VALUES
+('PAGE'),
 ('NEWS'),
 ('ARTICLE');
 

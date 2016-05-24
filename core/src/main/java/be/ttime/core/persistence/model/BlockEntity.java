@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name = "page_block")
+@Table(name = "block")
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"name", "displayName"})

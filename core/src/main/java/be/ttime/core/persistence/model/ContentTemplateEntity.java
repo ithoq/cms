@@ -28,8 +28,8 @@ public class ContentTemplateEntity {
     private String fields;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean active;
-    @OneToMany(mappedBy = "pageTemplate")
-    private List<PageEntity> pageEntities;
+    @OneToMany(mappedBy = "contentTemplate")
+    private List<ContentEntity> pageEntities;
 
     @OneToOne(targetEntity = BlockEntity.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private BlockEntity block;

@@ -1,11 +1,10 @@
 package be.ttime.core.persistence.service;
 
 import be.ttime.core.error.ResourceNotFoundException;
+import be.ttime.core.persistence.model.ContentDataEntity;
 import be.ttime.core.persistence.model.ContentEntity;
-import be.ttime.core.persistence.model.PageEntity;
+import be.ttime.core.persistence.repository.IContentDataRepository;
 import be.ttime.core.persistence.repository.IContentRepository;
-import be.ttime.core.persistence.repository.IPageRepository;
-import be.ttime.core.persistence.repository.ITagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,33 +16,32 @@ import java.util.Locale;
 
 @Service
 @Transactional
-public class PageServiceImpl implements IPageService {
+public class ContentServiceImpl implements IContentService {
 
     private final static int MAX_EXPANDED_TREE_LEVEL = 3; // 0 based
     @Autowired
-    private IPageRepository pageRepository;
+    private IContentRepository pageRepository;
     @Autowired
-    private IContentRepository contentRepository;
-    private ITagRepository tagRepository;
+    private IContentDataRepository contentRepository;
 
     @Override
 
-    public PageEntity find(Long id) {
+    public ContentEntity find(Long id) {
         return pageRepository.findOne(id);
     }
 
     @Override
-    public ContentEntity findBySlug(String slug, Locale locale) {
+    public ContentDataEntity findBySlug(String slug, Locale locale) {
         return contentRepository.findByComputedSlugAndLanguageLocale(slug, locale.toString());
     }
 
     @Override
-    public PageEntity savePage(PageEntity p) {
+    public ContentEntity savePage(ContentEntity p) {
 
         if (p.getId() == 0) {
-            PageEntity parent = p.getPageParent();
+            ContentEntity parent = p.getContentParent();
 
-            PageEntity result = pageRepository.findFirstByPageParentOrderByOrderDesc(parent);
+            ContentEntity result = pageRepository.findFirstByContentParentOrderByOrderDesc(parent);
 
             if (result == null) {
                 p.setOrder(0);
@@ -56,29 +54,29 @@ public class PageServiceImpl implements IPageService {
     }
 
     @Override
-    public List<PageEntity> savePage(List<PageEntity> pages) {
+    public List<ContentEntity> savePage(List<ContentEntity> pages) {
         return pageRepository.save(pages);
     }
 
 
     @Override
     public void delete(Long id) throws Exception {
-        PageEntity current = pageRepository.findOne(id);
+        ContentEntity current = pageRepository.findOne(id);
 
         // Exist
         if (current == null)
             throw new ResourceNotFoundException();
         // No children
-        if (current.getPageChildren().size() > 0)
+        if (current.getContentChildren().size() > 0)
             throw new Exception("Page with id = " + id + " has children !");
         // delete
         pageRepository.delete(id);
 
-        List<PageEntity> pages = pageRepository.findByPageParentOrderByOrderAsc(current.getPageParent());
+        List<ContentEntity> pages = pageRepository.findByContentParentOrderByOrderAsc(current.getContentParent());
 
         if (pages.size() > 0) {
             int counter = 0;
-            for (PageEntity p : pages) {
+            for (ContentEntity p : pages) {
                 p.setOrder(counter);
                 counter++;
             }
@@ -87,15 +85,15 @@ public class PageServiceImpl implements IPageService {
     }
 
     @Override
-    public List<PageEntity> getNavPages() {
-        List<PageEntity> pages = pageRepository.findByMenuItemTrueAndEnabledTrue();
+    public List<ContentEntity> getNavPages() {
+        List<ContentEntity> pages = pageRepository.findByMenuItemTrueAndEnabledTrue();
         return getRootPage(pages);
     }
 
     @Override
     public String getPagesTree() {
-        List<PageEntity> pages = pageRepository.findAll(); // force first level cache
-        List<PageEntity> roots = pageRepository.findByPageParentIsNullOrderByOrderAsc();
+        List<ContentEntity> pages = pageRepository.findAll(); // force first level cache
+        List<ContentEntity> roots = pageRepository.findByContentParentIsNullOrderByOrderAsc();
         StringBuilder sb = new StringBuilder();
 
         sb.append("[");
@@ -110,33 +108,33 @@ public class PageServiceImpl implements IPageService {
      * Used to prevent delete a page.
      */
     @Override
-    public PageEntity findWithChildren(Long id) {
-        PageEntity p = pageRepository.findOne(id);
-        p.getPageChildren().size(); // force lazy loading
+    public ContentEntity findWithChildren(Long id) {
+        ContentEntity p = pageRepository.findOne(id);
+        p.getContentChildren().size(); // force lazy loading
         return p;
     }
 
-    private List<PageEntity> getRootPage(List<PageEntity> pages) {
-        List<PageEntity> result = new ArrayList<>();
-        for (PageEntity pageEntity : pages) {
-            if (pageEntity.getPageParent() == null)
-                result.add(pageEntity);
+    private List<ContentEntity> getRootPage(List<ContentEntity> pages) {
+        List<ContentEntity> result = new ArrayList<>();
+        for (ContentEntity contentEntity : pages) {
+            if (contentEntity.getContentParent() == null)
+                result.add(contentEntity);
             else
                 break;
         }
         return result;
     }
 
-    private String buildJsonTree(List<PageEntity> pages, StringBuilder sb, boolean first, int level) {
+    private String buildJsonTree(List<ContentEntity> pages, StringBuilder sb, boolean first, int level) {
 
-        for (PageEntity p : pages) {
+        for (ContentEntity p : pages) {
             if (!first) {
                 sb.append(",");
             }
             first = false;
 
             sb.append("{ \"title\": \"").append(p.getName()).append("\", \"key\": \"").append(p.getId()).append("\"");
-            List<PageEntity> childrens = p.getPageChildren();
+            List<ContentEntity> childrens = p.getContentChildren();
             if (childrens.size() > 0) {
                 if (level <= MAX_EXPANDED_TREE_LEVEL) {
                     sb.append(", \"expanded\":true");
@@ -156,17 +154,17 @@ public class PageServiceImpl implements IPageService {
     }
 
     @Override
-    public List<ContentEntity> saveContents(List<ContentEntity> contents) {
+    public List<ContentDataEntity> saveContents(List<ContentDataEntity> contents) {
         return contentRepository.save(contents);
     }
 
     @Override
-    public ContentEntity saveContent(ContentEntity content) {
+    public ContentDataEntity saveContent(ContentDataEntity content) {
         return contentRepository.save(content);
     }
 
     @Override
-    public ContentEntity findContentById(Long id) {
+    public ContentDataEntity findContentById(Long id) {
         return contentRepository.findOne(id);
     }
 }

@@ -28,7 +28,6 @@ public class InputDefinitionEntity {
     private boolean array;
     @Expose
     private String validation;
-
     @ManyToOne
     private FieldsetEntity fieldset;
 }
