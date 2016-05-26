@@ -22,6 +22,8 @@ public class QFieldsetEntity extends EntityPathBase<FieldsetEntity> {
 
     public static final QFieldsetEntity fieldsetEntity = new QFieldsetEntity("fieldsetEntity");
 
+    public final BooleanPath array = createBoolean("array");
+
     public final QBlockEntity blockEntity;
 
     public final ListPath<ContentTemplateFieldsetEntity, QContentTemplateFieldsetEntity> contentTemplateFieldset = this.<ContentTemplateFieldsetEntity, QContentTemplateFieldsetEntity>createList("contentTemplateFieldset", ContentTemplateFieldsetEntity.class, QContentTemplateFieldsetEntity.class, PathInits.DIRECT2);
@@ -35,8 +37,6 @@ public class QFieldsetEntity extends EntityPathBase<FieldsetEntity> {
     public final ListPath<InputDefinitionEntity, QInputDefinitionEntity> inputs = this.<InputDefinitionEntity, QInputDefinitionEntity>createList("inputs", InputDefinitionEntity.class, QInputDefinitionEntity.class, PathInits.DIRECT2);
 
     public final StringPath name = createString("name");
-
-    public final StringPath namespace = createString("namespace");
 
     public QFieldsetEntity(String variable) {
         this(FieldsetEntity.class, forVariable(variable), INITS);

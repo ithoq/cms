@@ -38,7 +38,7 @@ public class BlockEntity {
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '0'")
     private boolean dynamic = false;
     @Expose
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private BlockTypeEntity blockType;
     @ManyToOne
     private ApplicationLanguageEntity language;

@@ -19,17 +19,18 @@ public class ContentTemplateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Access(AccessType.PROPERTY)
     @Column(columnDefinition = "SMALLINT(11) UNSIGNED")
-    @Expose
-    private long id;
+    @Expose private long id;
     @Column(nullable = false)
     @Expose private String name;
     @Expose private String description;
-    @Lob
-    private String fields;
+    @Lob private String fields;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean active;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ContentTypeEntity contentType;
     @OneToMany(mappedBy = "contentTemplate")
     private List<ContentEntity> pageEntities;
+    private boolean deletable;
 
     @OneToOne(targetEntity = BlockEntity.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private BlockEntity block;

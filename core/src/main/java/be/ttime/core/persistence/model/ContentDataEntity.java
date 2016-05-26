@@ -38,9 +38,6 @@ public class ContentDataEntity {
     @OneToMany(mappedBy = "contentFile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FileEntity> contentFiles;
 
-    @OneToMany(mappedBy = "contentImage", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FileEntity> ContentImages;
-
     @ManyToOne
     private ContentEntity content;
 

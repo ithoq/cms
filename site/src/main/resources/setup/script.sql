@@ -351,6 +351,7 @@ INSERT INTO `roles_privileges` (`role_id`, `privilege_id`) VALUES
 
 INSERT INTO `content_type` (`name`) VALUES
 ('PAGE'),
+('PAGE_LINK'),
 ('NEWS'),
 ('ARTICLE');
 

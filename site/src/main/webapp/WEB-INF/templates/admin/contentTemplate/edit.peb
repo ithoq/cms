@@ -13,7 +13,7 @@
     <hr class="section">
 
     <input type="hidden" id="template-id" value="{{ contentTemplate.id }}">
-    <div class="form-group form-group-default input-group noBorder">
+    <div class="form-group form-group-default input-group w150">
         <label class="inline">Active</label>
         <span class="input-group-addon bg-transparent">
           <div class="fc-switch typeButton">
@@ -76,28 +76,15 @@
         <div class="row column-seperation">
           <div class="col-md-12">
             <div class="form-group-attached  m-t-20">
-              <div class="row clearfix">
-                <input type="hidden" class="inputDefId" value="{{inputDefId}}">
-                <input type="hidden" class="inputDataId" value="{{data.id}}">
-                <div class="col-sm-6">
-                  <div class="form-group form-group-default input-group noBorder">
-                    <label class="inline">Array</label>
-                    <span class="input-group-addon bg-transparent">
-                        <div class="fc-switch typeButton">
-                          <input id="checkbox-{{counter}}" type="checkbox" class="checkbox-array" name="array" class="input-array" {{#data.array}}checked{{/data.array}}/>
-                          <label for="checkbox-{{counter}}" data-off="No" data-on="Yes"></label>
-                        </div>
-                    </span>
-                  </div>
-                </div>
-                <div class="col-sm-6">
+              <input type="hidden" class="inputDefId" value="{{inputDefId}}">
+              <input type="hidden" class="inputDataId" value="{{data.id}}">
+              <div class="row">
+                  <div class="col-sm-6">
                   <div class="form-group form-group-default required" aria-required="true">
                     <label>Validation</label>
                     <input type="text" name="validation" value="{{data.validation}}" class="form-control input-valid" required="" aria-required="true">
                   </div>
                 </div>
-              </div>
-              <div class="row">
                 <div class="col-sm-6">
                   <div class="form-group form-group-default required" aria-required="true">
                     <label>title</label>
@@ -131,6 +118,17 @@
           <label>Namespace</label>
           <input type="text" id="np-{{counter}}" name="name" value="{{np}}" class="form-control fieldset-np"/>
         </div>
+        {{#canBeAnArray}}
+            <div class="form-group form-group-default input-group noBorder w150">
+                <label class="inline">Array</label>
+                <span class="input-group-addon bg-transparent">
+                    <div class="fc-switch typeButton">
+                      <input id="checkbox-{{counter}}" type="checkbox" class="checkbox-array" name="checkbox-{{counter}}" class="input-array" {{#isArray}}checked{{/isArray}}/>
+                      <label for="checkbox-{{counter}}" data-off="No" data-on="Yes"></label>
+                    </div>
+                </span>
+            </div>
+        {{/canBeAnArray}}
         <div class="panel panel-transparent">
           <ul class="nav nav-tabs nav-tabs-linetriangle" id="inputsTab" data-init-reponsive-tabs="dropdownfx">
            {{{renderedLi}}}
@@ -153,5 +151,5 @@
 
         </script>
     {% endif %}
-    <script src="/resources/admin/js/page/template.js"></script>
+    <script src="/resources/admin/js/page/template-edit.js"></script>
 {% endblock bottom %}

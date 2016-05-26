@@ -31,11 +31,16 @@ import java.util.Map;
 public class CmsUtils {
 
     //public final String csrfParameterName = "_csrf";
-    public final static String BLOCKTYPE_CONTENT = "CONTENT";
-    public final static String BLOCKTYPE_NAVIGATION = "NAVIGATION";
-    public final static String BLOCKTYPE_PAGE_TEMPLATE = "'PAGE_TEMPLATE'";
-    public final static String BLOCKTYPE_SYSTEM = "SYSTEM";
-    public final static String BLOCKTYPE_FIELDSET= "FIELDSET";
+    public final static String CONTENT_TYPE_PAGE = "PAGE";
+    public final static String CONTENT_TYPE_PAGE_LINK = "PAGE_LINK";
+    public final static String CONTENT_TYPE_NEWS = "NEWS";
+    public final static String CONTENT_TYPE_ARTICLE = "ARTICLE";
+
+    public final static String BLOCK_TYPE_CONTENT = "CONTENT";
+    public final static String BLOCK_TYPE_NAVIGATION = "NAVIGATION";
+    public final static String BLOCK_TYPE_PAGE_TEMPLATE = "'PAGE_TEMPLATE'";
+    public final static String BLOCK_TYPE_SYSTEM = "SYSTEM";
+    public final static String BLOCK_TYPE_FIELDSET = "FIELDSET";
 
     public final static String BLOCK_PAGE_MASTER = "PAGE_MASTER";
     public final static String BLOCK_PAGE_LOGIN = "PAGE_LOGIN";

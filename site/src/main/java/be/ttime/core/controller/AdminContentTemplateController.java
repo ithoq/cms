@@ -5,6 +5,7 @@ import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IContentTemplateService;
 import be.ttime.core.persistence.service.IFieldsetService;
+import be.ttime.core.util.CmsUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -67,21 +68,44 @@ public class AdminContentTemplateController {
         return VIEWPATH + "edit";
     }
 
+    @RequestMapping(value = "/getJson", method = RequestMethod.GET)
+    @ResponseBody
+    public String getjson(HttpServletResponse response) {
+
+        return contentTemplateService.jsonContent();
+    }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public void delete(@PathVariable("id") Long id, HttpServletResponse response) {
+
+        if (id == null) {
+            response.setStatus(500);
+        }
+        try {
+            contentTemplateService.delete(id);
+        } catch (Exception e) {
+            response.setStatus(500);
+        }
+    }
+
     @RequestMapping(value= "/edit", method = RequestMethod.POST)
     @ResponseBody
-    public String edit(HttpServletResponse response, String names, String namespaces, String template, String fieldsets, String inputsData, String contentFieldsetId, String blockData) {
+    public String edit(HttpServletResponse response, String names, String namespaces, String arrays, String template, String fieldsets, String inputsData, String contentFieldsetId, String blockData) {
 
         // GET FORM VALUES
         Gson gson = new GsonBuilder().create();
         Type dataListType = new TypeToken<ArrayList<ArrayList<InputDataEntity>>>() {}.getType();
         Type fieldsetListType = new TypeToken<ArrayList<FieldsetEntity>>() {}.getType();
         Type stringArrayType = new TypeToken<Collection<String>>(){}.getType();
+        Type booleanArrayType = new TypeToken<Collection<Boolean>>(){}.getType();
         Type longArrayType = new TypeToken<Collection<Long>>(){}.getType();
 
         List<List<InputDataEntity>> dataList = gson.fromJson(inputsData, dataListType);
         List<FieldsetEntity> fieldsetList = gson.fromJson(fieldsets, fieldsetListType);
         List<String> nameList = gson.fromJson(names, stringArrayType);
         List<String> namespaceList = gson.fromJson(namespaces, stringArrayType);
+        List<Boolean> isArrayList = gson.fromJson(arrays, booleanArrayType);
         List<Long> contentFieldsetIdList = gson.fromJson(contentFieldsetId, longArrayType);
 
         ContentTemplateEntity contentForm =  gson.fromJson(template, ContentTemplateEntity.class);
@@ -119,6 +143,8 @@ public class AdminContentTemplateController {
         block.setDisplayName(blockPosted.getDisplayName());
         block.setContent(blockPosted.getContent());
 
+        content.setContentType(new ContentTypeEntity(CmsUtils.CONTENT_TYPE_PAGE));
+
         content.setActive(contentForm.isActive());
         content.setName(contentForm.getName());
         content.setDescription(contentForm.getDescription());
@@ -149,6 +175,7 @@ public class AdminContentTemplateController {
 
             cf.setDataEntities(dataList.get(i));
             cf.setNamespace(namespaceList.get(i));
+            cf.setArray(isArrayList.get(i));
             cf.setName(nameList.get(i));
             cf.setPosition(i);
             cf.setContentTemplate(content);

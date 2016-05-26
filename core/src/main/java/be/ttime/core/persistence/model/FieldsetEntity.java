@@ -26,9 +26,9 @@ public class FieldsetEntity {
     @Expose
     private String description;
     @Expose
-    private String namespace;
+    private boolean array;
 
-    private boolean deletable;
+    private boolean deletable = true;
 
     @OneToMany(mappedBy = "fieldset", fetch = FetchType.LAZY)
     private List<ContentTemplateFieldsetEntity> contentTemplateFieldset;

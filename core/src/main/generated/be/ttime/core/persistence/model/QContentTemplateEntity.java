@@ -28,6 +28,10 @@ public class QContentTemplateEntity extends EntityPathBase<ContentTemplateEntity
 
     public final ListPath<ContentTemplateFieldsetEntity, QContentTemplateFieldsetEntity> contentTemplateFieldset = this.<ContentTemplateFieldsetEntity, QContentTemplateFieldsetEntity>createList("contentTemplateFieldset", ContentTemplateFieldsetEntity.class, QContentTemplateFieldsetEntity.class, PathInits.DIRECT2);
 
+    public final QContentTypeEntity contentType;
+
+    public final BooleanPath deletable = createBoolean("deletable");
+
     public final StringPath description = createString("description");
 
     public final StringPath fields = createString("fields");
@@ -57,6 +61,7 @@ public class QContentTemplateEntity extends EntityPathBase<ContentTemplateEntity
     public QContentTemplateEntity(Class<? extends ContentTemplateEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
         this.block = inits.isInitialized("block") ? new QBlockEntity(forProperty("block"), inits.get("block")) : null;
+        this.contentType = inits.isInitialized("contentType") ? new QContentTypeEntity(forProperty("contentType")) : null;
     }
 
 }

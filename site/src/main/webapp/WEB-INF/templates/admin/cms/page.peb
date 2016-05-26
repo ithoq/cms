@@ -62,10 +62,7 @@
             <li><a data-toggle="tab" href="#tabSeo">SEO</a></li>
         </ul>
         <div class="tab-content bg-white">
-            <div class="panel-heading clearfix">
 
-            </div>
-            <hr class="section">
             <div id="tabGeneral" class="tab-pane active">
                 <div class="form-group form-group-default required">
                     <label>{{ message('admin.pageTitle') }}</label>
@@ -78,9 +75,10 @@
                     <input required type="text" id="pageSlug" name="slug" value="{{ content.slug }}" class="form-control">
                 </div>
 
-                {% for field in fields %}
-                    {{ beans.dynamicField.renderField(field, pageData) | raw }}
-                {% endfor %}
+                <h2>Template fields</h2>
+                <hr class="section">
+                {{ beans.dynamicField.renderField(template, pageData) | raw }}
+
 
             </div>
             <div id="tabSeo" class="tab-pane">

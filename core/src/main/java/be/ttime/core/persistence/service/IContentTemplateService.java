@@ -6,11 +6,15 @@ import java.util.List;
 
 public interface IContentTemplateService {
 
-    List<ContentTemplateEntity> findAll();
+    List<ContentTemplateEntity> findAllByTypeLike(String type);
 
     ContentTemplateEntity find(Long id);
 
     ContentTemplateEntity findWithFieldsetAndData(Long id);
 
     ContentTemplateEntity save(ContentTemplateEntity contentTemplate);
+
+    String jsonContent();
+
+    void delete(Long id) throws Exception;
 }

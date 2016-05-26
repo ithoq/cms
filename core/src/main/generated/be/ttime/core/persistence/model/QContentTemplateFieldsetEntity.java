@@ -22,6 +22,8 @@ public class QContentTemplateFieldsetEntity extends EntityPathBase<ContentTempla
 
     public static final QContentTemplateFieldsetEntity contentTemplateFieldsetEntity = new QContentTemplateFieldsetEntity("contentTemplateFieldsetEntity");
 
+    public final BooleanPath array = createBoolean("array");
+
     public final QContentTemplateEntity contentTemplate;
 
     public final ListPath<InputDataEntity, QInputDataEntity> dataEntities = this.<InputDataEntity, QInputDataEntity>createList("dataEntities", InputDataEntity.class, QInputDataEntity.class, PathInits.DIRECT2);

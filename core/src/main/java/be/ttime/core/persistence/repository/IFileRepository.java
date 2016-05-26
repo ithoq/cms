@@ -10,6 +10,4 @@ public interface IFileRepository extends JpaRepository<FileEntity, Long>, QueryD
     FileEntity findByServerName(String serverName);
 
     List<FileEntity> findByContentFileId(Long id);
-
-    List<FileEntity> findByContentImageId(Long id);
 }

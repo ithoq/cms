@@ -54,7 +54,7 @@ public class CmsController {
             model.put("dataArray", pageData.getDataArray());
         }
 
-        BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCKTYPE_SYSTEM);
+        BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCK_TYPE_SYSTEM);
 
 
         CmsUtils.fillModelMap(model,request);

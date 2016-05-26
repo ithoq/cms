@@ -3,7 +3,7 @@ $(function () {
   var $table = $('#data-table');
   $.Cms.initDataTableWithSearch({
     tableJqueryElement: $table,
-    ajax: '/admin/fieldset/getJson',
+    ajax: '/admin/contentTemplate/getJson',
     columnDefs: [
       { // Edit
         aTargets: [2],
@@ -19,14 +19,14 @@ $(function () {
 
     ],
     columns: [
-      { data: 'name', },
-      { data: 'description', },
-      {
-        data: null,
-        defaultContent: '<button type="button" class="btn btn-default ' +
-        'btn-modal-edit"><i class="fa fa-pencil"></i></button>',
-      },
-      { data: 'deletable' },
+        { data: 'name', },
+        { data: 'description', },
+        {
+          data: null,
+          defaultContent: '<button type="button" class="btn btn-default ' +
+          'btn-modal-edit"><i class="fa fa-pencil"></i></button>',
+        },
+        { data: 'deletable' },
     ],
   });
 
@@ -39,13 +39,13 @@ $(function () {
 
   $table.on('click', '.btn-modal-edit', function () {
     var id = $(this).closest('tr').data('id');
-    document.location.href = '/admin/fieldset/edit/' + id;
+    document.location.href = '/admin/contentTemplate/edit/' + id;
   });
 
   function deleteFieldset(id) {
     $.Cms.ajax({
       type: 'DELETE',
-      url: '/admin/fieldset/delete/' + id,
+      url: '/admin/contentTemplate/delete/' + id,
       successMessage: 'Fieldset deleted successfully',
       onSuccess: function (data) {
         $table.DataTable().ajax.reload();

@@ -30,6 +30,9 @@ public class ContentTemplateFieldsetEntity {
     @Column(nullable = false)
     @Expose private String name;
 
+    @Expose
+    private boolean array;
+
     @ManyToOne
     @JoinColumn(name = "page_template_id")
     private ContentTemplateEntity contentTemplate;

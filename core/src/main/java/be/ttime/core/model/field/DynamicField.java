@@ -1,15 +1,17 @@
 package be.ttime.core.model.field;
 
-import be.ttime.core.persistence.model.BlockEntity;
+import be.ttime.core.persistence.model.ContentTemplateEntity;
+import be.ttime.core.persistence.model.ContentTemplateFieldsetEntity;
+import be.ttime.core.persistence.model.FieldsetEntity;
+import be.ttime.core.persistence.model.InputDataEntity;
 import be.ttime.core.persistence.service.IBlockService;
-import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
+import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /*
@@ -34,9 +36,48 @@ public class DynamicField {
         }
     }
 
-    public String renderField(Field field, PageData pageData) throws Exception {
+    public String renderField(ContentTemplateEntity template, PageData pageData) throws Exception {
 
-        BlockEntity block = blockService.findByNameAndBlockType(field.getBlockName(), "FIELDSET");
+        StringBuilder builder = new StringBuilder();
+        Map<String, Object> model;
+        Slugify slg = new Slugify();
+
+        for (ContentTemplateFieldsetEntity contentTemplateFieldset : template.getContentTemplateFieldset()) {
+
+            model = new HashMap<>();
+            model.put("np",  contentTemplateFieldset.getNamespace() + '_');
+
+            FieldsetEntity fieldset = contentTemplateFieldset.getFieldset();
+            Map<String, Object> inputsMap = new HashMap<>();
+            for (InputDataEntity inputDataEntity : contentTemplateFieldset.getDataEntities()) {
+
+                String finalName = contentTemplateFieldset.getNamespace() + "_" + slg.slugify(inputDataEntity.getInputDefinition().getName());
+                Map<String, Object> inputMap = new HashMap<>();
+                inputMap.put("title", inputDataEntity.getTitle());
+                inputMap.put("name", finalName);
+                inputMap.put("hint", inputDataEntity.getHint());
+                inputMap.put("validation", inputDataEntity.getValidation());
+                inputMap.put("default", inputDataEntity.getDefaultValue());
+                if(inputDataEntity.isArray()){
+                    inputMap.put("data", pageData.getData().get(finalName));
+                } else{
+                    inputMap.put("data", pageData.getData().get(finalName));
+                }
+
+                inputsMap.put(finalName, inputMap);
+            }
+
+            model.put("inputs", inputsMap);
+
+            builder.append(pebbleUtils.parseBlock(fieldset.getBlockEntity(), model));
+        }
+
+        return builder.toString();
+
+
+
+        /*
+        BlockEntity block = blockService.findByNameAndBlockType(contentTemplateFieldsetEntity.get.getF.getBlockName(), "FIELDSET");
 
         if (block == null) {
             return CmsUtils.alert("danger", "unable to find the block named " + field.getBlockName(), "Block name error");
@@ -66,6 +107,6 @@ public class DynamicField {
             model.put("input", inputs.get(0));
         }
 
-        return pebbleUtils.parseBlock(block, model);
+        return pebbleUtils.parseBlock(block, model);*/
     }
 }

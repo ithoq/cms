@@ -49,10 +49,10 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
 
                 // base blocks
                 List<BlockEntity> blocks = new ArrayList<>();
-                blocks.add(new BlockEntity(CmsUtils.BLOCK_FIELD_TEXT, "text", CmsUtils.getResourceFileContent("setup/field_text.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_FIELDSET), null));
-                blocks.add(new BlockEntity(CmsUtils.BLOCK_FIELD_TINYMCE, "tinymce", CmsUtils.getResourceFileContent("setup/field_tinymce.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_FIELDSET), null));
-                blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_MASTER, "master", CmsUtils.getResourceFileContent("setup/master.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_SYSTEM), null));
-                blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_LOGIN, "login", CmsUtils.getResourceFileContent("setup/login.twig"), true, false, true, true, new BlockTypeEntity(CmsUtils.BLOCKTYPE_SYSTEM), null));
+                blocks.add(new BlockEntity(CmsUtils.BLOCK_FIELD_TEXT, "text", CmsUtils.getResourceFileContent("setup/field_text.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_FIELDSET), null));
+                blocks.add(new BlockEntity(CmsUtils.BLOCK_FIELD_TINYMCE, "tinymce", CmsUtils.getResourceFileContent("setup/field_tinymce.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_FIELDSET), null));
+                blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_MASTER, "master", CmsUtils.getResourceFileContent("setup/master.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_SYSTEM), null));
+                blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_LOGIN, "login", CmsUtils.getResourceFileContent("setup/login.twig"), true, false, true, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_SYSTEM), null));
                 blockService.save(blocks);
                 cacheManager.clearAll();
             } catch(Exception e){

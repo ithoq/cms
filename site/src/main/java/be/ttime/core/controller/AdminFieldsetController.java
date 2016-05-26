@@ -1,5 +1,6 @@
 package be.ttime.core.controller;
 
+import be.ttime.core.error.ForbiddenException;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.model.form.AdminFielsetForm;
 import be.ttime.core.persistence.model.BlockEntity;
@@ -110,14 +111,18 @@ public class AdminFieldsetController {
             }
         }
 
-
+        fieldset.setArray(form.isArray());
         List<InputDefinitionEntity> inputDefinitionEntityList = new ArrayList<>();
-        for (int i = 0; i < form.getInputsName().length ; i++) {
+        if(inputDefinitionEntityList.size() > 0) {
+            throw new ForbiddenException("Field must have at least one input!");
+        }
+
+        for (int i = 0; i < form.getInputsName().length; i++) {
             String validation = form.getInputsValidation()[i];
-            if(validation.equals("null")){
+            if (validation.equals("null")) {
                 validation = null;
             }
-            inputDefinitionEntityList.add(new InputDefinitionEntity(form.getInputDataId()[i], form.getOrder()[i], form.getInputsName()[i], form.getInputsArray()[i], validation, fieldset));
+            inputDefinitionEntityList.add(new InputDefinitionEntity(form.getInputDataId()[i], form.getOrder()[i], form.getInputsName()[i], form.getTypeSelect()[i], validation, fieldset));
         }
 
         if(StringUtils.isEmpty(blockEntity.getName())) {
@@ -125,7 +130,7 @@ public class AdminFieldsetController {
         }
 
         blockEntity.setDisplayName(form.getBlockDisplayName());
-        blockEntity.setBlockType(new BlockTypeEntity(CmsUtils.BLOCKTYPE_FIELDSET));
+        blockEntity.setBlockType(new BlockTypeEntity(CmsUtils.BLOCK_TYPE_FIELDSET));
         blockEntity.setCacheable(false);
         blockEntity.setDeletable(true);
         blockEntity.setEnabled(true);

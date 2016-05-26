@@ -13,26 +13,22 @@ $(function () {
     input.counter = inputCounter;
     input.style = (inputCounter === 1) ? 'display:block;' : '';
     $li = $('<li class="input-li" data-div="' +
-      input.counter + '">' +
-      input.name +
-      removeBtnHtml + '</li>');
+        input.counter + '">' +
+        input.name +
+        (input.existingInput ? '' : removeBtnHtml) + '</li>');
     $li.animate2Css('flipInX');
     $inputUl.append($li);
 
+    input.editorName = $.Cms.slugify(input.name);
     var template = document.getElementById('inputsTemplate').innerHTML;
     var html = Mustache.render(template, input);
 
     $inputContent.append(html);
 
-    /*
-    if(input.type) {
-
-      var $select = $(".input-div[data-id=" + input.id + "]").find(".typeSelect");
+    if (input.type) {
+      var $select = $('.input-div[data-id=' + input.id + ']').find('.typeSelect');
       $select.val(input.type);
-
-    }*/
-
-
+    }
 
   }
 
@@ -64,6 +60,10 @@ $(function () {
     var id = $input.data('id');
     var $li = $inputUl.find('[data-div="' + id + '"]').first();
     $li.html(this.value).append(removeBtnHtml);
+
+    var $editorName = $('#editor-name-' + id);
+    $editorName.html($.Cms.slugify(this.value));
+
   });
 
   $inputUl.on('click', '.input-li', function () {
@@ -82,6 +82,14 @@ $(function () {
     });
 
     $inputContent.find('#input-' + divId).remove();
+  });
+
+  $inputContent.on('click', '.editor-name', function () {
+      $.Cms.copyToClipboard(this);
+      $.Cms.notif({
+        message: 'Copied to the clipboard',
+        type: 'success',
+      });
   });
 
   $('#submitBtn').on('click', function (e) {
@@ -114,6 +122,7 @@ $(function () {
   if (window.inputs) {
 
     for (var i = 0; i < inputs.length; i++) {
+      inputs[i].existingInput= true;
       addNewInput(inputs[i]);
     }
   }

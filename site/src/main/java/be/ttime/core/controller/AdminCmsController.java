@@ -2,15 +2,11 @@ package be.ttime.core.controller;
 
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.model.field.Field;
-import be.ttime.core.model.field.Input;
 import be.ttime.core.model.field.PageData;
 import be.ttime.core.model.form.CreatePageForm;
 import be.ttime.core.model.form.EditPageForm;
 import be.ttime.core.model.form.EditPagePositionForm;
-import be.ttime.core.persistence.model.ApplicationLanguageEntity;
-import be.ttime.core.persistence.model.ContentDataEntity;
-import be.ttime.core.persistence.model.ContentTemplateEntity;
-import be.ttime.core.persistence.model.ContentEntity;
+import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.persistence.service.IContentTemplateService;
@@ -44,22 +40,22 @@ public class AdminCmsController {
 
     private final static String VIEWPATH = "admin/cms/";
     @Autowired
-    private IContentService pageService;
+    private IContentService contentService;
     @Autowired
-    private IContentTemplateService pageTemplateService;
+    private IContentTemplateService contentTemplateService;
     @Autowired
     private IApplicationService applicationService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String home(ModelMap model) {
-        model.put("templates", pageTemplateService.findAll());
+        model.put("templates", contentTemplateService.findAllByTypeLike("PAGE%"));
         return VIEWPATH + "home";
     }
 
     @RequestMapping(value = "/tree", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String getTree() {
-        return pageService.getPagesTree();
+        return contentService.getPagesTree();
     }
 
     @RequestMapping(value = "/page/{id}", method = RequestMethod.GET)
@@ -68,52 +64,58 @@ public class AdminCmsController {
         if (id == null)
             throw new ResourceNotFoundException();
 
-        ContentEntity page = pageService.findWithChildren(id);
+        ContentEntity content = contentService.findWithChildren(id);
 
         ApplicationLanguageEntity appLanguage = applicationService.getSiteApplicationLanguageMap().get(locale);
         if(appLanguage == null){
             appLanguage = applicationService.getDefaultSiteApplicationLanguage();
         }
 
-        ContentDataEntity content = null;
+        ContentDataEntity contentData = null;
 
-        for (ContentDataEntity c : page.getDataList()) {
+        for (ContentDataEntity c : content.getDataList()) {
             if (c.getLanguage().getLocale().equals(appLanguage.getLocale())) {
-                content = c;
+                contentData = c;
             }
         }
 
-        if (content == null) {
-            content = new ContentDataEntity();
-            content.setCreatedDate(new Date());
-            content.setContent(page);
-            content.setLanguage(appLanguage);
-            pageService.saveContent(content);
+        if (contentData == null) {
+            contentData = new ContentDataEntity();
+            contentData.setCreatedDate(new Date());
+            contentData.setContent(content);
+            contentData.setLanguage(appLanguage);
+            contentService.saveContent(contentData);
         }
 
         Gson gson = new Gson();
-        if (page == null)
+        if (content == null)
             throw new ResourceNotFoundException();
 
-        if (!StringUtils.isEmpty(content.getData())) {
+        if (!StringUtils.isEmpty(contentData.getData())) {
             try {
-                PageData pageData = gson.fromJson(content.getData(), PageData.class);
+                PageData pageData = gson.fromJson(contentData.getData(), PageData.class);
                 model.put("pageData", pageData);
             } catch (Exception e) {
                 log.error(e.toString());
             }
         }
         try {
-            Type listType = new TypeToken<ArrayList<Field>>() {
-            }.getType();
-            List<Field> fields = gson.fromJson(page.getContentTemplate().getFields(), listType);
+            Type listType = new TypeToken<ArrayList<Field>>() {}.getType();
+            List<Field> fields = gson.fromJson(content.getContentTemplate().getFields(), listType);
             model.put("fields", fields);
+
+
+            ContentTemplateEntity template = contentTemplateService.findWithFieldsetAndData(content.getContentTemplate().getId());
+            model.put("template", template);
+
+
+
         } catch (Exception e) {
             log.error(e.toString());
         }
 
-        model.put("page", page);
-        model.put("content", content);
+        model.put("page", content);
+        model.put("content", contentData);
         model.put("contentLocale", appLanguage.getLocale());
 
         return VIEWPATH + "page";
@@ -129,7 +131,7 @@ public class AdminCmsController {
         }
 
         try {
-            pageService.delete(urlId);
+            contentService.delete(urlId);
         } catch (Exception e) {
             response.setStatus(500);
             return "An error occurred, please try later";
@@ -150,31 +152,31 @@ public class AdminCmsController {
             try {
                 Slugify slg = new Slugify();
 
-                ContentEntity page = new ContentEntity();
-                page.setName(form.getName());
-                page.setCreatedDate(new Date());
+                ContentEntity content = new ContentEntity();
+                content.setName(form.getName());
+                content.setCreatedDate(new Date());
 
-                Locale defLocale = applicationService.getDefaultSiteLocale();
                 String lang = applicationService.getDefaultSiteLang();
-                String pageTitle = form.getName() + '-' + lang;
+                String pageTitle = form.getName();
                 String slug = slg.slugify(pageTitle);
-                ContentDataEntity content = new ContentDataEntity();
-                content.setLanguage(applicationService.getDefaultSiteApplicationLanguage());
+                ContentDataEntity contentData = new ContentDataEntity();
+                contentData.setLanguage(applicationService.getDefaultSiteApplicationLanguage());
                 //content.setSeoTitle(pageTitle);
-                content.setSlug("/" + slug);
+                contentData.setSlug("/" + slug);
+
                 ContentEntity parent;
                 if (form.getParentId() == -1) {
                     //page.setLevel(0);
-                    content.setComputedSlug(content.getSlug());
+                    contentData.setComputedSlug(contentData.getSlug());
                 } else {
-                    parent = pageService.find(form.getParentId());
+                    parent = contentService.find(form.getParentId());
                     if (parent == null) {
                         throw new Exception("Create page - parent not exist with id " + form.getParentId());
                     }
                     //page.setLevel(parent.getLevel() + 1);
-                    page.setContentParent(parent);
+                    content.setContentParent(parent);
 
-                    List<ContentDataEntity> contents = page.getDataList();
+                    List<ContentDataEntity> contents = content.getDataList();
                     ContentDataEntity parentContent = null;
                     for (ContentDataEntity c : contents) {
                         if (c.getLanguage() == applicationService.getDefaultSiteApplicationLanguage()) {
@@ -185,15 +187,19 @@ public class AdminCmsController {
                     if (parentContent == null)
                         throw new Exception("Parent with id : " + parent.getId() + " don't have a default content");
 
-                    content.setComputedSlug(parentContent.getComputedSlug() + '/' + content.getSlug());
+                    contentData.setComputedSlug(parentContent.getComputedSlug() + '/' + contentData.getSlug());
                 }
 
-                if (form.getTemplateId() != -1) {
-                    ContentTemplateEntity template = new ContentTemplateEntity();
-                    template.setId(form.getTemplateId());
-                    page.setContentTemplate(template);
+
+                ContentTemplateEntity contentTemplateEntity = contentTemplateService.find(form.getTemplateId());
+                if(contentTemplateEntity == null){
+                    throw new Exception("content template don't exist!");
                 }
-                pageService.savePage(page);
+
+                content.setContentTemplate(contentTemplateEntity);
+                content.setContentType(new ContentTypeEntity(contentTemplateEntity.getContentType().getName()));
+
+                contentService.savePage(content);
             } catch (Exception e) {
                 // Logger
                 response.setStatus(500);
@@ -207,8 +213,8 @@ public class AdminCmsController {
     @ResponseBody
     public String postPage(@PathVariable("id") Long urlId, @Valid EditPageForm form, BindingResult result, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        ContentEntity page;
-        ContentDataEntity content;
+        ContentEntity content;
+        ContentDataEntity contentData;
 
         Long id = form.getPageId();
 
@@ -218,54 +224,75 @@ public class AdminCmsController {
             return ControllerUtils.getValidationErrorsInUl(result.getFieldErrors());
         } else {
 
-            page = pageService.find(form.getPageId());
-            content = pageService.findContentById(form.getContentId());
-            if (page == null || content == null) {
+            content = contentService.find(form.getPageId());
+            contentData = contentService.findContentById(form.getContentId());
+            if (content == null || contentData == null) {
                 throw new Exception("Page or Content can't by null");
             }
 
-            ApplicationLanguageEntity appLanguage = applicationService.getSiteApplicationLanguageMap().get(content.getLanguage().getLocale());
+            ApplicationLanguageEntity appLanguage = applicationService.getSiteApplicationLanguageMap().get(contentData.getLanguage().getLocale());
             if (appLanguage == null) {
                 appLanguage = applicationService.getDefaultSiteApplicationLanguage();
             }
 
 
-            Type listType = new TypeToken<ArrayList<Field>>() {
-            }.getType();
-            List<Field> fields = new Gson().fromJson(page.getContentTemplate().getFields(), listType);
 
+            // retrieve data
+            ContentTemplateEntity template = contentTemplateService.findWithFieldsetAndData(content.getContentTemplate().getId());
+            Slugify slg = new Slugify();
             PageData pageData = new PageData();
-            String inputName;
-            for (Field field : fields) {
-                for (Input input : field.getInputs()) {
-                    inputName = field.getNamespace() + "_" + input.getName();
-                    if (input.getType().equals("array")) {
-                        pageData.getDataArray().put(inputName, Arrays.asList(request.getParameterValues(inputName)));
-                    } else {
-                        pageData.getData().put(inputName, request.getParameter(inputName));
-                    }
+            for (ContentTemplateFieldsetEntity contentTemplateFieldset : template.getContentTemplateFieldset()) {
+
+                FieldsetEntity fieldset = contentTemplateFieldset.getFieldset();
+                Map<String, Object> inputsMap = new HashMap<>();
+                for (InputDataEntity inputDataEntity : contentTemplateFieldset.getDataEntities()) {
+                    String finalName = contentTemplateFieldset.getNamespace() + "_" + slg.slugify(inputDataEntity.getInputDefinition().getName());
+                    String data = request.getParameter(finalName);
+                    pageData.getData().put(finalName, data);
                 }
             }
+
 
             Gson gson = new GsonBuilder().disableHtmlEscaping().create();
             String json = gson.toJson(pageData);
 
 
-            page.setModifiedDate(new Date());
-            page.setName(form.getName());
+            content.setModifiedDate(new Date());
+            content.setName(form.getName());
 
-            page.setMenuItem(form.isMenuItem());
-            page.setEnabled(form.isEnabled());
+            content.setMenuItem(form.isMenuItem());
+            content.setEnabled(form.isEnabled());
 
-            content.setData(json);
-            content.setSlug(form.getSlug());
+            contentData.setData(json);
+            contentData.setTitle(form.getName());
+            contentData.setSlug(form.getSlug());
+
+
+            ContentEntity parent = content.getContentParent();
+            if (parent == null) {
+                //page.setLevel(0);
+                contentData.setComputedSlug(contentData.getSlug());
+            } else {
+                List<ContentDataEntity> contents = content.getDataList();
+                ContentDataEntity parentContent = null;
+                for (ContentDataEntity c : contents) {
+                    if (c.getLanguage() == appLanguage) {
+                        parentContent = c;
+                    }
+                }
+
+                if (parentContent == null)
+                    throw new Exception("Parent with id : " + parent.getId() + " don't have a default content");
+
+                contentData.setComputedSlug(parentContent.getComputedSlug() + '/' + contentData.getSlug());
+            }
 //            content.setSeoDescription(form.getSeoDescription());
 //            content.setSeoH1(form.getSeoH1());
 //            content.setSeoTag(form.getSeoTag());
 //            content.setSeoTitle(form.getSeoTitle());
-            content.setModifiedDate(new Date());
-            pageService.savePage(page);
-            pageService.saveContent(content);
+            contentData.setModifiedDate(new Date());
+            contentService.savePage(content);
+            contentService.saveContent(contentData);
         }
 
         return "OK";
@@ -286,28 +313,28 @@ public class AdminCmsController {
         }
 
         List<ContentEntity> pages = new ArrayList<>();
-        ContentEntity pageParent;
+        ContentEntity contentParent;
         if (form.getParentId() == null) {
-            pageParent = null;
+            contentParent = null;
         } else {
-            pageParent = new ContentEntity();
-            pageParent.setId(form.getParentId());
+            contentParent = new ContentEntity();
+            contentParent.setId(form.getParentId());
         }
 
         for (int i = 0; i < idLength; i++) {
 
-            ContentEntity p = pageService.find(form.getId()[i]);
+            ContentEntity p = contentService.find(form.getId()[i]);
             if (p == null) {
                 response.setStatus(500);
                 return "ID : " + form.getId()[i] + " don't exist";
             }
-            p.setContentParent(pageParent);
+            p.setContentParent(contentParent);
             //p.setLevel(form.getLevel()[i]);
             p.setOrder(form.getPosition()[i]);
             pages.add(p);
         }
 
-        pageService.savePage(pages);
+        contentService.savePage(pages);
         return "Ok";
     }
 }

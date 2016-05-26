@@ -26,7 +26,7 @@ $(function () {
   }
 
   function addLi(name) {
-    $li = $('<li class="input-li" data-div="' + counter + '">' + name+ removeBtnHtml + '</li>');
+    $li = $('<li class="input-li" data-div="' + counter + '">' + name + removeBtnHtml + '</li>');
     $li.animate2Css('flipInX');
     $inputUl.append($li);
   }
@@ -60,7 +60,7 @@ $(function () {
 
       renderedInputs += Mustache.render(inputsTemplate, {
         cssClass: cssClass,
-        counter: counter,
+        counter: inputcounter,
         inputDefId: fieldset.inputs[i].id,
       });
     }
@@ -103,8 +103,9 @@ $(function () {
 
       renderedInputs += Mustache.render(inputsTemplate, {
         cssClass: cssClass,
-        counter: counter,
+        counter: inputcounter,
         inputDefId: templateFieldset.dataEntities[i].inputDefinition.id,
+        canBeAnArray : templateFieldset.array,
         data: templateFieldset.dataEntities[i],
       });
     }
@@ -115,6 +116,8 @@ $(function () {
       style: (counter === 1) ? 'display:block;' : '',
       fieldsetId: templateFieldset.fieldset.id,
       templateFieldsetId: templateFieldset.id,
+      canBeAnArray: templateFieldset.fieldset.array,
+      isArray: templateFieldset.array ,
       name: templateFieldset.name,
       np: templateFieldset.namespace,
       renderedLi: renderedLi,
@@ -133,7 +136,7 @@ $(function () {
 
   $('#addBtnInputs').on('click', function () {
     var data = $select2.val();
-    if (data.trim() !== '') {
+    if (data & data !== '0') {
       addNewInput(data);
     }
   });
@@ -163,10 +166,11 @@ $(function () {
     var names = [];
     var contentFieldsetId = [];
     var np = [];
+    var array = [];
     $inputUl.children().each(function () {
 
       var $div = $('#input-' + $(this).data('div'));
-      var $tabs = $div.find(".tab-pane");
+      var $tabs = $div.find('.tab-pane');
       var fieldsetItem = {};
       fieldsetItem.id = $div.find('.fieldset-id').val();
       fieldsetList.push(fieldsetItem);
@@ -182,6 +186,8 @@ $(function () {
         iData.validation = $this.find('.input-valid').val();
         iData.title = $this.find('.input-title').val();
         iData.hint = $this.find('.input-hint').val();
+        iData.defaultValue = $this.find('.input-defaultValue').val();
+        iData.array = $this.find('.checkbox-array').is(':checked');
         var inputDefId = $this.find('.inputDefId').val();
         inputDefinition.id = (inputDefId ? inputDefId : 0);
         iData.inputDefinition = inputDefinition;
@@ -191,6 +197,13 @@ $(function () {
       var contentFieldsetIdItem = $div.find('.templateFieldsetId').val();
       contentFieldsetId.push(contentFieldsetIdItem ? contentFieldsetIdItem : 0);
       names.push($('#name-' + $(this).data('div')).val());
+      var $isArray = $('#checkbox-' + $(this).data('div'));
+      if ($isArray.length !== 0) {
+        array.push($isArray.prop('checked'));
+      } else {
+        array.push(false);
+      }
+
       np.push($('#np-' + $(this).data('div')).val());
       inputasDataList.push(inputDataListTemp);
     });
@@ -199,25 +212,31 @@ $(function () {
     pageTemplate.id = ($('#template-id').val()) ?  $('#template-id').val() : 0;
     pageTemplate.name = $('#templateName').val();
     pageTemplate.description = $('#fieldsetDescription').val();
+    pageTemplate.active = $('#active').is(':checked');
 
-    if (fieldsetList.length > 0) {
-      $.Cms.ajax({
-        type: 'POST',
-        url: '/admin/contentTemplate/edit',
-        data: {
-          names: JSON.stringify(names),
-          namespaces: JSON.stringify(np),
-          template: JSON.stringify(pageTemplate),
-          fieldsets: JSON.stringify(fieldsetList),
-          inputsData: JSON.stringify(inputasDataList),
-          contentFieldsetId: JSON.stringify(contentFieldsetId),
-        },
-        successMessage: 'The template was saved successfully!',
-        onSuccess: function (e) {
-          document.location.href = '/admin/contentTemplate/edit/' + e;
-        },
-      });
-    }
+    var blockData = {};
+    blockData.name =  $('#blockName').val();
+    blockData.displayName = $('#blockDisplayName').val();
+    blockData.content = aceEditor.getSession().getValue().trim();
+
+    $.Cms.ajax({
+      type: 'POST',
+      url: '/admin/contentTemplate/edit',
+      data: {
+        names: JSON.stringify(names),
+        namespaces: JSON.stringify(np),
+        arrays: JSON.stringify(array),
+        template: JSON.stringify(pageTemplate),
+        fieldsets: JSON.stringify(fieldsetList),
+        inputsData: JSON.stringify(inputasDataList),
+        contentFieldsetId: JSON.stringify(contentFieldsetId),
+        blockData: JSON.stringify(blockData),
+      },
+      successMessage: 'The template was saved successfully!',
+      onSuccess: function (e) {
+        document.location.href = '/admin/contentTemplate/edit/' + e;
+      },
+    });
   });
 
   // Init
@@ -233,5 +252,7 @@ $(function () {
     data: data,
     placeholder: window.placeholder,
   });
+
+  aceEditor = $.Cms.initAceEditor();
 
 });

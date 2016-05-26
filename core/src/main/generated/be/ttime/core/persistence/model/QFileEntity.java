@@ -24,7 +24,7 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
 
     public final QContentDataEntity contentFile;
 
-    public final QContentDataEntity contentImage;
+    public final QFileTypeEntity contentType;
 
     public final StringPath description = createString("description");
 
@@ -71,7 +71,7 @@ public class QFileEntity extends EntityPathBase<FileEntity> {
     public QFileEntity(Class<? extends FileEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
         this.contentFile = inits.isInitialized("contentFile") ? new QContentDataEntity(forProperty("contentFile"), inits.get("contentFile")) : null;
-        this.contentImage = inits.isInitialized("contentImage") ? new QContentDataEntity(forProperty("contentImage"), inits.get("contentImage")) : null;
+        this.contentType = inits.isInitialized("contentType") ? new QFileTypeEntity(forProperty("contentType")) : null;
         this.fileParent = inits.isInitialized("fileParent") ? new QFileEntity(forProperty("fileParent"), inits.get("fileParent")) : null;
     }
 

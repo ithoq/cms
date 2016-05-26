@@ -45,7 +45,7 @@ public class ContentEntity {
     private List<ContentDataEntity> dataList;
     @ManyToOne
     private ContentTemplateEntity contentTemplate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ContentTypeEntity contentType;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Lazy for now (not used in the current version)
     @JoinTable(

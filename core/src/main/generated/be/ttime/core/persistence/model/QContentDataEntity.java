@@ -30,8 +30,6 @@ public class QContentDataEntity extends EntityPathBase<ContentDataEntity> {
 
     public final ListPath<FileEntity, QFileEntity> contentFiles = this.<FileEntity, QFileEntity>createList("contentFiles", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
 
-    public final ListPath<FileEntity, QFileEntity> ContentImages = this.<FileEntity, QFileEntity>createList("ContentImages", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
-
     public final DatePath<java.util.Date> createdDate = createDate("createdDate", java.util.Date.class);
 
     public final StringPath data = createString("data");

@@ -11,11 +11,12 @@ public class AdminFielsetForm {
     private String fieldsetDescription;
     private String blockName;
     private String blockDisplayName;
+    private boolean array;
 
     private String[] inputsValidation;
+    private String[] typeSelect;
     private Integer[] order;
     private Long[] inputDataId;
-    private boolean[] inputsArray;
 
     private String blockContent;
 

@@ -74,7 +74,13 @@ mark
 }
 
 @media (max-width: 767px)
-.jumbotron, .container-fluid {
-    padding-left: 30px;
+.container-fluid
+{
     padding-right: 30px;
+    padding-left: 30px;
+}
+
+.form-group-attached > div.row > [class*='col-']:not(:only-child):not(:last-child) > .form-group-default
+{
+    height: 59px;
 }

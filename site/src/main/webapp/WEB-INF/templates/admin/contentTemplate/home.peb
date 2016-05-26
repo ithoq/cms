@@ -8,13 +8,14 @@
 
 
 {% block content %}
+    {{ csrf | raw }}
     <div class="row">
         <div class="col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="panel-block-title m-b-30">
-                        <h2 class="inline">Gestion des fieldset </h2>
-                        <button id="btnCreateFieldset" type="button" class="btn btn-success pull-right btnCreateFieldset"><i class="fa fa-plus-circle fieldsetAddBtn"></i></button>
+                        <h2 class="inline">Gestion des templates </h2>
+                        <a href="/admin/contentTemplate/edit" class="btn btn-success pull-right btnCreateFieldset"><i class="fa fa-plus-circle fieldsetAddBtn"></i></a>
                     </div>
                 </div>
                 <div class="panel-body">
@@ -22,65 +23,16 @@
                         <div class="panel panel-transparent">
                             <div class="panel-body">
                                 <input id="search-table" type="text" placeholder="Search" class="form-control pull-right">
-                                <table id="tableWithSearch" class="table table-hover">
+                                <table id="data-table" class="table table-hover">
                                     <thead>
                                     <tr>
-                                        <th style="width: 20%;" class="center">Nom</th>
-                                        <th style="width: 20%;" class="center">Description</th>
-                                        <th style="width: 20%;" class="center">Block</th>
-                                        <th style="width: 15%;" class="center">Edit</th>
-                                        <th style="width:15%" class="center no-sort">Opération</th>
+                                        <th style="width: 200px" >{{ message('name') }}</th>
+                                        <th class="center">{{ message('description') }}</th>
+                                        <th style="width: 80px" class="center no-sort">{{ message('edit') }}</th>
+                                        <th style="width:100px" class="center no-sort">{{ message('operation') }}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr data-id="2">
-                                        <td class="center semi-bold">
-                                            <p>Mon super nom</p>
-                                        </td>
-                                        <td class="center">
-                                            <p>WYSIWYG</p>
-                                        </td>
-                                        <td class="center">
-                                            <p>block</p>
-                                        </td>
-                                        <td class="center">
-                                            <button id="btnModalEditFieldset" type="button" data-id="2" class="btn btn-default btn-modal-edit"><i class="fa fa-pencil"></i></button>
-                                        </td>
-                                        <td class="center">
-                                            <div class="op-table-slider-wrapper">
-                                                <div data-id="1" class="op-table-slide-container">
-                                                    <div class="op-table-slide-item">
-                                                        <button id="js-show-controls" type="button" class="btn btn-default button js-move"><i class="fa fa-trash-o"> </i></button>
-                                                    </div>
-                                                    <div class="op-table-slide-item"><button type="button" class="btn btn-danger js-move operation"><i class="fa fa-times"></i></button><button type="button" class="btn btn-success js-op-ajax operation"> <i class="fa fa-check"></i></button></div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr data-id="3">
-                                        <td class="center semi-bold">
-                                            <p>Mon super nom</p>
-                                        </td>
-                                        <td class="center">
-                                            <p>WYSIWYG</p>
-                                        </td>
-                                        <td class="center">
-                                            <p>block</p>
-                                        </td>
-                                        <td class="center">
-                                            <button id="btnModalEditFieldset" type="button" data-id="1" class="btn btn-default btn-modal-edit"><i class="fa fa-pencil"></i></button>
-                                        </td>
-                                        <td class="center">
-                                            <div class="op-table-slider-wrapper">
-                                                <div data-id="2" class="op-table-slide-container">
-                                                    <div class="op-table-slide-item">
-                                                        <button id="js-show-controls" type="button" class="btn btn-default button js-move"><i class="fa fa-trash-o"> </i></button>
-                                                    </div>
-                                                    <div class="op-table-slide-item"><button type="button" class="btn btn-danger js-move operation"><i class="fa fa-times"></i></button><button type="button" class="btn btn-success js-op-ajax operation"> <i class="fa fa-check"></i></button></div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -92,7 +44,5 @@
     </div>
 {% endblock content %}
 {% block bottom %}
-
-
-
+    <script src="/resources/admin/js/page/template-home.js"></script>
 {% endblock bottom %}

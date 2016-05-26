@@ -37,6 +37,9 @@ public class FileEntity {
 
     private boolean directory = false;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private FileTypeEntity contentType;
+
     @ManyToOne
     private FileEntity fileParent;
 
@@ -45,8 +48,7 @@ public class FileEntity {
 
     @ManyToOne
     private ContentDataEntity contentFile;
-    @ManyToOne
-    private ContentDataEntity contentImage;
+
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean enabled = true;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // lazy because not used for now !

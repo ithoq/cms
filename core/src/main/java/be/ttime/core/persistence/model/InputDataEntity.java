@@ -31,9 +31,6 @@ public class InputDataEntity {
     @ManyToOne
     private FieldsetEntity fieldset;
 
-    /*@ManyToOne
-    private ContentTemplateEntity contentTemplateEntity;*/
-
     @ManyToOne
     private ContentTemplateFieldsetEntity contentTemplateFieldsetEntity;
 }

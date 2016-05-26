@@ -74,7 +74,7 @@ public class FieldsetServiceImpl implements IFieldsetService {
             //row.add("DT_RowClass", "x"); // add a class
             row.add("DT_RowData", Json.createObjectBuilder().add("id", f.getId()));
             row.add("name", f.getName());
-            row.add("description", f.getDescription());
+            row.add("description", f.getDescription() != null ? f.getDescription() : "" );
             row.add("deletable", f.isDeletable());
             data.add(row);
         }

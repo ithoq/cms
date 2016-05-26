@@ -22,8 +22,6 @@ public class QInputDefinitionEntity extends EntityPathBase<InputDefinitionEntity
 
     public static final QInputDefinitionEntity inputDefinitionEntity = new QInputDefinitionEntity("inputDefinitionEntity");
 
-    public final BooleanPath array = createBoolean("array");
-
     public final QFieldsetEntity fieldset;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -31,6 +29,8 @@ public class QInputDefinitionEntity extends EntityPathBase<InputDefinitionEntity
     public final StringPath name = createString("name");
 
     public final NumberPath<Integer> sort = createNumber("sort", Integer.class);
+
+    public final StringPath type = createString("type");
 
     public final StringPath validation = createString("validation");
 

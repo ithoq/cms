@@ -10,18 +10,18 @@ import java.util.List;
 
 public interface IContentRepository extends JpaRepository<ContentEntity, Long>, QueryDslPredicateExecutor<ContentEntity> {
 
-    @Query("SELECT p from PageEntity p LEFT JOIN FETCH p.pageChildren ORDER BY p.level,p.order")
+    @Query("SELECT c from ContentEntity c LEFT JOIN FETCH c.contentChildren ORDER BY c.order")
     List<ContentEntity> findAll();
 
-    @Query("SELECT p from PageEntity p LEFT JOIN FETCH p.pageChildren WHERE p.menuItem = :nav AND p.enabled = :enabled ORDER BY p.level,p.order")
+    @Query("SELECT c from ContentEntity c LEFT JOIN FETCH c.contentChildren WHERE c.menuItem = :nav AND c.enabled = :enabled ORDER BY c.order")
     List<ContentEntity> findByMenuItemTrueAndEnabledTrue();
 
-    List<ContentEntity> findByPageParentIsNullOrderByOrderAsc();
+    List<ContentEntity> findByContentParentIsNullOrderByOrderAsc();
 
-    List<ContentEntity> findByPageParentOrderByOrderAsc(ContentEntity parent);
+    List<ContentEntity> findByContentParentOrderByOrderAsc(ContentEntity parent);
 
-    ContentEntity findFirstByPageParentOrderByOrderDesc(ContentEntity parent);
+    ContentEntity findFirstByContentParentOrderByOrderDesc(ContentEntity parent);
 
-    @Query("SELECT p from PageEntity p LEFT JOIN FETCH p.pageContents WHERE p.id = :id ")
+    @Query("SELECT c from ContentEntity c LEFT JOIN FETCH c.dataList WHERE c.id = :id ")
     ContentEntity findOne(@Param("id") Long id);
 }

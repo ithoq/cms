@@ -25,7 +25,7 @@ public class InputDefinitionEntity {
     @Expose
     private String name;
     @Expose
-    private boolean array;
+    private String type;
     @Expose
     private String validation;
     @ManyToOne

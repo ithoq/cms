@@ -22,6 +22,16 @@
             <label>Description</label>
             <textarea id="fieldsetDescription" type="text" name="fieldsetDescription" rows="5" class="form-control">{{ fieldset.description }}</textarea>
         </div>
+        <div class="form-group form-group-default input-group noBorder w300">
+            <label class="inline">Can be an Array</label>
+            <span class="input-group-addon bg-transparent">
+                <div class="fc-switch typeButton">
+                  <input id="array" type="checkbox" class="checkbox-array"  name="array" {% if fieldset.array %}checked{% endif %} />
+                  <label for="array" data-off="No" data-on="Yes"></label>
+                </div>
+            </span>
+        </div>
+
         <div class="inputs-container">
             <button id="addBtnInputs" type="button" name="addBtnInputs" class="btn btn-success addBtnInputs">Ajouter des inputs</button>
             <div class="row">
@@ -68,22 +78,23 @@
 {% block bottom %}
     {% verbatim %}
 <script type="text/template" id="inputsTemplate">
-    <div id="input-{{counter}}" class="input-div" style="{{style}}">
+    <div id="input-{{counter}}" class="input-div" data-id="{{id}}" style="{{style}}">
         <input type="hidden" name="order">
         <input type="hidden" name="inputDataId" value="{{id}}">
         <input type="text" data-id={{counter}} id="name-{{counter}}" class="js-input-name light-input page-title" name="inputsName" value="{{name}}" required="" aria-required="true">
+        <div><p>Editor name : <span class="label label-success editor-name" id="editor-name-{{counter}}">{{editorName}}</span></p></div>
         <div class="form-group-attached  m-t-20">
             <div class="row clearfix">
                 <div class="col-sm-6">
-                    <div class="form-group form-group-default input-group noBorder">
-                        <label class="inline">Can be an Array</label>
-                        <span class="input-group-addon bg-transparent">
-                            <div class="fc-switch typeButton">
-                              <input id='checkbox-hidden-{{counter}}' type='hidden' value='off' name='inputsArray'>
-                              <input id="checkbox-{{counter}}" type="checkbox" class="checkbox-array" data-id="{{counter}}" name="inputsArray" {{#array}}checked{{/array}}/>
-                              <label for="checkbox-{{counter}}" data-off="No" data-on="Yes"></label>
-                            </div>
-                        </span>
+                    <div class="form-group form-group-default required" aria-required="true">
+                        <label>Type cast</label>
+                        <select class="form-control typeSelect" name="typeSelect">
+                            <option value="string" selected="selected">string</option>
+                            <option value="date">date</option>
+                            <option value="file">file</option>
+                            <option value="integer">integer</option>
+                            <option value="double">double</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-sm-6">
