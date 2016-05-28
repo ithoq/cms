@@ -1,0 +1,7 @@
+{% set picker = inputs[np + "picker"] %}
+
+<h3 class="like-label">{{picker.title}}</h3>{% if picker.hint is not empty %} <i data-placement="right" title="" data-toggle="tooltip" data-original-title="{{picker.hint}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
+<div class="input-group date">
+    <input type="text" class="form-control" value="{{data}}" name="{{ picker.name}}" data-plugin="datepicker" {% if picker.isArray %}data-picker-multiple{% endif %}>
+    <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+</div>

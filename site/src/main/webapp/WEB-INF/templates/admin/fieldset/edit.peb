@@ -92,6 +92,7 @@
                             <option value="string" selected="selected">string</option>
                             <option value="date">date</option>
                             <option value="file">file</option>
+                            <option value="boolean">boolean</option>
                             <option value="integer">integer</option>
                             <option value="double">double</option>
                         </select>

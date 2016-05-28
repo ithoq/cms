@@ -1,6 +1,9 @@
 package be.ttime.core.util;
 
+import be.ttime.core.model.field.PageData;
 import be.ttime.core.persistence.model.UserEntity;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.ibatis.common.jdbc.ScriptRunner;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +34,8 @@ import java.util.Map;
 public class CmsUtils {
 
     //public final String csrfParameterName = "_csrf";
+    public final static String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public final static String DATE_FORMAT = "yyyy-MM-dd";
     public final static String CONTENT_TYPE_PAGE = "PAGE";
     public final static String CONTENT_TYPE_PAGE_LINK = "PAGE_LINK";
     public final static String CONTENT_TYPE_NEWS = "NEWS";
@@ -148,5 +153,32 @@ public class CmsUtils {
 
     public static boolean isAjax(HttpServletRequest request) {
         return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+    }
+
+    public static boolean isArray(Object obj)
+    {
+        return obj!=null && obj.getClass().isArray();
+    }
+
+    public static HashMap<String, Object> parseData(String pageDataString){
+        PageData pageData = parseStringToPageDate(pageDataString);
+        HashMap<String, Object> data = new HashMap<>();
+        data.putAll(pageData.getDataBoolean());
+        data.putAll(pageData.getDataBooleanArray());
+        data.putAll(pageData.getDataDate());
+        data.putAll(pageData.getDataDateArray());
+        data.putAll(pageData.getDataDouble());
+        data.putAll(pageData.getDataDoubleArray());
+        data.putAll(pageData.getDataInteger());
+        data.putAll(pageData.getDataIntegerArray());
+        data.putAll(pageData.getDataString());
+        data.putAll(pageData.getDataStringArray());
+
+        return data;
+    }
+
+    public static PageData parseStringToPageDate(String pageDataString){
+        Gson gson = new GsonBuilder().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
+        return gson.fromJson(pageDataString, PageData.class);
     }
 }

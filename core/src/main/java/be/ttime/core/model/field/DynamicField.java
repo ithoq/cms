@@ -5,14 +5,15 @@ import be.ttime.core.persistence.model.ContentTemplateFieldsetEntity;
 import be.ttime.core.persistence.model.FieldsetEntity;
 import be.ttime.core.persistence.model.InputDataEntity;
 import be.ttime.core.persistence.service.IBlockService;
+import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /*
     Render a dynamic field in CMS Page administration.
@@ -49,6 +50,7 @@ public class DynamicField {
 
             FieldsetEntity fieldset = contentTemplateFieldset.getFieldset();
             Map<String, Object> inputsMap = new HashMap<>();
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(CmsUtils.DATE_FORMAT);
             for (InputDataEntity inputDataEntity : contentTemplateFieldset.getDataEntities()) {
 
                 String finalName = contentTemplateFieldset.getNamespace() + "_" + slg.slugify(inputDataEntity.getInputDefinition().getName());
@@ -58,11 +60,39 @@ public class DynamicField {
                 inputMap.put("hint", inputDataEntity.getHint());
                 inputMap.put("validation", inputDataEntity.getValidation());
                 inputMap.put("default", inputDataEntity.getDefaultValue());
-                if(inputDataEntity.isArray()){
-                    inputMap.put("data", pageData.getData().get(finalName));
-                } else{
-                    inputMap.put("data", pageData.getData().get(finalName));
+                inputMap.put("isArray", contentTemplateFieldset.isArray());
+
+                String inputType = inputDataEntity.getInputDefinition().getType();
+                if(inputDataEntity.getFieldset().isArray()){
+                    if(inputType.equals("date")){
+                        Date[] dates = pageData.getDataDateArray().get(finalName);
+                        if(dates != null) {
+                            StringBuilder sb = new StringBuilder();
+                            for (int i = 0; i < pageData.getDataDateArray().get(finalName).length; i++) {
+                                if (i != 0) {
+                                    sb.append(",");
+                                }
+                                sb.append(dateFormatter.format(dates[i]));
+                            }
+                            model.put("data", sb.toString());
+                        }
+                    } else{
+                        model.put("data", Arrays.toString(pageData.getDataStringArray().get(finalName)));
+                    }
+                } else {
+                    if(inputType.equals("date")){
+                        Date d = pageData.getDataDate().get(finalName);
+                        if(d != null){
+                            model.put("data", dateFormatter.format(d));
+                        }
+
+                    } else{
+                        model.put("data", pageData.getDataString().get(finalName));
+                    }
                 }
+
+                //TODO: DATA
+               // if()
 
                 inputsMap.put(finalName, inputMap);
             }

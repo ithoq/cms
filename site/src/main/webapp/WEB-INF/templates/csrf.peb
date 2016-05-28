@@ -5,9 +5,38 @@
     <title>Document</title>
 </head>
 <body>
-<form action="/testCsrf" method="post">
-    <input type="text" name="test"/>
+<h1>{{ date }}</h1>
+
+<h1>{{ result | date("EEE, dd MMM yyyy") }}</h1>
+
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid asperiores assumenda dignissimos, dolorum earum excepturi facere, illo incidunt inventore maiores nesciunt, nulla odit optio rerum tenetur ullam vel veritatis. Similique.</p>
+<h2> number : {{ data.number }}</h2>
+
+
+{% if data.number > 20 %}
+
+    <h3>Is > 20</h3>
+{% endif %}
+
+<form method="POST">
+
+    {{ csrf | raw }}
+
+    <select name="select" id="select" multiple>
+        <option value="test1">test1</option>
+        <option value="test2">test2</option>
+        <option value="test3">test3</option>
+        <option value="test4">test4</option>
+        <option value="test5">test5</option>
+    </select>
+
+    <br>
+    <input type="checkbox" name="chk_group" value="value1" />Value 1<br />
+    <input type="checkbox" name="chk_group" value="value2" />Value 2<br />
+    <input type="checkbox" name="chk_group" value="value3" />Value 3<br />
+
     <input type="submit" value="submit">
+
 </form>
 </body>
 </html>

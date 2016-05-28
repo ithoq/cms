@@ -25,7 +25,9 @@ public class StartCMS extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
+
         SpringApplication.run(StartCMS.class, args);
+
     }
 
     @Override

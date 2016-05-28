@@ -1,7 +1,6 @@
 package be.ttime.core.controller;
 
 import be.ttime.core.error.ResourceNotFoundException;
-import be.ttime.core.model.field.PageData;
 import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.model.ContentDataEntity;
 import be.ttime.core.persistence.service.IApplicationService;
@@ -9,7 +8,6 @@ import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Locale;
 
 @RestController
@@ -48,10 +47,11 @@ public class CmsController {
         }
 
         if (!StringUtils.isEmpty(contentData.getData())) {
-            Gson gson = new Gson();
-            PageData pageData = gson.fromJson(contentData.getData(), PageData.class);
-            model.put("data", pageData.getData());
-            model.put("dataArray", pageData.getDataArray());
+
+            HashMap<String, Object> data = CmsUtils.parseData(contentData.getData());
+
+            model.put("data", data);
+            //model.put("dataArray", pageData.getDataArray());
         }
 
         BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCK_TYPE_SYSTEM);

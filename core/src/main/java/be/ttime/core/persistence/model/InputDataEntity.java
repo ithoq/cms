@@ -23,7 +23,6 @@ public class InputDataEntity {
     @Expose private String validation;
     @Expose private String title;
     @Expose private String hint;
-    @Expose private boolean array;
     @Expose private String defaultValue;
     @ManyToOne
     @Expose private InputDefinitionEntity inputDefinition;

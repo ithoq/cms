@@ -57,6 +57,15 @@
           $pageForm.find('[data-editor="tinymce"]').each(function (index, element) {
             $.Cms.initTinyMce({ selector: '#' + element.id });
           });
+  
+          $pageForm.find('[data-plugin="datepicker"]').each(function (index, element) {
+            var $picker = $(element);
+
+            $picker.datepicker({
+              format: 'yyyy-mm-dd',
+              multidate: (typeof $picker.data('picker-multiple') !== "undefined"),
+            });
+          });
         },
       };
   

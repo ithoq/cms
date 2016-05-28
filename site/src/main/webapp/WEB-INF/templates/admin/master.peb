@@ -20,6 +20,7 @@
     <link href="/resources/admin/libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="/resources/admin/libs/jquery-scrollbar/jquery.scrollbar.css" rel="stylesheet" type="text/css" media="screen">
     <link href="/resources/admin/libs/bootstrap-select2/select2.css" rel="stylesheet" type="text/css" media="screen">
+    <link href="/resources/admin/libs/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" media="screen">
     <link href="/resources/admin/libs/switchery/css/switchery.min.css" rel="stylesheet" type="text/css" media="screen">
     <link href="/resources/admin/libs/datatable/media/css/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="/resources/admin/libs/datatable/extensions/FixedColumns/css/fixedColumns.dataTables.min.css" rel="stylesheet" type="text/css">
@@ -40,6 +41,7 @@
     <script src="/resources/admin/libs/jquery-actual/jquery.actual.min.js"></script>
     <script src="/resources/admin/libs/jquery-scrollbar/jquery.scrollbar.min.js"></script>
     <script src="/resources/admin/libs/bootstrap-select2/select2.min.js"></script>
+    <script src="/resources/admin/libs/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
     <script src="/resources/admin/libs/classie/classie.js"></script>
     <script src="/resources/admin/libs/switchery/js/switchery.min.js"></script>
     <script src="/resources/admin/libs/datatable/datatables.min.js"></script>

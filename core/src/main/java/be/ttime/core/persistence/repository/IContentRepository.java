@@ -20,6 +20,10 @@ public interface IContentRepository extends JpaRepository<ContentEntity, Long>, 
 
     List<ContentEntity> findByContentParentOrderByOrderAsc(ContentEntity parent);
 
+    /*
+    @Query("SELECT c from ContentEntity c LEFT JOIN FETCH c. WHERE c.menuItem = :nav AND c.enabled = :enabled ORDER BY c.order")
+    ContentEntity findByComputedSlug(String slug, String locale);
+*/
     ContentEntity findFirstByContentParentOrderByOrderDesc(ContentEntity parent);
 
     @Query("SELECT c from ContentEntity c LEFT JOIN FETCH c.dataList WHERE c.id = :id ")

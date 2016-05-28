@@ -72,6 +72,7 @@ $(function () {
       fieldsetId: fieldset.id,
       templateFieldsetId: 0,
       renderedLi: renderedLi,
+      canBeAnArray: fieldset.array,
       renderedInputs: renderedInputs,
       name: fieldsetLabel,
     });
@@ -101,11 +102,14 @@ $(function () {
         name: templateFieldset.dataEntities[i].inputDefinition.name,
       });
 
+      if (templateFieldset.dataEntities[i].validation.length === 0) {
+        templateFieldset.dataEntities[i].validation = templateFieldset.dataEntities[i].inputDefinition.validation;
+      }
+
       renderedInputs += Mustache.render(inputsTemplate, {
         cssClass: cssClass,
         counter: inputcounter,
         inputDefId: templateFieldset.dataEntities[i].inputDefinition.id,
-        canBeAnArray : templateFieldset.array,
         data: templateFieldset.dataEntities[i],
       });
     }
@@ -136,7 +140,7 @@ $(function () {
 
   $('#addBtnInputs').on('click', function () {
     var data = $select2.val();
-    if (data & data !== '0') {
+    if (data && data !== '0') {
       addNewInput(data);
     }
   });

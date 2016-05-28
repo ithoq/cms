@@ -13,7 +13,7 @@ import java.util.List;
         @Index(name = "idx_slug", columnList = "computedSlug,language_locale", unique = true)})
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id", "slug"})
+@EqualsAndHashCode(of = {"id", "computedSlug"})
 public class ContentDataEntity {
 
     @Id
@@ -35,10 +35,10 @@ public class ContentDataEntity {
     private String slug;
     private String computedSlug;
 
-    @OneToMany(mappedBy = "contentFile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "contentFile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FileEntity> contentFiles;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ContentEntity content;
 
     @ManyToOne(fetch = FetchType.LAZY)

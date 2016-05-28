@@ -32,7 +32,9 @@ public class ContentServiceImpl implements IContentService {
 
     @Override
     public ContentDataEntity findBySlug(String slug, Locale locale) {
+        
         return contentRepository.findByComputedSlugAndLanguageLocale(slug, locale.toString());
+
     }
 
     @Override
