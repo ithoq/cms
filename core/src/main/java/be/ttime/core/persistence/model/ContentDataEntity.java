@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "content_data", indexes = {
@@ -35,8 +35,8 @@ public class ContentDataEntity {
     private String slug;
     private String computedSlug;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "contentFile", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FileEntity> contentFiles;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentFile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<FileEntity> contentFiles;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private ContentEntity content;
@@ -44,9 +44,9 @@ public class ContentDataEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private ApplicationLanguageEntity language;
 
-    @OneToMany(mappedBy = "contentData", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContentDataDictionaryEntity> dictionaryList;
+    @OneToMany(mappedBy = "contentData", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ContentDataDictionaryEntity> dictionaryList;
 
-    @OneToMany(mappedBy = "contentData", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommentEntity> commentList;
+    @OneToMany(mappedBy = "contentData", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CommentEntity> commentList;
 }

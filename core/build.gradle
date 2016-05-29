@@ -15,7 +15,7 @@ configurations {
 sourceSets {
     generated {
         java {
-            srcDirs = ['src/main/generated']
+           // srcDirs = ['src/main/java']
         }
     }
     main {
@@ -25,7 +25,7 @@ sourceSets {
 
 idea {
     module {
-        sourceDirs += file('src/main/generated')
+        //sourceDirs += file('src/main/generated')
     }
 }
 
@@ -37,7 +37,7 @@ task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates
             "-proc:only",
             "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"
     ]
-    destinationDir = file('src/main/generated')
+    destinationDir = file('src/main/java')
 }
 
 compileJava {

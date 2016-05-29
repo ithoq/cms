@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,14 +20,14 @@ public class ContentEntity {
     @Access(AccessType.PROPERTY)
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
     private long id;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date createdDate;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedDate;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date beginDate;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
     private boolean enabled = true;
     @Column(name = "pos", nullable = false)
@@ -40,10 +39,10 @@ public class ContentEntity {
     @ManyToOne
     private ContentEntity contentParent;
     @OneToMany(mappedBy = "contentParent")
-    private List<ContentEntity> contentChildren;
+    private Set<ContentEntity> contentChildren;
     @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContentDataEntity> dataList;
-    @ManyToOne
+    private Set<ContentDataEntity> dataList;
+    @ManyToOne(fetch = FetchType.LAZY)
     private ContentTemplateEntity contentTemplate;
     @ManyToOne(fetch = FetchType.LAZY)
     private ContentTypeEntity contentType;
@@ -56,7 +55,7 @@ public class ContentEntity {
     private Set<PrivilegeEntity> privileges;
 
     @ManyToMany(mappedBy = "contents")
-    private List<TaxonomyTermEntity> taxonomyTermEntities;
-    @OneToMany(mappedBy = "content", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContentDictionaryEntity> dictionaryList;
+    private Set<TaxonomyTermEntity> taxonomyTermEntities;
+    @OneToMany(mappedBy = "content", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ContentDictionaryEntity> dictionaryList;
 }

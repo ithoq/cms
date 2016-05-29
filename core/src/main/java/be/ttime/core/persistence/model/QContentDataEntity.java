@@ -22,19 +22,19 @@ public class QContentDataEntity extends EntityPathBase<ContentDataEntity> {
 
     public static final QContentDataEntity contentDataEntity = new QContentDataEntity("contentDataEntity");
 
-    public final ListPath<CommentEntity, QCommentEntity> commentList = this.<CommentEntity, QCommentEntity>createList("commentList", CommentEntity.class, QCommentEntity.class, PathInits.DIRECT2);
+    public final SetPath<CommentEntity, QCommentEntity> commentList = this.<CommentEntity, QCommentEntity>createSet("commentList", CommentEntity.class, QCommentEntity.class, PathInits.DIRECT2);
 
     public final StringPath computedSlug = createString("computedSlug");
 
     public final QContentEntity content;
 
-    public final ListPath<FileEntity, QFileEntity> contentFiles = this.<FileEntity, QFileEntity>createList("contentFiles", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
+    public final SetPath<FileEntity, QFileEntity> contentFiles = this.<FileEntity, QFileEntity>createSet("contentFiles", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
 
     public final DatePath<java.util.Date> createdDate = createDate("createdDate", java.util.Date.class);
 
     public final StringPath data = createString("data");
 
-    public final ListPath<ContentDataDictionaryEntity, QContentDataDictionaryEntity> dictionaryList = this.<ContentDataDictionaryEntity, QContentDataDictionaryEntity>createList("dictionaryList", ContentDataDictionaryEntity.class, QContentDataDictionaryEntity.class, PathInits.DIRECT2);
+    public final SetPath<ContentDataDictionaryEntity, QContentDataDictionaryEntity> dictionaryList = this.<ContentDataDictionaryEntity, QContentDataDictionaryEntity>createSet("dictionaryList", ContentDataDictionaryEntity.class, QContentDataDictionaryEntity.class, PathInits.DIRECT2);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 

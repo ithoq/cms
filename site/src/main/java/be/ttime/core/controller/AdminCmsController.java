@@ -159,7 +159,7 @@ public class AdminCmsController {
                     //page.setLevel(parent.getLevel() + 1);
                     content.setContentParent(parent);
 
-                    List<ContentDataEntity> contents = content.getDataList();
+                    Collection<ContentDataEntity> contents = content.getDataList();
                     ContentDataEntity parentContent = null;
                     for (ContentDataEntity c : contents) {
                         if (c.getLanguage() == applicationService.getDefaultSiteApplicationLanguage()) {
@@ -318,7 +318,7 @@ public class AdminCmsController {
                 //page.setLevel(0);
                 contentData.setComputedSlug(contentData.getSlug());
             } else {
-                List<ContentDataEntity> contents = content.getDataList();
+                Collection<ContentDataEntity> contents = content.getDataList();
                 ContentDataEntity parentContent = null;
                 for (ContentDataEntity c : contents) {
                     if (c.getLanguage() == appLanguage) {

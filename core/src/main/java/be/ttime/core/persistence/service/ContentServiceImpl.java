@@ -1,18 +1,16 @@
 package be.ttime.core.persistence.service;
 
 import be.ttime.core.error.ResourceNotFoundException;
-import be.ttime.core.persistence.model.ContentDataEntity;
-import be.ttime.core.persistence.model.ContentEntity;
+import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.repository.IContentDataRepository;
 import be.ttime.core.persistence.repository.IContentRepository;
+import com.mysema.query.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import javax.persistence.EntityManager;
+import java.util.*;
 
 @Service
 @Transactional
@@ -24,6 +22,9 @@ public class ContentServiceImpl implements IContentService {
     @Autowired
     private IContentDataRepository contentRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @Override
 
     public ContentEntity find(Long id) {
@@ -32,9 +33,57 @@ public class ContentServiceImpl implements IContentService {
 
     @Override
     public ContentDataEntity findBySlug(String slug, Locale locale) {
-        
-        return contentRepository.findByComputedSlugAndLanguageLocale(slug, locale.toString());
 
+
+        QContentEntity contentEntity = QContentEntity.contentEntity;
+        QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
+        QCommentEntity commentEntity = QCommentEntity.commentEntity;
+        QFileEntity fileEntity = QFileEntity.fileEntity;
+        QContentDataDictionaryEntity contentDataDictionaryEntity = QContentDataDictionaryEntity.contentDataDictionaryEntity;
+
+       JPAQuery query = new JPAQuery(entityManager);
+    JPAQuery query2 = query.clone(entityManager);
+
+        ContentDataEntity resultData =  query.from(contentDataEntity)
+                .leftJoin(contentDataEntity.commentList, commentEntity).fetch()
+                .leftJoin(commentEntity.commentParent, commentEntity).fetch()
+                .leftJoin(contentDataEntity.dictionaryList, contentDataDictionaryEntity).fetch()
+                .leftJoin(contentDataEntity.contentFiles, fileEntity).fetch()
+                .where(contentDataEntity.computedSlug.eq(slug)
+                        .and(contentDataEntity.language.locale.eq(locale.toString())))
+                .singleResult(contentDataEntity);
+
+        // Hibernate.initialize(resultData.getCommentList());
+        //Hibernate.initialize(resultData.getContentFiles());
+
+
+        ContentEntity result =
+                query2
+                        .from(contentEntity)
+                        .where(contentEntity.id.eq(resultData.getContent().getId()))
+                        .leftJoin(contentEntity.privileges).fetch()
+                        .leftJoin(contentEntity.contentParent)
+                        .singleResult(contentEntity);
+
+        String tortue = "tortue";
+
+        return resultData;
+    }
+
+    @Override
+    public ContentEntity findContentParent(Long id) {
+        JPAQuery query = new JPAQuery(entityManager);
+        QContentEntity contentEntity = QContentEntity.contentEntity;
+        query = new JPAQuery(entityManager);
+        ContentEntity result =
+                query
+                        .from(contentEntity)
+                        .where(contentEntity.id.eq(id))
+                        .leftJoin(contentEntity.privileges).fetch()
+                        .leftJoin(contentEntity.contentParent)
+                        .singleResult(contentEntity);
+
+        return result;
     }
 
     @Override
@@ -136,7 +185,9 @@ public class ContentServiceImpl implements IContentService {
             first = false;
 
             sb.append("{ \"title\": \"").append(p.getName()).append("\", \"key\": \"").append(p.getId()).append("\"");
-            List<ContentEntity> childrens = p.getContentChildren();
+            Set<ContentEntity> childrensSet = p.getContentChildren();
+            List<ContentEntity> childrens = new ArrayList<>();
+            childrens.addAll(childrensSet);
             if (childrens.size() > 0) {
                 if (level <= MAX_EXPANDED_TREE_LEVEL) {
                     sb.append(", \"expanded\":true");

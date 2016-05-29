@@ -32,4 +32,6 @@ public interface IContentService {
 
     ContentDataEntity findBySlug(String slug, Locale locale);
 
+    ContentEntity findContentParent(Long id);
+
 }

@@ -22,9 +22,9 @@ public class QContentEntity extends EntityPathBase<ContentEntity> {
 
     public static final QContentEntity contentEntity = new QContentEntity("contentEntity");
 
-    public final DatePath<java.util.Date> beginDate = createDate("beginDate", java.util.Date.class);
+    public final DateTimePath<java.util.Date> beginDate = createDateTime("beginDate", java.util.Date.class);
 
-    public final ListPath<ContentEntity, QContentEntity> contentChildren = this.<ContentEntity, QContentEntity>createList("contentChildren", ContentEntity.class, QContentEntity.class, PathInits.DIRECT2);
+    public final SetPath<ContentEntity, QContentEntity> contentChildren = this.<ContentEntity, QContentEntity>createSet("contentChildren", ContentEntity.class, QContentEntity.class, PathInits.DIRECT2);
 
     public final QContentEntity contentParent;
 
@@ -32,21 +32,21 @@ public class QContentEntity extends EntityPathBase<ContentEntity> {
 
     public final QContentTypeEntity contentType;
 
-    public final DatePath<java.util.Date> createdDate = createDate("createdDate", java.util.Date.class);
+    public final DateTimePath<java.util.Date> createdDate = createDateTime("createdDate", java.util.Date.class);
 
-    public final ListPath<ContentDataEntity, QContentDataEntity> dataList = this.<ContentDataEntity, QContentDataEntity>createList("dataList", ContentDataEntity.class, QContentDataEntity.class, PathInits.DIRECT2);
+    public final SetPath<ContentDataEntity, QContentDataEntity> dataList = this.<ContentDataEntity, QContentDataEntity>createSet("dataList", ContentDataEntity.class, QContentDataEntity.class, PathInits.DIRECT2);
 
-    public final ListPath<ContentDictionaryEntity, QContentDictionaryEntity> dictionaryList = this.<ContentDictionaryEntity, QContentDictionaryEntity>createList("dictionaryList", ContentDictionaryEntity.class, QContentDictionaryEntity.class, PathInits.DIRECT2);
+    public final SetPath<ContentDictionaryEntity, QContentDictionaryEntity> dictionaryList = this.<ContentDictionaryEntity, QContentDictionaryEntity>createSet("dictionaryList", ContentDictionaryEntity.class, QContentDictionaryEntity.class, PathInits.DIRECT2);
 
     public final BooleanPath enabled = createBoolean("enabled");
 
-    public final DatePath<java.util.Date> endDate = createDate("endDate", java.util.Date.class);
+    public final DateTimePath<java.util.Date> endDate = createDateTime("endDate", java.util.Date.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final BooleanPath menuItem = createBoolean("menuItem");
 
-    public final DatePath<java.util.Date> modifiedDate = createDate("modifiedDate", java.util.Date.class);
+    public final DateTimePath<java.util.Date> modifiedDate = createDateTime("modifiedDate", java.util.Date.class);
 
     public final StringPath name = createString("name");
 
@@ -54,7 +54,7 @@ public class QContentEntity extends EntityPathBase<ContentEntity> {
 
     public final SetPath<PrivilegeEntity, QPrivilegeEntity> privileges = this.<PrivilegeEntity, QPrivilegeEntity>createSet("privileges", PrivilegeEntity.class, QPrivilegeEntity.class, PathInits.DIRECT2);
 
-    public final ListPath<TaxonomyTermEntity, QTaxonomyTermEntity> taxonomyTermEntities = this.<TaxonomyTermEntity, QTaxonomyTermEntity>createList("taxonomyTermEntities", TaxonomyTermEntity.class, QTaxonomyTermEntity.class, PathInits.DIRECT2);
+    public final SetPath<TaxonomyTermEntity, QTaxonomyTermEntity> taxonomyTermEntities = this.<TaxonomyTermEntity, QTaxonomyTermEntity>createSet("taxonomyTermEntities", TaxonomyTermEntity.class, QTaxonomyTermEntity.class, PathInits.DIRECT2);
 
     public QContentEntity(String variable) {
         this(ContentEntity.class, forVariable(variable), INITS);
