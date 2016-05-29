@@ -22,3 +22,4 @@ gulp/admin/src/icons
 gulp/admin/src/static
 gulp/admin/sass-cache
 bin/
+logs/
