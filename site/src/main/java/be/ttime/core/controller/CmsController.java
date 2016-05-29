@@ -1,21 +1,25 @@
 package be.ttime.core.controller;
 
+import be.ttime.core.error.ResourceNotFoundException;
+import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.model.ContentDataEntity;
-import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IContentService;
+import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Locale;
 
 @RestController
@@ -39,9 +43,12 @@ public class CmsController {
     public String page(ModelMap model, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
 
         final String path = request.getRequestURI();
-        ContentDataEntity content = pageService.findBySlug(path, locale);
-        ContentEntity parents = pageService.findContentParent(content.getContent().getId());
-     /*     //ContentDataEntity contentData = pageService.findBySlug(path, locale);
+        //GET DATA WITH FILES,DIC,COMMENTS,...
+        ContentDataEntity contentData = pageService.findBySlug(path, locale);
+
+        //TODO : Récupérer le Content (de contentData) avec ses parents et les datas de la même langue (mais sans toute les jointures)
+        // Car il faut pouvoir reconstruire le breadcrumb: contentParent -> data -> slug / slug
+
         if (contentData == null) {
             throw new ResourceNotFoundException();
         }
@@ -54,20 +61,17 @@ public class CmsController {
             //model.put("dataArray", pageData.getDataArray());
         }
 
-        BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCK_TYPE_SYSTEM);
-
-
         CmsUtils.fillModelMap(model,request);
 
-        //model.put("title", content.getSeoTitle());
+        // Pas grave pour les perfs car les blocks seront completement caché.
+        BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCK_TYPE_SYSTEM);
         model.put("main", pebbleUtils.parseBlock(contentData.getContent().getContentTemplate().getBlock(), model));
 
         return pebbleUtils.parseBlock(master, model);
-        */
-        return "yoo";
     }
   
     /*
+
     @RequestMapping(method = RequestMethod.POST)
     public String pagePost(ModelMap model, HttpServletRequest request) throws Exception {
 

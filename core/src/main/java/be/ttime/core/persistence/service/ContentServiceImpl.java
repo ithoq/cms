@@ -41,31 +41,22 @@ public class ContentServiceImpl implements IContentService {
         QFileEntity fileEntity = QFileEntity.fileEntity;
         QContentDataDictionaryEntity contentDataDictionaryEntity = QContentDataDictionaryEntity.contentDataDictionaryEntity;
 
-       JPAQuery query = new JPAQuery(entityManager);
-    JPAQuery query2 = query.clone(entityManager);
+        JPAQuery query = new JPAQuery(entityManager);
+        JPAQuery query2 = query.clone(entityManager);
 
         ContentDataEntity resultData =  query.from(contentDataEntity)
                 .leftJoin(contentDataEntity.commentList, commentEntity).fetch()
                 .leftJoin(commentEntity.commentParent, commentEntity).fetch()
                 .leftJoin(contentDataEntity.dictionaryList, contentDataDictionaryEntity).fetch()
                 .leftJoin(contentDataEntity.contentFiles, fileEntity).fetch()
-                .where(contentDataEntity.computedSlug.eq(slug)
-                        .and(contentDataEntity.language.locale.eq(locale.toString())))
+                .where(contentDataEntity.computedSlug.eq(slug).and(contentDataEntity.language.locale.eq(locale.toString())))
                 .singleResult(contentDataEntity);
 
-        // Hibernate.initialize(resultData.getCommentList());
-        //Hibernate.initialize(resultData.getContentFiles());
-
-
-        ContentEntity result =
-                query2
-                        .from(contentEntity)
+        ContentEntity result = query2.from(contentEntity)
                         .where(contentEntity.id.eq(resultData.getContent().getId()))
                         .leftJoin(contentEntity.privileges).fetch()
                         .leftJoin(contentEntity.contentParent)
                         .singleResult(contentEntity);
-
-        String tortue = "tortue";
 
         return resultData;
     }

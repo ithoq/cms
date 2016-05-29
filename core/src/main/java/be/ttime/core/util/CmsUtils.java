@@ -47,10 +47,13 @@ public class CmsUtils {
     public final static String BLOCK_TYPE_SYSTEM = "SYSTEM";
     public final static String BLOCK_TYPE_FIELDSET = "FIELDSET";
 
+    public final static String BLOCK_TEMPLATE_BASIC_PAGE = "TEMPLATE_BASIC_PAGE";
+
     public final static String BLOCK_PAGE_MASTER = "PAGE_MASTER";
     public final static String BLOCK_PAGE_LOGIN = "PAGE_LOGIN";
     public final static String BLOCK_FIELD_TEXT = "FIELD_TEXT";
     public final static String BLOCK_FIELD_TINYMCE = "FIELD_TINYMCE";
+    public final static String BLOCK_FIELD_DATEPICKER = "FIELD_DATEPICKER";
 
     public static void fillModelMap(ModelMap model, HttpServletRequest request){
         model.put("attr", CmsUtils.getAttributes(request));

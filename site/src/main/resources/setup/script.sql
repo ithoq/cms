@@ -361,3 +361,34 @@ INSERT INTO `block_type` (`name`) VALUES
 ('PAGE_TEMPLATE'),
 ('SYSTEM'),
 ('FIELDSET');
+
+INSERT INTO `block` (`name`, `cacheable`, `content`, `deletable`, `displayName`, `dynamic`, `enabled`, `blockType_name`, `language_locale`) VALUES
+('FIELD_DATEPICKER', 0, '', 0, 'block for field datepicker',1, 1, 'FIELDSET', NULL),
+('FIELD_TEXT', 0, '', 0, 'block for field simple text', 1, 1, 'FIELDSET', NULL),
+('FIELD_TINYMCE', 0, '', 0, 'block for field tinymce', 1, 1, 'FIELDSET', NULL),
+('TEMPLATE_BASIC_PAGE', 0, '', 0, 'Basic Page', 1, 1, 'PAGE_TEMPLATE', NULL);
+
+INSERT INTO `fieldset` (`id`, `array`, `deletable`, `description`, `name`, `blockEntity_name`) VALUES
+(1, 0, 1, 'Un éditeur de texte', 'tinymce', 'FIELD_TINYMCE'),
+(2, 1, 1, 'Date picker', 'date picker', 'FIELD_DATEPICKER'),
+(3, 1, 1, 'simple text', 'simple text', 'FIELD_TEXT');
+
+INSERT INTO `content_template` (`id`, `active`, `deletable`, `description`, `name`, `block_name`, `contentType_name`) VALUES
+(1, 1, 0, NULL, 'Basic page', 'TEMPLATE_BASIC_PAGE', 'PAGE');
+
+INSERT INTO `content_template_fieldset` (`id`, `array`, `name`, `namespace`, `position`, `page_template_id`, `fieldset_id`) VALUES
+(1, 0, 'tinymce', 'main', 0, 1, 1);
+
+INSERT INTO `content` (`id`, `beginDate`, `createdDate`, `enabled`, `endDate`, `menuItem`, `modifiedDate`, `name`, `pos`, `contentParent_id`, `contentTemplate_id`, `contentType_name`) VALUES
+(1, NULL, '2016-05-26', b'1', NULL, 1, '2016-05-27', 'Accueil', 0, NULL, 1, 'PAGE');
+
+INSERT INTO `content_data` (`id`, `computedSlug`, `createdDate`, `data`, `modifiedDate`, `position`, `slug`, `title`, `version`, `content_id`, `language_locale`) VALUES
+(1, '/home', '2016-05-26', '', '2016-05-27', 0, '/home', 'Home', 9, 1, 'en');
+
+INSERT INTO `input_definition` (`id`, `name`, `sort`, `type`, `validation`, `fieldset_id`) VALUES
+(1, 'editor', 1, 'string', NULL, 1),
+(2, 'date', 1, 'date', NULL, 2),
+(3, 'text', 1, 'string', NULL, 3);
+
+INSERT INTO `input_data` (`id`, `defaultValue`, `hint`, `title`, `validation`, `contentTemplateFieldsetEntity_id`, `fieldset_id`, `inputDefinition_id`) VALUES
+(1, '', '', 'main editor', '', 1, 1, 1);

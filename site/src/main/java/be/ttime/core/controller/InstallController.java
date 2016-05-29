@@ -117,7 +117,7 @@ public class InstallController {
 
         userService.save(user);
 
-        return "redirect:/admin";
+        return "redirect:/admin/cms";
     }
 
     private ApplicationLanguageEntity publicLanguage(String locale){

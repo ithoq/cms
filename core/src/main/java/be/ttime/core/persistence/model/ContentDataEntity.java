@@ -38,10 +38,10 @@ public class ContentDataEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentFile", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FileEntity> contentFiles;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private ContentEntity content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private ApplicationLanguageEntity language;
 
     @OneToMany(mappedBy = "contentData", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

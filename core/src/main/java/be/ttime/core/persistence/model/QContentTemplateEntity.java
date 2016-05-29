@@ -34,8 +34,6 @@ public class QContentTemplateEntity extends EntityPathBase<ContentTemplateEntity
 
     public final StringPath description = createString("description");
 
-    public final StringPath fields = createString("fields");
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath name = createString("name");

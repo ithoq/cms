@@ -40,13 +40,13 @@ public class ContentEntity {
     private ContentEntity contentParent;
     @OneToMany(mappedBy = "contentParent")
     private Set<ContentEntity> contentChildren;
-    @OneToMany(mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ContentDataEntity> dataList;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private ContentTemplateEntity contentTemplate;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private ContentTypeEntity contentType;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Lazy for now (not used in the current version)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL) // Lazy for now (not used in the current version)
     @JoinTable(
             name = "content_privilege",
             joinColumns = @JoinColumn(name = "content_id"),
@@ -54,8 +54,8 @@ public class ContentEntity {
     )
     private Set<PrivilegeEntity> privileges;
 
-    @ManyToMany(mappedBy = "contents")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "contents")
     private Set<TaxonomyTermEntity> taxonomyTermEntities;
-    @OneToMany(mappedBy = "content", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "content", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ContentDictionaryEntity> dictionaryList;
 }

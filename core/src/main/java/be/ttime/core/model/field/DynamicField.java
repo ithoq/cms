@@ -61,33 +61,34 @@ public class DynamicField {
                 inputMap.put("validation", inputDataEntity.getValidation());
                 inputMap.put("default", inputDataEntity.getDefaultValue());
                 inputMap.put("isArray", contentTemplateFieldset.isArray());
-
-                String inputType = inputDataEntity.getInputDefinition().getType();
-                if(inputDataEntity.getFieldset().isArray()){
-                    if(inputType.equals("date")){
-                        Date[] dates = pageData.getDataDateArray().get(finalName);
-                        if(dates != null) {
-                            StringBuilder sb = new StringBuilder();
-                            for (int i = 0; i < pageData.getDataDateArray().get(finalName).length; i++) {
-                                if (i != 0) {
-                                    sb.append(",");
+                if(pageData!= null) {
+                    String inputType = inputDataEntity.getInputDefinition().getType();
+                    if (inputDataEntity.getFieldset().isArray()) {
+                        if (inputType.equals("date")) {
+                            Date[] dates = pageData.getDataDateArray().get(finalName);
+                            if (dates != null) {
+                                StringBuilder sb = new StringBuilder();
+                                for (int i = 0; i < pageData.getDataDateArray().get(finalName).length; i++) {
+                                    if (i != 0) {
+                                        sb.append(",");
+                                    }
+                                    sb.append(dateFormatter.format(dates[i]));
                                 }
-                                sb.append(dateFormatter.format(dates[i]));
+                                model.put("data", sb.toString());
                             }
-                            model.put("data", sb.toString());
+                        } else {
+                            model.put("data", Arrays.toString(pageData.getDataStringArray().get(finalName)));
                         }
-                    } else{
-                        model.put("data", Arrays.toString(pageData.getDataStringArray().get(finalName)));
-                    }
-                } else {
-                    if(inputType.equals("date")){
-                        Date d = pageData.getDataDate().get(finalName);
-                        if(d != null){
-                            model.put("data", dateFormatter.format(d));
-                        }
+                    } else {
+                        if (inputType.equals("date")) {
+                            Date d = pageData.getDataDate().get(finalName);
+                            if (d != null) {
+                                model.put("data", dateFormatter.format(d));
+                            }
 
-                    } else{
-                        model.put("data", pageData.getDataString().get(finalName));
+                        } else {
+                            model.put("data", pageData.getDataString().get(finalName));
+                        }
                     }
                 }
 

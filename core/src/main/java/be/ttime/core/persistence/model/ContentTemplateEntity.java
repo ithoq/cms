@@ -23,7 +23,6 @@ public class ContentTemplateEntity {
     @Column(nullable = false)
     @Expose private String name;
     @Expose private String description;
-    @Lob private String fields;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean active;
     @ManyToOne(fetch = FetchType.LAZY)

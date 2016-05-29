@@ -49,10 +49,25 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
 
                 // base blocks
                 List<BlockEntity> blocks = new ArrayList<>();
-                blocks.add(new BlockEntity(CmsUtils.BLOCK_FIELD_TEXT, "text", CmsUtils.getResourceFileContent("setup/field_text.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_FIELDSET), null));
-                blocks.add(new BlockEntity(CmsUtils.BLOCK_FIELD_TINYMCE, "tinymce", CmsUtils.getResourceFileContent("setup/field_tinymce.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_FIELDSET), null));
                 blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_MASTER, "master", CmsUtils.getResourceFileContent("setup/master.twig"), true, false, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_SYSTEM), null));
                 blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_LOGIN, "login", CmsUtils.getResourceFileContent("setup/login.twig"), true, false, true, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_SYSTEM), null));
+
+                BlockEntity fieldText =  blockService.find(CmsUtils.BLOCK_FIELD_TEXT);
+                fieldText.setContent(CmsUtils.getResourceFileContent("setup/field_text.twig"));
+                blocks.add(fieldText);
+
+                BlockEntity fieldTiny =  blockService.find(CmsUtils.BLOCK_FIELD_TINYMCE);
+                fieldTiny.setContent(CmsUtils.getResourceFileContent("setup/field_tinymce.twig"));
+                blocks.add(fieldTiny);
+
+                BlockEntity fieldDate =  blockService.find(CmsUtils.BLOCK_FIELD_DATEPICKER);
+                fieldDate.setContent(CmsUtils.getResourceFileContent("setup/field_datepicker.twig"));
+                blocks.add(fieldDate);
+
+                BlockEntity simplePage =  blockService.find(CmsUtils.BLOCK_TEMPLATE_BASIC_PAGE);
+                simplePage.setContent(CmsUtils.getResourceFileContent("setup/basic_page.twig"));
+                blocks.add(simplePage);
+
                 blockService.save(blocks);
                 cacheManager.clearAll();
             } catch(Exception e){
