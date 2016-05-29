@@ -24,10 +24,10 @@ public class ContentDataEntity {
     @Version
     private Long version;
     private int position;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date createdDate;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedDate;
     private String title;
     @Lob
@@ -38,10 +38,10 @@ public class ContentDataEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentFile", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FileEntity> contentFiles;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ContentEntity content;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ApplicationLanguageEntity language;
 
     @OneToMany(mappedBy = "contentData", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

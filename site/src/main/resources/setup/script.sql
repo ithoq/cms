@@ -353,6 +353,7 @@ INSERT INTO `content_type` (`name`) VALUES
 ('PAGE'),
 ('PAGE_LINK'),
 ('NEWS'),
+('EVENT'),
 ('ARTICLE');
 
 INSERT INTO `block_type` (`name`) VALUES

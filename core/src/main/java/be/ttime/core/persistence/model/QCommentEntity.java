@@ -32,9 +32,7 @@ public class QCommentEntity extends EntityPathBase<CommentEntity> {
 
     public final StringPath authorurl = createString("authorurl");
 
-    public final ListPath<CommentEntity, QCommentEntity> commentChildren = this.<CommentEntity, QCommentEntity>createList("commentChildren", CommentEntity.class, QCommentEntity.class, PathInits.DIRECT2);
-
-    public final QCommentEntity commentParent;
+    public final ListPath<CommentEntity, QCommentEntity> children = this.<CommentEntity, QCommentEntity>createList("children", CommentEntity.class, QCommentEntity.class, PathInits.DIRECT2);
 
     public final StringPath content = createString("content");
 
@@ -43,6 +41,8 @@ public class QCommentEntity extends EntityPathBase<CommentEntity> {
     public final DatePath<java.util.Date> createdDate = createDate("createdDate", java.util.Date.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final QCommentEntity parent;
 
     public QCommentEntity(String variable) {
         this(CommentEntity.class, forVariable(variable), INITS);
@@ -62,8 +62,8 @@ public class QCommentEntity extends EntityPathBase<CommentEntity> {
 
     public QCommentEntity(Class<? extends CommentEntity> type, PathMetadata<?> metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.commentParent = inits.isInitialized("commentParent") ? new QCommentEntity(forProperty("commentParent"), inits.get("commentParent")) : null;
         this.contentData = inits.isInitialized("contentData") ? new QContentDataEntity(forProperty("contentData"), inits.get("contentData")) : null;
+        this.parent = inits.isInitialized("parent") ? new QCommentEntity(forProperty("parent"), inits.get("parent")) : null;
     }
 
 }

@@ -32,7 +32,18 @@ public class CommentEntity {
     @ManyToOne
     private ContentDataEntity contentData;
     @ManyToOne(fetch = FetchType.LAZY)
-    private CommentEntity commentParent;
-    @OneToMany(mappedBy = "commentParent")
-    private List<CommentEntity> commentChildren;
+    private CommentEntity parent;
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentEntity> children;
+
+    public void addChild(CommentEntity child) {
+        children.add(child);
+        child.setParent(this);
+    }
+
+    public void removeChild(CommentEntity child) {
+        children.remove(child);
+        child.setParent(null);
+    }
+
 }

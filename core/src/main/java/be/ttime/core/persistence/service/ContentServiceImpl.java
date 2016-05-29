@@ -4,6 +4,7 @@ import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.repository.IContentDataRepository;
 import be.ttime.core.persistence.repository.IContentRepository;
+import be.ttime.core.persistence.repository.IContentRepositoryCustom;
 import com.mysema.query.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,11 @@ public class ContentServiceImpl implements IContentService {
 
     private final static int MAX_EXPANDED_TREE_LEVEL = 3; // 0 based
     @Autowired
-    private IContentRepository pageRepository;
+    private IContentRepository contentRepository;
     @Autowired
-    private IContentDataRepository contentRepository;
+    private IContentRepositoryCustom contentRepositoryCustom;
+    @Autowired
+    private IContentDataRepository contentDataRepository;
 
     @Autowired
     private EntityManager entityManager;
@@ -28,37 +31,15 @@ public class ContentServiceImpl implements IContentService {
     @Override
 
     public ContentEntity find(Long id) {
-        return pageRepository.findOne(id);
+        return contentRepository.findOne(id);
     }
 
     @Override
     public ContentDataEntity findBySlug(String slug, Locale locale) {
 
 
-        QContentEntity contentEntity = QContentEntity.contentEntity;
-        QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
-        QCommentEntity commentEntity = QCommentEntity.commentEntity;
-        QFileEntity fileEntity = QFileEntity.fileEntity;
-        QContentDataDictionaryEntity contentDataDictionaryEntity = QContentDataDictionaryEntity.contentDataDictionaryEntity;
-
-        JPAQuery query = new JPAQuery(entityManager);
-        JPAQuery query2 = query.clone(entityManager);
-
-        ContentDataEntity resultData =  query.from(contentDataEntity)
-                .leftJoin(contentDataEntity.commentList, commentEntity).fetch()
-                .leftJoin(commentEntity.commentParent, commentEntity).fetch()
-                .leftJoin(contentDataEntity.dictionaryList, contentDataDictionaryEntity).fetch()
-                .leftJoin(contentDataEntity.contentFiles, fileEntity).fetch()
-                .where(contentDataEntity.computedSlug.eq(slug).and(contentDataEntity.language.locale.eq(locale.toString())))
-                .singleResult(contentDataEntity);
-
-        ContentEntity result = query2.from(contentEntity)
-                        .where(contentEntity.id.eq(resultData.getContent().getId()))
-                        .leftJoin(contentEntity.privileges).fetch()
-                        .leftJoin(contentEntity.contentParent)
-                        .singleResult(contentEntity);
-
-        return resultData;
+        return contentRepositoryCustom.findContent(slug,locale.toString(),null);
+        //return contentDataRepository.findByComputedSlugAndLanguageLocale(slug,locale.toString());
     }
 
     @Override
@@ -83,7 +64,7 @@ public class ContentServiceImpl implements IContentService {
         if (p.getId() == 0) {
             ContentEntity parent = p.getContentParent();
 
-            ContentEntity result = pageRepository.findFirstByContentParentOrderByOrderDesc(parent);
+            ContentEntity result = contentRepository.findFirstByContentParentOrderByOrderDesc(parent);
 
             if (result == null) {
                 p.setOrder(0);
@@ -92,18 +73,18 @@ public class ContentServiceImpl implements IContentService {
             }
         }
 
-        return pageRepository.save(p);
+        return contentRepository.save(p);
     }
 
     @Override
     public List<ContentEntity> savePage(List<ContentEntity> pages) {
-        return pageRepository.save(pages);
+        return contentRepository.save(pages);
     }
 
 
     @Override
     public void delete(Long id) throws Exception {
-        ContentEntity current = pageRepository.findOne(id);
+        ContentEntity current = contentRepository.findOne(id);
 
         // Exist
         if (current == null)
@@ -112,9 +93,9 @@ public class ContentServiceImpl implements IContentService {
         if (current.getContentChildren().size() > 0)
             throw new Exception("Page with id = " + id + " has children !");
         // delete
-        pageRepository.delete(id);
+        contentRepository.delete(id);
 
-        List<ContentEntity> pages = pageRepository.findByContentParentOrderByOrderAsc(current.getContentParent());
+        List<ContentEntity> pages = contentRepository.findByContentParentOrderByOrderAsc(current.getContentParent());
 
         if (pages.size() > 0) {
             int counter = 0;
@@ -122,20 +103,20 @@ public class ContentServiceImpl implements IContentService {
                 p.setOrder(counter);
                 counter++;
             }
-            pageRepository.save(pages);
+            contentRepository.save(pages);
         }
     }
 
     @Override
     public List<ContentEntity> getNavPages() {
-        List<ContentEntity> pages = pageRepository.findByMenuItemTrueAndEnabledTrue();
+        List<ContentEntity> pages = contentRepository.findByMenuItemTrueAndEnabledTrue();
         return getRootPage(pages);
     }
 
     @Override
     public String getPagesTree() {
-        List<ContentEntity> pages = pageRepository.findAll(); // force first level cache
-        List<ContentEntity> roots = pageRepository.findByContentParentIsNullOrderByOrderAsc();
+        List<ContentEntity> pages = contentRepository.findAll(); // force first level cache
+        List<ContentEntity> roots = contentRepository.findByContentParentIsNullOrderByOrderAsc();
         StringBuilder sb = new StringBuilder();
 
         sb.append("[");
@@ -151,7 +132,7 @@ public class ContentServiceImpl implements IContentService {
      */
     @Override
     public ContentEntity findWithChildren(Long id) {
-        ContentEntity p = pageRepository.findOne(id);
+        ContentEntity p = contentRepository.findOne(id);
         p.getContentChildren().size(); // force lazy loading
         return p;
     }
@@ -199,16 +180,16 @@ public class ContentServiceImpl implements IContentService {
 
     @Override
     public List<ContentDataEntity> saveContents(List<ContentDataEntity> contents) {
-        return contentRepository.save(contents);
+        return contentDataRepository.save(contents);
     }
 
     @Override
     public ContentDataEntity saveContent(ContentDataEntity content) {
-        return contentRepository.save(content);
+        return contentDataRepository.save(content);
     }
 
     @Override
     public ContentDataEntity findContentById(Long id) {
-        return contentRepository.findOne(id);
+        return contentDataRepository.findOne(id);
     }
 }

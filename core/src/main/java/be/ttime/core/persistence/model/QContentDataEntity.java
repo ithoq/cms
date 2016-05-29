@@ -30,7 +30,7 @@ public class QContentDataEntity extends EntityPathBase<ContentDataEntity> {
 
     public final SetPath<FileEntity, QFileEntity> contentFiles = this.<FileEntity, QFileEntity>createSet("contentFiles", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
 
-    public final DatePath<java.util.Date> createdDate = createDate("createdDate", java.util.Date.class);
+    public final DateTimePath<java.util.Date> createdDate = createDateTime("createdDate", java.util.Date.class);
 
     public final StringPath data = createString("data");
 
@@ -40,7 +40,7 @@ public class QContentDataEntity extends EntityPathBase<ContentDataEntity> {
 
     public final QApplicationLanguageEntity language;
 
-    public final DatePath<java.util.Date> modifiedDate = createDate("modifiedDate", java.util.Date.class);
+    public final DateTimePath<java.util.Date> modifiedDate = createDateTime("modifiedDate", java.util.Date.class);
 
     public final NumberPath<Integer> position = createNumber("position", Integer.class);
 
