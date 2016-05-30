@@ -1,11 +1,11 @@
 package be.ttime.core.persistence.service;
 
 import be.ttime.core.error.ResourceNotFoundException;
-import be.ttime.core.persistence.model.*;
+import be.ttime.core.persistence.model.ContentDataEntity;
+import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.repository.IContentDataRepository;
 import be.ttime.core.persistence.repository.IContentRepository;
 import be.ttime.core.persistence.repository.IContentRepositoryCustom;
-import com.mysema.query.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,19 +49,8 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
-    public ContentEntity findContentParent(Long id) {
-        JPAQuery query = new JPAQuery(entityManager);
-        QContentEntity contentEntity = QContentEntity.contentEntity;
-        query = new JPAQuery(entityManager);
-        ContentEntity result =
-                query
-                        .from(contentEntity)
-                        .where(contentEntity.id.eq(id))
-                        .leftJoin(contentEntity.privileges).fetch()
-                        .leftJoin(contentEntity.contentParent)
-                        .singleResult(contentEntity);
-
-        return result;
+    public ContentEntity findContentWithParent(Long id) {
+        return contentRepositoryCustom.findContent(id, null);
     }
 
     @Override

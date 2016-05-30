@@ -3,6 +3,7 @@ package be.ttime.core.controller;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.model.ContentDataEntity;
+import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IContentService;
@@ -10,7 +11,6 @@ import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +39,6 @@ public class CmsController {
     private PebbleUtils pebbleUtils;
 
     @RequestMapping(method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    @Transactional
     public String page(ModelMap model, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
 
         final String path = request.getRequestURI();
@@ -47,7 +46,8 @@ public class CmsController {
         ContentDataEntity contentData = pageService.findBySlug(path, locale);
 
         // TODO : Vérifier les droits + construire le breadcrumb
-
+        // avec une seconde transaction c'est OK
+        ContentEntity parent = pageService.findContentWithParent(2L);
         if (contentData == null) {
             throw new ResourceNotFoundException();
         }
