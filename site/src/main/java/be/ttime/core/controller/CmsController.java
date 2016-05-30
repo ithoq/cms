@@ -46,8 +46,7 @@ public class CmsController {
         //GET DATA WITH FILES,DIC,COMMENTS,...
         ContentDataEntity contentData = pageService.findBySlug(path, locale);
 
-        //TODO : Récupérer le Content (de contentData) avec ses parents et les datas de la même langue (mais sans toute les jointures)
-        // Car il faut pouvoir reconstruire le breadcrumb: contentParent -> data -> slug / slug
+        // TODO : Vérifier les droits + construire le breadcrumb
 
         if (contentData == null) {
             throw new ResourceNotFoundException();

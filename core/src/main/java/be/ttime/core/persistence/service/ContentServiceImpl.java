@@ -38,7 +38,13 @@ public class ContentServiceImpl implements IContentService {
     public ContentDataEntity findBySlug(String slug, Locale locale) {
 
 
-        return contentRepositoryCustom.findContent(slug,locale.toString(),null);
+        ContentDataEntity result =  contentRepositoryCustom.findContentData(slug,locale.toString(),null);
+        if(result != null) {
+            ContentEntity parent = contentRepositoryCustom.findContent(result.getContent().getId(), null);
+            // we add parent to the first result
+            result.setContent(parent);
+        }
+        return result;
         //return contentDataRepository.findByComputedSlugAndLanguageLocale(slug,locale.toString());
     }
 

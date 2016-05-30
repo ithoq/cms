@@ -15,7 +15,7 @@ public class ContentRepositoryCustomImpl implements IContentRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public ContentDataEntity findContent(String slug, String locale, List<String> fetch) {
+    public ContentDataEntity findContentData(String slug, String locale, List<String> fetch) {
         QContentEntity contentEntity = QContentEntity.contentEntity;
         QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
         QCommentEntity commentEntity = QCommentEntity.commentEntity;
@@ -23,7 +23,6 @@ public class ContentRepositoryCustomImpl implements IContentRepositoryCustom {
         QContentDataDictionaryEntity contentDataDictionaryEntity = QContentDataDictionaryEntity.contentDataDictionaryEntity;
 
         JPAQuery query = new JPAQuery(entityManager);
-        JPAQuery query2 = query.clone(entityManager);
 
         ContentDataEntity resultData =  query.from(contentDataEntity)
                 .leftJoin(contentDataEntity.commentList, commentEntity).fetch()
@@ -33,12 +32,18 @@ public class ContentRepositoryCustomImpl implements IContentRepositoryCustom {
                 .where(contentDataEntity.computedSlug.eq(slug).and(contentDataEntity.language.locale.eq(locale.toString())))
                 .singleResult(contentDataEntity);
 
-        ContentEntity result = query2.from(contentEntity)
-                .where(contentEntity.id.eq(resultData.getContent().getId()))
+        return resultData;
+    }
+
+    @Override
+    public ContentEntity findContent(Long id, List<String> festch) {
+        QContentEntity contentEntity = QContentEntity.contentEntity;
+        JPAQuery query = new JPAQuery(entityManager);
+        ContentEntity result = query.from(contentEntity)
+                .where(contentEntity.id.eq(id))
                 .leftJoin(contentEntity.privileges).fetch()
                 .leftJoin(contentEntity.contentParent)
                 .singleResult(contentEntity);
-
-        return resultData;
+        return result;
     }
 }
