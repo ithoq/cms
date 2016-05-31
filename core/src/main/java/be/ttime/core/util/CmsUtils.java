@@ -8,6 +8,7 @@ import com.ibatis.common.jdbc.ScriptRunner;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,7 +44,7 @@ public class CmsUtils {
 
     public final static String BLOCK_TYPE_CONTENT = "CONTENT";
     public final static String BLOCK_TYPE_NAVIGATION = "NAVIGATION";
-    public final static String BLOCK_TYPE_PAGE_TEMPLATE = "'PAGE_TEMPLATE'";
+    public final static String BLOCK_TYPE_CONTENT_TEMPLATE = "PAGE_TEMPLATE";
     public final static String BLOCK_TYPE_SYSTEM = "SYSTEM";
     public final static String BLOCK_TYPE_FIELDSET = "FIELDSET";
 
@@ -61,6 +62,7 @@ public class CmsUtils {
         model.put("csrf", CmsUtils.getCsrfInput(request));
         model.put("session", request.getSession(false));
         model.put("user", CmsUtils.getCurrentUser());
+        model.put("locale", LocaleContextHolder.getLocale().toString());
     }
 
     public static void fillModelAndView(ModelAndView model, HttpServletRequest request){

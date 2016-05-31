@@ -24,7 +24,7 @@ public class TaxonomyTermEntity {
 
     private int position;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "content_term", joinColumns = @JoinColumn(name = "taxonomy_term_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "content_id", referencedColumnName = "id"))
     private List<ContentEntity> contents;
 

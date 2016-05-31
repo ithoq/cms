@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface IContentTemplateRepository extends JpaRepository<ContentTemplateEntity, Long>, QueryDslPredicateExecutor<ContentTemplateEntity> {
 
-    @Query("SELECT c from ContentTemplateEntity c LEFT JOIN FETCH c.contentTemplateFieldset WHERE c.id = :id ")
+    @Query("SELECT c from ContentTemplateEntity c LEFT JOIN FETCH c.contentTemplateFieldset LEFT JOIN FETCH c.block WHERE c.id = :id ")
     ContentTemplateEntity findByIdWithFieldset(@Param("id") Long id);
 
     List<ContentTemplateEntity> findByContentTypeNameLike(String name);

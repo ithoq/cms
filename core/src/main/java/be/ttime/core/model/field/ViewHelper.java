@@ -5,6 +5,7 @@ import be.ttime.core.persistence.model.ContentTemplateFieldsetEntity;
 import be.ttime.core.persistence.model.FieldsetEntity;
 import be.ttime.core.persistence.model.InputDataEntity;
 import be.ttime.core.persistence.service.IBlockService;
+import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import com.github.slugify.Slugify;
@@ -13,13 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
     Render a dynamic field in CMS Page administration.
  */
 @Component
-public class DynamicField {
+public class ViewHelper {
 
     private static final String FIELD_VIEW_PATH = "/WEB-INF/views/admin/field/";
     private static final Gson gson = new Gson();
@@ -27,6 +31,8 @@ public class DynamicField {
     private PebbleUtils pebbleUtils;
     @Autowired
     private IBlockService blockService;
+    @Autowired
+    private IContentService contentService;
 
     public static boolean isJSONValid(String JSON_STRING) {
         try {
@@ -104,40 +110,10 @@ public class DynamicField {
         }
 
         return builder.toString();
+    }
 
-
-
-        /*
-        BlockEntity block = blockService.findByNameAndBlockType(contentTemplateFieldsetEntity.get.getF.getBlockName(), "FIELDSET");
-
-        if (block == null) {
-            return CmsUtils.alert("danger", "unable to find the block named " + field.getBlockName(), "Block name error");
-        }
-        if (field.getInputs().size() == 0) {
-            return CmsUtils.alert("danger", "field " + field.getBlockName() + " must have inputs ", "Block inputs size");
-        }
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("name", field.getName());
-        model.put("desc", field.getDescription());
-        model.put("np", field.getNamespace());
-        model.put("blockName", field.getBlockName());
-        if (pageData != null) {
-            model.put("data", pageData.getData());
-            model.put("dataArray", pageData.getDataArray());
-        }
-
-        Map<String, Object> inputsModel = new HashMap<>();
-        List<Input> inputs = field.getInputs();
-        if (inputs.size() > 1) {
-            for (Input input : inputs) {
-                inputsModel.put(field.getNamespace() + '_' + field.getName(), input);
-            }
-            model.put("inputs", inputsModel);
-        } else {
-            model.put("input", inputs.get(0));
-        }
-
-        return pebbleUtils.parseBlock(block, model);*/
+    public String getNavMenu(String locale){
+        String menu = contentService.getNavMenu(locale);
+        return menu;
     }
 }

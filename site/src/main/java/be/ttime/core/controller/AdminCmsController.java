@@ -63,7 +63,7 @@ public class AdminCmsController {
         if (id == null)
             throw new ResourceNotFoundException();
 
-        ContentEntity content = contentService.findWithChildren(id);
+        ContentEntity content = contentService.findContentAdmin(id);
 
         ApplicationLanguageEntity appLanguage = applicationService.getSiteApplicationLanguageMap().get(locale);
         if(appLanguage == null){
@@ -152,17 +152,17 @@ public class AdminCmsController {
                     //page.setLevel(0);
                     contentData.setComputedSlug(contentData.getSlug());
                 } else {
-                    parent = contentService.find(form.getParentId());
+                    parent = contentService.findContentAdmin(form.getParentId());
                     if (parent == null) {
                         throw new Exception("Create page - parent not exist with id " + form.getParentId());
                     }
                     //page.setLevel(parent.getLevel() + 1);
                     content.setContentParent(parent);
 
-                    Collection<ContentDataEntity> contents = content.getDataList();
+                    Collection<ContentDataEntity> contents = parent.getDataList();
                     ContentDataEntity parentContent = null;
                     for (ContentDataEntity c : contents) {
-                        if (c.getLanguage() == applicationService.getDefaultSiteApplicationLanguage()) {
+                        if (c.getLanguage().getLocale().equals(applicationService.getDefaultSiteApplicationLanguage().getLocale())) {
                             parentContent = c;
                         }
                     }

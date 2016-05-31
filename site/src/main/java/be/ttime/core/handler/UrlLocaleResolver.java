@@ -110,6 +110,7 @@ public class UrlLocaleResolver extends CookieGenerator implements LocaleResolver
         if (locale == null) {
             locale = defautLocale;
         }
+
         request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, locale);
         return locale;
     }

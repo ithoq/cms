@@ -3,7 +3,6 @@ package be.ttime.core.controller;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.model.ContentDataEntity;
-import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IContentService;
@@ -45,27 +44,26 @@ public class CmsController {
         //GET DATA WITH FILES,DIC,COMMENTS,...
         ContentDataEntity contentData = pageService.findBySlug(path, locale);
 
-        // TODO : Vérifier les droits + construire le breadcrumb
-        // avec une seconde transaction c'est OK
-        ContentEntity parent = pageService.findContentWithParent(2L);
         if (contentData == null) {
             throw new ResourceNotFoundException();
         }
 
-        if (!StringUtils.isEmpty(contentData.getData())) {
+        // TODO: Vérifier les droits
 
+
+         if (!StringUtils.isEmpty(contentData.getData())) {
             HashMap<String, Object> data = CmsUtils.parseData(contentData.getData());
-
             model.put("data", data);
             //model.put("dataArray", pageData.getDataArray());
         }
 
         CmsUtils.fillModelMap(model,request);
-
-        // Pas grave pour les perfs car les blocks seront completement caché.
+        model.put("content", contentData);
+        // Pas grave pour les perfs car les blocks seront dans le cache
         BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCK_TYPE_SYSTEM);
-        model.put("main", pebbleUtils.parseBlock(contentData.getContent().getContentTemplate().getBlock(), model));
-
+        String blockName = contentData.getContent().getContentTemplate().getBlock().getName();
+        BlockEntity content = blockService.findByNameAndBlockType(contentData.getContent().getContentTemplate().getBlock().getName(),CmsUtils.BLOCK_TYPE_CONTENT_TEMPLATE);
+        model.put("main",  pebbleUtils.parseBlock(content, model));
         return pebbleUtils.parseBlock(master, model);
     }
   

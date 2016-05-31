@@ -16,13 +16,13 @@ public interface IContentService {
 
     List<ContentEntity> savePage(List<ContentEntity> pages);
 
-    List<ContentEntity> getNavPages();
+    String getNavMenu(String lang);
 
     String getPagesTree();
 
     void delete(Long id) throws Exception;
 
-    ContentEntity findWithChildren(Long id);
+    ContentEntity findContentAdmin(Long id);
 
     List<ContentDataEntity> saveContents(List<ContentDataEntity> contents);
 
@@ -31,7 +31,5 @@ public interface IContentService {
     ContentDataEntity findContentById(Long id);
 
     ContentDataEntity findBySlug(String slug, Locale locale);
-
-    ContentEntity findContentWithParent(Long id);
 
 }

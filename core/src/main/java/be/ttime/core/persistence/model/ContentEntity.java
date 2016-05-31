@@ -36,17 +36,17 @@ public class ContentEntity {
     private String name;
     @Column(columnDefinition = "TINYINT(1) default '1'")
     private boolean menuItem = true;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ContentEntity contentParent;
     @OneToMany(mappedBy = "contentParent")
     private Set<ContentEntity> contentChildren;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ContentDataEntity> dataList;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ContentTemplateEntity contentTemplate;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ContentTypeEntity contentType;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL) // Lazy for now (not used in the current version)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Lazy for now (not used in the current version)
     @JoinTable(
             name = "content_privilege",
             joinColumns = @JoinColumn(name = "content_id"),
@@ -54,8 +54,8 @@ public class ContentEntity {
     )
     private Set<PrivilegeEntity> privileges;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "contents")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "contents")
     private Set<TaxonomyTermEntity> taxonomyTermEntities;
-    @OneToMany(mappedBy = "content", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "content", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ContentDictionaryEntity> dictionaryList;
 }

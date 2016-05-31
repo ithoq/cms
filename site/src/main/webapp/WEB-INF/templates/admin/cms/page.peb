@@ -77,7 +77,7 @@
 
                 <h2>Template fields</h2>
                 <hr class="section">
-                {{ beans.dynamicField.renderField(template, data) | raw }}
+                {{ beans.viewHelper.renderField(template, data) | raw }}
 
 
             </div>

@@ -31,7 +31,7 @@ public class ContentTemplateEntity {
     private List<ContentEntity> pageEntities;
     private boolean deletable;
 
-    @OneToOne(targetEntity = BlockEntity.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(targetEntity = BlockEntity.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private BlockEntity block;
 
     @OneToMany(mappedBy = "contentTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
