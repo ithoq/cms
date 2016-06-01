@@ -111,8 +111,9 @@
             <div id="tabFile" class="tab-pane">
 
                 <input style="display:none" id="fileupload" type="file" name="files[]"
-                       data-url="/admin/file/upload/{{ content.id }}" multiple>
+                       data-url="/admin/file/upload" multiple>
 
+                <ul id="#list-file"></ul>
                 <div id="dropzone" class="dropzone">
                     <div class="dropzone-container">
                         <div class="dropzone-center"><i class="fa fa-download"></i>
