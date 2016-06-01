@@ -1,11 +1,6 @@
 .dropzone
 {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-
-    border-radius: 20px;
-    background: #f8f8f8;
+    padding: 0 8px 10px 8px;
 
     .dropzone-container
     {
@@ -14,8 +9,9 @@
         width: 100%;
         min-height: 200px;
 
-        border: 3px dashed #cdcaca;
-        border-radius: 20px;
+        border: 2px dashed transparent;
+        /* border-radius: 20px; */
+        background: #f3f3f3;
     }
 
     .dropzone-center
@@ -28,7 +24,7 @@
         transform: translate(-50%, -50%);
         text-align: center;
 
-        color: #bbb;
+        color: #7f858a;
 
         i
         {
@@ -48,5 +44,106 @@
 
             color: #10cfbd;
         }
+    }
+}
+
+.upload-container
+{
+    max-width: 600px;
+    margin: 10px auto 20px auto;
+    padding: 10px 0 15px 0;
+
+    border-radius: 0;
+    background-color: #eaeaea;
+    box-shadow: 0 0 3px rgba(0,0,0,.3);
+
+    ul
+    {
+        margin: 0;
+        padding: 0;
+
+        list-style: none;
+
+        border-top: 1px solid #2b2e31;
+        border-bottom: 1px solid #3d4043;
+    }
+
+    ul li
+    {
+        position: relative;
+
+        height: 11px;
+        padding: 18px;
+
+        border-top: 1px solid #3d4043;
+        border-bottom: 1px solid #5f5d5d;
+        background-color: #3e4348;
+    }
+
+    ul li input
+    {
+        display: none;
+    }
+
+    ul li p
+    {
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 17px;
+
+        position: absolute;
+        top: 1px;
+        right: 58px;
+        left: 100px;
+
+        overflow: hidden;
+
+        white-space: nowrap;
+
+        color: #eee;
+    }
+
+    ul li i
+    {
+        font-size: 12px;
+        font-weight: normal;
+        font-style: normal;
+
+        display: block;
+
+        color: #7f7f7f;
+    }
+
+    ul li canvas
+    {
+        position: absolute;
+        top: 8px;
+        left: 32px;
+    }
+
+    ul li span
+    {
+        position: absolute;
+        top: 11px;
+        right: 33px;
+
+        width: 15px;
+        height: 12px;
+
+        cursor: pointer;
+
+        background: url('../img/upload/icons.png') no-repeat;
+    }
+
+    ul li.working span
+    {
+        height: 16px;
+
+        background-position: 0 -12px;
+    }
+
+    ul li.error p
+    {
+        color: red;
     }
 }

@@ -1,9 +1,9 @@
 package be.ttime.core.controller;
 
 import be.ttime.core.model.form.AdminFileUploadForm;
-import be.ttime.core.persistence.model.FileEntity;
 import be.ttime.core.persistence.model.ContentDataEntity;
-import be.ttime.core.persistence.model.ContentEntity;
+import be.ttime.core.persistence.model.FileEntity;
+import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.persistence.service.IFileService;
 import be.ttime.core.util.FileTypeDetector;
 import com.github.slugify.Slugify;
@@ -47,7 +47,7 @@ public class AdminFileController {
     private FileTypeDetector fileTypeDetector;
 
     @Autowired
-    private IFileService pageFileService;
+    private IContentService contentService;
 
     @Autowired
     private Validator validator;
@@ -96,20 +96,23 @@ public class AdminFileController {
         return fileService.getFilesListJson(urlId);
     }
 
-
-    @RequestMapping(value = "/upload/{id}", method = RequestMethod.POST, produces="application/json")
+    @RequestMapping(value = "/upload", method = RequestMethod.POST, produces="application/json")
     public
     @ResponseBody
-    String upload(@PathVariable("id") Long urlId, MultipartHttpServletRequest request, HttpServletResponse response, Long contentId) throws IOException {
-        String jsonError = "{\"status\": \"error\"}";
-        String jsonSuccess = "{\"status\": \"success\"}";
-
+    Map<String, String> upload(MultipartHttpServletRequest request, HttpServletResponse response) throws IOException {
+        Map<String, String> jsonResponse = new HashMap<>();
+        jsonResponse.put("status", "error");
+        response.setStatus(500);
         Iterator<String> itr = request.getFileNames();
         int size = Iterators.size(itr);
         if (size > 0) {
             MultipartFile[] files = new MultipartFile[size];
             itr = request.getFileNames(); // reset iterator
-
+            try {
+                Thread.sleep(4000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             // List<MultipartFile> list = new ArrayList<>();
             int i = 0;
             while (itr.hasNext()) {
@@ -120,12 +123,19 @@ public class AdminFileController {
             // check if upload path exist
             File fileDir = new File(fileDirectory);
             if (!fileDir.exists()) {
-                FileUtils.forceMkdir(fileDir);
+                try {
+                    FileUtils.forceMkdir(fileDir);
+                } catch (IOException e) {
+                    log.error(e.toString());
+                    return jsonResponse;
+                }
             }
 
             AdminFileUploadForm uploadForm = new AdminFileUploadForm();
             uploadForm.setFiles(files);
-            uploadForm.setPageId(urlId);
+            String longId = request.getParameter("contentId");
+            Long contentId = Long.parseLong(longId);
+            uploadForm.setPageId(contentId);
             Map<String, String> map = new HashMap<>();
             MapBindingResult errors = new MapBindingResult(map, AdminFileUploadForm.class.getName());
             validator.validate(uploadForm, errors);
@@ -136,6 +146,8 @@ public class AdminFileController {
                 StringBuilder sb = new StringBuilder();
                 for (ObjectError objectError : errors.getAllErrors()) {
                     sb.append(objectError.getCode()).append(" ").append(objectError.getDefaultMessage());
+                    jsonResponse.put("message", sb.toString());
+                    return jsonResponse;
                 }
                 //return sb.toString();
             }
@@ -167,15 +179,9 @@ public class AdminFileController {
                         pageFile.setExtension(ext);
                         pageFile.setSize(Math.round(file.getSize()));
                         pageFile.setMimeType(uploadForm.getMimeTypes()[i]);
-                        if(contentId != null){
-                            ContentDataEntity c = new ContentDataEntity();
-                            c.setId(contentId);
-                            pageFile.setContentFile(c);
-                        }
-                        if (uploadForm.getPageId() != null) {
-                            ContentEntity p = new ContentEntity();
-                            p.setId(uploadForm.getPageId());
-                            //pageFile.setPage(p);
+                        if(uploadForm.getPageId() != null){
+                            ContentDataEntity c = contentService.findContentById(uploadForm.getPageId());
+                            pageFile.setContentDataEntity(c);
                         }
                         pageFiles.add(pageFile);
                         log.debug("Server File Location=" + serverFile.getAbsolutePath());
@@ -183,19 +189,20 @@ public class AdminFileController {
                         // st.append("You successfully uploaded file=" + name + 'n');
                     } catch (Exception e) {
                         log.error("You failed to upload " + name + " => " + e.getMessage());
-                        return jsonError;
+                        return jsonResponse;
                     }
                 } else {
                     log.info("You failed to upload because the file was empty");
-                    return jsonError;
+                    jsonResponse.put("message", "empty file");
+                    return jsonResponse;
                 }
             }
 
-            pageFileService.save(pageFiles);
-            return jsonSuccess;
-            //return getMetaFilesList(pageFiles);
+            fileService.save(pageFiles);
+            response.setStatus(200);
+            jsonResponse.put("status", "success");
+            return jsonResponse;
         }
-        response.setStatus(500);
-        return jsonError;
+        return jsonResponse;
     }
 }
