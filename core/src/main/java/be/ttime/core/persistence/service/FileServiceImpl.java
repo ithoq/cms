@@ -46,9 +46,9 @@ public class FileServiceImpl implements IFileService {
     }
 
     @Override
-    public String getFilesListJson(Long pageId) {
+    public String getFilesListJson(Long contentDataId) {
 
-        List<FileEntity> files = pageFileRepository.findByContentFileId(pageId);
+        List<FileEntity> files = pageFileRepository.findByContentDataEntityId(contentDataId);
         JsonArrayBuilder data = Json.createArrayBuilder();
         JsonObjectBuilder row;
 
@@ -66,7 +66,6 @@ public class FileServiceImpl implements IFileService {
         }
 
         String result = Json.createObjectBuilder().add("data", data).build().toString();
-        System.out.println(result);
         return result;
     }
 }

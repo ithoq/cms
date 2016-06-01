@@ -225,8 +225,39 @@ html
                           .dropzone-center
                             i.fa.fa-download
                             .span Déposez vos images ici
-                      #file-progress.progress
-                        .progress-bar(style='width:0%')
+                      ul#list-file
+                        li.working.error
+                          div(style='display:inline;width:48px;height:48px;')
+                            canvas(width='96', height='96', style='width: 48px; height: 48px;')
+                            input(type='text', value='0', data-width='48', data-height='48', data-fgcolor='#0788a5', data-readonly='1', data-bgcolor='#3e4043', readonly='readonly', style='width: 28px; height: 16px; position: absolute; vertical-align: middle; margin-top: 16px; margin-left: -38px; border: 0px; font-style: normal; font-variant: normal; font-weight: bold; font-stretch: normal; font-size: 9px; line-height: normal; font-family: Arial; text-align: center; color: rgb(7, 136, 165); padding: 0px; -webkit-appearance: none; background: none;')
+                          p
+                            | cms-MultiModuleStructure.zip
+                            i 79.94 MB
+                          span
+                        li
+                          div(style='display:inline;width:48px;height:48px;')
+                            canvas(width='96', height='96', style='width: 48px; height: 48px;')
+                            input(type='text', value='0', data-width='48', data-height='48', data-fgcolor='#0788a5', data-readonly='1', data-bgcolor='#3e4043', readonly='readonly', style='width: 28px; height: 16px; position: absolute; vertical-align: middle; margin-top: 16px; margin-left: -38px; border: 0px; font-style: normal; font-variant: normal; font-weight: bold; font-stretch: normal; font-size: 9px; line-height: normal; font-family: Arial; text-align: center; color: rgb(7, 136, 165); padding: 0px; -webkit-appearance: none; background: none;')
+                          p
+                            | Construction d’un cms.docx
+                            i 139.95 KB
+                          span
+                        li.error
+                          div(style='display:inline;width:48px;height:48px;')
+                            canvas(width='96', height='96', style='width: 48px; height: 48px;')
+                            input(type='text', value='0', data-width='48', data-height='48', data-fgcolor='#0788a5', data-readonly='1', data-bgcolor='#3e4043', readonly='readonly', style='width: 28px; height: 16px; position: absolute; vertical-align: middle; margin-top: 16px; margin-left: -38px; border: 0px; font-style: normal; font-variant: normal; font-weight: bold; font-stretch: normal; font-size: 9px; line-height: normal; font-family: Arial; text-align: center; color: rgb(7, 136, 165); padding: 0px; -webkit-appearance: none; background: none;')
+                          p
+                            | FileZilla_3.18.0_macosx-x86.app.tar.bz2
+                            i 7.63 MB
+                          span
+                        li.error
+                          div(style='display:inline;width:48px;height:48px;')
+                            canvas(width='96', height='96', style='width: 48px; height: 48px;')
+                            input(type='text', value='0', data-width='48', data-height='48', data-fgcolor='#0788a5', data-readonly='1', data-bgcolor='#3e4043', readonly='readonly', style='width: 28px; height: 16px; position: absolute; vertical-align: middle; margin-top: 16px; margin-left: -38px; border: 0px; font-style: normal; font-variant: normal; font-weight: bold; font-stretch: normal; font-size: 9px; line-height: normal; font-family: Arial; text-align: center; color: rgb(7, 136, 165); padding: 0px; -webkit-appearance: none; background: none;')
+                          p
+                            | FileZilla_3.18.0_macosx-x86.app.tar.bz2
+                            i 7.63 MB
+                          span
                       button.btn.btn-success.btn-cons.m-b-10(type='button')
                         i.fa.fa-cloud-upload
                         span.bold Upload

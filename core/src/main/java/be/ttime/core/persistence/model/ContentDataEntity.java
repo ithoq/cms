@@ -30,7 +30,7 @@ public class ContentDataEntity extends AbstractTimestampEntity {
     private String slug;
     private String computedSlug;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentFile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentDataEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FileEntity> contentFiles;
 
     @ManyToOne(fetch = FetchType.LAZY)

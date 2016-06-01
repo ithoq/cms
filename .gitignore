@@ -15,8 +15,9 @@ src/main/generated/
 out/
 gulp/admin/node_modules
 gulp/admin/public
-gulp/admin/src/lib
+gulp/admin/src/libs/*
 gulp/admin/src/img
+gulp/admin/src/images
 gulp/admin/src/fonts
 gulp/admin/src/icons
 gulp/admin/src/static

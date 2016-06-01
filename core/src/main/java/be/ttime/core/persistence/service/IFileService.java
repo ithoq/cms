@@ -17,5 +17,5 @@ public interface IFileService {
 
     void delete(Long id);
 
-    String getFilesListJson(Long id);
+    String getFilesListJson(Long contentDataId);
 }

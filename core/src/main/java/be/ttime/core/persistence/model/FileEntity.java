@@ -47,7 +47,7 @@ public class FileEntity {
     private List<FileEntity> taxonomyChildren;
 
     @ManyToOne
-    private ContentDataEntity contentFile;
+    private ContentDataEntity contentDataEntity;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean enabled = true;
