@@ -16,7 +16,7 @@ public class AdminFileUploadForm {
 
     @FilesEmpty
     @FilesExtension
-    @FilesSize(max = 1)
+    @FilesSize(max = 50)
     private MultipartFile[] files;
     private String[] mimeTypes;
     private Long pageId;
