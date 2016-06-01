@@ -22,6 +22,8 @@ public class QContentEntity extends EntityPathBase<ContentEntity> {
 
     public static final QContentEntity contentEntity = new QContentEntity("contentEntity");
 
+    public final be.ttime.core.persistence.QAbstractTimestampEntity _super = new be.ttime.core.persistence.QAbstractTimestampEntity(this);
+
     public final DateTimePath<java.util.Date> beginDate = createDateTime("beginDate", java.util.Date.class);
 
     public final SetPath<ContentEntity, QContentEntity> contentChildren = this.<ContentEntity, QContentEntity>createSet("contentChildren", ContentEntity.class, QContentEntity.class, PathInits.DIRECT2);
@@ -32,7 +34,8 @@ public class QContentEntity extends EntityPathBase<ContentEntity> {
 
     public final QContentTypeEntity contentType;
 
-    public final DateTimePath<java.util.Date> createdDate = createDateTime("createdDate", java.util.Date.class);
+    //inherited
+    public final DateTimePath<java.util.Date> created = _super.created;
 
     public final SetPath<ContentDataEntity, QContentDataEntity> dataList = this.<ContentDataEntity, QContentDataEntity>createSet("dataList", ContentDataEntity.class, QContentDataEntity.class, PathInits.DIRECT2);
 
@@ -46,8 +49,6 @@ public class QContentEntity extends EntityPathBase<ContentEntity> {
 
     public final BooleanPath menuItem = createBoolean("menuItem");
 
-    public final DateTimePath<java.util.Date> modifiedDate = createDateTime("modifiedDate", java.util.Date.class);
-
     public final StringPath name = createString("name");
 
     public final NumberPath<Integer> order = createNumber("order", Integer.class);
@@ -55,6 +56,9 @@ public class QContentEntity extends EntityPathBase<ContentEntity> {
     public final SetPath<PrivilegeEntity, QPrivilegeEntity> privileges = this.<PrivilegeEntity, QPrivilegeEntity>createSet("privileges", PrivilegeEntity.class, QPrivilegeEntity.class, PathInits.DIRECT2);
 
     public final SetPath<TaxonomyTermEntity, QTaxonomyTermEntity> taxonomyTermEntities = this.<TaxonomyTermEntity, QTaxonomyTermEntity>createSet("taxonomyTermEntities", TaxonomyTermEntity.class, QTaxonomyTermEntity.class, PathInits.DIRECT2);
+
+    //inherited
+    public final DateTimePath<java.util.Date> updated = _super.updated;
 
     public QContentEntity(String variable) {
         this(ContentEntity.class, forVariable(variable), INITS);

@@ -10,8 +10,6 @@ public interface IContentService {
 
     ContentEntity find(Long id);
 
-    //PageEntity findByParentIdIsNull();
-
     ContentEntity savePage(ContentEntity p);
 
     List<ContentEntity> savePage(List<ContentEntity> pages);
@@ -23,6 +21,8 @@ public interface IContentService {
     void delete(Long id) throws Exception;
 
     ContentEntity findContentAdmin(Long id);
+
+    ContentEntity findContentData(Long id, String locale);
 
     List<ContentDataEntity> saveContents(List<ContentDataEntity> contents);
 

@@ -106,7 +106,6 @@ public class InstallController {
         user.setFirstName(form.getFirstname());
         user.setLastName(form.getLastname());
         user.setEmail(form.getEmail());
-        user.setCreatedDate(new Date());
         user.setPassword(bCryptPasswordEncoder.encode(form.getPassword()));
 
         Collection<RoleEntity> roles = new ArrayList<>();

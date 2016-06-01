@@ -1,11 +1,11 @@
 package be.ttime.core.persistence.model;
 
+import be.ttime.core.persistence.AbstractTimestampEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -13,8 +13,8 @@ import java.util.Set;
         @Index(name = "idx_slug", columnList = "computedSlug,language_locale", unique = true)})
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id", "computedSlug"})
-public class ContentDataEntity {
+@EqualsAndHashCode(of = {"id", "computedSlug"}, callSuper = true)
+public class ContentDataEntity extends AbstractTimestampEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,12 +23,7 @@ public class ContentDataEntity {
     private long id;
     @Version
     private Long version;
-    private int position;
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date createdDate;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date modifiedDate;
+    private Integer position;
     private String title;
     @Lob
     private String data;

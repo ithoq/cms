@@ -1,30 +1,27 @@
 package be.ttime.core.persistence.model;
 
+import be.ttime.core.persistence.AbstractTimestampEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "content")
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id", "name", "createdDate"})
-public class ContentEntity {
+@EqualsAndHashCode(of = {"id", "name"}, callSuper = true)
+public class ContentEntity extends AbstractTimestampEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Access(AccessType.PROPERTY)
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
     private long id;
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date createdDate;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date modifiedDate;
     @Temporal(TemporalType.TIMESTAMP)
     private Date beginDate;
     @Temporal(TemporalType.TIMESTAMP)
@@ -58,4 +55,18 @@ public class ContentEntity {
     private Set<TaxonomyTermEntity> taxonomyTermEntities;
     @OneToMany(mappedBy = "content", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ContentDictionaryEntity> dictionaryList;
+
+    public void addContentData(ContentDataEntity child) {
+        if(dataList == null){
+            dataList = new HashSet<>();
+        }
+        child.setContent(this);
+        dataList.add(child);
+    }
+
+    public void removeContentData(ContentDataEntity child) {
+        child.setContent(null);
+        dataList.remove(child);
+
+    }
 }

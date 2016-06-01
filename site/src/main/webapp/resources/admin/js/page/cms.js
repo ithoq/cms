@@ -60,10 +60,10 @@
   
           $pageForm.find('[data-plugin="datepicker"]').each(function (index, element) {
             var $picker = $(element);
-
+  
             $picker.datepicker({
               format: 'yyyy-mm-dd',
-              multidate: (typeof $picker.data('picker-multiple') !== "undefined"),
+              multidate: (typeof $picker.data('picker-multiple') !== 'undefined'),
             });
           });
         },
@@ -292,7 +292,7 @@
     
     // expand
     $pageForm.on('click', '#btn-expand', function () {
-      $('.container-fluid').toggleClass('expanded');
+      $('#main-content').toggleClass('expanded');
     });
     
     // Save a page

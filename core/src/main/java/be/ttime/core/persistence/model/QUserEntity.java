@@ -22,6 +22,8 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
 
     public static final QUserEntity userEntity = new QUserEntity("userEntity");
 
+    public final be.ttime.core.persistence.QAbstractTimestampEntity _super = new be.ttime.core.persistence.QAbstractTimestampEntity(this);
+
     public final BooleanPath accountNonExpired = createBoolean("accountNonExpired");
 
     public final BooleanPath accountNonLocked = createBoolean("accountNonLocked");
@@ -38,7 +40,8 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
 
     public final StringPath countyCode = createString("countyCode");
 
-    public final DatePath<java.util.Date> createdDate = createDate("createdDate", java.util.Date.class);
+    //inherited
+    public final DateTimePath<java.util.Date> created = _super.created;
 
     public final BooleanPath credentialsNonExpired = createBoolean("credentialsNonExpired");
 
@@ -67,6 +70,9 @@ public class QUserEntity extends EntityPathBase<UserEntity> {
     public final StringPath street2 = createString("street2");
 
     public final StringPath street3 = createString("street3");
+
+    //inherited
+    public final DateTimePath<java.util.Date> updated = _super.updated;
 
     public final StringPath username = createString("username");
 

@@ -80,7 +80,6 @@ public class AdminCmsController {
 
         if (contentData == null) {
             contentData = new ContentDataEntity();
-            contentData.setCreatedDate(new Date());
             contentData.setContent(content);
             contentData.setLanguage(appLanguage);
             contentService.saveContent(contentData);
@@ -137,13 +136,13 @@ public class AdminCmsController {
 
                 ContentEntity content = new ContentEntity();
                 content.setName(form.getName());
-                content.setCreatedDate(new Date());
 
                 String lang = applicationService.getDefaultSiteLang();
                 String pageTitle = form.getName();
                 String slug = slg.slugify(pageTitle);
                 ContentDataEntity contentData = new ContentDataEntity();
                 contentData.setLanguage(applicationService.getDefaultSiteApplicationLanguage());
+                contentData.setTitle(pageTitle + '_' + applicationService.getDefaultSiteApplicationLanguage().getLocale());
                 //content.setSeoTitle(pageTitle);
                 contentData.setSlug("/" + slug);
 
@@ -152,7 +151,7 @@ public class AdminCmsController {
                     //page.setLevel(0);
                     contentData.setComputedSlug(contentData.getSlug());
                 } else {
-                    parent = contentService.findContentAdmin(form.getParentId());
+                    parent = contentService.findContentData(form.getParentId(), applicationService.getDefaultSiteApplicationLanguage().getLocale());
                     if (parent == null) {
                         throw new Exception("Create page - parent not exist with id " + form.getParentId());
                     }
@@ -180,6 +179,7 @@ public class AdminCmsController {
                 }
 
                 content.setContentTemplate(contentTemplateEntity);
+                content.addContentData(contentData);
                 content.setContentType(new ContentTypeEntity(contentTemplateEntity.getContentType().getName()));
 
                 contentService.savePage(content);
@@ -303,7 +303,6 @@ public class AdminCmsController {
             Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
             String json = gson.toJson(pageData);
 
-            content.setModifiedDate(new Date());
             content.setName(form.getName());
 
             content.setMenuItem(form.isMenuItem());
@@ -335,7 +334,6 @@ public class AdminCmsController {
 //            content.setSeoH1(form.getSeoH1());
 //            content.setSeoTag(form.getSeoTag());
 //            content.setSeoTitle(form.getSeoTitle());
-            contentData.setModifiedDate(new Date());
             contentService.savePage(content);
             contentService.saveContent(contentData);
         }

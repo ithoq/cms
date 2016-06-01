@@ -42,11 +42,11 @@
             // The list of processing actions:
             processQueue: [
                 /*
-                 {
-                 action: 'log',
-                 type: 'debug'
-                 }
-                 */
+                {
+                    action: 'log',
+                    type: 'debug'
+                }
+                */
             ],
             add: function (e, data) {
                 var $this = $(this);
@@ -59,12 +59,12 @@
 
         processActions: {
             /*
-             log: function (data, options) {
-             console[options.type](
-             'Processing "' + data.files[data.index].name + '"'
-             );
-             }
-             */
+            log: function (data, options) {
+                console[options.type](
+                    'Processing "' + data.files[data.index].name + '"'
+                );
+            }
+            */
         },
 
         _processFile: function (data, originalData) {
@@ -76,7 +76,7 @@
                 var func = function (data) {
                     if (originalData.errorThrown) {
                         return $.Deferred()
-                            .rejectWith(that, [originalData]).promise();
+                                .rejectWith(that, [originalData]).promise();
                     }
                     return that.processActions[settings.action].call(
                         that,
@@ -84,7 +84,7 @@
                         settings
                     );
                 };
-                chain = chain.pipe(func, settings.always && func);
+                chain = chain.then(func, settings.always && func);
             });
             chain
                 .done(function () {
@@ -110,11 +110,11 @@
                     prefix = this.prefix === true ? action : this.prefix;
                 $.each(this, function (key, value) {
                     if ($.type(value) === 'string' &&
-                        value.charAt(0) === '@') {
+                            value.charAt(0) === '@') {
                         settings[key] = options[
-                        value.slice(1) || (prefix ? prefix +
-                        key.charAt(0).toUpperCase() + key.slice(1) : key)
-                            ];
+                            value.slice(1) || (prefix ? prefix +
+                                key.charAt(0).toUpperCase() + key.slice(1) : key)
+                        ];
                     } else {
                         settings[key] = value;
                     }
@@ -145,13 +145,13 @@
                         func = function () {
                             if (data.errorThrown) {
                                 return $.Deferred()
-                                    .rejectWith(that, [data]).promise();
+                                        .rejectWith(that, [data]).promise();
                             }
                             return that._processFile(opts, data);
                         };
                     opts.index = index;
                     that._processing += 1;
-                    that._processingQueue = that._processingQueue.pipe(func, func)
+                    that._processingQueue = that._processingQueue.then(func, func)
                         .always(function () {
                             that._processing -= 1;
                             if (that._processing === 0) {

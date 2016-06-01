@@ -4,8 +4,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8">
     <meta charset="utf-8">
     <title>Administration</title>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <link rel="apple-touch-icon" href="/resources/admin/img/ico/favicon-60x60.png">
     <link rel="apple-touch-icon" sizes="76x76" href="/resources/admin/img/ico/favicon-76x76.png">
     <link rel="apple-touch-icon" sizes="120x120" href="/resources/admin/img/ico/favicon-120x120.png">
@@ -30,7 +29,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" type="text/css">
     <script src="/resources/admin/libs/tinymce/tinymce.min.js"></script>
     <script src="/resources/admin/libs/pace/pace.min.js"></script>
-    <script src="/resources/admin/libs/jQuery/jquery-2.2.1.min.js"></script>
+    <script src="/resources/admin/libs/jQuery/jquery-2.2.4.min.js"></script>
     <script src="/resources/admin/libs/modernizr.custom.js"></script>
     <script src="/resources/admin/libs/jQueryUi/jquery-ui.min.js"></script>
     <script src="/resources/admin/libs/boostrapv3/js/bootstrap.min.js"></script>
@@ -57,7 +56,6 @@
     <link href="/resources/admin/css/style.css" rel="stylesheet" type="text/css">
     <script src="/resources/admin/libs/parsley/parsley.js"></script>
 
-
 </head>
 <body class="fixed-header">
 
@@ -73,9 +71,10 @@
     <div class="page-content-wrapper">
         {% block modal %}
         {% endblock modal %}
-        {% if noBreadCrumb == null or not noBreadCrumb %}
         <div class="content">
+        {% if noBreadCrumb == null or not noBreadCrumb %}
             <div data-pages="parallax" class="jumbotron">
+
                 <div class="container-fluid container-fixed-lg sm-p-l-20 sm-p-r-20">
                     <div class="inner">
                         <ul class="breadcrumb">
@@ -89,11 +88,13 @@
                     </div>
                 </div>
             </div>
-        </div>
+
         {% endif %}
-        <div class="container-fluid container-fixed-lg">
-            {% block content %}
-            {% endblock content %}
+
+            <div class="container-fluid container-fixed-lg" id="main-content">
+                {% block content %}
+                {% endblock content %}
+            </div>
         </div>
     </div>
     {% if noFooter == null or not noFooter %}

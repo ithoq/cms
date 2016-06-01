@@ -1,5 +1,6 @@
 package be.ttime.core.persistence.model;
 
+import be.ttime.core.persistence.AbstractTimestampEntity;
 import be.ttime.core.persistence.converter.UserGenderConverter;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,10 +17,10 @@ import java.util.List;
 @Table(name = "user")
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id", "username", "password"})
+@EqualsAndHashCode(of = {"id", "username", "password"}, callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity implements UserDetails {
+public class UserEntity extends AbstractTimestampEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,9 +45,6 @@ public class UserEntity implements UserDetails {
     private String comment;
     @Temporal(TemporalType.DATE)
     private Date birthday;
-    @Temporal(TemporalType.DATE)
-    @Column(nullable = false)
-    private Date createdDate;
     @Temporal(TemporalType.DATE)
     private Date passwordModifiedDate;
     @Convert(converter = UserGenderConverter.class)

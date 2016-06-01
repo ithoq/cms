@@ -99,7 +99,6 @@
 
 {% block content %}
 
-
     <div class="tree-container">
         <div class="panel panel-default panel-tree">
             <div class="panel-heading">
@@ -114,7 +113,7 @@
                         <button id="btnResetSearch" class="btn btn-default">X</button>
                     </div>
                     <div class="tree-search-input">
-                        <input placeholder="search" id="searchTree" class="light-input">
+                        <input placeholder="search" name="search" id="searchTree" class="light-input">
                     </div>
                 </div>
             </div>

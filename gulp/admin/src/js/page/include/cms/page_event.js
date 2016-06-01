@@ -16,7 +16,7 @@ $('#btnDeletePage').click(function () {
 
 // expand
 $pageForm.on('click', '#btn-expand', function () {
-  $('.container-fluid').toggleClass('expanded');
+  $('#main-content').toggleClass('expanded');
 });
 
 // Save a page

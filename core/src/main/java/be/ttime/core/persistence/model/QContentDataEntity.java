@@ -22,6 +22,8 @@ public class QContentDataEntity extends EntityPathBase<ContentDataEntity> {
 
     public static final QContentDataEntity contentDataEntity = new QContentDataEntity("contentDataEntity");
 
+    public final be.ttime.core.persistence.QAbstractTimestampEntity _super = new be.ttime.core.persistence.QAbstractTimestampEntity(this);
+
     public final SetPath<CommentEntity, QCommentEntity> commentList = this.<CommentEntity, QCommentEntity>createSet("commentList", CommentEntity.class, QCommentEntity.class, PathInits.DIRECT2);
 
     public final StringPath computedSlug = createString("computedSlug");
@@ -30,7 +32,8 @@ public class QContentDataEntity extends EntityPathBase<ContentDataEntity> {
 
     public final SetPath<FileEntity, QFileEntity> contentFiles = this.<FileEntity, QFileEntity>createSet("contentFiles", FileEntity.class, QFileEntity.class, PathInits.DIRECT2);
 
-    public final DateTimePath<java.util.Date> createdDate = createDateTime("createdDate", java.util.Date.class);
+    //inherited
+    public final DateTimePath<java.util.Date> created = _super.created;
 
     public final StringPath data = createString("data");
 
@@ -40,13 +43,14 @@ public class QContentDataEntity extends EntityPathBase<ContentDataEntity> {
 
     public final QApplicationLanguageEntity language;
 
-    public final DateTimePath<java.util.Date> modifiedDate = createDateTime("modifiedDate", java.util.Date.class);
-
     public final NumberPath<Integer> position = createNumber("position", Integer.class);
 
     public final StringPath slug = createString("slug");
 
     public final StringPath title = createString("title");
+
+    //inherited
+    public final DateTimePath<java.util.Date> updated = _super.updated;
 
     public final NumberPath<Long> version = createNumber("version", Long.class);
 

@@ -380,12 +380,11 @@ INSERT INTO `content_template` (`id`, `active`, `deletable`, `description`, `nam
 INSERT INTO `content_template_fieldset` (`id`, `array`, `name`, `namespace`, `position`, `page_template_id`, `fieldset_id`) VALUES
 (1, 0, 'tinymce', 'main', 0, 1, 1);
 
-INSERT INTO `content` (`id`, `beginDate`, `createdDate`, `enabled`, `endDate`, `menuItem`, `modifiedDate`, `name`, `pos`, `contentParent_id`, `contentTemplate_id`, `contentType_name`) VALUES
+INSERT INTO `content` (`id`, `beginDate`, `created`, `enabled`, `endDate`, `menuItem`, `updated`, `name`, `pos`, `contentParent_id`, `contentTemplate_id`, `contentType_name`) VALUES
 (1, NULL, '2016-05-26', b'1', NULL, 1, '2016-05-27', 'Accueil', 0, NULL, 1, 'PAGE'),
 (2, NULL, '2016-05-26', b'1', NULL, 1, '2016-05-27', 'Child', 0, 1, 1, 'PAGE');
 
-
-INSERT INTO `content_data` (`id`, `computedSlug`, `createdDate`, `data`, `modifiedDate`, `position`, `slug`, `title`, `version`, `content_id`, `language_locale`) VALUES
+INSERT INTO `content_data` (`id`, `computedSlug`, `created`, `data`, `updated`, `position`, `slug`, `title`, `version`, `content_id`, `language_locale`) VALUES
 (1, '/home', '2016-05-26', '', '2016-05-27', 0, '/home', 'Home', 1, 1, 'en'),
 (2, '/child', '2016-05-26', '', '2016-05-27', 0, '/child', 'Child', 1, 2, 'en');
 

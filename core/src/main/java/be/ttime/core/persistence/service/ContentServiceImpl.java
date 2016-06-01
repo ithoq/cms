@@ -191,6 +191,20 @@ public class ContentServiceImpl implements IContentService {
         return result;
     }
 
+    @Override
+    public ContentEntity findContentData(Long id, String locale) {
+        QContentEntity contentEntity = QContentEntity.contentEntity;
+        QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        JPAQuery query = new JPAQuery(entityManager);
+        ContentEntity result = query.from(contentEntity)
+                .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
+                .where(contentEntity.id.eq(id).and(contentDataEntity.language.locale.eq(locale)))
+                .singleResult(contentEntity);
+        entityManager.close();
+        return result;
+    }
+
     private List<ContentEntity> getRootPage(List<ContentEntity> pages) {
         List<ContentEntity> result = new ArrayList<>();
         for (ContentEntity contentEntity : pages) {
