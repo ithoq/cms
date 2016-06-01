@@ -1,25 +1,52 @@
-function initFileUpload(params) {
+Cms.prototype.initFileUpload = function initFileUpload(params) {
+
+  if(!params.$container){
+    alert('container element must be provided!');
+    return;
+  }
+
   var defaults = {
-    $container: '#upload-file',
-    successMessage: 'Files were succesfully uploaded!',
-    dropZoneElement: '#dropzone',
-    inputFileElement: '#fileupload',
+    maxSize: 50 * 1000  * 1000 , // 50 MB
+    formData: {},
+    acceptFileTypes: false,
   };
 
-  $(document).on('drop dragover', function (e) {
-    e.preventDefault();
-  });
-
   var options = $.extend({}, defaults, params);
-  var $fileProgress = $('#file-progress');
-  var $ul = $('#upload-file ul');
+  var $container = options.$container;
+  var $ul = $container.find('ul').first();
+  var $dropZone = $container.find('.dropzone').first();
+  var $inputFile = $container.find('.fileupload').first();
+
   var jqMultiUploadConf = {
-    formData: { contentId: 2 },
     dataType: 'json',
 
     // This function is called when a file is added to the queue;
     // either via the browse button, or via drag/drop:
     add: function (e, data) {
+
+      // validation
+      var file = data.originalFiles[0];
+      var fileType = file.name.split('.').pop();
+      if (options.maxSize) {
+        if (file.size > options.maxSize) {
+          $.Cms.notif({
+            message: 'Max size is ' + $.Cms.formatFileSize(options.maxSize),
+            type: 'error',
+          });
+          return;
+        }
+      }
+
+      if (options.acceptFileTypes) {
+        if (options.acceptFileTypes.test(file.type)) {
+          $.Cms.notif({
+            message: 'The file type is not allowed',
+            type: 'error',
+          });
+          return;
+        }
+      }
+
       var tpl = $('<li class="working"><input type="text" value="0" data-width="18" data-height="18"'+
          ' data-fgColor="#0788a5" data-readOnly="1" data-bgColor="#3e4043" /><p></p><span></span></li>');
 
@@ -67,27 +94,24 @@ function initFileUpload(params) {
     },
 
     stop: function () {
-      console.log('stop');
-      $tableFiles.DataTable().ajax.reload();
-      $fileProgress.find('.progress-bar').css('width', 0 + '%');
+      options.onStop && options.onStop();
     },
 
-    progressall: function (e, data) {
+    /*progressall: function (e, data) {
       var progress = parseInt(data.loaded / data.total * 100, 10);
       if (progress == 100) {
         console.log('finish');
       }
-    },
+    },*/
 
     // jscs:disable requireDollarBeforejQueryAssignment
     // This element will accept file drag/drop uploading
-    dropZone: $('#dropzone'),
+    dropZone: $dropZone,
 
     // jscs:enable requireDollarBeforejQueryAssignment
   };
 
   var dragEvent = function (e) {
-    var $dropZone = $(options.dropZoneElement);
     var timeout = window.dropZoneTimeout;
     if (!timeout) {
       $dropZone.addClass('in');
@@ -118,6 +142,6 @@ function initFileUpload(params) {
   };
 
   $(document).bind('dragover', dragEvent);
-  $(options.inputFileElement).fileupload(jqMultiUploadConf)
+  $($inputFile).fileupload(jqMultiUploadConf)
       .bind('fileuploaddone');
 }

@@ -10,8 +10,6 @@
 
   //=include include/cms/page_function.js
 
-  //=include include/cms/fileupload_function.js
-
   //=include include/cms/tree_function.js
 
   $(function () {

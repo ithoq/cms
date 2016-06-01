@@ -395,3 +395,7 @@ INSERT INTO `input_definition` (`id`, `name`, `sort`, `type`, `validation`, `fie
 
 INSERT INTO `input_data` (`id`, `defaultValue`, `hint`, `title`, `validation`, `contentTemplateFieldsetEntity_id`, `fieldset_id`, `inputDefinition_id`) VALUES
 (1, '', '', 'main editor', '', 1, 1, 1);
+
+INSERT INTO file_type` (`name`) VALUES
+('DOWNLOAD'),
+('GALLERY');

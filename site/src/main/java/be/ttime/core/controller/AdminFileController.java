@@ -14,6 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -54,6 +55,9 @@ public class AdminFileController {
 
     @Autowired
     private IFileService fileService;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     @ResponseBody
@@ -96,10 +100,18 @@ public class AdminFileController {
         return fileService.getFilesListJson(urlId);
     }
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST, produces="application/json")
-    public
+    @RequestMapping(value = "/upload", method = RequestMethod.GET, produces="application/json")
     @ResponseBody
-    Map<String, String> upload(MultipartHttpServletRequest request, HttpServletResponse response) throws IOException {
+    public Map<String, String> get() throws IOException {
+        Map<String, String> jsonResponse = new HashMap<>();
+        jsonResponse.put("status", "error");
+        jsonResponse.put("message", "zpeirpzeori zpeir pzeoirp zeorze");
+        return jsonResponse;
+    }
+
+    @RequestMapping(value = "/upload", method = RequestMethod.POST, produces="application/json")
+    @ResponseBody
+    public Map<String, String> upload(MultipartHttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
         Map<String, String> jsonResponse = new HashMap<>();
         jsonResponse.put("status", "error");
         response.setStatus(500);
@@ -108,11 +120,6 @@ public class AdminFileController {
         if (size > 0) {
             MultipartFile[] files = new MultipartFile[size];
             itr = request.getFileNames(); // reset iterator
-            try {
-                Thread.sleep(4000L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             // List<MultipartFile> list = new ArrayList<>();
             int i = 0;
             while (itr.hasNext()) {
@@ -144,11 +151,11 @@ public class AdminFileController {
             if (errors.hasErrors()) {
                 response.setStatus(500);
                 StringBuilder sb = new StringBuilder();
-                for (ObjectError objectError : errors.getAllErrors()) {
-                    sb.append(objectError.getCode()).append(" ").append(objectError.getDefaultMessage());
-                    jsonResponse.put("message", sb.toString());
-                    return jsonResponse;
+                if(errors.getErrorCount() > 1){
+                    ObjectError error = errors.getAllErrors().get(0);
+                    jsonResponse.put("message",  messageSource.getMessage(error.getCode(), null, locale));
                 }
+                return jsonResponse;
                 //return sb.toString();
             }
 

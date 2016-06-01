@@ -109,10 +109,10 @@
                 </div>
             </div>
             <div id="tabFile" class="tab-pane">
-                <div id="upload-file" class="upload-container">
-                    <input style="display:none" id="fileupload" type="file" name="files[]"
+                <div id="upload-file" class="upload-container" data-type="DOWNLOAD" data-contentId="{{ content.id }}">
+                    <input style="display:none" class="fileupload" type="file" name="files[]"
                            data-url="/admin/file/upload" multiple>
-                    <div id="dropzone" class="dropzone">
+                    <div class="dropzone">
                         <div class="dropzone-container">
                             <div class="dropzone-center"><i class="fa fa-download"></i>
                                 <div class="span">{{ message('admin.dropFilesHere') }}</div>

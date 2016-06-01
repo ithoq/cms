@@ -41,7 +41,26 @@ function reloadPage(id, _locale) {
         $('#fileupload').fileupload('destroy');
 
         $pageForm.html(data);
-        initFileUpload();
+
+        $('.upload-container').each(function (index, element) {
+          var $el = $(element);
+          var options = {};
+          var formData = {};
+          formData.type = $el.data('type');
+          formData.contentId = $el.data('contentId');
+          if (formData.type === 'GALLERY') {
+            options.maxSize = 5 * 1000 * 1000;
+            options.acceptFileTypes = /(\.|\/)(gif|jpe?g|png)$/i;
+          }
+
+          options.formData = formData;
+          options.$container = $el;
+          options.onStop = function () {
+            $('#tableFiles').DataTable().ajax.reload();
+          };
+
+          $.Cms.initFileUpload(options);
+        });
 
         $pageForm.find('[data-toggle="tooltip"]').tooltip();
         $pageForm.find('[data-editor="tinymce"]').each(function (index, element) {
