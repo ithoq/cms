@@ -3,6 +3,7 @@ package be.ttime.core.controller;
 import be.ttime.core.model.form.AdminFileUploadForm;
 import be.ttime.core.persistence.model.ContentDataEntity;
 import be.ttime.core.persistence.model.FileEntity;
+import be.ttime.core.persistence.model.FileTypeEntity;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.persistence.service.IFileService;
 import be.ttime.core.util.FileTypeDetector;
@@ -95,9 +96,9 @@ public class AdminFileController {
 
     @RequestMapping(value = "/getJson/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public String filesListJson(@PathVariable("id") long urlId, HttpServletResponse response) {
+    public String filesListJson(@PathVariable("id") long urlId, HttpServletResponse response, String type) {
 
-        return fileService.getFilesListJson(urlId);
+        return fileService.getFilesListJson(urlId, type);
     }
 
     @RequestMapping(value = "/upload", method = RequestMethod.GET, produces="application/json")
@@ -190,6 +191,10 @@ public class AdminFileController {
                             ContentDataEntity c = contentService.findContentById(uploadForm.getPageId());
                             pageFile.setContentDataEntity(c);
                         }
+
+                        String fileType = request.getParameter("type");
+                        pageFile.setContentType(new FileTypeEntity(fileType));
+
                         pageFiles.add(pageFile);
                         log.debug("Server File Location=" + serverFile.getAbsolutePath());
 

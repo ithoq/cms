@@ -40,6 +40,6 @@ public class BlockEntity {
     @Expose
     @ManyToOne(fetch = FetchType.LAZY)
     private BlockTypeEntity blockType;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ApplicationLanguageEntity language;
 }

@@ -6,6 +6,7 @@
   var $selectType;
   var $modalCreateNewPage;
   var $tableFiles;
+  var $tablesGallery;
   var $pageForm;
 
   function updatePagePosition(pagesToUpdate, parentId) {
@@ -38,13 +39,13 @@
         onSuccess: function (data) {
           // remove TinyMce Plugin
           $.Cms.removeAllTinyMce();
-          var $tableFiles = $('#tableFiles');
   
-          // remove DataTable Plugin and YesNo
-          if ($tableFiles) {
-            $tableFiles.DataTable().destroy();
-  
-            //$.Cms.destroyTabSwitchYesNo();
+          // remove DataTable Plugin
+          var $tables = $('table.dataTable');
+          if ($tables.length > 0) {
+            $tables.each(function (index, element) {
+              $(element).DataTable().destroy();
+            });
           }
   
           // remove Jquery Upload Plugin
@@ -57,7 +58,8 @@
             var options = {};
             var formData = {};
             formData.type = $el.data('type');
-            formData.contentId = $el.data('contentId');
+            formData.contentId = $el.data('id');
+  
             if (formData.type === 'GALLERY') {
               options.maxSize = 5 * 1000 * 1000;
               options.acceptFileTypes = /(\.|\/)(gif|jpe?g|png)$/i;
@@ -66,7 +68,8 @@
             options.formData = formData;
             options.$container = $el;
             options.onStop = function () {
-              $('#tableFiles').DataTable().ajax.reload();
+              var $el = $(element);
+              $('#' + $el.data('table')).DataTable().ajax.reload();
             };
   
             $.Cms.initFileUpload(options);
@@ -313,20 +316,46 @@
 
     $pageForm.on('click', '#tabFileBtn', function () {
       var tableFileId = '#tableFiles';
-      var id = $pageForm.find('#currentPageId').val();
       $tableFiles = $(tableFileId);
-      if (!$.fn.DataTable.isDataTable($tableFiles)) {
-        initDataTable(id, $tableFiles);
-        initSwitchYesNo(tableFileId);
+    
+      if (!$.fn.DataTable.isDataTable($tablesGallery)) {
+        var options = {};
+        options.elementId = tableFileId;
+        options.$element = $tableFiles;
+        options.type = 'DOWNLOAD';
+        options.searchElementId = '#search-table-files';
+    
+        initDataTable(options);
+        initSwitchYesNo(options);
       }
     });
     
-    function initDataTable(id, $tableFiles) {
+    $pageForm.on('click', '#tabGalleryBtn', function () {
+      var tableGalleryId = '#tableGallery';
+      $tablesGallery = $(tableGalleryId);
+      if (!$.fn.DataTable.isDataTable($tablesGallery)) {
+        var options = {};
+        options.elementId = tableGalleryId;
+        options.$element = $tablesGallery;
+        options.type = 'GALLERY';
+        options.searchElementId = '#search-table-gallery';
+    
+        initDataTable(options);
+        initSwitchYesNo(options);
+      }
+    });
+    
+    function initDataTable(options) {
       var $contentId = $('#currentContentId');
       $.Cms.initDataTableWithSearch({
-        tableJqueryElement: $tableFiles,
-        searchElement: '#search-table-files',
-        ajax: '/admin/file/getJson/' + $contentId.val(),
+        tableJqueryElement: options.$element,
+        searchElement: options.searchElementId,
+        ajax: {
+          url: '/admin/file/getJson/' + $contentId.val(),
+          data: {
+            type: options.type,
+          },
+        },
         appendOperationColumns: 'double',
         columnDefs: [
           { // name
@@ -372,9 +401,9 @@
       });
     }
     
-    function initSwitchYesNo(tableFileId) {
+    function initSwitchYesNo(options) {
       $.Cms.initTabSwitchYesNo({
-        tableElement: tableFileId,
+        tableElement: options.elementId,
         onDelete: function ($tr) {
           var id = $tr.data('id');
           $.Cms.ajax({
@@ -383,7 +412,7 @@
             successMessage: 'File deleted successfully!',
             onSuccess: function () {
               //$tr.hide(200, function () { $tr.remove(); });
-              $tableFiles.DataTable().ajax.reload();
+              options.$element.DataTable().ajax.reload();
             },
           });
         },
