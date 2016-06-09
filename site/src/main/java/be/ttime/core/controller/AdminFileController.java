@@ -101,15 +101,6 @@ public class AdminFileController {
         return fileService.getFilesListJson(urlId, type);
     }
 
-    @RequestMapping(value = "/upload", method = RequestMethod.GET, produces="application/json")
-    @ResponseBody
-    public Map<String, String> get() throws IOException {
-        Map<String, String> jsonResponse = new HashMap<>();
-        jsonResponse.put("status", "error");
-        jsonResponse.put("message", "zpeirpzeori zpeir pzeoirp zeorze");
-        return jsonResponse;
-    }
-
     @RequestMapping(value = "/upload", method = RequestMethod.POST, produces="application/json")
     @ResponseBody
     public Map<String, String> upload(MultipartHttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
@@ -188,7 +179,7 @@ public class AdminFileController {
                         pageFile.setSize(Math.round(file.getSize()));
                         pageFile.setMimeType(uploadForm.getMimeTypes()[i]);
                         if(uploadForm.getPageId() != null){
-                            ContentDataEntity c = contentService.findContentById(uploadForm.getPageId());
+                            ContentDataEntity c = contentService.findContentData(uploadForm.getPageId());
                             pageFile.setContentDataEntity(c);
                         }
 

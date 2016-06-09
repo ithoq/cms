@@ -4,6 +4,9 @@ import be.ttime.core.persistence.model.ContentTemplateEntity;
 import be.ttime.core.persistence.repository.IContentTemplateRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,32 +24,40 @@ public class ContentTemplateServiceImpl implements IContentTemplateService {
     private IContentTemplateRepository contentTemplateRepository;
 
     @Override
+    @Cacheable(value = "templateList", key = "#type")
     public List<ContentTemplateEntity> findAllByTypeLike(String type) {
         return contentTemplateRepository.findByContentTypeNameLike(type);
     }
 
-    @Override
-    public ContentTemplateEntity find(Long id) {
-        return contentTemplateRepository.findOne(id);
-    }
 
     @Override
+    @Cacheable(value = "template", key = "#id")
+    public ContentTemplateEntity find(Long id) {
+        return contentTemplateRepository.findByIdWithFieldset(id);
+    }
+
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "template", key = "#contentTemplate.id"),
+            @CacheEvict(value = "templateList", allEntries = true),
+    })
     public ContentTemplateEntity save(ContentTemplateEntity contentTemplate) {
         return contentTemplateRepository.save(contentTemplate);
     }
 
-    @Override
-    public ContentTemplateEntity findWithFieldsetAndData(Long id) {
-        return contentTemplateRepository.findByIdWithFieldset(id);
-    }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "template", key = "#id"),
+            @CacheEvict(value = "templateList", allEntries = true),
+    })
     public void delete(Long id) throws Exception {
         ContentTemplateEntity contentTemplateEntity = contentTemplateRepository.findOne(id);
         if (contentTemplateEntity == null) {
-            throw new Exception("Fieldset with id " + id + " is not found!");
+            throw new Exception("Content Template with id " + id + " is not found!");
         } else if (!contentTemplateEntity.isDeletable()) {
-            String message = "Fieldset with name \" + name + \" is not deletable!";
+            String message = "Content Template with name \" + name + \" is not deletable!";
             log.error(message);
             throw new Exception(message);
         }
@@ -60,11 +71,9 @@ public class ContentTemplateServiceImpl implements IContentTemplateService {
         List<ContentTemplateEntity> contentTemplateEntityList = contentTemplateRepository.findAll();
         JsonArrayBuilder data = Json.createArrayBuilder();
         JsonObjectBuilder row;
-        // reload tree like this : table.ajax.reload()
+
         for (ContentTemplateEntity c : contentTemplateEntityList) {
             row = Json.createObjectBuilder();
-            //row.add("DT_RowId", "x"); // add an name
-            //row.add("DT_RowClass", "x"); // add a class
             row.add("DT_RowData", Json.createObjectBuilder().add("id", c.getId()));
             row.add("name", c.getName());
             row.add("description", c.getDescription() != null ? c.getDescription() : "");

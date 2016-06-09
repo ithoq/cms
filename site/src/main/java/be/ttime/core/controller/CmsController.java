@@ -3,9 +3,11 @@ package be.ttime.core.controller;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.model.ContentDataEntity;
+import be.ttime.core.persistence.model.ContentTemplateEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IContentService;
+import be.ttime.core.persistence.service.IContentTemplateService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,9 @@ public class CmsController {
 
     @Autowired
     private IContentService pageService;
+
+    @Autowired
+    private IContentTemplateService contentTemplateService;
 
     @Autowired
     private IApplicationService applicationService;
@@ -60,9 +65,9 @@ public class CmsController {
         CmsUtils.fillModelMap(model,request);
         model.put("content", contentData);
         // Pas grave pour les perfs car les blocks seront dans le cache
-        BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCK_TYPE_SYSTEM);
-        String blockName = contentData.getContent().getContentTemplate().getBlock().getName();
-        BlockEntity content = blockService.findByNameAndBlockType(contentData.getContent().getContentTemplate().getBlock().getName(),CmsUtils.BLOCK_TYPE_CONTENT_TEMPLATE);
+        BlockEntity master = blockService.find(CmsUtils.BLOCK_PAGE_MASTER);
+        ContentTemplateEntity templateEntity = contentTemplateService.find(contentData.getContent().getContentTemplate().getId());
+        BlockEntity content = blockService.find(templateEntity.getBlock().getName());
         model.put("main",  pebbleUtils.parseBlock(content, model));
         return pebbleUtils.parseBlock(master, model);
     }

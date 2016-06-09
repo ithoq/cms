@@ -6,6 +6,9 @@ import be.ttime.core.persistence.repository.IContentDataRepository;
 import be.ttime.core.persistence.repository.IContentRepository;
 import com.mysema.query.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,12 +29,10 @@ public class ContentServiceImpl implements IContentService {
     private EntityManagerFactory entityManagerFactory;
 
     @Override
-
-    public ContentEntity find(Long id) {
-        return contentRepository.findOne(id);
-    }
-
-    @Override
+    @Cacheable(value = "content", key = "#slug")
+    /**
+     * Public page / when user request a page
+     */
     public ContentDataEntity findBySlug(String slug, Locale locale) {
 
         QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
@@ -52,7 +53,7 @@ public class ContentServiceImpl implements IContentService {
                                         .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
                                         .where(contentEntity.id.eq(result.getContent().getId()).and(contentDataEntity.language.locale.eq(locale.toString())))
                                         .leftJoin(contentEntity.contentParent).fetch()
-                                        .leftJoin(contentEntity.contentTemplate).fetch()
+                                        //.leftJoin(contentEntity.contentTemplate).fetch()
                                         //.leftJoin(contentEntity.dictionaryList).fetch()
                                         .leftJoin(contentEntity.privileges).fetch()
                                         //.leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermDataEntity).fetch()
@@ -64,11 +65,76 @@ public class ContentServiceImpl implements IContentService {
 
         }
         return result;
-        //return contentDataRepository.findByComputedSlugAndLanguageLocale(slug,locale.toString());
     }
 
     @Override
-    public ContentEntity savePage(ContentEntity p) {
+    /*
+        Find without fetch
+     */
+    public ContentEntity findContent(Long id) {
+        return contentRepository.findOne(id);
+    }
+
+    @Override
+        /*
+        Find without fetch
+     */
+    public ContentDataEntity findContentData(Long id) {
+        return contentDataRepository.findOne(id);
+    }
+
+    /**
+     * Get a page ( admin CMS ) with his children.
+     * Used to prevent delete a page.
+     */
+    @Override
+    @Cacheable(value = "adminContent", key = "#id")
+    public ContentEntity findContentAdmin(Long id) {
+        QContentEntity contentEntity = QContentEntity.contentEntity;
+        QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
+        QTaxonomyTermEntity taxonomyTermDataEntity = QTaxonomyTermEntity.taxonomyTermEntity;
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        JPAQuery query = new JPAQuery(entityManager);
+        ContentEntity result = query.from(contentEntity)
+                .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
+                .where(contentEntity.id.eq(id))
+                .leftJoin(contentEntity.contentParent).fetch()
+                .leftJoin(contentEntity.contentTemplate).fetch()
+                //.leftJoin(contentEntity.dictionaryList).fetch()
+                .leftJoin(contentEntity.privileges).fetch()
+                .leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermDataEntity).fetch()
+                .leftJoin(taxonomyTermDataEntity.termDataList).fetch()
+                .singleResult(contentEntity);
+        entityManager.close();
+        return result;
+    }
+
+
+    @Override
+    /**
+     * Find a content and a content Data
+     */
+    public ContentEntity findContentAndContentData(Long id, String locale) {
+        QContentEntity contentEntity = QContentEntity.contentEntity;
+        QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        JPAQuery query = new JPAQuery(entityManager);
+        ContentEntity result = query.from(contentEntity)
+                .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
+                .where(contentEntity.id.eq(id).and(contentDataEntity.language.locale.eq(locale)))
+                .singleResult(contentEntity);
+        entityManager.close();
+        return result;
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "content", allEntries = true),
+            @CacheEvict(value = "adminContent", key = "#p.id"),
+            @CacheEvict(value = "adminTree", allEntries = true),
+            @CacheEvict(value = "mainNav", allEntries = true),
+    })
+    public ContentEntity saveContent(ContentEntity p) {
 
         if (p.getId() == 0) {
             ContentEntity parent = p.getContentParent();
@@ -86,12 +152,22 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
-    public List<ContentEntity> savePage(List<ContentEntity> pages) {
-        return contentRepository.save(pages);
+    public List<ContentEntity> saveContent(List<ContentEntity> pages) {
+
+        for (ContentEntity page : pages) {
+            saveContent(page);
+        }
+        return pages;
     }
 
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "content", allEntries = true),
+            @CacheEvict(value = "adminTree", allEntries = true),
+            @CacheEvict(value = "adminContent", key = "#p.id"),
+            @CacheEvict(value = "mainNav", allEntries = true),
+    })
     public void delete(Long id) throws Exception {
         ContentEntity current = contentRepository.findOne(id);
 
@@ -116,7 +192,29 @@ public class ContentServiceImpl implements IContentService {
         }
     }
 
+
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "content", allEntries = true),
+            @CacheEvict(value = "adminTree", allEntries = true),
+            @CacheEvict(value = "mainNav", allEntries = true),
+    })
+    public List<ContentDataEntity> saveContentData(List<ContentDataEntity> contents) {
+        return contentDataRepository.save(contents);
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "content", allEntries = true),
+            @CacheEvict(value = "adminTree", allEntries = true),
+            @CacheEvict(value = "mainNav", allEntries = true),
+    })
+    public ContentDataEntity saveContentData(ContentDataEntity content) {
+        return contentDataRepository.save(content);
+    }
+
+    @Override
+    @Cacheable(value = "mainNav", key = "#lang")
     public String getNavMenu(String lang) {
         QContentEntity contentEntity = QContentEntity.contentEntity;
         QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
@@ -125,13 +223,13 @@ public class ContentServiceImpl implements IContentService {
         JPAQuery query = new JPAQuery(entityManager);
         List<ContentEntity> result =
                 query.from(contentEntity)
-                     .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
-                     .leftJoin(contentEntity.privileges).fetch()
-                      .where(contentEntity.enabled.eq(true)
-                              .and(contentEntity.menuItem.eq(true))
-                              .and(contentDataEntity.language.locale.eq(lang))
-                              .and(contentDataEntity.computedSlug.isNotNull()))
-                     .list(contentEntity);
+                        .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
+                        .leftJoin(contentEntity.privileges).fetch()
+                        .where(contentEntity.enabled.eq(true)
+                                .and(contentEntity.menuItem.eq(true))
+                                .and(contentDataEntity.language.locale.eq(lang))
+                                .and(contentDataEntity.computedSlug.isNotNull()))
+                        .list(contentEntity);
 
         query = new JPAQuery(entityManager2);
         List<ContentEntity> roots =
@@ -154,6 +252,7 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
+    @Cacheable(value = "adminTree")
     public String getPagesTree() {
         List<ContentEntity> pages = contentRepository.findAll(); // force first level cache
         List<ContentEntity> roots = contentRepository.findByContentParentIsNullOrderByOrderAsc();
@@ -165,71 +264,6 @@ public class ContentServiceImpl implements IContentService {
         return sb.toString();
     }
 
-
-    /**
-     * Get a page ( admin CMS ) with his children.
-     * Used to prevent delete a page.
-     */
-    @Override
-    public ContentEntity findContentAdmin(Long id) {
-        QContentEntity contentEntity = QContentEntity.contentEntity;
-        QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
-        QTaxonomyTermEntity taxonomyTermDataEntity = QTaxonomyTermEntity.taxonomyTermEntity;
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        JPAQuery query = new JPAQuery(entityManager);
-        ContentEntity result = query.from(contentEntity)
-                .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
-                .where(contentEntity.id.eq(id))
-                .leftJoin(contentEntity.contentParent).fetch()
-                .leftJoin(contentEntity.contentTemplate).fetch()
-                //.leftJoin(contentEntity.dictionaryList).fetch()
-                .leftJoin(contentEntity.privileges).fetch()
-                .leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermDataEntity).fetch()
-                .leftJoin(taxonomyTermDataEntity.termDataList).fetch()
-                .singleResult(contentEntity);
-        entityManager.close();
-        return result;
-    }
-
-    @Override
-    public ContentEntity findContentData(Long id, String locale) {
-        QContentEntity contentEntity = QContentEntity.contentEntity;
-        QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        JPAQuery query = new JPAQuery(entityManager);
-        ContentEntity result = query.from(contentEntity)
-                .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
-                .where(contentEntity.id.eq(id).and(contentDataEntity.language.locale.eq(locale)))
-                .singleResult(contentEntity);
-        entityManager.close();
-        return result;
-    }
-
-    private List<ContentEntity> getRootPage(List<ContentEntity> pages) {
-        List<ContentEntity> result = new ArrayList<>();
-        for (ContentEntity contentEntity : pages) {
-            if (contentEntity.getContentParent() == null)
-                result.add(contentEntity);
-            else
-                break;
-        }
-        return result;
-    }
-
-    @Override
-    public List<ContentDataEntity> saveContents(List<ContentDataEntity> contents) {
-        return contentDataRepository.save(contents);
-    }
-
-    @Override
-    public ContentDataEntity saveContent(ContentDataEntity content) {
-        return contentDataRepository.save(content);
-    }
-
-    @Override
-    public ContentDataEntity findContentById(Long id) {
-        return contentDataRepository.findOne(id);
-    }
 
     private String buildNavMenu(List<ContentEntity> pages, StringBuilder sb) {
 

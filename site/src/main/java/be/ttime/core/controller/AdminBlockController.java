@@ -59,7 +59,7 @@ public class AdminBlockController {
     @ResponseBody
     public String getjson(HttpServletResponse response) {
 
-        return pageBlockRepository.jsonBlockArray();
+        return pageBlockRepository.jsonBlockArray(null);
     }
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

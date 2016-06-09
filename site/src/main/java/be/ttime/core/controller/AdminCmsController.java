@@ -82,7 +82,7 @@ public class AdminCmsController {
             contentData = new ContentDataEntity();
             contentData.setContent(content);
             contentData.setLanguage(appLanguage);
-            contentService.saveContent(contentData);
+            contentService.saveContentData(contentData);
         }
 
         Gson gson = new Gson();
@@ -93,7 +93,7 @@ public class AdminCmsController {
             model.put("data",  CmsUtils.parseStringToPageDate(contentData.getData()));
         }
 
-        ContentTemplateEntity template = contentTemplateService.findWithFieldsetAndData(content.getContentTemplate().getId());
+        ContentTemplateEntity template = contentTemplateService.find(content.getContentTemplate().getId());
         model.put("template", template);
 
         model.put("page", content);
@@ -151,7 +151,7 @@ public class AdminCmsController {
                     //page.setLevel(0);
                     contentData.setComputedSlug(contentData.getSlug());
                 } else {
-                    parent = contentService.findContentData(form.getParentId(), applicationService.getDefaultSiteApplicationLanguage().getLocale());
+                    parent = contentService.findContentAndContentData(form.getParentId(), applicationService.getDefaultSiteApplicationLanguage().getLocale());
                     if (parent == null) {
                         throw new Exception("Create page - parent not exist with id " + form.getParentId());
                     }
@@ -182,7 +182,7 @@ public class AdminCmsController {
                 content.addContentData(contentData);
                 content.setContentType(new ContentTypeEntity(contentTemplateEntity.getContentType().getName()));
 
-                contentService.savePage(content);
+                contentService.saveContent(content);
             } catch (Exception e) {
                 // Logger
                 response.setStatus(500);
@@ -207,8 +207,8 @@ public class AdminCmsController {
             return ControllerUtils.getValidationErrorsInUl(result.getFieldErrors());
         } else {
 
-            content = contentService.find(form.getPageId());
-            contentData = contentService.findContentById(form.getContentId());
+            content = contentService.findContentAdmin(form.getPageId());
+            contentData = contentService.findContentData(form.getContentId());
             if (content == null || contentData == null) {
                 throw new Exception("Page or Content can't by null");
             }
@@ -219,7 +219,7 @@ public class AdminCmsController {
             }
 
             // retrieve data
-            ContentTemplateEntity template = contentTemplateService.findWithFieldsetAndData(content.getContentTemplate().getId());
+            ContentTemplateEntity template = contentTemplateService.find(content.getContentTemplate().getId());
             Slugify slg = new Slugify();
             PageData pageData = new PageData();
 
@@ -320,7 +320,7 @@ public class AdminCmsController {
                 Collection<ContentDataEntity> contents = content.getDataList();
                 ContentDataEntity parentContent = null;
                 for (ContentDataEntity c : contents) {
-                    if (c.getLanguage() == appLanguage) {
+                    if (c.getLanguage().getLocale().equals(appLanguage.getLocale())) {
                         parentContent = c;
                     }
                 }
@@ -334,8 +334,8 @@ public class AdminCmsController {
 //            content.setSeoH1(form.getSeoH1());
 //            content.setSeoTag(form.getSeoTag());
 //            content.setSeoTitle(form.getSeoTitle());
-            contentService.savePage(content);
-            contentService.saveContent(contentData);
+            contentService.saveContent(content);
+            contentService.saveContentData(contentData);
         }
 
         return "OK";
@@ -366,7 +366,7 @@ public class AdminCmsController {
 
         for (int i = 0; i < idLength; i++) {
 
-            ContentEntity p = contentService.find(form.getId()[i]);
+            ContentEntity p = contentService.findContent(form.getId()[i]);
             if (p == null) {
                 response.setStatus(500);
                 return "ID : " + form.getId()[i] + " don't exist";
@@ -377,7 +377,7 @@ public class AdminCmsController {
             pages.add(p);
         }
 
-        contentService.savePage(pages);
+        contentService.saveContent(pages);
         return "Ok";
     }
 }

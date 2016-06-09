@@ -24,7 +24,7 @@ public class QRoleEntity extends EntityPathBase<RoleEntity> {
 
     public final StringPath name = createString("name");
 
-    public final CollectionPath<PrivilegeEntity, QPrivilegeEntity> privileges = this.<PrivilegeEntity, QPrivilegeEntity>createCollection("privileges", PrivilegeEntity.class, QPrivilegeEntity.class, PathInits.DIRECT2);
+    public final SetPath<PrivilegeEntity, QPrivilegeEntity> privileges = this.<PrivilegeEntity, QPrivilegeEntity>createSet("privileges", PrivilegeEntity.class, QPrivilegeEntity.class, PathInits.DIRECT2);
 
     public final SetPath<UserEntity, QUserEntity> users = this.<UserEntity, QUserEntity>createSet("users", UserEntity.class, QUserEntity.class, PathInits.DIRECT2);
 
