@@ -1,6 +1,5 @@
 package be.ttime.core.persistence.model;
 
-import be.ttime.core.persistence.AbstractTimestampEntity;
 import be.ttime.core.persistence.converter.UserGenderConverter;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

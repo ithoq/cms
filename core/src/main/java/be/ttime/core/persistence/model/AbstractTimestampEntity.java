@@ -1,4 +1,4 @@
-package be.ttime.core.persistence;
+package be.ttime.core.persistence.model;
 
 
 import javax.persistence.*;
