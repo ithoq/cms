@@ -60,7 +60,7 @@ public class AdminContentTemplateController {
         String result;
 
         if(id != null){
-            ContentTemplateEntity template = contentTemplateService.findWithFieldsetAndData(id);
+            ContentTemplateEntity template = contentTemplateService.find(id);
             model.put("contentTemplate", template);
             model.put("fieldsetData", gson.toJson(template.getContentTemplateFieldset()));
         }
@@ -115,7 +115,7 @@ public class AdminContentTemplateController {
         BlockEntity block = null;
 
         if(contentForm.getId() != 0){
-            content = contentTemplateService.findWithFieldsetAndData(contentForm.getId());
+            content = contentTemplateService.find(contentForm.getId());
             if(content == null){
                 response.setStatus(500);
                 throw new ForbiddenException("Invalid content id : " + contentForm.getId());
@@ -135,7 +135,6 @@ public class AdminContentTemplateController {
             // TO DO : block.setBlockType();
         }
 
-        block.setCacheable(false);
         block.setDynamic(true);
         block.setEnabled(true);
 

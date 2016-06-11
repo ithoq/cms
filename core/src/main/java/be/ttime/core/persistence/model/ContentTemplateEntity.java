@@ -25,6 +25,12 @@ public class ContentTemplateEntity {
     @Expose private String description;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean active;
+    @Expose
+    @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
+    private boolean useGallery = true;
+    @Expose
+    @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
+    private boolean useFiles = true;
     @ManyToOne(fetch = FetchType.LAZY)
     private ContentTypeEntity contentType;
     @OneToMany(mappedBy = "contentTemplate")

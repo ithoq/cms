@@ -46,9 +46,14 @@ public class FileServiceImpl implements IFileService {
     }
 
     @Override
-    public String getFilesListJson(Long contentDataId) {
+    public String getFilesListJson(Long contentDataId, String type) {
+        List<FileEntity> files = null;
+        if(type == null){
+            files = pageFileRepository.findByContentDataEntityId(contentDataId);
+        } else{
+            files = pageFileRepository.findByContentDataEntityIdAndContentTypeName(contentDataId, type);
+        }
 
-        List<FileEntity> files = pageFileRepository.findByContentDataEntityId(contentDataId);
         JsonArrayBuilder data = Json.createArrayBuilder();
         JsonObjectBuilder row;
 

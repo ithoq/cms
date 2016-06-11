@@ -28,13 +28,13 @@ function reloadPage(id, _locale) {
       onSuccess: function (data) {
         // remove TinyMce Plugin
         $.Cms.removeAllTinyMce();
-        var $tableFiles = $('#tableFiles');
 
-        // remove DataTable Plugin and YesNo
-        if ($tableFiles) {
-          $tableFiles.DataTable().destroy();
-
-          //$.Cms.destroyTabSwitchYesNo();
+        // remove DataTable Plugin
+        var $tables = $('table.dataTable');
+        if ($tables.length > 0) {
+          $tables.each(function (index, element) {
+            $(element).DataTable().destroy();
+          });
         }
 
         // remove Jquery Upload Plugin
@@ -47,7 +47,8 @@ function reloadPage(id, _locale) {
           var options = {};
           var formData = {};
           formData.type = $el.data('type');
-          formData.contentId = $el.data('contentId');
+          formData.contentId = $el.data('id');
+
           if (formData.type === 'GALLERY') {
             options.maxSize = 5 * 1000 * 1000;
             options.acceptFileTypes = /(\.|\/)(gif|jpe?g|png)$/i;
@@ -56,7 +57,8 @@ function reloadPage(id, _locale) {
           options.formData = formData;
           options.$container = $el;
           options.onStop = function () {
-            $('#tableFiles').DataTable().ajax.reload();
+            var $el = $(element);
+            $('#' + $el.data('table')).DataTable().ajax.reload();
           };
 
           $.Cms.initFileUpload(options);

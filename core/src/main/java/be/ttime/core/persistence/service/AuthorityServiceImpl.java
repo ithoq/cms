@@ -29,7 +29,9 @@ public class AuthorityServiceImpl implements IAuthorityService {
         RoleEntity role = roleRepository.findByName(name);
         if (role == null) {
             role = new RoleEntity(name);
-            role.setPrivileges(privileges);
+            for (PrivilegeEntity privilege : privileges) {
+                role.getPrivileges().add(privilege);
+            }
             roleRepository.save(role);
         }
         return role;

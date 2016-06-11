@@ -363,11 +363,11 @@ INSERT INTO `block_type` (`name`) VALUES
 ('SYSTEM'),
 ('FIELDSET');
 
-INSERT INTO `block` (`name`, `cacheable`, `content`, `deletable`, `displayName`, `dynamic`, `enabled`, `blockType_name`, `language_locale`) VALUES
-('FIELD_DATEPICKER', 0, '', 0, 'block for field datepicker',1, 1, 'FIELDSET', NULL),
-('FIELD_TEXT', 0, '', 0, 'block for field simple text', 1, 1, 'FIELDSET', NULL),
-('FIELD_TINYMCE', 0, '', 0, 'block for field tinymce', 1, 1, 'FIELDSET', NULL),
-('TEMPLATE_BASIC_PAGE', 0, '', 0, 'Basic Page', 1, 1, 'PAGE_TEMPLATE', NULL);
+INSERT INTO `block` (`name`, `content`, `deletable`, `displayName`, `dynamic`, `enabled`, `blockType_name`, `language_locale`) VALUES
+('FIELD_DATEPICKER', '', 0, 'block for field datepicker',1, 1, 'FIELDSET', NULL),
+('FIELD_TEXT', '', 0, 'block for field simple text', 1, 1, 'FIELDSET', NULL),
+('FIELD_TINYMCE', '', 0, 'block for field tinymce', 1, 1, 'FIELDSET', NULL),
+('TEMPLATE_BASIC_PAGE', '', 0, 'Basic Page', 1, 1, 'PAGE_TEMPLATE', NULL);
 
 INSERT INTO `fieldset` (`id`, `array`, `deletable`, `description`, `name`, `blockEntity_name`) VALUES
 (1, 0, 1, 'Un éditeur de texte', 'tinymce', 'FIELD_TINYMCE'),

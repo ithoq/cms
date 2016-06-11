@@ -58,6 +58,7 @@
         <ul class="nav nav-tabs nav-tabs-linetriangle bg-white">
             <li class="active"><a data-toggle="tab" href="#tabGeneral">{{ message('general') }}</a></li>
             <li><a data-toggle="tab" href="#tabFile" id="tabFileBtn">{{ message('file') }}</a></li>
+            <li><a data-toggle="tab" href="#tabGallery" id="tabGalleryBtn">{{ message('gallery') }}</a></li>
             <li><a data-toggle="tab" href="#tabDev">Dev</a></li>
             <li><a data-toggle="tab" href="#tabSeo">SEO</a></li>
         </ul>
@@ -109,13 +110,14 @@
                 </div>
             </div>
             <div id="tabFile" class="tab-pane">
-                <div id="upload-file" class="upload-container" data-type="DOWNLOAD" data-contentId="{{ content.id }}">
+                <div class="upload-container" data-type="DOWNLOAD" data-id="{{ content.id }}" data-table="tableFiles">
                     <input style="display:none" class="fileupload" type="file" name="files[]"
                            data-url="/admin/file/upload" multiple>
                     <div class="dropzone">
                         <div class="dropzone-container">
                             <div class="dropzone-center"><i class="fa fa-download"></i>
                                 <div class="span">{{ message('admin.dropFilesHere') }}</div>
+                                <span class="btn btn-browse">BROWSE</span>
                             </div>
                         </div>
                     </div>
@@ -123,6 +125,37 @@
                 </div>
                 <input id="search-table-files" type="text" placeholder="Search" class="form-control pull-right">
                 <table id="tableFiles" class="table table-small-pad">
+                    <thead>
+                    <tr role="row">
+                        <th style="width:230px">{{ message('name') }}</th>
+                        <th style="min-width:230px" class="no-sort">{{ message('description') }}</th>
+                        <th style="width:50px" class="center">{{ message('active') }}</th>
+                        <th style="width:50px" class="no-sort center">{{ message('type') }}</th>
+                        <th style="width:50px" class="center">{{ message('size') }}</th>
+                        <th style="width:100px" class="no-sort center">{{ message('operation') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="tabGallery" class="tab-pane">
+                <div class="upload-container" data-type="GALLERY" data-id="{{ content.id }}" data-table="tableGallery">
+                    <input style="display:none" class="fileupload" type="file" name="files[]"
+                           data-url="/admin/file/upload" multiple>
+                    <div class="dropzone">
+                        <div class="dropzone-container">
+                            <div class="dropzone-center"><i class="fa fa-download"></i>
+                                <div class="span">{{ message('admin.dropFilesHere') }}</div>
+                                <span class="btn btn-browse">BROWSE</span>
+                            </div>
+                        </div>
+                    </div>
+                    <ul id="list-file"></ul>
+                </div>
+                <input id="search-table-gallery" type="text" placeholder="Search" class="form-control pull-right">
+                <table id="tableGallery" class="table table-small-pad">
                     <thead>
                     <tr role="row">
                         <th style="width:230px">{{ message('name') }}</th>

@@ -3,6 +3,7 @@ package be.ttime.core.controller;
 import be.ttime.core.model.form.AdminFileUploadForm;
 import be.ttime.core.persistence.model.ContentDataEntity;
 import be.ttime.core.persistence.model.FileEntity;
+import be.ttime.core.persistence.model.FileTypeEntity;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.persistence.service.IFileService;
 import be.ttime.core.util.FileTypeDetector;
@@ -95,18 +96,9 @@ public class AdminFileController {
 
     @RequestMapping(value = "/getJson/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public String filesListJson(@PathVariable("id") long urlId, HttpServletResponse response) {
+    public String filesListJson(@PathVariable("id") long urlId, HttpServletResponse response, String type) {
 
-        return fileService.getFilesListJson(urlId);
-    }
-
-    @RequestMapping(value = "/upload", method = RequestMethod.GET, produces="application/json")
-    @ResponseBody
-    public Map<String, String> get() throws IOException {
-        Map<String, String> jsonResponse = new HashMap<>();
-        jsonResponse.put("status", "error");
-        jsonResponse.put("message", "zpeirpzeori zpeir pzeoirp zeorze");
-        return jsonResponse;
+        return fileService.getFilesListJson(urlId, type);
     }
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST, produces="application/json")
@@ -187,9 +179,13 @@ public class AdminFileController {
                         pageFile.setSize(Math.round(file.getSize()));
                         pageFile.setMimeType(uploadForm.getMimeTypes()[i]);
                         if(uploadForm.getPageId() != null){
-                            ContentDataEntity c = contentService.findContentById(uploadForm.getPageId());
+                            ContentDataEntity c = contentService.findContentData(uploadForm.getPageId());
                             pageFile.setContentDataEntity(c);
                         }
+
+                        String fileType = request.getParameter("type");
+                        pageFile.setContentType(new FileTypeEntity(fileType));
+
                         pageFiles.add(pageFile);
                         log.debug("Server File Location=" + serverFile.getAbsolutePath());
 

@@ -8,11 +8,9 @@ import java.util.Locale;
 
 public interface IContentService {
 
-    ContentEntity find(Long id);
+    ContentEntity saveContent(ContentEntity p);
 
-    ContentEntity savePage(ContentEntity p);
-
-    List<ContentEntity> savePage(List<ContentEntity> pages);
+    List<ContentEntity> saveContent(List<ContentEntity> pages);
 
     String getNavMenu(String lang);
 
@@ -22,13 +20,15 @@ public interface IContentService {
 
     ContentEntity findContentAdmin(Long id);
 
-    ContentEntity findContentData(Long id, String locale);
+    ContentEntity findContentAndContentData(Long id, String locale);
 
-    List<ContentDataEntity> saveContents(List<ContentDataEntity> contents);
+    List<ContentDataEntity> saveContentData(List<ContentDataEntity> contents);
 
-    ContentDataEntity saveContent(ContentDataEntity content);
+    ContentDataEntity saveContentData(ContentDataEntity content);
 
-    ContentDataEntity findContentById(Long id);
+    ContentEntity findContent(Long id);
+
+    ContentDataEntity findContentData(Long id);
 
     ContentDataEntity findBySlug(String slug, Locale locale);
 

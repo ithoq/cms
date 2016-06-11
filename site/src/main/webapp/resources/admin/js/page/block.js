@@ -109,17 +109,12 @@
           className: 'center',
           render: $.Cms.dataTableRenderBoolean,
         },
-        { // Cacheable
-          aTargets: [3],
-          className: 'center',
-          render: $.Cms.dataTableRenderBoolean,
-        },
         { // Edit
-          aTargets: [4],
+          aTargets: [3],
           className: 'center',
         },
         { // Operation
-          aTargets: [5],
+          aTargets: [4],
           className: 'center',
           render: function (data) {
             return (data === true) ? $.Cms.tabSwitchSimpleTpl : '';
@@ -131,7 +126,6 @@
         { data: 'name', },
         { data: 'type', },
         { data: 'dynamic', },
-        { data: 'cacheable', },
         {
           data: null,
           defaultContent: '<button type="button" class="btn btn-default ' +

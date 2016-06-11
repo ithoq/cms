@@ -33,8 +33,8 @@ public class LoginController {
     @ResponseBody
     public String home(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 
-        BlockEntity master = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_MASTER, CmsUtils.BLOCK_TYPE_SYSTEM);
-        BlockEntity login = blockService.findByNameAndBlockType(CmsUtils.BLOCK_PAGE_LOGIN, CmsUtils.BLOCK_TYPE_SYSTEM);
+        BlockEntity master = blockService.find(CmsUtils.BLOCK_PAGE_MASTER);
+        BlockEntity login = blockService.find(CmsUtils.BLOCK_PAGE_LOGIN);
 
         CmsUtils.fillModelMap(model,request);
 
@@ -60,7 +60,10 @@ public class LoginController {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
 
-        RedirectView redirect = new RedirectView("/login?logout");
+        String isAdmin = request.getParameter("isAdmin");
+        String targetUrl =  isAdmin == null ? "/login?logout" : "/admin/login?logout";
+
+        RedirectView redirect = new RedirectView(targetUrl);
         redirect.setExposeModelAttributes(false);
         return redirect;
     }

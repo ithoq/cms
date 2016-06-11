@@ -26,11 +26,15 @@ public class CachingConfig extends CachingConfigurerSupport {
         //config.addCache(cacheConfig("org.hibernate.cache.spi.UpdateTimestampsCache", "5M", true, null, null)); // holds timestamps of the most recent updates to queryable tables.
         config.addCache(cacheConfig("localizedMessage", null, true, null, null));
         config.addCache(cacheConfig("block", null, true, null, null));
-        config.addCache(cacheConfig("blockByName", null, true, null, null));
-        config.addCache(cacheConfig("navBlock", null, true, null, null));
-        config.addCache(cacheConfig("renderedBlock", null, true, null, null));
+        config.addCache(cacheConfig("blockJson", null, true, null, null));
+        config.addCache(cacheConfig("blockCompiledTemplate", null, true, null, null));
         config.addCache(cacheConfig("locale", null , true, null, null));
-        config.addCache(cacheConfig("page", "10M", true, null, null));
+        config.addCache(cacheConfig("mainNav", null, true, null, null));
+        config.addCache(cacheConfig("adminTree", null, true, null, null));
+        config.addCache(cacheConfig("templateList", null, true, null, null));
+        config.addCache(cacheConfig("template", null, true, null, null));
+        config.addCache(cacheConfig("content", "10M", true, null, null));
+        config.addCache(cacheConfig("adminContent", "2M", true, null, null));
         config.addCache(cacheConfig("user", "5M", true, null, null));
         config.addCache(cacheConfig("persistentLogin", "5M", true, null, null));
 
@@ -45,7 +49,7 @@ public class CachingConfig extends CachingConfigurerSupport {
         config.persistence(persistenceConfiguration);
         config.setName(name);
         config.setEternal(eternal);
-        config.setMemoryStoreEvictionPolicy("LRU");
+        config.setMemoryStoreEvictionPolicy("LFU");
         if (maxSizeHeap != null) {
             config.setMaxBytesLocalHeap(maxSizeHeap);
         }

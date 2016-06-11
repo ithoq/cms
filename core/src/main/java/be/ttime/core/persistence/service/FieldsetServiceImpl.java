@@ -7,6 +7,8 @@ import be.ttime.core.persistence.repository.IContentTemplateFieldsetRepository;
 import be.ttime.core.persistence.repository.IFieldsetRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,20 +34,35 @@ public class FieldsetServiceImpl implements IFieldsetService {
 
     @Override
     public List<ContentTemplateFieldsetEntity> saveContentTemplateFieldset(List<ContentTemplateFieldsetEntity> list) {
-        return contentTemplateFieldsetRepository.save(list);
+
+        for (ContentTemplateFieldsetEntity c : list) {
+            saveContentTemplateFieldset(c);
+        }
+
+        return list;
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "template", allEntries = true),
+    })
     public ContentTemplateFieldsetEntity saveContentTemplateFieldset(ContentTemplateFieldsetEntity ctf) {
         return contentTemplateFieldsetRepository.save(ctf);
     }
 
     @Override
     public List<FieldsetEntity> saveFieldset(List<FieldsetEntity> list) {
-        return fieldsetRepository.save(list);
+
+        for (FieldsetEntity fieldsetEntity : list) {
+            saveFieldset(fieldsetEntity);
+        }
+        return list;
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "template", allEntries = true),
+    })
     public FieldsetEntity saveFieldset(FieldsetEntity fieldset) {
         return fieldsetRepository.save(fieldset);
     }
@@ -83,6 +100,9 @@ public class FieldsetServiceImpl implements IFieldsetService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "template", allEntries = true),
+    })
     public void deleteFieldset(Long id) throws Exception {
         FieldsetEntity fieldset = fieldsetRepository.findOne(id);
         if (fieldset == null) {

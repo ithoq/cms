@@ -3,9 +3,9 @@
  */
 
 Cms.prototype.dataTableRenderCheckboxDisabled = function (data, type, full) {
-   var isChecked = data === true ? 'checked' : '';
-   return '<input disabled type="checkbox" class="checkbox" ' + isChecked + ' />';
- };
+  var isChecked = data === true ? 'checked' : '';
+  return '<input disabled type="checkbox" class="checkbox" ' + isChecked + ' />';
+};
 
 Cms.prototype.dataTableRenderCheckbox = function (data, type, full) {
   var isChecked = data === true ? 'checked' : '';
@@ -13,16 +13,16 @@ Cms.prototype.dataTableRenderCheckbox = function (data, type, full) {
 };
 
 Cms.prototype.dataTableRenderBoolean = function (data, type, full) {
-   // text-success
-   var css;
-   if (data === true) {
-     css = ' text-success"';
-   } else {
-     css = '" style="opacity:0.15"';
-   }
+  // text-success
+  var css;
+  if (data === true) {
+    css = ' text-success"';
+  } else {
+    css = '" style="opacity:0.15"';
+  }
 
-   return '<i class="fa fa-check-circle' + css + '></i>';
- };
+  return '<i class="fa fa-check-circle' + css + '></i>';
+};
 
 Cms.prototype.initDataTableWithSearch = function (params) {
   var defaults = {

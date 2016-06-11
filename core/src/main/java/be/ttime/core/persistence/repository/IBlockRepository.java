@@ -4,7 +4,9 @@ import be.ttime.core.persistence.model.BlockEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
+import java.util.List;
+
 public interface IBlockRepository extends JpaRepository<BlockEntity, String>, QueryDslPredicateExecutor<BlockEntity> {
 
-    BlockEntity findByNameAndBlockTypeName(String name, String blockType);
+    List<BlockEntity> findAllByBlockTypeName(String type);
 }

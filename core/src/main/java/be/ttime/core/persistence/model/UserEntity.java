@@ -2,6 +2,8 @@ package be.ttime.core.persistence.model;
 
 import be.ttime.core.persistence.converter.UserGenderConverter;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,12 +59,13 @@ public class UserEntity extends AbstractTimestampEntity implements UserDetails {
     private boolean accountNonLocked = true;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean credentialsNonExpired = true;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserCustomEntity> dictionaryList;
     @ManyToOne
     private CompanyEntity company;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @Fetch(FetchMode.JOIN)
     private Collection<RoleEntity> roles;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

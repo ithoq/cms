@@ -6,7 +6,11 @@ import be.ttime.core.persistence.dto.UserDto;
 import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.repository.*;
 import be.ttime.core.util.CmsUtils;
+import com.mysema.query.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
@@ -37,6 +43,8 @@ public class UserServiceImpl implements IUserService {
     private IVerificationTokenRepository verificationTokenRepository;
     @Autowired
     private IPasswordResetTokenRepository passwordResetTokenRepository;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     /*
 
@@ -54,20 +62,36 @@ public class UserServiceImpl implements IUserService {
 	 *
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.print(username);
-        UserEntity user = findByUsernameOrEmail(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        UserEntity user = findByUsernameOrEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException("Username not found");
         }
-
-        // force eager loading.
-        user.getRoles();
 
         return user;
     }
 
     @Override
+    @Cacheable(value = "user", key = "#email")
+    public UserEntity findByUsernameOrEmail(String email) {
+
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        JPAQuery query = new JPAQuery(entityManager);
+        QUserEntity qUserEntity = QUserEntity.userEntity;
+        QRoleEntity qRoleEntity = QRoleEntity.roleEntity;
+        UserEntity user = query
+                .from(qUserEntity)
+                .leftJoin(qUserEntity.roles, qRoleEntity).fetch()
+                .leftJoin(qRoleEntity.privileges).fetch()
+                .where(qUserEntity.email.eq(email)).singleResult(qUserEntity);
+        return user;
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "user", key = "#user.email"),
+    })
     public UserEntity save(UserEntity user) {
         return userRepository.save(user);
     }
@@ -78,6 +102,9 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "user", key = "#user.email"),
+    })
     public void delete(UserEntity user) {
         userRepository.delete(user);
     }
@@ -187,11 +214,6 @@ public class UserServiceImpl implements IUserService {
     public void createPasswordResetTokenForUser(UserEntity user, String token) {
         final PasswordResetTokenEntity myToken = new PasswordResetTokenEntity(token, user);
         passwordResetTokenRepository.save(myToken);
-    }
-
-    @Override
-    public UserEntity findByUsernameOrEmail(String user) {
-        return userRepository.findByEmailOrUsername(user, user);
     }
 
     @Override

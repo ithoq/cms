@@ -131,7 +131,6 @@ public class AdminFieldsetController {
 
         blockEntity.setDisplayName(form.getBlockDisplayName());
         blockEntity.setBlockType(new BlockTypeEntity(CmsUtils.BLOCK_TYPE_FIELDSET));
-        blockEntity.setCacheable(false);
         blockEntity.setDeletable(true);
         blockEntity.setEnabled(true);
         blockEntity.setContent(form.getBlockContent());

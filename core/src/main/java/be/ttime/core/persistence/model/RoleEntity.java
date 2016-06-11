@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -25,7 +25,7 @@ public class RoleEntity {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "roles_privileges", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
-    private Collection<PrivilegeEntity> privileges;
+    private Set<PrivilegeEntity> privileges = new HashSet<>();
 
     @ManyToMany(mappedBy = "roles")
     private Set<UserEntity> users;

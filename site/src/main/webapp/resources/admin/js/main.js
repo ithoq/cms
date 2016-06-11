@@ -361,9 +361,9 @@ String.prototype.capitalizeFirstLetter = function () {
    */
   
   Cms.prototype.dataTableRenderCheckboxDisabled = function (data, type, full) {
-     var isChecked = data === true ? 'checked' : '';
-     return '<input disabled type="checkbox" class="checkbox" ' + isChecked + ' />';
-   };
+    var isChecked = data === true ? 'checked' : '';
+    return '<input disabled type="checkbox" class="checkbox" ' + isChecked + ' />';
+  };
   
   Cms.prototype.dataTableRenderCheckbox = function (data, type, full) {
     var isChecked = data === true ? 'checked' : '';
@@ -371,16 +371,16 @@ String.prototype.capitalizeFirstLetter = function () {
   };
   
   Cms.prototype.dataTableRenderBoolean = function (data, type, full) {
-     // text-success
-     var css;
-     if (data === true) {
-       css = ' text-success"';
-     } else {
-       css = '" style="opacity:0.15"';
-     }
+    // text-success
+    var css;
+    if (data === true) {
+      css = ' text-success"';
+    } else {
+      css = '" style="opacity:0.15"';
+    }
   
-     return '<i class="fa fa-check-circle' + css + '></i>';
-   };
+    return '<i class="fa fa-check-circle' + css + '></i>';
+  };
   
   Cms.prototype.initDataTableWithSearch = function (params) {
     var defaults = {
@@ -461,13 +461,14 @@ String.prototype.capitalizeFirstLetter = function () {
   
   Cms.prototype.initFileUpload = function initFileUpload(params) {
   
-    if(!params.$container){
+    if (!params.$container) {
       alert('container element must be provided!');
       return;
     }
   
     var defaults = {
-      maxSize: 50 * 1000  * 1000 , // 50 MB
+      // 50 MB
+      maxSize: 50 * 1000  * 1000,
       formData: {},
       acceptFileTypes: false,
     };
@@ -477,9 +478,15 @@ String.prototype.capitalizeFirstLetter = function () {
     var $ul = $container.find('ul').first();
     var $dropZone = $container.find('.dropzone').first();
     var $inputFile = $container.find('.fileupload').first();
+    var $btnUpload = $dropZone.find('.btn-browse').first();
+  
+    $btnUpload.on('click', function () {
+      $inputFile.click();
+    });
   
     var jqMultiUploadConf = {
       dataType: 'json',
+      formData: options.formData,
   
       // This function is called when a file is added to the queue;
       // either via the browse button, or via drag/drop:
@@ -499,7 +506,7 @@ String.prototype.capitalizeFirstLetter = function () {
         }
   
         if (options.acceptFileTypes) {
-          if (options.acceptFileTypes.test(file.type)) {
+          if (options.acceptFileTypes.test(fileType)) {
             $.Cms.notif({
               message: 'The file type is not allowed',
               type: 'error',
@@ -573,9 +580,11 @@ String.prototype.capitalizeFirstLetter = function () {
     };
   
     var dragEvent = function (e) {
+      var $target = $(e.target);
+      var $drop = $target.closest('.dropzone');
       var timeout = window.dropZoneTimeout;
       if (!timeout) {
-        $dropZone.addClass('in');
+        $drop.addClass('in');
       } else {
         clearTimeout(timeout);
       }
@@ -583,7 +592,7 @@ String.prototype.capitalizeFirstLetter = function () {
       var found = false;
       var node = e.target;
       do {
-        if (node === $dropZone[0]) {
+        if (node === $drop[0]) {
           found = true;
           break;
         }
@@ -591,21 +600,20 @@ String.prototype.capitalizeFirstLetter = function () {
         node = node.parentNode;
       } while (node !== null);
       if (found) {
-        $dropZone.addClass('hover');
+        $drop.addClass('hover');
       } else {
-        $dropZone.removeClass('hover');
+        $drop.removeClass('hover');
       }
   
       window.dropZoneTimeout = setTimeout(function () {
         window.dropZoneTimeout = null;
-        $dropZone.removeClass('in hover');
+        $drop.removeClass('in hover');
       }, 100);
     };
   
     $(document).bind('dragover', dragEvent);
-    $($inputFile).fileupload(jqMultiUploadConf)
-        .bind('fileuploaddone');
-  }
+    $($inputFile).fileupload(jqMultiUploadConf);
+  };
   
 
   // jscs:disable maximumLineLength

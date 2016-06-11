@@ -51,6 +51,7 @@ public class AdminBlockController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
     public void addBlock(BlockEntity block, HttpServletResponse response) {
+        block.setBlockType(new BlockTypeEntity("CONTENT"));
         pageBlockRepository.save(block);
     }
 
@@ -59,7 +60,7 @@ public class AdminBlockController {
     @ResponseBody
     public String getjson(HttpServletResponse response) {
 
-        return pageBlockRepository.jsonBlockArray();
+        return pageBlockRepository.jsonBlockArray("all");
     }
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -98,7 +99,6 @@ public class AdminBlockController {
         //        && page.getBlockType() != PageBlockEntity.BlockType.FieldSet) {
             page.setBlockType(blockTypeEntity);
         //}
-        page.setCacheable(cacheable);
         pageBlockRepository.save(page);
         return "OK";
     }

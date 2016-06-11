@@ -42,7 +42,6 @@
                                         <th class="center">{{ message('name') }}</th>
                                         <th style="width: 80px" class="center">{{ message('type') }}</th>
                                         <th style="width: 80px" class="center">{{ message('dynamic') }}</th>
-                                        <th style="width: 80px" class="center">{{ message('cacheable') }}</th>
                                         <th style="width: 80px" class="center no-sort">{{ message('edit') }}</th>
                                         <th style="width:100px" class="center no-sort">{{ message('operation') }}</th>
                                     </tr>
@@ -68,36 +67,12 @@
                           method="post">
                         {{ csrf | raw }}
                         <div class="form-group form-group-default m-b-20 required">
-                            <label>{{ message('name') }}</label>
+                            <label for="createFormName">{{ message('id') }}</label>
                             <input id="createFormName" type="text" name="name" class="form-control" required>
                         </div>
-                        <div class="form-group form-group-default form-group-default-select2 required">
-                            <label for="addSelectType">{{ message('type') }}</label>
-                            <select id="addSelectType" name="blockType" data-init-plugin="select2"
-                                    data-disable-search="true" class="full-width">
-                                <option value="Content">{{ message('content') }}</option>
-                                <option value="Navigation">{{ message('navigation') }}</option>
-                                <option value="PageTemplate">{{ message('admin.pageTemplate') }}</option>
-                                <option value="FieldSet">{{ message('fieldset') }}</option>
-                            </select>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6 center">
-                                <h5>{{ message('dynamic') }}</h5>
-                                <div class="fc-switch">
-                                    <input id="new-block-dynamic" name="dynamic" type="checkbox">
-                                    <label for="new-block-dynamic" data-off="{{ message('no') }}"
-                                           data-on="{{ message('yes') }}"></label>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 center">
-                                <h5>{{ message('cacheable') }}</h5>
-                                <div class="fc-switch">
-                                    <input id="new-block-cachaeble" name="cacheable" type="checkbox" checked>
-                                    <label for="new-block-cachaeble" data-off="{{ message('no') }}"
-                                           data-on="{{ message('yes') }}"></label>
-                                </div>
-                            </div>
+                        <div class="form-group form-group-default m-b-20 required">
+                            <label for="createFormDisplayName">{{ message('name') }}</label>
+                            <input id="createFormDisplayName" type="text" name="displayName" class="form-control" required>
                         </div>
                         <hr class="section m-t-5 light">
                         <button type="submit" class="btn btn-success btn-block m-t-5">{{ message('add') }}</button>
@@ -144,10 +119,7 @@
             <div class="form-group form-group-default form-group-default-select2">
                 <label for="selectType">{{ message('type') }}</label>
                 <select id="selectType" name="blockType" data-disable-search="true" class="full-width">
-                    <option value="Content">{{ message('content') }}</option>
-                    <option value="Navigation">{{ message('navigation') }}</option>
-                    <option value="PageTemplate">{{ message('admin.pageTemplate') }}</option>
-                    <option value="FieldSet">{{ message('fieldset') }}</option>
+                    <option value="CONTENT">{{ message('content') }}</option>
                 </select>
             </div>
             <div class="form-group form-group-default m-b-20 required">

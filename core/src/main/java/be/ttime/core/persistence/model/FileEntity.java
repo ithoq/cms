@@ -37,7 +37,7 @@ public class FileEntity {
 
     private boolean directory = false;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     private FileTypeEntity contentType;
 
     @ManyToOne

@@ -1,12 +1,13 @@
 Cms.prototype.initFileUpload = function initFileUpload(params) {
 
-  if(!params.$container){
+  if (!params.$container) {
     alert('container element must be provided!');
     return;
   }
 
   var defaults = {
-    maxSize: 50 * 1000  * 1000 , // 50 MB
+    // 50 MB
+    maxSize: 50 * 1000  * 1000,
     formData: {},
     acceptFileTypes: false,
   };
@@ -16,9 +17,15 @@ Cms.prototype.initFileUpload = function initFileUpload(params) {
   var $ul = $container.find('ul').first();
   var $dropZone = $container.find('.dropzone').first();
   var $inputFile = $container.find('.fileupload').first();
+  var $btnUpload = $dropZone.find('.btn-browse').first();
+
+  $btnUpload.on('click', function () {
+    $inputFile.click();
+  });
 
   var jqMultiUploadConf = {
     dataType: 'json',
+    formData: options.formData,
 
     // This function is called when a file is added to the queue;
     // either via the browse button, or via drag/drop:
@@ -38,7 +45,7 @@ Cms.prototype.initFileUpload = function initFileUpload(params) {
       }
 
       if (options.acceptFileTypes) {
-        if (options.acceptFileTypes.test(file.type)) {
+        if (options.acceptFileTypes.test(fileType)) {
           $.Cms.notif({
             message: 'The file type is not allowed',
             type: 'error',
@@ -112,9 +119,11 @@ Cms.prototype.initFileUpload = function initFileUpload(params) {
   };
 
   var dragEvent = function (e) {
+    var $target = $(e.target);
+    var $drop = $target.closest('.dropzone');
     var timeout = window.dropZoneTimeout;
     if (!timeout) {
-      $dropZone.addClass('in');
+      $drop.addClass('in');
     } else {
       clearTimeout(timeout);
     }
@@ -122,7 +131,7 @@ Cms.prototype.initFileUpload = function initFileUpload(params) {
     var found = false;
     var node = e.target;
     do {
-      if (node === $dropZone[0]) {
+      if (node === $drop[0]) {
         found = true;
         break;
       }
@@ -130,18 +139,17 @@ Cms.prototype.initFileUpload = function initFileUpload(params) {
       node = node.parentNode;
     } while (node !== null);
     if (found) {
-      $dropZone.addClass('hover');
+      $drop.addClass('hover');
     } else {
-      $dropZone.removeClass('hover');
+      $drop.removeClass('hover');
     }
 
     window.dropZoneTimeout = setTimeout(function () {
       window.dropZoneTimeout = null;
-      $dropZone.removeClass('in hover');
+      $drop.removeClass('in hover');
     }, 100);
   };
 
   $(document).bind('dragover', dragEvent);
-  $($inputFile).fileupload(jqMultiUploadConf)
-      .bind('fileuploaddone');
-}
+  $($inputFile).fileupload(jqMultiUploadConf);
+};

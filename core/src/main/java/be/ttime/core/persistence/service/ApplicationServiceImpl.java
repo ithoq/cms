@@ -39,6 +39,7 @@ public class ApplicationServiceImpl implements IApplicationService {
     }
 
     @Override
+    @Cacheable(value = "locale")
     public Map<String, ApplicationLanguageEntity> getApplicationLanguagesMap() {
         return langListToLangEntityeMap(applicationLanguageRepository.findAll());
     }
@@ -113,6 +114,7 @@ public class ApplicationServiceImpl implements IApplicationService {
     }
 
     @Override
+    @CacheEvict(value = "locale", allEntries = true)
     public List<ApplicationLanguageEntity> saveApplicationLanguage(List<ApplicationLanguageEntity> langs) {
         return applicationLanguageRepository.save(langs);
     }
