@@ -374,9 +374,9 @@ String.prototype.capitalizeFirstLetter = function () {
     // text-success
     var css;
     if (data === true) {
-      css = ' text-success';
+      css = ' text-success"';
     } else {
-      css = ' style="opacity:0.15"';
+      css = '" style="opacity:0.15"';
     }
   
     return '<i class="fa fa-check-circle' + css + '></i>';

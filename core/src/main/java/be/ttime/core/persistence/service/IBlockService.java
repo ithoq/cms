@@ -16,5 +16,5 @@ public interface IBlockService {
 
     List<BlockEntity> save(List<BlockEntity> blocks);
 
-    String jsonBlockArray(List<String> types);
+    String jsonBlockArray(String type);
 }

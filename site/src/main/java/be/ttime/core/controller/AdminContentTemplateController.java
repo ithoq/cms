@@ -135,7 +135,6 @@ public class AdminContentTemplateController {
             // TO DO : block.setBlockType();
         }
 
-        block.setCacheable(false);
         block.setDynamic(true);
         block.setEnabled(true);
 

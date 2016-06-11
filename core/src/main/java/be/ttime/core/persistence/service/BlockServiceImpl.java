@@ -4,6 +4,7 @@ import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.repository.IBlockRepository;
 import be.ttime.core.util.PebbleUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -73,14 +74,14 @@ public class BlockServiceImpl implements IBlockService {
     }
 
     @Override
-    @Cacheable(value = "blockJson")
-    public String jsonBlockArray(List<String> types) {
+    @Cacheable(value = "blockJson", key = "#type")
+    public String jsonBlockArray(String type) {
 
         List<BlockEntity> blocks = null;
-        if(types == null){
+        if(type == null || type.equals("all")){
             blocks = blockRepository.findAll();
         } else{
-            blocks = blockRepository.findAllByBlockTypeNameIn(types);
+            blocks = blockRepository.findAllByBlockTypeName(type);
         }
         JsonArrayBuilder data = Json.createArrayBuilder();
         JsonObjectBuilder row;
@@ -90,10 +91,9 @@ public class BlockServiceImpl implements IBlockService {
             //row.add("DT_RowId", "x"); // add an name
             //row.add("DT_RowClass", "x"); // add a class
             row.add("DT_RowData", Json.createObjectBuilder().add("id", block.getName()));
-            row.add("name", block.getDisplayName());
+            row.add("name", (StringUtils.isEmpty(block.getDisplayName()) ? block.getName(): block.getDisplayName()));
             row.add("type", block.getBlockType().getName());
             row.add("dynamic", block.isDynamic());
-            row.add("cacheable", block.isCacheable());
             row.add("deletable", block.isDeletable());
             data.add(row);
         }
