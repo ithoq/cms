@@ -5,7 +5,14 @@ import be.ttime.core.model.field.PageData;
 import be.ttime.core.model.form.CreatePageForm;
 import be.ttime.core.model.form.EditPageForm;
 import be.ttime.core.model.form.EditPagePositionForm;
-import be.ttime.core.persistence.model.*;
+import be.ttime.core.persistence.model.ApplicationLanguageEntity;
+import be.ttime.core.persistence.model.ContentDataEntity;
+import be.ttime.core.persistence.model.ContentEntity;
+import be.ttime.core.persistence.model.ContentTemplateEntity;
+import be.ttime.core.persistence.model.ContentTemplateFieldsetEntity;
+import be.ttime.core.persistence.model.ContentTypeEntity;
+import be.ttime.core.persistence.model.FieldsetEntity;
+import be.ttime.core.persistence.model.InputDataEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.persistence.service.IContentTemplateService;
@@ -30,7 +37,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/admin/cms")
@@ -66,7 +77,7 @@ public class AdminCmsController {
         ContentEntity content = contentService.findContentAdmin(id);
 
         ApplicationLanguageEntity appLanguage = applicationService.getSiteApplicationLanguageMap().get(locale);
-        if(appLanguage == null){
+        if (appLanguage == null) {
             appLanguage = applicationService.getDefaultSiteApplicationLanguage();
         }
 
@@ -85,12 +96,8 @@ public class AdminCmsController {
             contentService.saveContent(contentData);
         }
 
-        Gson gson = new Gson();
-        if (content == null)
-            throw new ResourceNotFoundException();
-
         if (!StringUtils.isEmpty(contentData.getData())) {
-            model.put("data",  CmsUtils.parseStringToPageDate(contentData.getData()));
+            model.put("data", CmsUtils.parseStringToPageDate(contentData.getData()));
         }
 
         ContentTemplateEntity template = contentTemplateService.findWithFieldsetAndData(content.getContentTemplate().getId());
@@ -137,44 +144,29 @@ public class AdminCmsController {
                 ContentEntity content = new ContentEntity();
                 content.setName(form.getName());
 
-                String lang = applicationService.getDefaultSiteLang();
+                ApplicationLanguageEntity language = applicationService.getDefaultSiteApplicationLanguage();
                 String pageTitle = form.getName();
                 String slug = slg.slugify(pageTitle);
                 ContentDataEntity contentData = new ContentDataEntity();
-                contentData.setLanguage(applicationService.getDefaultSiteApplicationLanguage());
-                contentData.setTitle(pageTitle + '_' + applicationService.getDefaultSiteApplicationLanguage().getLocale());
+                contentData.setLanguage(language);
+                contentData.setTitle(pageTitle + '_' + language.getLocale());
                 //content.setSeoTitle(pageTitle);
                 contentData.setSlug("/" + slug);
 
                 ContentEntity parent;
-                if (form.getParentId() == -1) {
-                    //page.setLevel(0);
-                    contentData.setComputedSlug(contentData.getSlug());
-                } else {
-                    parent = contentService.findContentData(form.getParentId(), applicationService.getDefaultSiteApplicationLanguage().getLocale());
+                if (form.getParentId() >= 0) {
+                    parent = contentService.findContentData(form.getParentId(), language.getLocale());
                     if (parent == null) {
                         throw new Exception("Create page - parent not exist with id " + form.getParentId());
                     }
                     //page.setLevel(parent.getLevel() + 1);
                     content.setContentParent(parent);
-
-                    Collection<ContentDataEntity> contents = parent.getDataList();
-                    ContentDataEntity parentContent = null;
-                    for (ContentDataEntity c : contents) {
-                        if (c.getLanguage().getLocale().equals(applicationService.getDefaultSiteApplicationLanguage().getLocale())) {
-                            parentContent = c;
-                        }
-                    }
-
-                    if (parentContent == null)
-                        throw new Exception("Parent with id : " + parent.getId() + " don't have a default content");
-
-                    contentData.setComputedSlug(parentContent.getComputedSlug() + '/' + contentData.getSlug());
                 }
 
+                contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, language.getLocale()));
 
                 ContentTemplateEntity contentTemplateEntity = contentTemplateService.find(form.getTemplateId());
-                if(contentTemplateEntity == null){
+                if (contentTemplateEntity == null) {
                     throw new Exception("content template don't exist!");
                 }
 
@@ -232,12 +224,12 @@ public class AdminCmsController {
                     String finalName = contentTemplateFieldset.getNamespace() + "_" + slg.slugify(inputDataEntity.getInputDefinition().getName());
                     String type = inputDataEntity.getInputDefinition().getType();
                     boolean isArray = contentTemplateFieldset.isArray() && fieldset.isArray();
-                    if(type.equals("date")){
+                    if (type.equals("date")) {
 
-                        if(isArray){
+                        if (isArray) {
                             String[] stringDateArray = request.getParameter(finalName).split(",");
                             Date[] dateArray = new Date[stringDateArray.length];
-                            for (int i=0; i < stringDateArray.length; i++) {
+                            for (int i = 0; i < stringDateArray.length; i++) {
                                 dateArray[i] = dateFormatter.parse(stringDateArray[i]);
                             }
                             pageData.getDataDateArray().put(finalName, dateArray);
@@ -254,44 +246,43 @@ public class AdminCmsController {
                         } else{
                             pageData.getDataString().put(finalName, request.getParameter(finalName));
                         }*/
-                    } else if (type.equals("integer")){
-                        if(isArray){
+                    } else if (type.equals("integer")) {
+                        if (isArray) {
                             final String[] stringArray = request.getParameterValues(finalName);
                             final Integer[] ints = new Integer[stringArray.length];
-                            for (int i=0; i < stringArray.length; i++) {
+                            for (int i = 0; i < stringArray.length; i++) {
                                 ints[i] = Integer.parseInt(stringArray[i]);
                             }
-                            pageData.getDataIntegerArray().put(finalName, ints );
-                        } else{
+                            pageData.getDataIntegerArray().put(finalName, ints);
+                        } else {
                             pageData.getDataInteger().put(finalName, Integer.parseInt(request.getParameter(finalName)));
                         }
-                    } else if (type.equals("double")){
-                        if(isArray){
+                    } else if (type.equals("double")) {
+                        if (isArray) {
                             final String[] stringArray = request.getParameterValues(finalName);
                             final Double[] doubles = new Double[stringArray.length];
-                            for (int i=0; i < stringArray.length; i++) {
+                            for (int i = 0; i < stringArray.length; i++) {
                                 doubles[i] = Double.parseDouble(stringArray[i]);
                             }
-                            pageData.getDataDoubleArray().put(finalName, doubles );
-                        } else{
+                            pageData.getDataDoubleArray().put(finalName, doubles);
+                        } else {
                             pageData.getDataDouble().put(finalName, Double.parseDouble(request.getParameter(finalName)));
                         }
-                    } else if(type.equals("boolean")){
-                        if(isArray){
+                    } else if (type.equals("boolean")) {
+                        if (isArray) {
                             final String[] stringArray = request.getParameterValues(finalName);
                             final Boolean[] booleans = new Boolean[stringArray.length];
-                            for (int i=0; i < stringArray.length; i++) {
+                            for (int i = 0; i < stringArray.length; i++) {
                                 booleans[i] = Boolean.parseBoolean(stringArray[i]);
                             }
                             pageData.getDataBooleanArray().put(finalName, booleans);
-                        } else{
+                        } else {
                             pageData.getDataString().put(finalName, request.getParameter(finalName));
                         }
-                    }
-                    else{
-                        if(isArray){
-                           pageData.getDataStringArray().put(finalName, request.getParameterValues(finalName));
-                        } else{
+                    } else {
+                        if (isArray) {
+                            pageData.getDataStringArray().put(finalName, request.getParameterValues(finalName));
+                        } else {
                             pageData.getDataString().put(finalName, request.getParameter(finalName));
                         }
                     }
@@ -312,24 +303,8 @@ public class AdminCmsController {
             contentData.setTitle(form.getName());
             contentData.setSlug(form.getSlug());
 
-            ContentEntity parent = content.getContentParent();
-            if (parent == null) {
-                //page.setLevel(0);
-                contentData.setComputedSlug(contentData.getSlug());
-            } else {
-                Collection<ContentDataEntity> contents = content.getDataList();
-                ContentDataEntity parentContent = null;
-                for (ContentDataEntity c : contents) {
-                    if (c.getLanguage() == appLanguage) {
-                        parentContent = c;
-                    }
-                }
+            contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, appLanguage.getLocale()));
 
-                if (parentContent == null)
-                    throw new Exception("Parent with id : " + parent.getId() + " don't have a default content");
-
-                contentData.setComputedSlug(parentContent.getComputedSlug() + '/' + contentData.getSlug());
-            }
 //            content.setSeoDescription(form.getSeoDescription());
 //            content.setSeoH1(form.getSeoH1());
 //            content.setSeoTag(form.getSeoTag());

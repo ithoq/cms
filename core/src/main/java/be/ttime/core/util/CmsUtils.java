@@ -1,12 +1,15 @@
 package be.ttime.core.util;
 
 import be.ttime.core.model.field.PageData;
+import be.ttime.core.persistence.model.ContentDataEntity;
+import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.model.UserEntity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ibatis.common.jdbc.ScriptRunner;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -56,7 +59,7 @@ public class CmsUtils {
     public final static String BLOCK_FIELD_TINYMCE = "FIELD_TINYMCE";
     public final static String BLOCK_FIELD_DATEPICKER = "FIELD_DATEPICKER";
 
-    public static void fillModelMap(ModelMap model, HttpServletRequest request){
+    public static void fillModelMap(ModelMap model, HttpServletRequest request) {
         model.put("attr", CmsUtils.getAttributes(request));
         model.put("get", CmsUtils.getParameters(request));
         model.put("csrf", CmsUtils.getCsrfInput(request));
@@ -65,7 +68,7 @@ public class CmsUtils {
         model.put("locale", LocaleContextHolder.getLocale().toString());
     }
 
-    public static void fillModelAndView(ModelAndView model, HttpServletRequest request){
+    public static void fillModelAndView(ModelAndView model, HttpServletRequest request) {
         model.addObject("attr", CmsUtils.getAttributes(request));
         model.addObject("get", CmsUtils.getParameters(request));
         model.addObject("csrf", CmsUtils.getCsrfInput(request));
@@ -152,7 +155,7 @@ public class CmsUtils {
         });
     }
 
-    public static Date LocalDateTimeToDate(LocalDateTime date){
+    public static Date LocalDateTimeToDate(LocalDateTime date) {
         return Date.from(date.atZone(ZoneId.systemDefault()).toInstant());
     }
 
@@ -160,12 +163,11 @@ public class CmsUtils {
         return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
 
-    public static boolean isArray(Object obj)
-    {
-        return obj!=null && obj.getClass().isArray();
+    public static boolean isArray(Object obj) {
+        return obj != null && obj.getClass().isArray();
     }
 
-    public static HashMap<String, Object> parseData(String pageDataString){
+    public static HashMap<String, Object> parseData(String pageDataString) {
         PageData pageData = parseStringToPageDate(pageDataString);
         HashMap<String, Object> data = new HashMap<>();
         data.putAll(pageData.getDataBoolean());
@@ -182,8 +184,38 @@ public class CmsUtils {
         return data;
     }
 
-    public static PageData parseStringToPageDate(String pageDataString){
+    public static PageData parseStringToPageDate(String pageDataString) {
         Gson gson = new GsonBuilder().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
         return gson.fromJson(pageDataString, PageData.class);
     }
+
+    public static String computeSlug(final ContentEntity content, final ContentDataEntity contentData, final String locale) {
+        return StringUtils.trimToEmpty(computeSlugWithSlashes(content, contentData, locale))
+                .replaceAll("/+", "/")
+                .replaceAll("/+$", "");
+    }
+
+    public static ContentDataEntity getForLocale(final ContentEntity content, final String locale) {
+        return content.getDataList().stream()
+                .filter(c -> c.getLanguage().getLocale().equals(locale))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(String
+                        .format("Parent with id [%s] doesn't have a default content", content.getId())));
+    }
+
+    private static String computeSlugWithSlashes(final ContentEntity content, final ContentDataEntity contentData, final String locale) {
+        final ContentEntity parent = content.getContentParent();
+        if (parent == null) {
+            return contentData.getSlug();
+        } else {
+            final ContentDataEntity parentContentData = getForLocale(parent, locale);
+
+//            Lazy init exception below
+//
+//            return computeSlugWithSlashes(parent, parentContentData, locale) + "/" + contentData.getSlug();
+
+            return parentContentData.getComputedSlug() + "/" + contentData.getSlug();
+        }
+    }
+
 }
