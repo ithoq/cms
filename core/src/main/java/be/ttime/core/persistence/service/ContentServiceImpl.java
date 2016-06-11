@@ -59,6 +59,19 @@ public class ContentServiceImpl implements IContentService {
                 .where(contentDataEntity.computedSlug.eq(slug).and(contentDataEntity.language.locale.eq(locale.toString())))
                 .singleResult(contentDataEntity);
 //        entityManager.clear();
+
+        /*  JUSTE POUR TESTER */
+        contentEntity = QContentEntity.contentEntity;
+        query = new JPAQuery(entityManager);
+        List<ContentEntity> roots =
+                query.from(contentEntity)
+                        .where(contentEntity.enabled.eq(true)
+                                .and(contentEntity.menuItem.eq(true))
+                                .and(contentEntity.contentParent.isNull()))
+                        .orderBy(contentEntity.order.asc())
+                        .list(contentEntity);
+
+     /*  JUSTE POUR TESTER */
         if (result != null) {
             query = new JPAQuery(entityManager);
             ContentEntity parent = query.from(contentEntity)
@@ -229,21 +242,7 @@ public class ContentServiceImpl implements IContentService {
     @Cacheable(value = "mainNav", key = "#lang")
     public String getNavMenu(String lang) {
         QContentEntity contentEntity = QContentEntity.contentEntity;
-//        QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
-//        EntityManager entityManager = entityManagerFactory.createEntityManager();
-//        EntityManager entityManager2 = entityManagerFactory.createEntityManager();
         JPAQuery query = new JPAQuery(entityManager);
-//        List<ContentEntity> result =
-//                query.from(contentEntity)
-//                        .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
-//                        .leftJoin(contentEntity.privileges).fetch()
-//                        .where(contentEntity.enabled.eq(true)
-//                                .and(contentEntity.menuItem.eq(true))
-//                                .and(contentDataEntity.language.locale.eq(lang))
-//                                .and(contentDataEntity.computedSlug.isNotNull()))
-//                        .list(contentEntity);
-
-//        query = new JPAQuery(entityManager2);
         List<ContentEntity> roots =
                 query.from(contentEntity)
                         .where(contentEntity.enabled.eq(true)
