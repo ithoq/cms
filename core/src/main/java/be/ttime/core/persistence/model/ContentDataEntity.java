@@ -1,6 +1,5 @@
 package be.ttime.core.persistence.model;
 
-import be.ttime.core.persistence.AbstractTimestampEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
