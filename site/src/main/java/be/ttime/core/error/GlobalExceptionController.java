@@ -2,8 +2,10 @@ package be.ttime.core.error;
 
 import be.ttime.core.persistence.service.IApplicationService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.CharEncoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -29,42 +31,28 @@ class GlobalExceptionController {
     IApplicationService applicationService;
 
     public static ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Exception ex) {
+        log.error(request.getRequestURI() + " - " + ex.getMessage(), ex);
 
-        try {
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html; charset=UTF-8");
-            log.error(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex);
-            if (ex instanceof ResourceNotFoundException) {
-                log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
-                return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_404, "error.notFound");
-            } else if (ex instanceof UserNotFoundException) {
-                log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
-                return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.auth.userNotFound");
-            } else if (ex instanceof UserAlreadyExistException) {
-                log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
-                return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.auth.userExist");
-            } else if (ex instanceof InvalidOldPasswordException) {
-                log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
-                return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.auth.invalidOldPassword");
-            } else if (ex instanceof MailAuthenticationException) {
-                log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
-                return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.mail.config");
-            } else if (response.getStatus() == 403) {
-                log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
-                return handleException(HttpServletResponse.SC_FORBIDDEN, request, response, VIEW_GENERAL, "error.forbidden");
-            } else {
-                log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex);
-                return handleException(response.getStatus(), request, response, VIEW_GENERAL, "error.general");
-            }
-        } catch (Exception handlerException) {
-            log.error("Handling of [" + ex.getClass().getName() + "] resulted in Exception", handlerException);
+        if (ex instanceof ResourceNotFoundException) {
+            return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_404, "error.notFound");
+        } else if (ex instanceof UserNotFoundException) {
+            return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.auth.userNotFound");
+        } else if (ex instanceof UserAlreadyExistException) {
+            return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.auth.userExist");
+        } else if (ex instanceof InvalidOldPasswordException) {
+            return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.auth.invalidOldPassword");
+        } else if (ex instanceof MailAuthenticationException) {
+            return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.mail.config");
+        } else if (response.getStatus() == 403) {
+            return handleException(HttpServletResponse.SC_FORBIDDEN, request, response, VIEW_GENERAL, "error.forbidden");
+        } else {
+            return handleException(response.getStatus(), request, response, VIEW_GENERAL, "error.general");
         }
-        return null;
     }
 
-    private static ModelAndView handleException(int sc, HttpServletRequest request, HttpServletResponse response, String view, String messageCode) throws Exception {
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html; charset=UTF-8");
+    private static ModelAndView handleException(int sc, HttpServletRequest request, HttpServletResponse response, String view, String messageCode) {
+        response.setCharacterEncoding(CharEncoding.UTF_8);
+        response.setContentType(MediaType.TEXT_HTML_VALUE);
         response.setStatus(sc);
         response.setStatus(response.getStatus());
         ModelAndView mv = new ModelAndView(view);
