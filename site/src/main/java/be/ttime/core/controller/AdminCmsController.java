@@ -1,5 +1,6 @@
 package be.ttime.core.controller;
 
+import be.ttime.core.error.PagePersistenceException;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.model.field.PageData;
 import be.ttime.core.model.form.CreatePageForm;
@@ -24,7 +25,10 @@ import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -36,6 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -129,59 +134,59 @@ public class AdminCmsController {
         return "delete";
     }
 
+    private static String slugify(final String input) throws PagePersistenceException {
+        try {
+            return new Slugify(true).slugify(input);
+        } catch (final IOException e) {
+            throw new PagePersistenceException(e.getMessage(), e);
+        }
+    }
 
     @RequestMapping(value = "/page/create", method = RequestMethod.POST)
     @ResponseBody
-    public String createPage(@Valid CreatePageForm form, BindingResult result, HttpServletResponse response) {
+    public ResponseEntity<String> createPage(final @Valid CreatePageForm form, final BindingResult result) {
 
         if (result.hasErrors()) {
-            response.setStatus(500);
-            return ControllerUtils.getValidationErrorsInUl(result.getFieldErrors());
+            final HttpHeaders headers = new HttpHeaders();
+            headers.set(CmsUtils.HEADER_VALIDATION_FAILED, Boolean.TRUE.toString());
+            return new ResponseEntity<>(ControllerUtils.getValidationErrorsInUl(result.getFieldErrors()), headers, HttpStatus.OK);
         } else {
-            try {
-                Slugify slg = new Slugify();
+            ContentEntity content = new ContentEntity();
+            content.setName(form.getName());
 
-                ContentEntity content = new ContentEntity();
-                content.setName(form.getName());
+            ApplicationLanguageEntity language = applicationService.getDefaultSiteApplicationLanguage();
+            String pageTitle = form.getName();
+            String slug = slugify(pageTitle);
+            ContentDataEntity contentData = new ContentDataEntity();
+            contentData.setLanguage(language);
+            contentData.setTitle(pageTitle + '_' + language.getLocale());
+            //content.setSeoTitle(pageTitle);
+            contentData.setSlug("/" + slug);
 
-                ApplicationLanguageEntity language = applicationService.getDefaultSiteApplicationLanguage();
-                String pageTitle = form.getName();
-                String slug = slg.slugify(pageTitle);
-                ContentDataEntity contentData = new ContentDataEntity();
-                contentData.setLanguage(language);
-                contentData.setTitle(pageTitle + '_' + language.getLocale());
-                //content.setSeoTitle(pageTitle);
-                contentData.setSlug("/" + slug);
-
-                ContentEntity parent;
-                if (form.getParentId() >= 0) {
-                    parent = contentService.findContentAndContentData(form.getParentId(), applicationService.getDefaultSiteApplicationLanguage().getLocale());
-                    if (parent == null) {
-                        throw new Exception("Create page - parent not exist with id " + form.getParentId());
-                    }
-                    //page.setLevel(parent.getLevel() + 1);
-                    content.setContentParent(parent);
+            ContentEntity parent;
+            if (form.getParentId() >= 0) {
+                parent = contentService.findContentAndContentData(form.getParentId(), applicationService.getDefaultSiteApplicationLanguage().getLocale());
+                if (parent == null) {
+                    throw new PagePersistenceException("Create page - parent not exist with id " + form.getParentId());
                 }
-
-                contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, language.getLocale()));
-
-                ContentTemplateEntity contentTemplateEntity = contentTemplateService.find(form.getTemplateId());
-                if (contentTemplateEntity == null) {
-                    throw new Exception("content template don't exist!");
-                }
-
-                content.setContentTemplate(contentTemplateEntity);
-                content.addContentData(contentData);
-                content.setContentType(new ContentTypeEntity(contentTemplateEntity.getContentType().getName()));
-
-                contentService.saveContent(content);
-            } catch (Exception e) {
-                // Logger
-                response.setStatus(500);
-                return "Erreur du serveur - veuillez ressayer plus tard";
+                //page.setLevel(parent.getLevel() + 1);
+                content.setContentParent(parent);
             }
+
+            contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, language.getLocale()));
+
+            ContentTemplateEntity contentTemplateEntity = contentTemplateService.find(form.getTemplateId());
+            if (contentTemplateEntity == null) {
+                throw new PagePersistenceException("content template don't exist!");
+            }
+
+            content.setContentTemplate(contentTemplateEntity);
+            content.addContentData(contentData);
+            content.setContentType(new ContentTypeEntity(contentTemplateEntity.getContentType().getName()));
+
+            contentService.saveContent(content);
         }
-        return "OK";
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)

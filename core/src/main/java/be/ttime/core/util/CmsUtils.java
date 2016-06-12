@@ -59,6 +59,8 @@ public class CmsUtils {
     public final static String BLOCK_FIELD_TINYMCE = "FIELD_TINYMCE";
     public final static String BLOCK_FIELD_DATEPICKER = "FIELD_DATEPICKER";
 
+    public final static String HEADER_VALIDATION_FAILED = "Validation-Failed";
+
     public static void fillModelMap(ModelMap model, HttpServletRequest request) {
         model.put("attr", CmsUtils.getAttributes(request));
         model.put("get", CmsUtils.getParameters(request));

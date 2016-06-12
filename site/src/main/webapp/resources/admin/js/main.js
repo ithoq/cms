@@ -235,7 +235,7 @@ String.prototype.capitalizeFirstLetter = function () {
       url: url,
       type: method,
       data: data,
-      success: function (data, status) {
+      success: function (data, status, response) {
         if ($form && settings.formReset) {
           $form[0].reset();
         }
@@ -247,7 +247,7 @@ String.prototype.capitalizeFirstLetter = function () {
           });
         }
   
-        settings.onSuccess && settings.onSuccess(data, status);
+        settings.onSuccess && settings.onSuccess(data, status, response);
       },
   
       error: function (result, status, error) {

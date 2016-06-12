@@ -3,10 +3,12 @@ package be.ttime.core.error;
 import be.ttime.core.persistence.service.IApplicationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,11 +49,10 @@ class GlobalExceptionController {
             } else if (ex instanceof MailAuthenticationException) {
                 log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
                 return handleException(HttpServletResponse.SC_NOT_FOUND, request, response, VIEW_GENERAL, "error.mail.config");
-            }  else if (response.getStatus() == 403) {
+            } else if (response.getStatus() == 403) {
                 log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex.getCause());
                 return handleException(HttpServletResponse.SC_FORBIDDEN, request, response, VIEW_GENERAL, "error.forbidden");
-            }
-            else {
+            } else {
                 log.debug(request.getRequestURI() + " - " + ex.getMessage() + " - " + ex);
                 return handleException(response.getStatus(), request, response, VIEW_GENERAL, "error.general");
             }
@@ -72,7 +73,7 @@ class GlobalExceptionController {
     }
 
     @ExceptionHandler({CmsNotInstalledException.class})
-    public String notInstalled(HttpServletResponse response, HttpServletRequest request, Model model){
+    public String notInstalled(HttpServletResponse response, HttpServletRequest request, Model model) {
 
       /*  try {
             Locale[] locales = Arrays.copyOfRange(Locale.getAvailableLocales(), 1, Locale.getAvailableLocales().length);
@@ -120,6 +121,13 @@ class GlobalExceptionController {
     @ExceptionHandler({MailAuthenticationException.class})
     public ModelAndView mailAuth(HttpServletRequest request, HttpServletResponse response, MailAuthenticationException ex) throws IOException {
         return doResolveException(request, response, ex);
+    }
+
+    @ExceptionHandler(PagePersistenceException.class)
+    public ModelAndView pagePersistence(final HttpServletRequest request, final HttpServletResponse response, final PagePersistenceException e) throws Exception {
+        log.error(e.getMessage(), e);
+        final HttpStatus status = PagePersistenceException.class.getAnnotation(ResponseStatus.class).code();
+        return handleException(status.value(), request, response, e.viewName(), e.errorKey());
     }
 
     @ExceptionHandler(Exception.class)
