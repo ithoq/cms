@@ -23,15 +23,15 @@ public class AdminWebContentController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String home(ModelMap model) throws Exception{
         model.put("contentType", "NEWS");
-        contentService.getContentJsonByTypeAndLocale(CmsUtils.CONTENT_TYPE_NEWS, "en");
+
         return VIEWPATH + "home";
     }
 
     @RequestMapping(value = "/getJson", method = RequestMethod.GET)
     @ResponseBody
-    public String getjson(String contentType, String locale) {
+    public String getjson(String contentType, String locale) throws Exception {
 
-        return null;
+        return contentService.getContentJsonByTypeAndLocale(CmsUtils.CONTENT_TYPE_NEWS, "en");
         //return contentService.("all");
     }
 }

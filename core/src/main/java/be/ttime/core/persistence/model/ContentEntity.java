@@ -35,7 +35,7 @@ public class ContentEntity extends AbstractTimestampEntity {
     @OneToMany(mappedBy = "contentParent")
     private Set<ContentEntity> contentChildren;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
-    @MapKey(name="language")
+    @MapKeyColumn(name="language_locale")
     private Map<String, ContentDataEntity> dataList;
     @ManyToOne(fetch = FetchType.LAZY)
     private ContentTemplateEntity contentTemplate;

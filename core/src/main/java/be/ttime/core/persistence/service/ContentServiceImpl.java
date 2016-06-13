@@ -1,16 +1,10 @@
 package be.ttime.core.persistence.service;
 
 import be.ttime.core.error.ResourceNotFoundException;
-import be.ttime.core.persistence.model.BlockEntity;
-import be.ttime.core.persistence.model.ContentDataEntity;
-import be.ttime.core.persistence.model.ContentEntity;
-import be.ttime.core.persistence.model.QContentDataEntity;
-import be.ttime.core.persistence.model.QContentEntity;
-import be.ttime.core.persistence.model.QTaxonomyTermEntity;
+import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.repository.IContentDataRepository;
 import be.ttime.core.persistence.repository.IContentRepository;
 import com.mysema.query.jpa.impl.JPAQuery;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,11 +17,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 //import javax.persistence.EntityManagerFactory;
 
@@ -273,23 +263,20 @@ public class ContentServiceImpl implements IContentService {
         if(type == null || locale == null){
             throw new Exception("type and locale must not be null");
         }
-        if(locale.equals("all")){
-            contentEntities =  contentRepository.findAllByContentTypeName(type);
-        } else{
+        //if(locale.equals("all")){
+        //    contentEntities =  contentRepository.findAllByContentTypeName(type);
+        //} else{
             contentEntities = contentRepository.findAllByContentTypeNameAndDataListLanguageLocale(type, locale);
-        }
+        //}
         JsonArrayBuilder data = Json.createArrayBuilder();
         JsonObjectBuilder row;
         // reload tree like this : table.ajax.reload()
         for (ContentEntity c : contentEntities) {
             row = Json.createObjectBuilder();
-          /*  row.add("active", c());
-            row.add("DT_RowData", Json.createObjectBuilder().add("id", block.getName()));
-            row.add("name", (StringUtils.isEmpty(block.getDisplayName()) ? block.getName(): block.getDisplayName()));
-            row.add("type", block.getBlockType().getName());
-
-            row.add("deletable", block.isDeletable());
-            data.add(row);*/
+            row.add("active", c.isEnabled());
+            row.add("title", c.getDataList().get(locale).getTitle());
+            row.add("category", "TO DO");
+            data.add(row);
         }
 
         return Json.createObjectBuilder().add("data", data).build().toString();

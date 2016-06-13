@@ -14,7 +14,7 @@
             <form role="form">
                 <div class="panel panel-transparent">
                     <div class="panel-body">
-                        <input id="search-table" type="text" placeholder="{{ message('search') }}"
+                        <input id="web-content-table" type="text" placeholder="{{ message('search') }}"
                                class="form-control pull-right">
                         <table id="webContentTable" class="table table-hover">
                             <thead>
@@ -43,5 +43,5 @@
         var contentType = '{{contentType  }}';
         var locale = 'en';
     </script>
-    <script src="/resources/admin/js/page/webContent.js"></script>
+    <script src="/resources/admin/js/page/web-content.js"></script>
 {% endblock bottom %}

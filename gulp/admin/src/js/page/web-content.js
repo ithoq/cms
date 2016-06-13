@@ -4,29 +4,31 @@
   // Cached variables
   var $newsTable;
 
-
-
   $(function () {
     $.Cms.addCsrfAjaxHeaderToken();
 
     // init variables
     $newsTable = $('#webContentTable');
 
-    console.log("Content type : " + window.contentType);
-    /*
     $.Cms.initDataTableWithSearch({
-      tableJqueryElement: $blockTable,
-      searchElement: '#search-table-files',
-      ajax: '/admin/webContent/getJson',
-      columnDefs: [
-        { // Type
-          aTargets: [1],
-          className: 'center',
+      tableJqueryElement: $newsTable,
+      searchElement: '#web-content-table',
+      ajax: {
+        url: '/admin/webContent/getJson',
+        data: {
+          contentType: window.contentType,
+          locale: locale,
         },
-        { // Dynamic
+      },
+      columnDefs: [
+        { // Active
+          aTargets: [0],
+          className: 'center',
+          render: $.Cms.dataTableRenderBoolean
+        },
+        { // Category
           aTargets: [2],
           className: 'center',
-          render: $.Cms.dataTableRenderBoolean,
         },
         { // Edit
           aTargets: [3],
@@ -35,25 +37,24 @@
         { // Operation
           aTargets: [4],
           className: 'center',
-          render: function (data) {
-            return (data === true) ? $.Cms.tabSwitchSimpleTpl : '';
-          },
         },
 
       ],
       columns: [
-        { data: 'name', },
-        { data: 'type', },
-        { data: 'dynamic', },
+        { data: 'active', },
+        { data: 'title', },
+        { data: 'category', },
         {
           data: null,
           defaultContent: '<button type="button" class="btn btn-default ' +
                           'btn-modal-edit"><i class="fa fa-pencil"></i></button>',
         },
-        { data: 'deletable' },
+        {
+          data: null,
+          defaultContent: $.Cms.tabSwitchSimpleTpl(),
+        },
       ],
     });
 
-      */
   });
 })(jQuery);
