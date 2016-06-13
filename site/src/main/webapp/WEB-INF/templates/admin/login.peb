@@ -23,7 +23,7 @@
     <link href="/resources/admin/libs/pages/css/pages-icons.css" rel="stylesheet" type="text/css">
     <link href="/resources/admin/libs/pages/css/pages.css" rel="stylesheet" type="text/css" class="main-stylesheet">
     <link href="/resources/admin/css/style.css" rel="stylesheet" type="text/css">
-    <script src="/resources/admin/libs/jQuery/jquery-2.2.1.min.js"></script>
+    <script src="/resources/admin/libs/jQuery/jquery-2.2.4.min.js"></script>
     <script src="/resources/admin/libs/parsley/parsley.js"></script>
 </head>
 <body class="fixed-header">

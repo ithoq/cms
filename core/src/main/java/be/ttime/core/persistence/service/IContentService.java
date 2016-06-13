@@ -22,6 +22,8 @@ public interface IContentService {
 
     ContentEntity findContentAndContentData(Long id, String locale);
 
+    String getContentJsonByTypeAndLocale(String type, String locale) throws Exception;
+
     List<ContentDataEntity> saveContentData(List<ContentDataEntity> contents);
 
     ContentDataEntity saveContentData(ContentDataEntity content);

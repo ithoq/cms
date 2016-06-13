@@ -59,7 +59,7 @@ Cms.prototype.ajax = function (params) {
     url: url,
     type: method,
     data: data,
-    success: function (data, status) {
+    success: function (data, status, response) {
       if ($form && settings.formReset) {
         $form[0].reset();
       }
@@ -71,7 +71,7 @@ Cms.prototype.ajax = function (params) {
         });
       }
 
-      settings.onSuccess && settings.onSuccess(data, status);
+      settings.onSuccess && settings.onSuccess(data, status, response);
     },
 
     error: function (result, status, error) {
