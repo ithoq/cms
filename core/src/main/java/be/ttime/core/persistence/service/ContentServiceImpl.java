@@ -260,7 +260,7 @@ public class ContentServiceImpl implements IContentService {
 
 
         sb.append("<ul class='main-menu' id='main-menu'>");
-        buildNavMenu(roots, sb);
+        buildNavMenu(roots, sb, lang);
         sb.append("</ul>");
 //        entityManager.close();
 //        entityManager2.close();
@@ -309,12 +309,12 @@ public class ContentServiceImpl implements IContentService {
     }
 
 
-    private String buildNavMenu(List<ContentEntity> pages, StringBuilder sb) {
+    private String buildNavMenu(List<ContentEntity> pages, StringBuilder sb, String locale) {
 
         for (ContentEntity p : pages) {
             sb.append("<li>");
             if (!p.getDataList().isEmpty()) {
-                ContentDataEntity data = p.getDataList().iterator().next();
+                ContentDataEntity data = p.getDataList().get(locale);
                 sb.append("<a href='");
                 sb.append(data.getComputedSlug());
                 sb.append("'>");
@@ -327,7 +327,7 @@ public class ContentServiceImpl implements IContentService {
                     // This is bad :(
                     Collections.sort(childrens, (p1, p2) -> Integer.compare(p1.getOrder(), p2.getOrder()));
                     sb.append("<ul class='main-menu-children'>");
-                    buildNavMenu(childrens, sb);
+                    buildNavMenu(childrens, sb, locale);
                     sb.append("</ul>");
                 }
                 sb.append("</li>");

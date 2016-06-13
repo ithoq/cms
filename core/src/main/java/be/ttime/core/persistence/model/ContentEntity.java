@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "content")
@@ -37,7 +35,8 @@ public class ContentEntity extends AbstractTimestampEntity {
     @OneToMany(mappedBy = "contentParent")
     private Set<ContentEntity> contentChildren;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ContentDataEntity> dataList;
+    @MapKey(name="language")
+    private Map<String, ContentDataEntity> dataList;
     @ManyToOne(fetch = FetchType.LAZY)
     private ContentTemplateEntity contentTemplate;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,15 +56,15 @@ public class ContentEntity extends AbstractTimestampEntity {
 
     public void addContentData(ContentDataEntity child) {
         if(dataList == null){
-            dataList = new HashSet<>();
+            dataList = new HashMap<>();
         }
         child.setContent(this);
-        dataList.add(child);
+        dataList.put(child.getLanguage().getLocale(), child);
     }
 
     public void removeContentData(ContentDataEntity child) {
         child.setContent(null);
-        dataList.remove(child);
+        dataList.remove(child.getLanguage().getLocale());
 
     }
 }

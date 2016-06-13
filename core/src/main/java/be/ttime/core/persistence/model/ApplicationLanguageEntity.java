@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "application_language")
@@ -21,4 +20,9 @@ public class ApplicationLanguageEntity {
     private boolean enabledForAdmin = false;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '0'")
     private boolean enabledForPublic = false;
+
+    @Override
+    public String toString() {
+        return locale;
+    }
 }

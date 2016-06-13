@@ -9,8 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 
 @RunWith(JUnit4.class)
 public class CmsUtilsTest {
@@ -32,9 +31,9 @@ public class CmsUtilsTest {
         Mockito.when(branchContent.getContentParent()).thenReturn(rootContent);
         Mockito.when(rootContent.getContentParent()).thenReturn(null);
 
-        Mockito.when(leafContent.getDataList()).thenReturn(new HashSet<>(Collections.singleton(leafData)));
-        Mockito.when(branchContent.getDataList()).thenReturn(new HashSet<>(Collections.singleton(branchData)));
-        Mockito.when(rootContent.getDataList()).thenReturn(new HashSet<>(Collections.singleton(rootData)));
+        Mockito.when(leafContent.getDataList()).thenReturn(new HashMap<String, ContentDataEntity>(){{put("en", leafData);}});
+        Mockito.when(branchContent.getDataList()).thenReturn(new HashMap<String, ContentDataEntity>(){{put("en", branchData);}});
+        Mockito.when(rootContent.getDataList()).thenReturn(new HashMap<String, ContentDataEntity>(){{put("en", rootData);}});
 
         Mockito.when(leafData.getSlug()).thenReturn("//leaf");
         Mockito.when(leafData.getLanguage()).thenReturn(english);
