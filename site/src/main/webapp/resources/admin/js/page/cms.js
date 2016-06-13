@@ -266,7 +266,11 @@
       $.Cms.ajax({
         formElement: '#createPageForm',
         successMessage: 'The page was created successfully!',
-        onSuccess: function () {
+        onSuccess: function (data, status, response) {
+          if(response.getResponseHeader('Validation-Failed')) {
+            window.console.log(data);
+            return;
+          }
           $modalCreateNewPage.modal('hide');
           treeCache.reload();
         },
