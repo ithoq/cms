@@ -196,15 +196,6 @@ public class CmsUtils {
                 .replaceAll("/+", "/")
                 .replaceAll("/+$", "");
     }
-/*
-    public static ContentDataEntity getForLocale(final ContentEntity content, final String locale) {
-
-        return content.getDataList().stream()
-                .filter(c -> c.getLanguage().getLocale().equals(locale))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException(String
-                        .format("Parent with id [%s] doesn't have a default content", content.getId())));
-    }*/
 
     private static String computeSlugWithSlashes(final ContentEntity content, final ContentDataEntity contentData, final String locale) {
         final ContentEntity parent = content.getContentParent();

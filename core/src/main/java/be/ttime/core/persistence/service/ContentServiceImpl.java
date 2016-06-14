@@ -5,6 +5,7 @@ import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.repository.IContentDataRepository;
 import be.ttime.core.persistence.repository.IContentRepository;
 import com.mysema.query.jpa.impl.JPAQuery;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -111,6 +112,7 @@ public class ContentServiceImpl implements IContentService {
     @Cacheable(value = "adminContent", key = "#id")
     public ContentEntity findContentAdmin(Long id) {
         QContentEntity contentEntity = QContentEntity.contentEntity;
+        QContentEntity parentEntity = QContentEntity.contentEntity;
         QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
         QTaxonomyTermEntity taxonomyTermDataEntity = QTaxonomyTermEntity.taxonomyTermEntity;
 //        EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -126,6 +128,10 @@ public class ContentServiceImpl implements IContentService {
                 .leftJoin(taxonomyTermDataEntity.termDataList).fetch()
                 .singleResult(contentEntity);
 //        entityManager.close();
+
+        if(result.getContentParent() != null){
+            Hibernate.initialize(result.getContentParent().getDataList());
+        }
         return result;
     }
 
@@ -285,8 +291,8 @@ public class ContentServiceImpl implements IContentService {
     @Override
     @Cacheable(value = "adminTree")
     public String getPagesTree() {
-        List<ContentEntity> pages = contentRepository.findAll(); // force first level cache
-        List<ContentEntity> roots = contentRepository.findByContentParentIsNullOrderByOrderAsc();
+        List<ContentEntity> pages = contentRepository.findAllByContentTypeName("PAGE%"); // force first level cache
+        List<ContentEntity> roots = contentRepository.findByContentTypeNameLikeAndContentParentIsNullOrderByOrderAsc("PAGE%");
         StringBuilder sb = new StringBuilder();
 
         sb.append("[");

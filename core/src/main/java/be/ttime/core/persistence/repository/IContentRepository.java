@@ -11,12 +11,12 @@ import java.util.List;
 public interface IContentRepository extends JpaRepository<ContentEntity, Long>, QueryDslPredicateExecutor<ContentEntity> {
 
     @Query("SELECT c from ContentEntity c LEFT JOIN FETCH c.contentChildren ORDER BY c.order")
-    List<ContentEntity> findAll();
+    List<ContentEntity> findAllByContentTypeNameLike(String type);
 
     @Query("SELECT c from ContentEntity c LEFT JOIN FETCH c.contentChildren WHERE c.menuItem = :nav AND c.enabled = :enabled ORDER BY c.order")
     List<ContentEntity> findByMenuItemTrueAndEnabledTrue();
 
-    List<ContentEntity> findByContentParentIsNullOrderByOrderAsc();
+    List<ContentEntity> findByContentTypeNameLikeAndContentParentIsNullOrderByOrderAsc(String type);
 
     List<ContentEntity> findByContentParentOrderByOrderAsc(ContentEntity parent);
 
