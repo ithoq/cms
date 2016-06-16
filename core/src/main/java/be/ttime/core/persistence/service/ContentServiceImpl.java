@@ -4,6 +4,7 @@ import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.repository.IContentDataRepository;
 import be.ttime.core.persistence.repository.IContentRepository;
+import be.ttime.core.persistence.repository.IContentTypeRepository;
 import com.mysema.query.jpa.impl.JPAQuery;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,8 @@ public class ContentServiceImpl implements IContentService {
     private IContentRepository contentRepository;
     @Autowired
     private IContentDataRepository contentDataRepository;
+    @Autowired
+    private IContentTypeRepository contentTypeRepository;
 //    @Autowired
 //    private EntityManagerFactory entityManagerFactory;
 
@@ -49,7 +52,6 @@ public class ContentServiceImpl implements IContentService {
 //        QTaxonomyTermEntity taxonomyTermDataEntity = QTaxonomyTermEntity.taxonomyTermEntity;
         JPAQuery query = new JPAQuery(entityManager);
         ContentDataEntity result = query.from(contentDataEntity)
-                .leftJoin(contentDataEntity.dictionaryList).fetch()
                 .leftJoin(contentDataEntity.commentList).fetch()
                 .leftJoin(contentDataEntity.contentFiles).fetch()
                 .where(contentDataEntity.computedSlug.eq(slug).and(contentDataEntity.language.locale.eq(locale.toString())))
@@ -71,7 +73,7 @@ public class ContentServiceImpl implements IContentService {
         if (result != null) {
             query = new JPAQuery(entityManager);
             ContentEntity parent = query.from(contentEntity)
-                    .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
+                    .leftJoin(contentEntity.contentDataList, contentDataEntity).fetch()
                     .where(contentEntity.id.eq(result.getContent().getId()).and(contentDataEntity.language.locale.eq(locale.toString())))
                     .leftJoin(contentEntity.contentParent).fetch()
                             //.leftJoin(contentEntity.contentTemplate).fetch()
@@ -118,7 +120,7 @@ public class ContentServiceImpl implements IContentService {
 //        EntityManager entityManager = entityManagerFactory.createEntityManager();
         JPAQuery query = new JPAQuery(entityManager);
         ContentEntity result = query.from(contentEntity)
-                .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
+                .leftJoin(contentEntity.contentDataList, contentDataEntity).fetch()
                 .where(contentEntity.id.eq(id))
                 .leftJoin(contentEntity.contentParent).fetch()
                 .leftJoin(contentEntity.contentTemplate).fetch()
@@ -130,7 +132,7 @@ public class ContentServiceImpl implements IContentService {
 //        entityManager.close();
 
         if(result.getContentParent() != null){
-            Hibernate.initialize(result.getContentParent().getDataList());
+            Hibernate.initialize(result.getContentParent().getContentDataList());
         }
         return result;
     }
@@ -146,7 +148,7 @@ public class ContentServiceImpl implements IContentService {
 //        EntityManager entityManager = entityManagerFactory.createEntityManager();
         JPAQuery query = new JPAQuery(entityManager);
         ContentEntity result = query.from(contentEntity)
-                .leftJoin(contentEntity.dataList, contentDataEntity).fetch()
+                .leftJoin(contentEntity.contentDataList, contentDataEntity).fetch()
                 .where(contentEntity.id.eq(id).and(contentDataEntity.language.locale.eq(locale)))
                 .singleResult(contentEntity);
 //        entityManager.close();
@@ -272,15 +274,16 @@ public class ContentServiceImpl implements IContentService {
         //if(locale.equals("all")){
         //    contentEntities =  contentRepository.findAllByContentTypeName(type);
         //} else{
-            contentEntities = contentRepository.findAllByContentTypeNameAndDataListLanguageLocale(type, locale);
+            contentEntities = contentRepository.findAllByContentTypeNameAndContentDataListLanguageLocale(type, locale);
         //}
         JsonArrayBuilder data = Json.createArrayBuilder();
         JsonObjectBuilder row;
         // reload tree like this : table.ajax.reload()
         for (ContentEntity c : contentEntities) {
             row = Json.createObjectBuilder();
+            row.add("DT_RowData", Json.createObjectBuilder().add("id", c.getId()));
             row.add("active", c.isEnabled());
-            row.add("title", c.getDataList().get(locale).getTitle());
+            row.add("title", c.getContentDataList().get(locale).getTitle());
             row.add("category", "TO DO");
             data.add(row);
         }
@@ -301,13 +304,22 @@ public class ContentServiceImpl implements IContentService {
         return sb.toString();
     }
 
+    @Override
+    public List<ContentTypeEntity> findAllContentType() {
+        return contentTypeRepository.findAll();
+    }
+
+    @Override
+    public boolean contentTypeExist(String contentType) {
+        return contentTypeRepository.exists(contentType);
+    }
 
     private String buildNavMenu(List<ContentEntity> pages, StringBuilder sb, String locale) {
 
         for (ContentEntity p : pages) {
             sb.append("<li>");
-            if (!p.getDataList().isEmpty()) {
-                ContentDataEntity data = p.getDataList().get(locale);
+            if (!p.getContentDataList().isEmpty()) {
+                ContentDataEntity data = p.getContentDataList().get(locale);
                 sb.append("<a href='");
                 sb.append(data.getComputedSlug());
                 sb.append("'>");

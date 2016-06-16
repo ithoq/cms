@@ -2,6 +2,7 @@ package be.ttime.core.persistence.service;
 
 import be.ttime.core.persistence.model.ContentDataEntity;
 import be.ttime.core.persistence.model.ContentEntity;
+import be.ttime.core.persistence.model.ContentTypeEntity;
 
 import java.util.List;
 import java.util.Locale;
@@ -33,5 +34,9 @@ public interface IContentService {
     ContentDataEntity findContentData(Long id);
 
     ContentDataEntity findBySlug(String slug, Locale locale);
+
+    List<ContentTypeEntity> findAllContentType();
+
+    boolean contentTypeExist(String contentType);
 
 }

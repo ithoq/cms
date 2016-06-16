@@ -28,10 +28,10 @@ public class TaxonomyTermEntity {
     @JoinTable(name = "content_term", joinColumns = @JoinColumn(name = "taxonomy_term_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "content_id", referencedColumnName = "id"))
     private List<ContentEntity> contents;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private TaxonomyTypeEntity taxonomyType;
 
-    @OneToMany(mappedBy = "taxonomyTerm")
+    @OneToMany(mappedBy = "taxonomyTerm", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TaxonomyTermDataEntity> termDataList;
 
     @ManyToOne

@@ -1,0 +1,19 @@
+.date-and-time-group
+{
+    label
+    {
+        display: block;
+    }
+
+    > div
+    {
+        display: inline-block;
+
+        max-width: 150px;
+
+        > .bootstrap-timepicker
+        {
+            max-width: 120px;
+        }
+    }
+}

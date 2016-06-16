@@ -48,6 +48,11 @@
     <script src="/resources/admin/libs/datatables-responsive/js/datatables.responsive.js"></script>
     <script src="/resources/admin/libs/classie/classie.js"></script>
     <script src="/resources/admin/libs/select2/dist/js/select2.min.js"></script>
+    <link href="/resources/admin/libs/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" media="screen">
+    <script src="/resources/admin/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
+    <script src="/resources/admin/libs/jQuery-tagEditor/jquery.caret.min.js"></script>
+    <link href="/resources/admin/libs/jQuery-tagEditor/jquery.tag-editor.css" rel="stylesheet" type="text/css" media="screen">
+    <script src="/resources/admin/libs/jQuery-tagEditor/jquery.tag-editor.min.js"></script>
 
     {% block head %}{% endblock head %}
 

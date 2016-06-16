@@ -1,0 +1,292 @@
+{% extends 'admin/master' %}
+{% set activeNav = 'cms' %}
+{% set title =  message('admin.pagesManagement') %}
+
+{% block head %}
+    <link href="/resources/admin/libs/fancytree/dist/skin-fab/ui.fancytree.css" rel="stylesheet" type="text/css" media="screen">
+    <script src="/resources/admin/libs/fancytree/dist/jquery.fancytree-all.min.js"></script>
+    <script src="/resources/admin/libs/jQuery-Knob/dist/jquery.knob.min.js"></script>
+    <script src="/resources/admin/libs/jqUpload/js/jquery.iframe-transport.js"></script>
+    <script src="/resources/admin/libs/jqUpload/js/jquery.fileupload.js"></script>
+{% endblock head %}
+
+{% block content %}
+
+    <form role="form" id="contentForm" action="/admin/webContent/edit" enctype="multipart/form-data" method="post">
+        {{ csrf | raw }}
+        <input id="contentId" type="hidden" name="contentId" value="{{ content.id }}"/>
+        <input id="contentDataId" type="hidden" name="contentDataId" value="{{ data.id }}"/>
+        <input id="contentType" type="hidden" name="contentType" value="{{ contentType }}"/>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="operation-box">
+                    <button type="button" data-toggle="modal" data-target="#modalSlideLeft" class="btn btn-default btn-delete"><i class="fa fa-trash-o"></i></button>
+                    <button id="saveBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i></button>
+                </div>
+                <span class="thumbnail-wrapper d100 circular inline m-t-5">{{  message('message') }}</span>
+                <div class="panel-page-title">
+                    <div class="page-title light-input">News Management</div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="lang-selector">
+                <div class="select-country">
+                    <select id="selectLanguage" name="selectLanguage">
+                        {% for lang in beans.applicationService.getSiteLanguages() %}
+                            <option id="{{ lang.getLanguage() }}" value="{{ lang.getLanguage() }}"
+                                    {% if lang.toString() == contentLocale %}selected{% endif %}>{{ lang.getDisplayLanguage() }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="checkbox check-success">
+                        <input id="contentActive" name="contentActive" type="checkbox" checked="checked">
+                        <label for="contentActive">{{ message('active') }}</label>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav nav-tabs nav-tabs-linetriangle bg-white">
+                <li class="active"><a data-toggle="tab" href="#tabGeneral">{{ message('general') }}</a></li>
+                <li><a data-toggle="tab" href="#tabFile" id="tabFileBtn">{{ message('file') }}</a></li>
+                <li><a data-toggle="tab" href="#tabGallery" id="tabGalleryBtn">{{ message('gallery') }}</a></li>
+                <li><a data-toggle="tab" href="#tabDev">Dev</a></li>
+                <li><a data-toggle="tab" href="#tabSeo">SEO</a></li>
+            </ul>
+            <div class="tab-content bg-white">
+
+                <div id="tabGeneral" class="tab-pane active">
+
+                    <div class="form-group date-and-time-group">
+                        <label>Date begin</label>
+                        <div>
+                            <div class="input-group date">
+                                <input type="text" class="form-control" value="" id="dateBegin" name="dateBegin" data-plugin="datepicker">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="input-group bootstrap-timepicker">
+                                <input type="text" id="dateTimeBegin" name="dateTimeBegin" class="form-control timepicker">
+                                <span class="input-group-addon"><i class="pg-clock"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group date-and-time-group">
+                        <label>Date end</label>
+                        <div>
+                            <div class="input-group date">
+                                <input type="text" class="form-control" value="" id="dateEnd" name="dateEnd"  data-plugin="datepicker">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="input-group bootstrap-timepicker">
+                                <input type="text" id="dateTimeEnd" name="dateTimeEnd" class="form-control timepicker">
+                                <span class="input-group-addon"><i class="pg-clock"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <input type="text" id="categories" name="categories" class="form-control" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>Tags</label>
+                        <input type="text" id="tags" name="tags" class="form-control" value="">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Preview</label>
+                        <input id="input-preview" name="thumbnail" type="file" class="">
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ message('title') }}</label>
+                        <input type="text" class="form-control" name="title" value="{{ data.title }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Slug </label><i data-placement="right" title="" data-toggle="tooltip" type="button"
+                                               data-original-title="Label unique, pour identifier un élément. Exemple : http://www.exemple.com/blog/le-titre-de-mon-article où la chaîne de caractères le-titre-de-mon-article est le slug"
+                                               class="fa fa-info-circle"></i>
+                        <input required type="text" id="pageSlug" name="slug" value="{{ data.slug }}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>{{ message('intro') }}</label>
+                        <textarea name="intro" class="form-control" rows="7"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ message('content') }}</label>
+                        <textarea name="content" id="content" cols="30" rows="10"></textarea>
+                    </div>
+                </div>
+                <div id="tabSeo" class="tab-pane">
+                    <div class="form-group form-group-default required">
+                        <label>H1</label>
+                        <input type="text" class="form-control" name="seoH1" value="{{ data.seoH1 }}">
+                    </div>
+                    <div class="form-group form-group-default">
+                        <label>Tag </label>
+                        <input type="text" class="form-control" name="seoTag" value="{{ data.seoTag }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">{{ message('description') }}</label>
+                          <textarea id="comment" rows="5" name="seoDescription"
+                                    class="form-control">{{ data.seoDescription }}</textarea>
+                    </div>
+                </div>
+                <div id="tabDev" class="tab-pane">
+                    <div class="form-group">
+                        <label for="comment">Include top:</label>
+                          <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
+                                    class="form-control">{{ data.devIncludeTop }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Include bottom:</label>
+                          <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
+                                    class="form-control">{{ data.devIncludeBot }}</textarea>
+                    </div>
+                </div>
+                <div id="tabFile" class="tab-pane">
+                    <div class="upload-container" data-type="DOWNLOAD" data-id="{{ data.id }}" data-table="tableFiles">
+                        <input style="display:none" class="fileupload" type="file" name="files[]"
+                               data-url="/admin/file/upload" multiple>
+                        <div class="dropzone">
+                            <div class="dropzone-container">
+                                <div class="dropzone-center"><i class="fa fa-download"></i>
+                                    <div class="span">{{ message('admin.dropFilesHere') }}</div>
+                                    <span class="btn btn-browse">BROWSE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <ul id="list-file"></ul>
+                    </div>
+                    <input id="search-table-files" type="text" placeholder="Search" class="form-control pull-right">
+                    <table id="tableFiles" class="table table-small-pad">
+                        <thead>
+                        <tr role="row">
+                            <th style="width:230px">{{ message('name') }}</th>
+                            <th style="min-width:230px" class="no-sort">{{ message('description') }}</th>
+                            <th style="width:50px" class="center">{{ message('active') }}</th>
+                            <th style="width:50px" class="no-sort center">{{ message('type') }}</th>
+                            <th style="width:50px" class="center">{{ message('size') }}</th>
+                            <th style="width:100px" class="no-sort center">{{ message('operation') }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="tabGallery" class="tab-pane">
+                    <div class="upload-container" data-type="GALLERY" data-id="{{ data.id }}" data-table="tableGallery">
+                        <input style="display:none" class="fileupload" type="file" name="files[]"
+                               data-url="/admin/file/upload" multiple>
+                        <div class="dropzone">
+                            <div class="dropzone-container">
+                                <div class="dropzone-center"><i class="fa fa-download"></i>
+                                    <div class="span">{{ message('admin.dropFilesHere') }}</div>
+                                    <span class="btn btn-browse">BROWSE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <ul id="list-file"></ul>
+                    </div>
+                    <input id="search-table-gallery" type="text" placeholder="Search" class="form-control pull-right">
+                    <table id="tableGallery" class="table table-small-pad">
+                        <thead>
+                        <tr role="row">
+                            <th style="width:230px">{{ message('name') }}</th>
+                            <th style="min-width:230px" class="no-sort">{{ message('description') }}</th>
+                            <th style="width:50px" class="center">{{ message('active') }}</th>
+                            <th style="width:50px" class="no-sort center">{{ message('type') }}</th>
+                            <th style="width:50px" class="center">{{ message('size') }}</th>
+                            <th style="width:100px" class="no-sort center">{{ message('operation') }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(function () {
+
+                var tags = {{ tags | raw }};
+                var categories = {{ categories | raw }};
+                var contentType = '{{ contentType }}';
+
+                var renderSelectLanguage = function (data) {
+                    var $state = $(
+                            '<span><img src="/resources/admin/img/flags/' + data.id.toLowerCase() + '.png" class="img-flag" /> ' + data.text + '</span>'
+                    );
+                    return $state;
+                };
+
+                $('#selectLanguage').select2({
+                    minimumResultsForSearch: -1,
+                    formatSelection: renderSelectLanguage,
+                    formatResult: renderSelectLanguage,
+                });
+
+                var datepickeroptions = {
+                    format: 'yyyy-mm-dd',
+                }
+                $('#dateEnd').datepicker(datepickeroptions);
+
+                if($('#dateBegin').val().length === 0){
+                    var d = new Date();
+                    var curr_date = ("0" + d.getDate()).slice(-2);
+                    var curr_month = ("0" + (d.getMonth() + 1)).slice(-2);
+                    var curr_year = d.getFullYear();
+                    var currentDate = curr_year + '-' +  curr_month + "-" + curr_date;
+                    $('#dateBegin').val(currentDate);
+                }
+                $('#dateBegin').datepicker(datepickeroptions);
+
+                var timepickerConfig = function(e) {
+                    var widget = $('.bootstrap-timepicker-widget');
+                    widget.find('.glyphicon-chevron-up').removeClass().addClass('pg-arrow_maximize');
+                    widget.find('.glyphicon-chevron-down').removeClass().addClass('pg-arrow_minimize');
+                };
+
+                $('#dateTimeBegin').timepicker({
+                    showMeridian: false,
+                    defaultTime: 'current',
+                }).on('show.timepicker', timepickerConfig);
+
+                $('#dateTimeBegin').timepicker({
+                    defaultTime: false,
+                    showMeridian: false,
+                }).on('show.timepicker', timepickerConfig);
+
+                $('.timepicker').focus(function(){
+                    $(this).parent().find('span.input-group-addon').trigger('click');
+                })
+
+                $('#categories').tagEditor({
+                    placeholder: 'Enter categories ...',
+                    autocomplete: { source: categories, minLength: 1},
+                });
+
+                $('#tags').tagEditor({
+                    placeholder: 'Enter tags ...',
+                    autocomplete: { source: tags, minLength: 1},
+                });
+
+                $.Cms.initTinyMce({ selector: '#content' });
+
+                // Save a page
+                $('#saveBtn').on('click', function () {
+                    tinyMCE.triggerSave();
+                    console.log('submit');
+                    $('#contentForm').submit();
+                });
+
+            });
+        </script>
+    </form>
+
+{% endblock content %}
+
+{% block bottom %}
+    <script src="/resources/admin/js/page/cms.js"></script>
+{% endblock bottom %}

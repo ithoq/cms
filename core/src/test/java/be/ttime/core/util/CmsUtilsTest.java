@@ -31,9 +31,9 @@ public class CmsUtilsTest {
         Mockito.when(branchContent.getContentParent()).thenReturn(rootContent);
         Mockito.when(rootContent.getContentParent()).thenReturn(null);
 
-        Mockito.when(leafContent.getDataList()).thenReturn(new HashMap<String, ContentDataEntity>(){{put("en", leafData);}});
-        Mockito.when(branchContent.getDataList()).thenReturn(new HashMap<String, ContentDataEntity>(){{put("en", branchData);}});
-        Mockito.when(rootContent.getDataList()).thenReturn(new HashMap<String, ContentDataEntity>(){{put("en", rootData);}});
+        Mockito.when(leafContent.getContentDataList()).thenReturn(new HashMap<String, ContentDataEntity>(){{put("en", leafData);}});
+        Mockito.when(branchContent.getContentDataList()).thenReturn(new HashMap<String, ContentDataEntity>(){{put("en", branchData);}});
+        Mockito.when(rootContent.getContentDataList()).thenReturn(new HashMap<String, ContentDataEntity>(){{put("en", rootData);}});
 
         Mockito.when(leafData.getSlug()).thenReturn("//leaf");
         Mockito.when(leafData.getLanguage()).thenReturn(english);

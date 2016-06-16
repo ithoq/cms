@@ -86,7 +86,7 @@ public class AdminCmsController {
             appLanguage = applicationService.getDefaultSiteApplicationLanguage();
         }
 
-        ContentDataEntity contentData = content.getDataList().get(appLanguage.getLocale());
+        ContentDataEntity contentData = content.getContentDataList().get(appLanguage.getLocale());
 
         if (contentData == null) {
             contentData = new ContentDataEntity();

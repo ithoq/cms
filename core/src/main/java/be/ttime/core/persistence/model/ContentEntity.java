@@ -36,7 +36,7 @@ public class ContentEntity extends AbstractTimestampEntity {
     private Set<ContentEntity> contentChildren;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKeyColumn(name="language_locale")
-    private Map<String, ContentDataEntity> dataList;
+    private Map<String, ContentDataEntity> contentDataList = new HashMap<>();
     @ManyToOne(fetch = FetchType.LAZY)
     private ContentTemplateEntity contentTemplate;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,16 +55,16 @@ public class ContentEntity extends AbstractTimestampEntity {
     private Set<ContentDictionaryEntity> dictionaryList;
 
     public void addContentData(ContentDataEntity child) {
-        if(dataList == null){
-            dataList = new HashMap<>();
+        if(contentDataList == null){
+            contentDataList = new HashMap<>();
         }
         child.setContent(this);
-        dataList.put(child.getLanguage().getLocale(), child);
+        contentDataList.put(child.getLanguage().getLocale(), child);
     }
 
     public void removeContentData(ContentDataEntity child) {
         child.setContent(null);
-        dataList.remove(child.getLanguage().getLocale());
+        contentDataList.remove(child.getLanguage().getLocale());
 
     }
 }

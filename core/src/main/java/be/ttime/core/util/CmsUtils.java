@@ -4,11 +4,14 @@ import be.ttime.core.model.field.PageData;
 import be.ttime.core.persistence.model.ContentDataEntity;
 import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.model.UserEntity;
+import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ibatis.common.jdbc.ScriptRunner;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -17,16 +20,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -58,6 +63,9 @@ public class CmsUtils {
     public final static String BLOCK_FIELD_TEXT = "FIELD_TEXT";
     public final static String BLOCK_FIELD_TINYMCE = "FIELD_TINYMCE";
     public final static String BLOCK_FIELD_DATEPICKER = "FIELD_DATEPICKER";
+
+    public final static String UPLOAD_DIRECTORY_PRIVATE = "webdata/upload/pages/";
+    public final static String UPLOAD_DIRECTORY_PUBLIC = "webdata/upload/public/";
 
     public final static String HEADER_VALIDATION_FAILED = "Validation-Failed";
 
@@ -202,7 +210,7 @@ public class CmsUtils {
         if (parent == null) {
             return contentData.getSlug();
         } else {
-            final ContentDataEntity parentContentData = parent.getDataList().get(locale);
+            final ContentDataEntity parentContentData = parent.getContentDataList().get(locale);
 
 //            Lazy init exception below
 //
@@ -210,6 +218,78 @@ public class CmsUtils {
 
             return parentContentData.getComputedSlug() + "/" + contentData.getSlug();
         }
+    }
+
+    public static File uploadFile(MultipartFile uploadFile, boolean isPrivate) throws IOException {
+
+
+        Slugify slg = null;
+        try {
+            slg = new Slugify();
+        } catch (IOException e) {
+            log.error("Impossible to create instance Slugify", e);
+        }
+        String ext = FilenameUtils.getExtension(uploadFile.getOriginalFilename());
+        String baseName = FilenameUtils.getBaseName(uploadFile.getOriginalFilename());
+        String prefix = slg.slugify(baseName);
+        File serverFile = null;
+        if(isPrivate) {
+
+            if(prefix.length() < 3){
+                prefix += "___";
+            }
+            serverFile = File.createTempFile(prefix, "." + ext, getUploadDirectory(isPrivate));
+        } else {
+            serverFile= new File(getUploadDirectory(false).getAbsolutePath() + "/" + prefix + "." + ext);
+        }
+        BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+        stream.write(uploadFile.getBytes());
+        stream.close();
+        return serverFile;
+    }
+
+    public static File getUploadDirectory(boolean isPrivate){
+        // check if upload path exist
+        File fileDir = new File((isPrivate) ? UPLOAD_DIRECTORY_PRIVATE : UPLOAD_DIRECTORY_PUBLIC);
+
+        if (!fileDir.exists()) {
+            try {
+                FileUtils.forceMkdir(fileDir);
+            } catch (IOException e) {
+                log.error("Impossible to create the upload directory : " + fileDir.getPath(),e);
+                return null;
+            }
+        }
+        return fileDir;
+    }
+
+    public static Date parseDate(String date,String time){
+        if(StringUtils.isEmpty(date)){
+            return null;
+        }
+        if(StringUtils.isEmpty(time)){
+            time = "00:00:00";
+        }
+        else{
+            // il manque le premier 0
+            if(time.length() == 4){
+                time = "0" + time;
+            }
+            // il manque les secondes
+            if(time.length() == 5){
+                time += ":00";
+            }
+        }
+        String dateString = date + " " + time;
+        SimpleDateFormat df = new SimpleDateFormat(CmsUtils.DATETIME_FORMAT);
+        Date dateBegin;
+
+        try {
+            dateBegin = df.parse(dateString);
+        }catch (ParseException e){
+            dateBegin= null;
+        }
+        return dateBegin;
     }
 
 }

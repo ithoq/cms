@@ -28,6 +28,8 @@ public class ContentDataEntity extends AbstractTimestampEntity {
     private String data;
     private String slug;
     private String computedSlug;
+    @Column(columnDefinition = "TINYINT(1) default '1'")
+    private boolean enabled = true;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentDataEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FileEntity> contentFiles;
@@ -37,9 +39,6 @@ public class ContentDataEntity extends AbstractTimestampEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private ApplicationLanguageEntity language;
-
-    @OneToMany(mappedBy = "contentData", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ContentDataDictionaryEntity> dictionaryList;
 
     @OneToMany(mappedBy = "contentData", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CommentEntity> commentList;

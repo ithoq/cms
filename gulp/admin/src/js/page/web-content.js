@@ -2,22 +2,22 @@
   'use strict';
 
   // Cached variables
-  var $newsTable;
+  var $table;
 
   $(function () {
     $.Cms.addCsrfAjaxHeaderToken();
 
     // init variables
-    $newsTable = $('#webContentTable');
+    $table = $('#webContentTable');
 
     $.Cms.initDataTableWithSearch({
-      tableJqueryElement: $newsTable,
+      tableJqueryElement: $table,
       searchElement: '#web-content-table',
       ajax: {
         url: '/admin/webContent/getJson',
         data: {
           contentType: window.contentType,
-          locale: locale,
+          locale: window.locale,
         },
       },
       columnDefs: [
@@ -54,6 +54,19 @@
           defaultContent: $.Cms.tabSwitchSimpleTpl(),
         },
       ],
+    });
+
+    $table.on('click', '.btn-modal-edit', function () {
+      var id = $(this).closest('tr').data('id');
+      document.location.href = '/admin/webContent/edit/' + id + '?langCode=' + window.locale;
+    });
+
+    $.Cms.initTabSwitchYesNo({
+      tableElement: '#webContentTable',
+      onConfirmation: function ($tr) {
+        //deleteblock($tr.data('id'));
+        console.log('delete');
+      },
     });
 
   });

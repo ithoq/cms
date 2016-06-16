@@ -399,3 +399,7 @@ INSERT INTO `input_data` (`id`, `defaultValue`, `hint`, `title`, `validation`, `
 INSERT INTO `file_type` (`name`) VALUES
 ('DOWNLOAD'),
 ('GALLERY');
+
+INSERT INTO `taxonomy_type` (`name`) VALUES
+('TAG'),
+('CATEGORY');

@@ -86,3 +86,14 @@ mark
 {
     height: 59px;
 }
+
+/* TIME PICKER */
+.bootstrap-timepicker-widget table td:not(.separator)
+{
+    min-width: 50px!important;
+}
+.bootstrap-timepicker-widget table td input
+{
+    width: 35px!important;
+    height: 33px!important;
+}

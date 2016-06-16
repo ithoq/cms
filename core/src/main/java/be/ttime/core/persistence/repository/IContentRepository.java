@@ -20,7 +20,7 @@ public interface IContentRepository extends JpaRepository<ContentEntity, Long>, 
 
     List<ContentEntity> findByContentParentOrderByOrderAsc(ContentEntity parent);
 
-    List<ContentEntity>findAllByContentTypeNameAndDataListLanguageLocale(String Name, String locale);
+    List<ContentEntity>findAllByContentTypeNameAndContentDataListLanguageLocale(String Name, String locale);
     List<ContentEntity>findAllByContentTypeName(String Name);
     /*
     @Query("SELECT c from ContentEntity c LEFT JOIN FETCH c. WHERE c.menuItem = :nav AND c.enabled = :enabled ORDER BY c.order")
@@ -28,6 +28,6 @@ public interface IContentRepository extends JpaRepository<ContentEntity, Long>, 
 */
     ContentEntity findFirstByContentParentOrderByOrderDesc(ContentEntity parent);
 
-    @Query("SELECT c from ContentEntity c LEFT JOIN FETCH c.dataList WHERE c.id = :id ")
+    @Query("SELECT c from ContentEntity c LEFT JOIN FETCH c.contentDataList WHERE c.id = :id ")
     ContentEntity findOne(@Param("id") Long id);
 }
