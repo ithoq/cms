@@ -8,7 +8,7 @@ $(function () {
     var tableFileId = '#tableFiles';
     $tableFiles = $(tableFileId);
   
-    if (!$.fn.DataTable.isDataTable($tableGallery)) {
+    if (!$.fn.DataTable.isDataTable($tablesGallery)) {
       var options = {};
       options.elementId = tableFileId;
       options.$element = $tableFiles;
@@ -22,11 +22,11 @@ $(function () {
   
   $pageForm.on('click', '#tabGalleryBtn', function () {
     var tableGalleryId = '#tableGallery';
-    $tableGallery = $(tableGalleryId);
-    if (!$.fn.DataTable.isDataTable($tableGallery)) {
+    $tablesGallery = $(tableGalleryId);
+    if (!$.fn.DataTable.isDataTable($tablesGallery)) {
       var options = {};
       options.elementId = tableGalleryId;
-      options.$element = $tableGallery;
+      options.$element = $tablesGallery;
       options.type = 'GALLERY';
       options.searchElementId = '#search-table-gallery';
   
@@ -36,7 +36,7 @@ $(function () {
   });
   
   function initDataTable(options) {
-    var $contentId = $('#contentId');
+    var $contentId = $('#currentContentId');
     $.Cms.initDataTableWithSearch({
       tableJqueryElement: options.$element,
       searchElement: options.searchElementId,

@@ -93,7 +93,8 @@ $selectType.on('change', function () {
   }
 });
 
+/*
 $('#fileupload').bind('fileuploadsubmit', function (e, data) {
   var $input = $('#currentContentId');
   data.formData = { contentId: $input.val() };
-});
+});*/
