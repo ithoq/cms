@@ -102,8 +102,8 @@ public class AdminCmsController {
         ContentTemplateEntity template = contentTemplateService.find(content.getContentTemplate().getId());
         model.put("template", template);
 
-        model.put("page", content);
-        model.put("content", contentData);
+        model.put("content", content);
+        model.put("contentData", contentData);
         model.put("contentLocale", appLanguage.getLocale());
 
         return VIEWPATH + "page";
@@ -190,7 +190,7 @@ public class AdminCmsController {
         ContentEntity content;
         ContentDataEntity contentData;
 
-        Long id = form.getPageId();
+        Long id = form.getContentId();
 
         // des erreurs ?
         if (result.hasErrors()) {
@@ -198,8 +198,8 @@ public class AdminCmsController {
             return ControllerUtils.getValidationErrorsInUl(result.getFieldErrors());
         } else {
 
-            content = contentService.findContentAdmin(form.getPageId());
-            contentData = contentService.findContentData(form.getContentId());
+            content = contentService.findContentAdmin(form.getContentId());
+            contentData = contentService.findContentData(form.getContentDataId());
             if (content == null || contentData == null) {
                 throw new Exception("Page or Content can't by null");
             }

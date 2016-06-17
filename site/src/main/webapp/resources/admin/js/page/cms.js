@@ -223,7 +223,7 @@
 
     // Delete a page
     $('#btnDeletePage').click(function () {
-      var id = $('#currentPageId').val();
+      var id = $('#contentId').val();
       var params = {
         url: '/admin/cms/page/delete/' + id,
         type: 'DELETE',
@@ -244,7 +244,7 @@
     
     // Save a page
     $pageForm.on('click', '#savePageBtn', function () {
-      var id = $('#currentPageId').val();
+      var id = $('#contentId').val();
       $.Cms.ajax({
         formJqueryElement: $pageForm,
         successMessage: 'The page was saved successfully!',
@@ -258,7 +258,7 @@
     
     // change language
     $pageForm.on('change', '#selectLanguage', function () {
-      reloadPage($('#currentPageId').val(), this.value);
+      reloadPage($('#contentId').val(), this.value);
     });
     
     // Create Page
@@ -267,7 +267,7 @@
         formElement: '#createPageForm',
         successMessage: 'The page was created successfully!',
         onSuccess: function (data, status, response) {
-          if(response.getResponseHeader('Validation-Failed')) {
+          if (response.getResponseHeader('Validation-Failed')) {
             window.console.log(data);
             $.Cms.notif({
               message: 'Validation error',
@@ -316,12 +316,6 @@
       }
     });
     
-    /*
-    $('#fileupload').bind('fileuploadsubmit', function (e, data) {
-      var $input = $('#currentContentId');
-      data.formData = { contentId: $input.val() };
-    });*/
-    
 
     $pageForm.on('click', '#tabFileBtn', function () {
       var tableFileId = '#tableFiles';
@@ -355,7 +349,7 @@
     });
     
     function initDataTable(options) {
-      var $contentId = $('#currentContentId');
+      var $contentId = $('#contentDataId');
       $.Cms.initDataTableWithSearch({
         tableJqueryElement: options.$element,
         searchElement: options.searchElementId,

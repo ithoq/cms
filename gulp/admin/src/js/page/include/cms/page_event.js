@@ -1,6 +1,6 @@
 // Delete a page
 $('#btnDeletePage').click(function () {
-  var id = $('#currentPageId').val();
+  var id = $('#contentId').val();
   var params = {
     url: '/admin/cms/page/delete/' + id,
     type: 'DELETE',
@@ -21,7 +21,7 @@ $pageForm.on('click', '#btn-expand', function () {
 
 // Save a page
 $pageForm.on('click', '#savePageBtn', function () {
-  var id = $('#currentPageId').val();
+  var id = $('#contentId').val();
   $.Cms.ajax({
     formJqueryElement: $pageForm,
     successMessage: 'The page was saved successfully!',
@@ -35,7 +35,7 @@ $pageForm.on('click', '#savePageBtn', function () {
 
 // change language
 $pageForm.on('change', '#selectLanguage', function () {
-  reloadPage($('#currentPageId').val(), this.value);
+  reloadPage($('#contentId').val(), this.value);
 });
 
 // Create Page
@@ -92,9 +92,3 @@ $selectType.on('change', function () {
     $selector.hide(anim);
   }
 });
-
-/*
-$('#fileupload').bind('fileuploadsubmit', function (e, data) {
-  var $input = $('#currentContentId');
-  data.formData = { contentId: $input.val() };
-});*/

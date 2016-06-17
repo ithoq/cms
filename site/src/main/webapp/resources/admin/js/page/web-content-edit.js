@@ -36,7 +36,7 @@ $(function () {
   });
   
   function initDataTable(options) {
-    var $contentId = $('#currentContentId');
+    var $contentId = $('#contentDataId');
     $.Cms.initDataTableWithSearch({
       tableJqueryElement: options.$element,
       searchElement: options.searchElementId,
