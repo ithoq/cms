@@ -3,6 +3,7 @@ package be.ttime.core.controller;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.persistence.model.FileEntity;
 import be.ttime.core.persistence.service.IFileService;
+import be.ttime.core.util.CmsUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -17,9 +18,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 @Controller
-@RequestMapping(value = "/download")
 public class FileDownloadController {
 
     @Autowired
@@ -28,19 +29,37 @@ public class FileDownloadController {
     @Autowired
     private IFileService pageFileService;
 
-    @RequestMapping(value = "/{name}", method = RequestMethod.GET)
+    @RequestMapping(value = "/download/{name}", method = RequestMethod.GET)
     public void downloadFileByName(HttpServletResponse response, @PathVariable("name") String name, Boolean force) throws Exception {
 
         FileEntity file = pageFileService.findServerName(name);
         download(response, file, force);
     }
 
-    @RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/download/id/{id}", method = RequestMethod.GET)
     public void downloadFileById(HttpServletResponse response, @PathVariable("id") Long id, Boolean force) throws Exception {
 
         FileEntity file = pageFileService.findOne(id);
         download(response, file, force);
 
+    }
+
+    @RequestMapping(value = "/public/{name}", method = RequestMethod.GET)
+    public void publicFile(HttpServletResponse response, @PathVariable("name") String name) throws Exception {
+
+        File uploadDirectory = CmsUtils.getUploadDirectory(false);
+        File file = new File(uploadDirectory.getAbsolutePath() + "/" + name);
+        if(file.exists()){
+           // String mimeType = Files.probeContentType(file.toPath());
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
+            response.setContentLength((int) file.length());
+            InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+            FileCopyUtils.copy(inputStream, response.getOutputStream());
+        }
+        else{
+            throw new ResourceNotFoundException();
+        }
     }
 
     private void download(HttpServletResponse response, FileEntity pageFile, Boolean force) throws Exception {

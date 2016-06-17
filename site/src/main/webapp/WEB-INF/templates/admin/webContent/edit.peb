@@ -15,7 +15,7 @@
     <form role="form" id="contentForm" action="/admin/webContent/edit" enctype="multipart/form-data" method="post">
         {{ csrf | raw }}
         <input id="contentId" type="hidden" name="contentId" value="{{ content.id }}"/>
-        <input id="contentDataId" type="hidden" name="contentDataId" value="{{ data.id }}"/>
+        <input id="contentDataId" type="hidden" name="contentDataId" value="{{ contentData.id }}"/>
         <input id="contentType" type="hidden" name="contentType" value="{{ contentType }}"/>
         <div class="panel panel-default">
             <div class="panel-body">
@@ -35,7 +35,7 @@
                     <select id="selectLanguage" name="selectLanguage">
                         {% for lang in beans.applicationService.getSiteLanguages() %}
                             <option id="{{ lang.getLanguage() }}" value="{{ lang.getLanguage() }}"
-                                    {% if lang.toString() == contentLocale %}selected{% endif %}>{{ lang.getDisplayLanguage() }}</option>
+                            {% if lang.toString() == contentLocale %}selected{% endif %}>{{ lang.getDisplayLanguage() }}</option>
                         {% endfor %}
                     </select>
                     <div class="checkbox check-success">
@@ -59,13 +59,13 @@
                         <label>Date begin</label>
                         <div>
                             <div class="input-group date">
-                                <input type="text" class="form-control" value="" id="dateBegin" name="dateBegin" data-plugin="datepicker">
+                                <input type="text" class="form-control" value="{{ data.date_begin_date }}" id="dateBegin" name="dateBegin" data-plugin="datepicker">
                                 <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
                             </div>
                         </div>
                         <div>
                             <div class="input-group bootstrap-timepicker">
-                                <input type="text" id="dateTimeBegin" name="dateTimeBegin" class="form-control timepicker">
+                                <input type="text" value="{{ data.date_begin_time }}" id="dateTimeBegin" name="dateTimeBegin" class="form-control timepicker">
                                 <span class="input-group-addon"><i class="pg-clock"></i></span>
                             </div>
                         </div>
@@ -74,13 +74,13 @@
                         <label>Date end</label>
                         <div>
                             <div class="input-group date">
-                                <input type="text" class="form-control" value="" id="dateEnd" name="dateEnd"  data-plugin="datepicker">
+                                <input type="text" class="form-control" value="{{ data.date_end_date }}" id="dateEnd" name="dateEnd"  data-plugin="datepicker">
                                 <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
                             </div>
                         </div>
                         <div>
                             <div class="input-group bootstrap-timepicker">
-                                <input type="text" id="dateTimeEnd" name="dateTimeEnd" class="form-control timepicker">
+                                <input type="text" id="dateTimeEnd" value="{{ data.date_end_time }}" name="dateTimeEnd" class="form-control timepicker">
                                 <span class="input-group-addon"><i class="pg-clock"></i></span>
                             </div>
                         </div>
@@ -95,57 +95,62 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label">Preview</label>
+                        <input type="hidden" name="previousFile" value="{{ data.image_preview }}">
+                        {% if data.image_preview is not empty %}
+                            <h5>{{ data.image_preview }}</h5>
+                            <img src="/public/{{ data.image_preview }}" alt="image" class="w150">
+                        {% endif %}
                         <input id="input-preview" name="thumbnail" type="file" class="">
                     </div>
 
                     <div class="form-group">
                         <label>{{ message('title') }}</label>
-                        <input type="text" class="form-control" name="title" value="{{ data.title }}">
+                        <input type="text" class="form-control" name="title" value="{{ contentData.title }}">
                     </div>
                     <div class="form-group">
                         <label>Slug </label><i data-placement="right" title="" data-toggle="tooltip" type="button"
                                                data-original-title="Label unique, pour identifier un élément. Exemple : http://www.exemple.com/blog/le-titre-de-mon-article où la chaîne de caractères le-titre-de-mon-article est le slug"
                                                class="fa fa-info-circle"></i>
-                        <input required type="text" id="pageSlug" name="slug" value="{{ data.slug }}" class="form-control">
+                        <input required type="text" id="pageSlug" name="slug" value="{{ contentData.slug }}" class="form-control">
                     </div>
                     <div class="form-group">
                         <label>{{ message('intro') }}</label>
-                        <textarea name="intro" class="form-control" rows="7"></textarea>
+                        <textarea name="intro" class="form-control" rows="4">{{ data.intro }}</textarea>
                     </div>
                     <div class="form-group">
                         <label>{{ message('content') }}</label>
-                        <textarea name="content" id="content" cols="30" rows="10"></textarea>
+                        <textarea name="content" id="content" cols="30" rows="10">{{ data.content }}</textarea>
                     </div>
                 </div>
                 <div id="tabSeo" class="tab-pane">
                     <div class="form-group form-group-default required">
                         <label>H1</label>
-                        <input type="text" class="form-control" name="seoH1" value="{{ data.seoH1 }}">
+                        <input type="text" class="form-control" name="seoH1" value="{{ data.seo_title }}">
                     </div>
                     <div class="form-group form-group-default">
                         <label>Tag </label>
-                        <input type="text" class="form-control" name="seoTag" value="{{ data.seoTag }}">
+                        <input type="text" class="form-control" name="seoTag" value="{{ data.seo_tags }}">
                     </div>
                     <div class="form-group">
                         <label for="comment">{{ message('description') }}</label>
                           <textarea id="comment" rows="5" name="seoDescription"
-                                    class="form-control">{{ data.seoDescription }}</textarea>
+                                    class="form-control">{{ data.seo_description }}</textarea>
                     </div>
                 </div>
                 <div id="tabDev" class="tab-pane">
                     <div class="form-group">
                         <label for="comment">Include top:</label>
                           <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
-                                    class="form-control">{{ data.devIncludeTop }}</textarea>
+                                    class="form-control">{{ data.dev_top }}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="comment">Include bottom:</label>
                           <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
-                                    class="form-control">{{ data.devIncludeBot }}</textarea>
+                                    class="form-control">{{ data.dev_bot }}</textarea>
                     </div>
                 </div>
                 <div id="tabFile" class="tab-pane">
-                    <div class="upload-container" data-type="DOWNLOAD" data-id="{{ data.id }}" data-table="tableFiles">
+                    <div class="upload-container" data-type="DOWNLOAD" data-id="{{ contentData.id }}" data-table="tableFiles">
                         <input style="display:none" class="fileupload" type="file" name="files[]"
                                data-url="/admin/file/upload" multiple>
                         <div class="dropzone">
@@ -176,7 +181,7 @@
                 </div>
 
                 <div id="tabGallery" class="tab-pane">
-                    <div class="upload-container" data-type="GALLERY" data-id="{{ data.id }}" data-table="tableGallery">
+                    <div class="upload-container" data-type="GALLERY" data-id="{{ contentData.id }}" data-table="tableGallery">
                         <input style="display:none" class="fileupload" type="file" name="files[]"
                                data-url="/admin/file/upload" multiple>
                         <div class="dropzone">
@@ -207,86 +212,18 @@
                 </div>
             </div>
         </div>
-        <script>
-            $(function () {
-
-                var tags = {{ tags | raw }};
-                var categories = {{ categories | raw }};
-                var contentType = '{{ contentType }}';
-
-                var renderSelectLanguage = function (data) {
-                    var $state = $(
-                            '<span><img src="/resources/admin/img/flags/' + data.id.toLowerCase() + '.png" class="img-flag" /> ' + data.text + '</span>'
-                    );
-                    return $state;
-                };
-
-                $('#selectLanguage').select2({
-                    minimumResultsForSearch: -1,
-                    formatSelection: renderSelectLanguage,
-                    formatResult: renderSelectLanguage,
-                });
-
-                var datepickeroptions = {
-                    format: 'yyyy-mm-dd',
-                }
-                $('#dateEnd').datepicker(datepickeroptions);
-
-                if($('#dateBegin').val().length === 0){
-                    var d = new Date();
-                    var curr_date = ("0" + d.getDate()).slice(-2);
-                    var curr_month = ("0" + (d.getMonth() + 1)).slice(-2);
-                    var curr_year = d.getFullYear();
-                    var currentDate = curr_year + '-' +  curr_month + "-" + curr_date;
-                    $('#dateBegin').val(currentDate);
-                }
-                $('#dateBegin').datepicker(datepickeroptions);
-
-                var timepickerConfig = function(e) {
-                    var widget = $('.bootstrap-timepicker-widget');
-                    widget.find('.glyphicon-chevron-up').removeClass().addClass('pg-arrow_maximize');
-                    widget.find('.glyphicon-chevron-down').removeClass().addClass('pg-arrow_minimize');
-                };
-
-                $('#dateTimeBegin').timepicker({
-                    showMeridian: false,
-                    defaultTime: 'current',
-                }).on('show.timepicker', timepickerConfig);
-
-                $('#dateTimeBegin').timepicker({
-                    defaultTime: false,
-                    showMeridian: false,
-                }).on('show.timepicker', timepickerConfig);
-
-                $('.timepicker').focus(function(){
-                    $(this).parent().find('span.input-group-addon').trigger('click');
-                })
-
-                $('#categories').tagEditor({
-                    placeholder: 'Enter categories ...',
-                    autocomplete: { source: categories, minLength: 1},
-                });
-
-                $('#tags').tagEditor({
-                    placeholder: 'Enter tags ...',
-                    autocomplete: { source: tags, minLength: 1},
-                });
-
-                $.Cms.initTinyMce({ selector: '#content' });
-
-                // Save a page
-                $('#saveBtn').on('click', function () {
-                    tinyMCE.triggerSave();
-                    console.log('submit');
-                    $('#contentForm').submit();
-                });
-
-            });
-        </script>
     </form>
 
 {% endblock content %}
 
 {% block bottom %}
-    <script src="/resources/admin/js/page/cms.js"></script>
+    <script>
+        var tags = {{ tags | raw }};
+        var categories = {{ categories | raw }};
+        var contentType = '{{ contentType }}';
+
+        var initialTags= {{ initialTags | raw }};
+        var initialCategories= {{ initialCategories | raw }};
+    </script>
+    <script src="/resources/admin/js/page/web-content-edit.js"></script>
 {% endblock bottom %}

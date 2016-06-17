@@ -49,8 +49,12 @@ public class ContentEntity extends AbstractTimestampEntity {
     )
     private Set<PrivilegeEntity> privileges;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "contents")
-    private Set<TaxonomyTermEntity> taxonomyTermEntities;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "content_term",
+            joinColumns = @JoinColumn(name = "content_id", referencedColumnName = "id") ,
+            inverseJoinColumns = @JoinColumn(name = "taxonomy_term_id", referencedColumnName = "id"))
+    private Set<TaxonomyTermEntity> taxonomyTermEntities = new HashSet<>();
+
     @OneToMany(mappedBy = "content", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ContentDictionaryEntity> dictionaryList;
 

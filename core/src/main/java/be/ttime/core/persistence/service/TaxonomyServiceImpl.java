@@ -37,7 +37,7 @@ public class TaxonomyServiceImpl implements ITaxonomyService {
     public TaxonomyTermEntity createIfNotExist(String term, String type) {
         TaxonomyTermEntity termEntity = taxonomyTermRepository.findByNameAndTaxonomyTypeName(term.toLowerCase(), type);
         if(termEntity == null){
-            add(term, type);
+            termEntity = add(term, type);
         }
         return termEntity;
     }
@@ -89,11 +89,11 @@ public class TaxonomyServiceImpl implements ITaxonomyService {
       //  return result;
     }
 
-    private void add(String term, String type){
+    private TaxonomyTermEntity add(String term, String type){
         TaxonomyTermEntity termEntity = new TaxonomyTermEntity();
         termEntity.setName(term.toLowerCase());
         TaxonomyTypeEntity typeEntity = createTypeIfNotExist(type);
         termEntity.setTaxonomyType(typeEntity);
-        taxonomyTermRepository.save(termEntity);
+        return taxonomyTermRepository.save(termEntity);
     }
 }

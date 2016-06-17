@@ -58,7 +58,7 @@
 
     $table.on('click', '.btn-modal-edit', function () {
       var id = $(this).closest('tr').data('id');
-      document.location.href = '/admin/webContent/edit/' + id + '?langCode=' + window.locale;
+      document.location.href = '/admin/webContent/edit/' + contentType + '/' + id + '?langCode=' + window.locale;
     });
 
     $.Cms.initTabSwitchYesNo({

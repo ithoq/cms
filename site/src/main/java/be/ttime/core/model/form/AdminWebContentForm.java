@@ -19,12 +19,13 @@ public class AdminWebContentForm {
     private String dateTimeEnd;
     private String categories;
     private String tags;
+    private String previousFile;
     private MultipartFile thumbnail;
     private String title;
     @NotEmpty
     private String slug;
     private String intro;
-    private String editorContent;
+    private String content;
     private String devIncludeTop;
     private String devIncludeBot;
 
