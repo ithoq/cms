@@ -6,7 +6,7 @@
   var $selectType;
   var $modalCreateNewPage;
   var $tableFiles;
-  var $tablesGallery;
+  var $tableGallery;
   var $pageForm;
 
   //=include include/cms/page_function.js

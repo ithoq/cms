@@ -6,7 +6,7 @@
   var $selectType;
   var $modalCreateNewPage;
   var $tableFiles;
-  var $tablesGallery;
+  var $tableGallery;
   var $pageForm;
 
   function updatePagePosition(pagesToUpdate, parentId) {
@@ -316,17 +316,18 @@
       }
     });
     
+    /*
     $('#fileupload').bind('fileuploadsubmit', function (e, data) {
       var $input = $('#currentContentId');
       data.formData = { contentId: $input.val() };
-    });
+    });*/
     
 
     $pageForm.on('click', '#tabFileBtn', function () {
       var tableFileId = '#tableFiles';
       $tableFiles = $(tableFileId);
     
-      if (!$.fn.DataTable.isDataTable($tablesGallery)) {
+      if (!$.fn.DataTable.isDataTable($tableGallery)) {
         var options = {};
         options.elementId = tableFileId;
         options.$element = $tableFiles;
@@ -340,11 +341,11 @@
     
     $pageForm.on('click', '#tabGalleryBtn', function () {
       var tableGalleryId = '#tableGallery';
-      $tablesGallery = $(tableGalleryId);
-      if (!$.fn.DataTable.isDataTable($tablesGallery)) {
+      $tableGallery = $(tableGalleryId);
+      if (!$.fn.DataTable.isDataTable($tableGallery)) {
         var options = {};
         options.elementId = tableGalleryId;
-        options.$element = $tablesGallery;
+        options.$element = $tableGallery;
         options.type = 'GALLERY';
         options.searchElementId = '#search-table-gallery';
     
