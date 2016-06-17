@@ -16,6 +16,9 @@
         {{ csrf | raw }}
         <input id="contentId" type="hidden" name="contentId" value="{{ content.id }}"/>
         <input id="contentDataId" type="hidden" name="contentDataId" value="{{ contentData.id }}"/>
+        <input id="currentContentId" type="hidden" name="currentContentId" value="{{ contentData.id }}"/>
+
+
         <input id="contentType" type="hidden" name="contentType" value="{{ contentType }}"/>
         <div class="panel panel-default">
             <div class="panel-body">

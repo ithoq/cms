@@ -24,7 +24,7 @@
         { // Active
           aTargets: [0],
           className: 'center',
-          render: $.Cms.dataTableRenderBoolean
+          render: $.Cms.dataTableRenderBoolean,
         },
         { // Category
           aTargets: [2],

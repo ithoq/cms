@@ -44,7 +44,7 @@ $('#btnFormCeatePage').click(function () {
     formElement: '#createPageForm',
     successMessage: 'The page was created successfully!',
     onSuccess: function (data, status, response) {
-      if(response.getResponseHeader('Validation-Failed')) {
+      if (response.getResponseHeader('Validation-Failed')) {
         window.console.log(data);
         $.Cms.notif({
           message: 'Validation error',
