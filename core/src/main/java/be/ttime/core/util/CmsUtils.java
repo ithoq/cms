@@ -220,9 +220,22 @@ public class CmsUtils {
         }
     }
 
+    public static String getFilePath(File file, String limit){
+
+        File parent = file.getParentFile();
+        if(limit.equals(parent.getName())){
+            return "";
+        }
+        else{
+            return getFilePath(parent, limit) + "/" + parent.getName();
+        }
+    }
+
     public static File uploadFile(MultipartFile uploadFile, boolean isPrivate) throws IOException {
+        return uploadFile(uploadFile, isPrivate, null);
+    }
 
-
+    public static File uploadFile(MultipartFile uploadFile, boolean isPrivate, String prePath) throws IOException {
         Slugify slg = null;
         try {
             slg = new Slugify();
@@ -234,14 +247,19 @@ public class CmsUtils {
         String prefix = slg.slugify(baseName);
         File serverFile = null;
         if(isPrivate) {
-
             if(prefix.length() < 3){
                 prefix += "___";
             }
             serverFile = File.createTempFile(prefix, "." + ext, getUploadDirectory(isPrivate));
         } else {
-            serverFile= new File(getUploadDirectory(false).getAbsolutePath() + "/" + prefix + "." + ext);
+            String filePath = getUploadDirectory(false).getAbsolutePath();
+            if(!StringUtils.isEmpty(prePath)){
+                filePath += "/" + prePath;
+            }
+            filePath += "/" + prefix + "." + ext;
+            serverFile= new File(filePath);
         }
+        serverFile.getParentFile().mkdirs();
         BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
         stream.write(uploadFile.getBytes());
         stream.close();

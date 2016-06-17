@@ -11,6 +11,7 @@ import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.persistence.service.ITaxonomyService;
 import be.ttime.core.util.CmsUtils;
+import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -137,7 +138,7 @@ public class AdminWebContentController {
 
             Date begin = CmsUtils.parseDate(form.getDateBegin(), form.getDateTimeBegin());
             Date end =  CmsUtils.parseDate(form.getDateEnd(),form.getDateTimeEnd());
-
+            Slugify slugify = new Slugify();
             ContentEntity content = null;
             ContentDataEntity contentData = null;
 
@@ -164,26 +165,22 @@ public class AdminWebContentController {
                 contentData = contentService.findContentData(form.getContentDataId());
             }
 
-
             content.setBeginDate(begin);
             content.setEndDate(end);
 
             contentData.setTitle(form.getTitle());
-            contentData.setSlug(form.getSlug());
+            contentData.setSlug(slugify.slugify(form.getSlug()));
             contentData.setComputedSlug(getComputedSlug(form.getContentType(), form.getSlug()));
 
             // Form data
             Map<String, String> data = new HashMap<>();
 
-            if(form.getThumbnail() != null && !form.getThumbnail().isEmpty()){
-                File uploadedFile = CmsUtils.uploadFile(form.getThumbnail(), false);
-                data.put("image_preview", uploadedFile.getName());
-            }
             if(form.getThumbnail() != null){
                 // new or replace
                 if( !form.getThumbnail().isEmpty()){
-                    File uploadedFile = CmsUtils.uploadFile(form.getThumbnail(), false);
-                    data.put("image_preview", uploadedFile.getName());
+                    File uploadedFile = CmsUtils.uploadFile(form.getThumbnail(), false, form.getContentType().toLowerCase() + "/" + form.getContentId());
+                    String resultPath = CmsUtils.getFilePath(uploadedFile, "public") + "/" + uploadedFile.getName();
+                    data.put("image_preview", resultPath.substring(1));
                 }
                 // existing
                 else{

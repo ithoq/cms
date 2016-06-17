@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
 
 @Controller
 public class FileDownloadController {
@@ -44,8 +44,14 @@ public class FileDownloadController {
 
     }
 
-    @RequestMapping(value = "/public/{name}", method = RequestMethod.GET)
-    public void publicFile(HttpServletResponse response, @PathVariable("name") String name) throws Exception {
+    @RequestMapping(value = "/public/**", method = RequestMethod.GET)
+    public void publicFile(HttpServletResponse response, HttpServletRequest request) throws Exception {
+
+        String requestURI = request.getRequestURI();
+        if(requestURI.length() < 8){
+            throw new ResourceNotFoundException();
+        }
+        String name = requestURI.substring(8);
 
         File uploadDirectory = CmsUtils.getUploadDirectory(false);
         File file = new File(uploadDirectory.getAbsolutePath() + "/" + name);
