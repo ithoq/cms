@@ -17,7 +17,9 @@ public interface IContentService {
 
     String getPagesTree();
 
-    void delete(Long id) throws Exception;
+    void deleteContent(Long id) throws Exception;
+
+    void deleteContentData(Long id) throws Exception;
 
     ContentEntity findContentAdmin(Long id);
 

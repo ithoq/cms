@@ -109,9 +109,7 @@
             <div class="inline">
                 <h3 class="like-label">{{ message('cacheable') }}</h3>
                 <div class="fc-switch inline">
-                    {% verbatim %}
-                <input id="edit-block-cachaeble" name="cacheable" type="checkbox" {{#cacheable}}checked{{/cacheable}}>
-                {% endverbatim %}
+
                     <label for="edit-block-cachaeble" data-off="{{ message('no') }}"
                            data-on="{{ message('yes') }}"></label>
                 </div>
@@ -120,6 +118,8 @@
                 <label for="selectType">{{ message('type') }}</label>
                 <select id="selectType" name="blockType" data-disable-search="true" class="full-width">
                     <option value="CONTENT">{{ message('content') }}</option>
+                    <option value="PAGE_TEMPLATE">{{ message('PAGE_TEMPLATE') }}</option>
+                    <option value="SYSTEM">{{ message('PAGE_TEMPLATE') }}</option>
                 </select>
             </div>
             <div class="form-group form-group-default m-b-20 required">
@@ -138,7 +138,6 @@
             <div id="ace-editor">{{content}}</div>
         </div>
         {{/dynamic}}
-        <input name="id" type="hidden" value="{{id}}"/>
         {% endverbatim %}
 
                 <div class="row">

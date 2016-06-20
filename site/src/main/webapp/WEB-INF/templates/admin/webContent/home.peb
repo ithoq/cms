@@ -7,15 +7,22 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-block-title m-b-30">
-                <h2>{{ message('admin.newsManagement') | capitalize }}</h2>
+                {% set contentTypeToLower = contentType | lower %}
+                <h2>{{ message('admin.' + contentTypeToLower + '.management') | capitalize }}</h2>
             </div>
         </div>
         <div class="panel-body">
             <form role="form">
                 <div class="panel panel-transparent">
                     <div class="panel-body">
-                        <input id="web-content-table" type="text" placeholder="{{ message('search') }}"
-                               class="form-control pull-right">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <input id="web-content-table" type="text" placeholder="{{ message('search') }}" class="form-control pull-right">
+                            </div>
+                            <div class="col-md-3" style="text-align:right">
+                                <a href="/admin/webContent/edit/{{ contentType }}/0" class="btn btn-default">+</a>
+                            </div>
+                        </div>
                         <table id="webContentTable" class="table table-hover">
                             <thead>
                             <tr>
@@ -40,8 +47,8 @@
 
 {% block bottom %}
     <script>
-        var contentType = '{{contentType  }}';
-        var locale = 'en';
+        var contentType = '{{contentType}}';
+        var locale = '{{ locale }}';
     </script>
     <script src="/resources/admin/js/page/web-content-home.js"></script>
 {% endblock bottom %}

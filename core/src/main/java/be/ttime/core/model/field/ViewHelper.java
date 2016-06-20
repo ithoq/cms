@@ -97,6 +97,9 @@ public class ViewHelper {
                         }
                     }
                 }
+                else{
+                    inputMap.put("data", "");
+                }
 
                 //TODO: DATA
                // if()

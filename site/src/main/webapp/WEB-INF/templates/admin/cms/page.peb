@@ -1,20 +1,8 @@
 <input id="contentId" type="hidden" name="contentId" value="{{ content.id }}"/>
-<input id="contentDataId" type="hidden" name="contentId" value="{{ contentData.id }}"/>
+<input id="contentDataId" type="hidden" name="contentDataId" value="{{ contentData.id }}"/>
 <div class="panel panel-default">
     <div id="btn-expand" class="button btn btn-expand"><i aria-hidden="true" class="fa fa-expand"></i></div>
     <div class="panel-body">
-        <div class="operation-box">
-            {% if content.pageChildren is empty %}
-                <button type="button" data-toggle="modal" data-target="#modalSlideLeft"
-                        class="btn btn-default btn-delete"><i class="fa fa-trash-o"></i></button>
-            {% else %}
-                <button type="button" class="btn disabled" style="opacity: 0.3;pointer-events: auto;"
-                        data-toggle="tooltip" data-placement="bottom"
-                        title="Impossible de supprimer une page ayant des enfants"><i class="fa fa-trash-o"></i>
-                </button>
-            {% endif %}
-            <button id="savePageBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i></button>
-        </div>
         <span class="thumbnail-wrapper d100 circular inline m-t-5">{{ content.contentTemplate.name }}</span>
         <div class="panel-page-title">
             <input type="text" required name="name" id="pageName" value="{{ content.name }}"
@@ -52,6 +40,18 @@
             <div class="checkbox check-success">
                 <input id="contentActive" type="checkbox" checked="checked" value="{{ contentData.active }}">
                 <label for="contentActive">{{ message('active') }}</label>
+            </div>
+            <div class="operation-box">
+                {% if content.pageChildren is empty %}
+                    <button type="button" data-toggle="modal" data-target="#modalSlideLeft"
+                            class="btn btn-default btn-delete"><i class="fa fa-trash-o"></i></button>
+                {% else %}
+                    <button type="button" class="btn disabled" style="opacity: 0.3;pointer-events: auto;"
+                            data-toggle="tooltip" data-placement="bottom"
+                            title="Impossible de supprimer une page ayant des enfants"><i class="fa fa-trash-o"></i>
+                    </button>
+                {% endif %}
+                <button id="savePageBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i></button>
             </div>
         </div>
     </div>

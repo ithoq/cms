@@ -112,7 +112,10 @@ INSERT INTO `message` (`id`, `domain`, `messageKey`) VALUES
 (103, 'admin', 'admin.userManagement'),
 (104, 'admin', 'admin.templatesManagement'),
 (105, 'admin', 'admin.fieldManagement'),
-(106, 'general', 'forgotPassword');
+(106, 'general', 'forgotPassword'),
+(107, 'admin', 'admin.article.management'),
+(108, 'admin', 'admin.news.management'),
+(109, 'admin', 'admin.event.management');
 
 INSERT INTO `translation` (`id`, `value`, `language_locale`, `message_id`) VALUES
 (1, 'déposez vos fichiers ici', 'fr', 1),
@@ -326,7 +329,13 @@ INSERT INTO `translation` (`id`, `value`, `language_locale`, `message_id`) VALUE
 (209, 'gestion des champs', 'fr', 105),
 (210, 'field Management', 'en', 105),
 (211, 'Mot de passe oublié?', 'fr', 106),
-(212, 'Forgot your password?', 'en', 106);
+(212, 'Forgot your password?', 'en', 106),
+(213, 'article Management', 'fr', 107),
+(214, 'gestion des articles', 'en', 107),
+(215, 'news management', 'fr', 108),
+(216, 'gestion des actualités', 'en', 108),
+(217, 'event management', 'fr', 109),
+(218, 'gestion des événements', 'en', 109);
 
 INSERT INTO `privilege` (`id`, `name`) VALUES
 (1, 'USER_PRIVILEGE'),

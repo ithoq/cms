@@ -119,7 +119,15 @@ public class AdminCmsController {
         }
 
         try {
-            contentService.delete(urlId);
+            ContentDataEntity contentData = contentService.findContentData(urlId);
+            ContentEntity content = contentService.findContentAdmin(contentData.getContent().getId());
+            int size = content.getContentDataList().size();
+            if(size <=1){
+                contentService.deleteContent(urlId);
+            } else {
+                contentService.deleteContentData(urlId);
+            }
+
         } catch (Exception e) {
             response.setStatus(500);
             return "An error occurred, please try later";

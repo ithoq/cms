@@ -223,7 +223,7 @@
 
     // Delete a page
     $('#btnDeletePage').click(function () {
-      var id = $('#contentId').val();
+      var id = $('#contentDataId').val();
       var params = {
         url: '/admin/cms/page/delete/' + id,
         type: 'DELETE',

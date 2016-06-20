@@ -4,5 +4,3 @@
     <label>{{text.title}}</label>{% if text.hint is not empty %} <i data-placement="right" data-toggle="tooltip" data-original-title="{{text.hint}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
     <input type="text" class="form-control" id="{{ text.name }}" name="{{ text.name }}" value="{{data}}" />
 </div>
-
-{% if data is empty %} {% else

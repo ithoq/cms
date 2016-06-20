@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/admin/block")
@@ -65,21 +67,27 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public BlockEntity getBlock(@PathVariable("id") String id, HttpServletResponse response) {
+    public Map<String, Object> getBlock(@PathVariable("id") String id, HttpServletResponse response) {
 
         BlockEntity block = pageBlockRepository.find(id);
         if (block == null) {
             response.setStatus(500);
             return null;
         }
-        return pageBlockRepository.find(id);
+        BlockEntity e = pageBlockRepository.find(id);
+        Map<String,Object> result = new HashMap<>();
+        result.put("blockType", e.getBlockType().getName());
+        result.put("dynamic", e.isDynamic());
+        result.put("content", e.getContent());
+        result.put("name", e.getName());
+        return result;
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ResponseBody
-    public String setBlock(String id, String name, String content, String blockType, boolean cacheable, HttpServletResponse response) throws Exception {
+    public String setBlock(String name, String content, String blockType, HttpServletResponse response) throws Exception {
 
-        BlockEntity page = pageBlockRepository.find(id);
+        BlockEntity page = pageBlockRepository.find(name);
 
         BlockTypeEntity blockTypeEntity = blockTypeRepository.findOne(blockType);
 

@@ -4,6 +4,7 @@ import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.persistence.model.FileEntity;
 import be.ttime.core.persistence.service.IFileService;
 import be.ttime.core.util.CmsUtils;
+import be.ttime.core.util.FileTypeDetector;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -28,6 +29,9 @@ public class FileDownloadController {
 
     @Autowired
     private IFileService pageFileService;
+
+    @Autowired
+    private FileTypeDetector fileTypeDetector;
 
     @RequestMapping(value = "/download/{name}", method = RequestMethod.GET)
     public void downloadFileByName(HttpServletResponse response, @PathVariable("name") String name, Boolean force) throws Exception {
@@ -56,8 +60,9 @@ public class FileDownloadController {
         File uploadDirectory = CmsUtils.getUploadDirectory(false);
         File file = new File(uploadDirectory.getAbsolutePath() + "/" + name);
         if(file.exists()){
-           // String mimeType = Files.probeContentType(file.toPath());
-            response.setContentType("application/octet-stream");
+            String mimeType = fileTypeDetector.probeContentType(file.toPath());
+
+            response.setContentType(mimeType != null ? mimeType : "application/octet-stream");
             response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
             response.setContentLength((int) file.length());
             InputStream inputStream = new BufferedInputStream(new FileInputStream(file));

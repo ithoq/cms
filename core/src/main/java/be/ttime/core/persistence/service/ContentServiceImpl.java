@@ -196,7 +196,7 @@ public class ContentServiceImpl implements IContentService {
             @CacheEvict(value = "adminContent", key = "#p.id"),
             @CacheEvict(value = "mainNav", allEntries = true),
     })
-    public void delete(Long id) throws Exception {
+    public void deleteContent(Long id) throws Exception {
         ContentEntity current = contentRepository.findOne(id);
 
         // Exist
@@ -220,6 +220,10 @@ public class ContentServiceImpl implements IContentService {
         }
     }
 
+    @Override
+    public void deleteContentData(Long id) throws Exception {
+        contentDataRepository.delete(id);
+    }
 
     @Override
     @Caching(evict = {

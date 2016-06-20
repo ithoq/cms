@@ -47,10 +47,22 @@ public class AdminWebContentController {
     @Autowired
     private ITaxonomyService taxonomyService;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public String home(ModelMap model) throws Exception{
-        model.put("contentType", "NEWS");
+    @RequestMapping(value = "{contentType}", method = RequestMethod.GET)
+    public String home(@PathVariable("contentType") String contentType, ModelMap model) throws Exception{
+        return home(contentType, null, model);
+    }
 
+    @RequestMapping(value = "{contentType}/{locale}", method = RequestMethod.GET)
+    public String home(@PathVariable("contentType") String contentType, @PathVariable("locale") String locale, ModelMap model) throws Exception{
+        if(!contentService.contentTypeExist(contentType)){
+            throw new ResourceNotFoundException();
+        }
+
+        if(locale == null || applicationService.getSiteLanguagesMap().get(locale) == null){
+            locale = applicationService.getDefaultSiteLang();
+        }
+
+        model.put("contentType", contentType);
         return VIEWPATH + "home";
     }
 
@@ -241,8 +253,11 @@ public class AdminWebContentController {
     @RequestMapping(value = "/getJson", method = RequestMethod.GET)
     @ResponseBody
     public String getjson(String contentType, String locale) throws Exception {
+        if(!contentService.contentTypeExist(contentType)){
+            throw new ResourceNotFoundException();
+        }
 
-        return contentService.getContentJsonByTypeAndLocale(CmsUtils.CONTENT_TYPE_NEWS, "en");
+        return contentService.getContentJsonByTypeAndLocale(contentType, locale);
         //return contentService.("all");
     }
 
