@@ -3,18 +3,17 @@ package be.ttime.core.controller;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.model.field.PageData;
 import be.ttime.core.model.form.AdminWebContentForm;
-import be.ttime.core.persistence.model.ContentDataEntity;
-import be.ttime.core.persistence.model.ContentEntity;
-import be.ttime.core.persistence.model.ContentTypeEntity;
-import be.ttime.core.persistence.model.TaxonomyTermEntity;
+import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IContentService;
+import be.ttime.core.persistence.service.IContentTemplateService;
 import be.ttime.core.persistence.service.ITaxonomyService;
 import be.ttime.core.util.CmsUtils;
 import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +45,8 @@ public class AdminWebContentController {
     private IApplicationService applicationService;
     @Autowired
     private ITaxonomyService taxonomyService;
+    @Autowired
+    private IContentTemplateService contentTemplateService;
 
     @RequestMapping(value = "{contentType}", method = RequestMethod.GET)
     public String home(@PathVariable("contentType") String contentType, ModelMap model) throws Exception{
@@ -74,6 +75,7 @@ public class AdminWebContentController {
         }
         ContentEntity content = null;
         ContentDataEntity contentData = null;
+        ContentTemplateEntity template = null;
         if(id != null && id != 0){
             content =  contentService.findContentAdmin(id);
             if(content == null){
@@ -121,9 +123,17 @@ public class AdminWebContentController {
                 data.put("date_end_time", date[1].substring(0, date[1].length()-3));
             }
             model.put("data", data);
+            template = contentTemplateService.find(content.getContentTemplate().getId());
+            model.put("pageData", CmsUtils.parseStringToPageDate(contentData.getData()));
+
+        }
+        else{
+            template = contentTemplateService.findByName("Webcontent");
         }
 
 
+
+        model.put("template", template);
         model.put("initialTags", gson.toJson(tags));
         model.put("initialCategories", gson.toJson(categories));
         model.put("content", content);
@@ -139,7 +149,8 @@ public class AdminWebContentController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @Transactional
     public String save(@Valid AdminWebContentForm form, BindingResult result, MultipartHttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception{
-
+        ContentEntity content = null;
+        ContentDataEntity contentData = null;
 
         // if errors
 
@@ -151,13 +162,17 @@ public class AdminWebContentController {
             Date begin = CmsUtils.parseDate(form.getDateBegin(), form.getDateTimeBegin());
             Date end =  CmsUtils.parseDate(form.getDateEnd(),form.getDateTimeEnd());
             Slugify slugify = new Slugify();
-            ContentEntity content = null;
-            ContentDataEntity contentData = null;
+
 
             // get content
             if(form.getContentId() == null){
                 content = new ContentEntity();
                 content.setContentType(new ContentTypeEntity(form.getContentType()));
+                ContentTemplateEntity c = contentTemplateService.findByName("Webcontent");
+                if(c == null){
+                    throw new Exception("Content Template Webcontent not exist");
+                }
+                content.setContentTemplate(c);
             }
             else{
                 content = contentService.findContent(form.getContentId());
@@ -182,7 +197,7 @@ public class AdminWebContentController {
 
             contentData.setTitle(form.getTitle());
             contentData.setSlug(slugify.slugify(form.getSlug()));
-            contentData.setComputedSlug(getComputedSlug(form.getContentType(), form.getSlug()));
+            contentData.setComputedSlug(getComputedSlug(form.getContentType(), form.getSlug(), begin, contentData.getLanguage().getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));
 
             // Form data
             Map<String, String> data = new HashMap<>();
@@ -199,16 +214,15 @@ public class AdminWebContentController {
                     data.put("image_preview", form.getPreviousFile());
                 }
             }
-
-            data.put("intro", form.getIntro());
-            data.put("content", form.getContent());
+            ContentTemplateEntity ct = contentTemplateService.find(content.getContentTemplate().getId());
+            PageData pageData = CmsUtils.fillData(ct.getContentTemplateFieldset(), request);
             data.put("dev_top", form.getDevIncludeTop());
             data.put("dev_bot", form.getDevIncludeBot());
-            data.put("seo_title", form.getSeoH1());
+            data.put("seo_h1", form.getSeoH1());
             data.put("seo_description", form.getSeoDescription());
             data.put("seo_tags", form.getSeoTag());
-            PageData pageData = new PageData();
-            pageData.setDataString(data);
+
+            pageData.getDataString().putAll(data);
             Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
             String json = gson.toJson(pageData);
             contentData.setData(json);
@@ -244,7 +258,7 @@ public class AdminWebContentController {
 
         return "redirect:/admin/webContent/edit/" +
                 form.getContentType()+ "/" +
-                form.getContentId() +
+                content.getId() +
                 "?langCode=" +
                 form.getSelectLanguage();
     }
@@ -261,22 +275,40 @@ public class AdminWebContentController {
         //return contentService.("all");
     }
 
-    private String getComputedSlug(String type, String slug) {
-        String computedSlug = null;
+    private String getComputedSlug(String type, String slug, Date dateCreated, String locale, boolean forceLangInUrl) {
+        StringBuilder computedSlug = new StringBuilder();
+        DateTime dateTime = new DateTime(dateCreated);
+
+        if(forceLangInUrl){
+            computedSlug.append("/").append(locale);
+        }
         switch (type){
             case "NEWS" :
-                computedSlug ="/news/" + slug;
+                computedSlug.append("/news/");
                 break;
             case "EVENT" :
-                computedSlug ="/event/" + slug;
+                computedSlug.append("/event/");
                 break;
             case "ARTICLE" :
-                computedSlug ="/article/" + slug;
+                computedSlug.append("/article/");
                 break;
             default:
                 throw new IllegalArgumentException("Invalid content type : " + type);
         }
-        return computedSlug;
+
+        int day = dateTime.getDayOfMonth();
+        int month = dateTime.getMonthOfYear();
+        int year = dateTime.getYear();
+
+        computedSlug.append(year)
+                    .append("/")
+                    .append(CmsUtils.twoDigit(month))
+                    .append("/")
+                    .append(CmsUtils.twoDigit(day))
+                    .append("/")
+                    .append(slug);
+
+        return computedSlug.toString();
     }
 
 }

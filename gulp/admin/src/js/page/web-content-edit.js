@@ -6,6 +6,8 @@ $(function () {
   $.Cms.addCsrfAjaxHeaderToken();
   //=include include/cms/datatables_event.js
 
+  $.Cms.initDynamicFields($pageForm);
+  
   $('.upload-container').each(function (index, element) {
     var $el = $(element);
     var options = {};

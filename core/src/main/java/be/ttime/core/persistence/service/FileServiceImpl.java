@@ -51,7 +51,7 @@ public class FileServiceImpl implements IFileService {
         if(type == null){
             files = pageFileRepository.findByContentDataEntityId(contentDataId);
         } else{
-            files = pageFileRepository.findByContentDataEntityIdAndContentTypeName(contentDataId, type);
+            files = pageFileRepository.findByContentDataEntityIdAndFileTypeName(contentDataId, type);
         }
 
         JsonArrayBuilder data = Json.createArrayBuilder();

@@ -1,0 +1,68 @@
+<div class="breadcrumb">
+    <div class="l-container">
+        <p class="breadcrumb-article-cat">Collective complaint</p><span class="breadcrumb-article-date">26 Apr</span>
+        <p class="breadcrumb-article-title">Lorem ipsum dolor sit amet sit ipsum et ames</p>
+    </div>
+</div>
+<div class="detail-container">
+    <div class="download-background"></div>
+    <div class="l-container">
+        <div class="main-content">
+            <div class="article-container">
+                <div class="flexslider">
+                    <ul class="slides">
+                        <li><img src="http://fpoimg.com/749x500" alt=""></li>
+                        <li><img src="http://fpoimg.com/749x500" alt=""></li>
+                        <li><img src="http://fpoimg.com/749x500" alt=""></li>
+                        <li><img src="http://fpoimg.com/749x500" alt=""></li>
+                    </ul>
+                </div>
+                <div class="article-content">
+                    <p class="article-intro">{{data._textarea}}</p>
+                    <div class="editor-content">
+                        {{data._editor | raw}}
+                    </div>
+                </div>
+            </div>
+            <div class="download-section">
+                <div class="download-section-title">download section</div>
+                <div class="download-section-group">Pratical info</div>
+                <div class="ul-files">
+                    <li><a href="">Access détails</a></li>
+                    <li><a href="">Lists of conference</a></li>
+                </div>
+                <div class="download-section-group">Pratical info</div>
+                <div class="ul-files">
+                    <li><a href="">Presentation 1 title</a></li>
+                    <li><a href="">Presentation 2 title</a></li>
+                </div>
+            </div>
+            <div class="article-container">
+                <ul class="social-icons">
+                    <li><a href=""><i aria-hidden="true" class="fa fa-facebook"></i></a></li>
+                    <li><a href=""><i aria-hidden="true" class="fa fa-twitter"></i></a></li>
+                    <li><a href=""><i aria-hidden="true" class="fa fa-linkedin"></i></a></li>
+                </ul>
+                <ul class="tags">
+                    {% for t in content.getTaxonomy('TAG') %}
+                        <li><a href="">{{ t.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                <ul class="cats">
+                    {% for t in content.getTaxonomy('CATEGORY') %}
+                        <li><a href="">{{ t.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                <div class="related-resources-container">
+                    <div class="related-title">Related Resources</div>
+                    <div class="row">
+                        <div class="col-md-3 col-xs-6"><img src="http://fpoimg.com/165x110" alt=""><span> Lorem ipsum dolor sit amet, consectetur adipisicing elit.</span></div>
+                        <div class="col-md-3 col-xs-6"><img src="http://fpoimg.com/165x110" alt=""><span> Lorem ipsum dolor sit amet, consectetur adipisicing elit.</span></div>
+                        <div class="col-md-3 col-xs-6"><img src="http://fpoimg.com/165x110" alt=""><span> Lorem ipsum dolor sit amet, consectetur adipisicing elit.</span></div>
+                        <div class="col-md-3 col-xs-6"><img src="http://fpoimg.com/165x110" alt=""><span> Lorem ipsum dolor sit amet, consectetur adipisicing elit.</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

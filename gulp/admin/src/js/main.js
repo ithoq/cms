@@ -24,6 +24,7 @@
   //=include include/utils.js
   //=include include/ajax.js
   //=include include/tabSwitchYesNo.js
+  //=include include/initDynamicFields.js
   //=include include/notif.js
   //=include include/plugin_datatables.js
   //=include include/upload.js

@@ -14,12 +14,13 @@ public class EditPageForm {
     private String name;
     @NotEmpty
     private String slug;
-    private String seoTitle;
-    private String seoTag;
-    private String seoDescription;
-    private String seoH1;
+
     private String devIncludeTop;
     private String devIncludeBot;
+
+    private String seoH1;
+    private String seoTag;
+    private String seoDescription;
     private boolean menuItem;
     private boolean enabled;
 }

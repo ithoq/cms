@@ -132,12 +132,11 @@ public class AdminContentTemplateController {
         if(block == null){
             block = new BlockEntity();
             block.setName(blockPosted.getName());
-            // TO DO : block.setBlockType();
+            block.setBlockType(new BlockTypeEntity(CmsUtils.BLOCK_TYPE_CONTENT_TEMPLATE));
         }
 
         block.setDynamic(true);
         block.setEnabled(true);
-
 
         block.setDisplayName(blockPosted.getDisplayName());
         block.setContent(blockPosted.getContent());
@@ -147,6 +146,7 @@ public class AdminContentTemplateController {
         content.setActive(contentForm.isActive());
         content.setName(contentForm.getName());
         content.setDescription(contentForm.getDescription());
+        content.setDeletable(true);
         // save
         if(content.getId() == 0) {
            content = contentTemplateService.save(content);

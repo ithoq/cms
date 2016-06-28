@@ -3,9 +3,10 @@ package be.ttime.core.persistence.model;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "content_data", indexes = {
@@ -42,4 +43,20 @@ public class ContentDataEntity extends AbstractTimestampEntity {
 
     @OneToMany(mappedBy = "contentData", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CommentEntity> commentList;
+
+    // TODO : something better than this
+    public Map<String, List<FileEntity>> getFileByGroupMap(){
+        Map<String, List<FileEntity>> result = new HashMap<>();
+        for (FileEntity f : contentFiles) {
+            if(!StringUtils.isEmpty(f.getFileGroup()) && f.getFileType().getName().equals("DOWNLOAD")){
+                List<FileEntity> list = result.get(f.getFileGroup());
+                if(list == null){
+                    list = new ArrayList<>();
+                }
+                list.add(f);
+                result.put(f.getFileGroup(), list);
+            }
+        }
+        return result;
+    }
 }

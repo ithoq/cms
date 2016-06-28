@@ -45,6 +45,9 @@ public class ViewHelper {
 
     public String renderField(ContentTemplateEntity template, PageData pageData) throws Exception {
 
+        if(template == null){
+            return null;
+        }
         StringBuilder builder = new StringBuilder();
         Map<String, Object> model;
         Slugify slg = new Slugify();
@@ -69,7 +72,7 @@ public class ViewHelper {
                 inputMap.put("isArray", contentTemplateFieldset.isArray());
                 if(pageData!= null) {
                     String inputType = inputDataEntity.getInputDefinition().getType();
-                    if (inputDataEntity.getFieldset().isArray()) {
+                    if (fieldset.isArray() && contentTemplateFieldset.isArray()) {
                         if (inputType.equals("date")) {
                             Date[] dates = pageData.getDataDateArray().get(finalName);
                             if (dates != null) {
@@ -80,29 +83,26 @@ public class ViewHelper {
                                     }
                                     sb.append(dateFormatter.format(dates[i]));
                                 }
-                                model.put("data", sb.toString());
+                                inputMap.put("data", sb.toString());
                             }
                         } else {
-                            model.put("data", Arrays.toString(pageData.getDataStringArray().get(finalName)));
+                            inputMap.put("data", Arrays.toString(pageData.getDataStringArray().get(finalName)));
                         }
                     } else {
                         if (inputType.equals("date")) {
                             Date d = pageData.getDataDate().get(finalName);
                             if (d != null) {
-                                model.put("data", dateFormatter.format(d));
+                                inputMap.put("data", dateFormatter.format(d));
                             }
 
                         } else {
-                            model.put("data", pageData.getDataString().get(finalName));
+                            inputMap.put("data", pageData.getDataString().get(finalName));
                         }
                     }
                 }
-                else{
-                    inputMap.put("data", "");
-                }
 
-                //TODO: DATA
-               // if()
+                // avoid "null"
+                inputMap.putIfAbsent("data", "");
 
                 inputsMap.put(finalName, inputMap);
             }

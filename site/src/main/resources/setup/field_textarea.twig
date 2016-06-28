@@ -1,0 +1,6 @@
+{% set textarea = inputs[np + "textarea"] %}
+
+<div class="form-group m-t-10">
+    <label>{{textarea.title}}</label>{% if textarea.hint is not empty %} <i data-placement="right" data-toggle="tooltip" data-original-title="{{textarea.hint}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
+    <textarea rows="4" class="form-control" id="{{ textarea.name }}" name="{{ textarea.name }}">{{textarea.data}}</textarea>
+</div>

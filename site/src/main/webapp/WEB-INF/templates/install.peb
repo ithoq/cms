@@ -34,7 +34,7 @@
                     </div>
                     <div class="form-group">
                         <div class="checkbox ">
-                            <input type="checkbox" name="langInUrl"  value="0" id="checkboxForceLang">
+                            <input type="checkbox" name="langInUrl" id="checkboxForceLang">
                             <label for="checkboxForceLang">Force Lang in URL</label><span class="help">e.g. "/fr/home"</span>
                         </div>
                     </div>

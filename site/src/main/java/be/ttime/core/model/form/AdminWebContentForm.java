@@ -24,8 +24,6 @@ public class AdminWebContentForm {
     private String title;
     @NotEmpty
     private String slug;
-    private String intro;
-    private String content;
     private String devIncludeTop;
     private String devIncludeBot;
 

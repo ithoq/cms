@@ -55,7 +55,7 @@ public class CmsController {
 
         // TODO: Vérifier les droits
 
-
+        model.put("title", contentData.getTitle());
          if (!StringUtils.isEmpty(contentData.getData())) {
             HashMap<String, Object> data = CmsUtils.parseData(contentData.getData());
             model.put("data", data);
@@ -63,7 +63,8 @@ public class CmsController {
         }
 
         CmsUtils.fillModelMap(model,request);
-        model.put("content", contentData);
+        model.put("contentData", contentData);
+        model.put("content", contentData.getContent());
         // Pas grave pour les perfs car les blocks seront dans le cache
         BlockEntity master = blockService.find(CmsUtils.BLOCK_PAGE_MASTER);
         ContentTemplateEntity templateEntity = contentTemplateService.find(contentData.getContent().getContentTemplate().getId());

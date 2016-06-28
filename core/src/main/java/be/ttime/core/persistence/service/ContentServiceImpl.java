@@ -58,18 +58,6 @@ public class ContentServiceImpl implements IContentService {
                 .singleResult(contentDataEntity);
 //        entityManager.clear();
 
-        /*  JUSTE POUR TESTER */
-        contentEntity = QContentEntity.contentEntity;
-        query = new JPAQuery(entityManager);
-        List<ContentEntity> roots =
-                query.from(contentEntity)
-                        .where(contentEntity.enabled.eq(true)
-                                .and(contentEntity.menuItem.eq(true))
-                                .and(contentEntity.contentParent.isNull()))
-                        .orderBy(contentEntity.order.asc())
-                        .list(contentEntity);
-
-     /*  JUSTE POUR TESTER */
         if (result != null) {
             query = new JPAQuery(entityManager);
             ContentEntity parent = query.from(contentEntity)
@@ -193,7 +181,7 @@ public class ContentServiceImpl implements IContentService {
     @Caching(evict = {
             @CacheEvict(value = "content", allEntries = true),
             @CacheEvict(value = "adminTree", allEntries = true),
-            @CacheEvict(value = "adminContent", key = "#p.id"),
+            @CacheEvict(value = "adminContent", key = "#id"),
             @CacheEvict(value = "mainNav", allEntries = true),
     })
     public void deleteContent(Long id) throws Exception {
@@ -254,7 +242,9 @@ public class ContentServiceImpl implements IContentService {
                 query.from(contentEntity)
                         .where(contentEntity.enabled.eq(true)
                                 .and(contentEntity.menuItem.eq(true))
-                                .and(contentEntity.contentParent.isNull()))
+                                .and(contentEntity.contentParent.isNull())
+                                .and(contentEntity.contentType.name.like("PAGE%"))
+                        )
                         .orderBy(contentEntity.order.asc())
                         .list(contentEntity);
 

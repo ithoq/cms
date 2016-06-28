@@ -79,6 +79,7 @@ dependencies {
     compile('org.hibernate:hibernate-validator:5.2.4.Final')
     compile('org.passay:passay:1.1.0')
     compile('org.slf4j:slf4j-api')
+    compile('joda-time:joda-time:2.9.4')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.security:spring-security-config')

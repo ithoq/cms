@@ -14,4 +14,7 @@ public interface IContentTemplateRepository extends JpaRepository<ContentTemplat
     ContentTemplateEntity findByIdWithFieldset(@Param("id") Long id);
 
     List<ContentTemplateEntity> findByContentTypeNameLike(String name);
+
+    @Query("SELECT c from ContentTemplateEntity c LEFT JOIN FETCH c.contentTemplateFieldset LEFT JOIN FETCH c.block WHERE c.name = :name ")
+    ContentTemplateEntity findFirstByName(@Param("name") String name);
 }

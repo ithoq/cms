@@ -29,6 +29,10 @@ public class ContentTemplateServiceImpl implements IContentTemplateService {
         return contentTemplateRepository.findByContentTypeNameLike(type);
     }
 
+    @Override
+    public ContentTemplateEntity findByName(String name) {
+        return contentTemplateRepository.findFirstByName(name);
+    }
 
     @Override
     @Cacheable(value = "template", key = "#id")

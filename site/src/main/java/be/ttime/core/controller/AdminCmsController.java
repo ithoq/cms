@@ -6,14 +6,7 @@ import be.ttime.core.model.field.PageData;
 import be.ttime.core.model.form.CreatePageForm;
 import be.ttime.core.model.form.EditPageForm;
 import be.ttime.core.model.form.EditPagePositionForm;
-import be.ttime.core.persistence.model.ApplicationLanguageEntity;
-import be.ttime.core.persistence.model.ContentDataEntity;
-import be.ttime.core.persistence.model.ContentEntity;
-import be.ttime.core.persistence.model.ContentTemplateEntity;
-import be.ttime.core.persistence.model.ContentTemplateFieldsetEntity;
-import be.ttime.core.persistence.model.ContentTypeEntity;
-import be.ttime.core.persistence.model.FieldsetEntity;
-import be.ttime.core.persistence.model.InputDataEntity;
+import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.persistence.service.IContentTemplateService;
@@ -41,9 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,8 +114,10 @@ public class AdminCmsController {
             ContentEntity content = contentService.findContentAdmin(contentData.getContent().getId());
             int size = content.getContentDataList().size();
             if(size <=1){
-                contentService.deleteContent(urlId);
+                // delete the content
+                contentService.deleteContent(content.getId());
             } else {
+                // delete the content data
                 contentService.deleteContentData(urlId);
             }
 
@@ -162,7 +155,6 @@ public class AdminCmsController {
             ContentDataEntity contentData = new ContentDataEntity();
             contentData.setLanguage(language);
             contentData.setTitle(pageTitle + '_' + language.getLocale());
-            //content.setSeoTitle(pageTitle);
             contentData.setSlug("/" + slug);
 
             ContentEntity parent;
@@ -175,7 +167,7 @@ public class AdminCmsController {
                 content.setContentParent(parent);
             }
 
-            contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, language.getLocale()));
+            contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, language.getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));
 
             ContentTemplateEntity contentTemplateEntity = contentTemplateService.find(form.getTemplateId());
             if (contentTemplateEntity == null) {
@@ -219,103 +211,32 @@ public class AdminCmsController {
 
             // retrieve data
             ContentTemplateEntity template = contentTemplateService.find(content.getContentTemplate().getId());
-            Slugify slg = new Slugify();
-            PageData pageData = new PageData();
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat(CmsUtils.DATE_FORMAT);
-            for (ContentTemplateFieldsetEntity contentTemplateFieldset : template.getContentTemplateFieldset()) {
+            PageData pageData = CmsUtils.fillData(template.getContentTemplateFieldset(), request);
 
-                FieldsetEntity fieldset = contentTemplateFieldset.getFieldset();
-                Map<String, Object> inputsMap = new HashMap<>();
-                for (InputDataEntity inputDataEntity : contentTemplateFieldset.getDataEntities()) {
-                    String finalName = contentTemplateFieldset.getNamespace() + "_" + slg.slugify(inputDataEntity.getInputDefinition().getName());
-                    String type = inputDataEntity.getInputDefinition().getType();
-                    boolean isArray = contentTemplateFieldset.isArray() && fieldset.isArray();
-                    if (type.equals("date")) {
-
-                        if (isArray) {
-                            String[] stringDateArray = request.getParameter(finalName).split(",");
-                            Date[] dateArray = new Date[stringDateArray.length];
-                            for (int i = 0; i < stringDateArray.length; i++) {
-                                dateArray[i] = dateFormatter.parse(stringDateArray[i]);
-                            }
-                            pageData.getDataDateArray().put(finalName, dateArray);
-                        } else {
-                            pageData.getDataDate().put(finalName, dateFormatter.parse(request.getParameter(finalName)));
-                        }
-
-
-                    } else if (type.equals("file")) {
-                        // TODO : Upload and save the name
-                        /*
-                        if(isArray){
-                            pageData.getDataStringArray().put(finalName, request.getParameterValues(finalName));
-                        } else{
-                            pageData.getDataString().put(finalName, request.getParameter(finalName));
-                        }*/
-                    } else if (type.equals("integer")) {
-                        if (isArray) {
-                            final String[] stringArray = request.getParameterValues(finalName);
-                            final Integer[] ints = new Integer[stringArray.length];
-                            for (int i = 0; i < stringArray.length; i++) {
-                                ints[i] = Integer.parseInt(stringArray[i]);
-                            }
-                            pageData.getDataIntegerArray().put(finalName, ints);
-                        } else {
-                            pageData.getDataInteger().put(finalName, Integer.parseInt(request.getParameter(finalName)));
-                        }
-                    } else if (type.equals("double")) {
-                        if (isArray) {
-                            final String[] stringArray = request.getParameterValues(finalName);
-                            final Double[] doubles = new Double[stringArray.length];
-                            for (int i = 0; i < stringArray.length; i++) {
-                                doubles[i] = Double.parseDouble(stringArray[i]);
-                            }
-                            pageData.getDataDoubleArray().put(finalName, doubles);
-                        } else {
-                            pageData.getDataDouble().put(finalName, Double.parseDouble(request.getParameter(finalName)));
-                        }
-                    } else if (type.equals("boolean")) {
-                        if (isArray) {
-                            final String[] stringArray = request.getParameterValues(finalName);
-                            final Boolean[] booleans = new Boolean[stringArray.length];
-                            for (int i = 0; i < stringArray.length; i++) {
-                                booleans[i] = Boolean.parseBoolean(stringArray[i]);
-                            }
-                            pageData.getDataBooleanArray().put(finalName, booleans);
-                        } else {
-                            pageData.getDataString().put(finalName, request.getParameter(finalName));
-                        }
-                    } else {
-                        if (isArray) {
-                            pageData.getDataStringArray().put(finalName, request.getParameterValues(finalName));
-                        } else {
-                            pageData.getDataString().put(finalName, request.getParameter(finalName));
-                        }
-                    }
-
-                }
-            }
-
-
-            Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
-            String json = gson.toJson(pageData);
+            // Form data
+            Map<String, String> data = new HashMap<>();
+            data.put("dev_top", form.getDevIncludeTop());
+            data.put("dev_bot", form.getDevIncludeBot());
+            data.put("seo_h1", form.getSeoH1());
+            data.put("seo_description", form.getSeoDescription());
+            data.put("seo_tags", form.getSeoTag());
+            pageData.getDataString().putAll(data);
 
             content.setName(form.getName());
 
             content.setMenuItem(form.isMenuItem());
             content.setEnabled(form.isEnabled());
 
-            contentData.setData(json);
+            Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
+            contentData.setData(gson.toJson(pageData));
+
             contentData.setTitle(form.getName());
             contentData.setSlug(form.getSlug());
 
-            contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, appLanguage.getLocale()));
+            contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, appLanguage.getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));
 
-//            content.setSeoDescription(form.getSeoDescription());
-//            content.setSeoH1(form.getSeoH1());
-//            content.setSeoTag(form.getSeoTag());
-//            content.setSeoTitle(form.getSeoTitle());
+
             contentService.saveContent(content);
             contentService.saveContentData(contentData);
         }

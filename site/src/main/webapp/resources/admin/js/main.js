@@ -338,6 +338,22 @@ String.prototype.capitalizeFirstLetter = function () {
     return '<div class="op-table-slider-wrapper"><div class="op-table-slide-container"><div class="op-table-slide-item"><button type="button" data-type="trash" class="btn btn-default button js-move"><i class="fa fa-trash"></i></button><button type="button" data-type="save" class="btn btn-default button js-move"><i class="fa fa-save"> </i></button></div><div class="op-table-slide-item save"><button type="button" class="btn btn-danger js-move operation"><i class="fa fa-times"></i></button><button type="button" class="btn btn-success js-op-ajax operation"> <i class="fa fa-save"></i></button></div><div class="op-table-slide-item trash"><button type="button" class="btn btn-danger js-move operation"><i class="fa fa-times"></i></button><button type="button" class="btn btn-success js-op-ajax operation"> <i class="fa fa-trash"></i></button></div></div></div>';
   };
   
+  Cms.prototype.initDynamicFields = function ($form) {
+    $form.find('[data-toggle="tooltip"]').tooltip();
+    $form.find('[data-editor="tinymce"]').each(function (index, element) {
+      $.Cms.initTinyMce({ selector: '#' + element.id });
+    });
+  
+    $form.find('[data-plugin="datepicker"]').each(function (index, element) {
+      var $picker = $(element);
+  
+      $picker.datepicker({
+        format: 'yyyy-mm-dd',
+        multidate: (typeof $picker.data('picker-multiple') !== 'undefined'),
+      });
+    });
+  };
+  
   Cms.prototype.notif = function (params) {
     var defaults = {
       style: 'bar',
@@ -623,6 +639,7 @@ String.prototype.capitalizeFirstLetter = function () {
       selector: '#content',
       theme: 'modern',
       height: 200,
+      content_css: '/public/assets/css/style.css' ,
       plugins: [
         'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
         'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',

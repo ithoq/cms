@@ -32,13 +32,14 @@ public class FileEntity {
     private String extension;
     @Column(nullable = false)
     private String serverName;
+    private String fileGroup;
     @Column(nullable = false, columnDefinition = "INT(11) UNSIGNED")
     private long size;
 
     private boolean directory = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private FileTypeEntity contentType;
+    private FileTypeEntity fileType;
 
     @ManyToOne
     private FileEntity fileParent;

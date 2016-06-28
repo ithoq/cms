@@ -151,7 +151,7 @@ public class AdminFileController {
                         File result = CmsUtils.uploadFile(file, true);
 
                         FileEntity pageFile = new FileEntity();
-                        pageFile.setName(FilenameUtils.getName(result.getName()));
+                        pageFile.setName(FilenameUtils.getName(name));
                         pageFile.setUploadDate(new Date());
                         pageFile.setServerName(result.getName());
                         pageFile.setExtension(FilenameUtils.getExtension(result.getName()));
@@ -163,7 +163,7 @@ public class AdminFileController {
                         }
 
                         String fileType = request.getParameter("type");
-                        pageFile.setContentType(new FileTypeEntity(fileType));
+                        pageFile.setFileType(new FileTypeEntity(fileType));
 
                         pageFiles.add(pageFile);
                     } catch (IOException e) {

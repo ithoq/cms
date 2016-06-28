@@ -20,7 +20,7 @@ public class ContentTemplateEntity {
     @Access(AccessType.PROPERTY)
     @Column(columnDefinition = "SMALLINT(11) UNSIGNED")
     @Expose private long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @Expose private String name;
     @Expose private String description;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")

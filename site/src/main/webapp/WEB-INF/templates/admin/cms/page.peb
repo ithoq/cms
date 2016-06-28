@@ -85,16 +85,16 @@
         <div id="tabSeo" class="tab-pane">
             <div class="form-group form-group-default required">
                 <label>H1</label>
-                <input type="text" class="form-control" name="seoH1" value="{{ contentData.seoH1 }}">
+                <input type="text" class="form-control" name="seoH1" value="{{ data.seo_title }}">
             </div>
             <div class="form-group form-group-default">
                 <label>Tag </label>
-                <input type="text" class="form-control" name="seoTag" value="{{ contentData.seoTag }}">
+                <input type="text" class="form-control" name="seoTag" value="{{ data.seo_tags }}">
             </div>
             <div class="form-group">
                 <label for="comment">{{ message('description') }}</label>
-                    <textarea id="comment" rows="5" name="seoDescription"
-                              class="form-control">{{ contentData.seoDescription }}</textarea>
+                          <textarea id="comment" rows="5" name="seoDescription"
+                                    class="form-control">{{ data.seo_description }}</textarea>
             </div>
         </div>
         <div id="tabDev" class="tab-pane">

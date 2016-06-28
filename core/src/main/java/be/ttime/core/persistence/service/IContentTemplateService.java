@@ -8,6 +8,7 @@ public interface IContentTemplateService {
 
     List<ContentTemplateEntity> findAllByTypeLike(String type);
 
+    ContentTemplateEntity findByName(String name);
 
     ContentTemplateEntity find(Long id);
   /*

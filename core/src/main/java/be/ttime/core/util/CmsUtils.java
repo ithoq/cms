@@ -1,9 +1,7 @@
 package be.ttime.core.util;
 
 import be.ttime.core.model.field.PageData;
-import be.ttime.core.persistence.model.ContentDataEntity;
-import be.ttime.core.persistence.model.ContentEntity;
-import be.ttime.core.persistence.model.UserEntity;
+import be.ttime.core.persistence.model.*;
 import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,10 +32,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 public class CmsUtils {
@@ -57,10 +52,13 @@ public class CmsUtils {
     public final static String BLOCK_TYPE_FIELDSET = "FIELDSET";
 
     public final static String BLOCK_TEMPLATE_BASIC_PAGE = "TEMPLATE_BASIC_PAGE";
+    public final static String BLOCK_TEMPLATE_WEBCONTENT = "TEMPLATE_WEBCONTENT";
 
     public final static String BLOCK_PAGE_MASTER = "PAGE_MASTER";
     public final static String BLOCK_PAGE_LOGIN = "PAGE_LOGIN";
+
     public final static String BLOCK_FIELD_TEXT = "FIELD_TEXT";
+    public final static String BLOCK_FIELD_TEXTAREA = "FIELD_TEXTAREA";
     public final static String BLOCK_FIELD_TINYMCE = "FIELD_TINYMCE";
     public final static String BLOCK_FIELD_DATEPICKER = "FIELD_DATEPICKER";
 
@@ -199,22 +197,22 @@ public class CmsUtils {
         return gson.fromJson(pageDataString, PageData.class);
     }
 
-    public static String computeSlug(final ContentEntity content, final ContentDataEntity contentData, final String locale) {
-        return StringUtils.trimToEmpty(computeSlugWithSlashes(content, contentData, locale))
-                .replaceAll("/+", "/")
-                .replaceAll("/+$", "");
+    public static String computeSlug(final ContentEntity content, final ContentDataEntity contentData, final String locale, final boolean forceLang) {
+        String slug = StringUtils.trimToEmpty(computeSlugWithSlashes(content, contentData, locale, forceLang)).replaceAll("/+", "/");
+        return (slug.length()> 1 ) ? slug.replaceAll("/+$", "") : slug;
     }
 
-    private static String computeSlugWithSlashes(final ContentEntity content, final ContentDataEntity contentData, final String locale) {
+    private static String computeSlugWithSlashes(final ContentEntity content, final ContentDataEntity contentData, final String locale, final boolean forceLang) {
         final ContentEntity parent = content.getContentParent();
         if (parent == null) {
-            return contentData.getSlug();
+            if(forceLang){
+                return "/" + locale.toString() + contentData.getSlug();
+            } else{
+                return contentData.getSlug();
+            }
+
         } else {
             final ContentDataEntity parentContentData = parent.getContentDataList().get(locale);
-
-//            Lazy init exception below
-//
-//            return computeSlugWithSlashes(parent, parentContentData, locale) + "/" + contentData.getSlug();
 
             return parentContentData.getComputedSlug() + "/" + contentData.getSlug();
         }
@@ -308,6 +306,98 @@ public class CmsUtils {
             dateBegin= null;
         }
         return dateBegin;
+    }
+
+    public static PageData fillData(PageData pageData, List<ContentTemplateFieldsetEntity> contentTemplateFieldset, HttpServletRequest request ) throws IOException, ParseException{
+
+        Slugify slg = new Slugify();
+        if(pageData == null) {
+            pageData = new PageData();
+        }
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(CmsUtils.DATE_FORMAT);
+        for (ContentTemplateFieldsetEntity ctf : contentTemplateFieldset) {
+
+            FieldsetEntity fieldset = ctf.getFieldset();
+            Map<String, Object> inputsMap = new HashMap<>();
+            for (InputDataEntity inputDataEntity : ctf.getDataEntities()) {
+                String finalName = ctf.getNamespace() + "_" + slg.slugify(inputDataEntity.getInputDefinition().getName());
+                String type = inputDataEntity.getInputDefinition().getType();
+                boolean isArray = ctf.isArray() && fieldset.isArray();
+                if (type.equals("date")) {
+
+                    if (isArray) {
+                        String[] stringDateArray = request.getParameter(finalName).split(",");
+                        Date[] dateArray = new Date[stringDateArray.length];
+                        for (int i = 0; i < stringDateArray.length; i++) {
+                            dateArray[i] = dateFormatter.parse(stringDateArray[i]);
+                        }
+                        pageData.getDataDateArray().put(finalName, dateArray);
+                    } else {
+                        pageData.getDataDate().put(finalName, dateFormatter.parse(request.getParameter(finalName)));
+                    }
+
+
+                } else if (type.equals("file")) {
+                    // TODO : Upload and save the name
+                    /*
+                    if(isArray){
+                        pageData.getDataStringArray().put(finalName, request.getParameterValues(finalName));
+                    } else{
+                        pageData.getDataString().put(finalName, request.getParameter(finalName));
+                    }*/
+                } else if (type.equals("integer")) {
+                    if (isArray) {
+                        final String[] stringArray = request.getParameterValues(finalName);
+                        final Integer[] ints = new Integer[stringArray.length];
+                        for (int i = 0; i < stringArray.length; i++) {
+                            ints[i] = Integer.parseInt(stringArray[i]);
+                        }
+                        pageData.getDataIntegerArray().put(finalName, ints);
+                    } else {
+                        pageData.getDataInteger().put(finalName, Integer.parseInt(request.getParameter(finalName)));
+                    }
+                } else if (type.equals("double")) {
+                    if (isArray) {
+                        final String[] stringArray = request.getParameterValues(finalName);
+                        final Double[] doubles = new Double[stringArray.length];
+                        for (int i = 0; i < stringArray.length; i++) {
+                            doubles[i] = Double.parseDouble(stringArray[i]);
+                        }
+                        pageData.getDataDoubleArray().put(finalName, doubles);
+                    } else {
+                        pageData.getDataDouble().put(finalName, Double.parseDouble(request.getParameter(finalName)));
+                    }
+                } else if (type.equals("boolean")) {
+                    if (isArray) {
+                        final String[] stringArray = request.getParameterValues(finalName);
+                        final Boolean[] booleans = new Boolean[stringArray.length];
+                        for (int i = 0; i < stringArray.length; i++) {
+                            booleans[i] = Boolean.parseBoolean(stringArray[i]);
+                        }
+                        pageData.getDataBooleanArray().put(finalName, booleans);
+                    } else {
+                        pageData.getDataString().put(finalName, request.getParameter(finalName));
+                    }
+                } else {
+                    if (isArray) {
+                        pageData.getDataStringArray().put(finalName, request.getParameterValues(finalName));
+                    } else {
+                        pageData.getDataString().put(finalName, request.getParameter(finalName));
+                    }
+                }
+
+            }
+        }
+
+        return pageData;
+    }
+
+    public static PageData fillData(List<ContentTemplateFieldsetEntity> contentTemplateFieldset, HttpServletRequest request ) throws IOException, ParseException{
+        return fillData(null, contentTemplateFieldset, request);
+    }
+
+    public static String twoDigit(int number){
+        return String.format("%02d", number);
     }
 
 }

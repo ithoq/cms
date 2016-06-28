@@ -71,4 +71,14 @@ public class ContentEntity extends AbstractTimestampEntity {
         contentDataList.remove(child.getLanguage().getLocale());
 
     }
+
+    public List<TaxonomyTermEntity> getTaxonomy(String type){
+        List<TaxonomyTermEntity> result = new ArrayList<>();
+        for (TaxonomyTermEntity t : taxonomyTermEntities) {
+            if(t.getTaxonomyType().getName().equals(type)){
+                result.add(t);
+            }
+        }
+        return result;
+    }
 }

@@ -106,7 +106,10 @@ public class ForceLocalUrlFilter implements Filter {
         final String requestURI = request.getRequestURI();
 
         // remove resources URL
-        if (requestURI.startsWith("/resources/") || requestURI.equals("/favicon.ico")) {
+        if (requestURI.startsWith("/resources/") ||
+                requestURI.equals("/favicon.ico") ||
+                requestURI.startsWith("/public/") ||
+                requestURI.startsWith("/download/")){
             chain.doFilter(request, response);
             return;
         }
