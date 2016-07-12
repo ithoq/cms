@@ -2,6 +2,7 @@ package be.ttime.core.config;
 
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.PersistenceConfiguration;
+import net.sf.ehcache.config.SizeOfPolicyConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -17,8 +18,13 @@ public class CachingConfig extends CachingConfigurerSupport {
     @Bean(destroyMethod = "shutdown")
     public net.sf.ehcache.CacheManager ehCacheManager() {
 
+        final SizeOfPolicyConfiguration sizeOfPolicyConfiguration = new SizeOfPolicyConfiguration();
+        sizeOfPolicyConfiguration.maxDepth(100);
+
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
+
         config.setMaxBytesLocalHeap("50M");
+        config.sizeOfPolicy(sizeOfPolicyConfiguration);
 
         // I don't want to set a Name or a default cache is possible || config.setName("mainCache"); || config.addDefaultCache(cacheConfig("default", "5M", false, 1 * 60, null));
 

@@ -152,7 +152,6 @@ public class AdminFileController {
 
                         FileEntity pageFile = new FileEntity();
                         pageFile.setName(FilenameUtils.getName(name));
-                        pageFile.setUploadDate(new Date());
                         pageFile.setServerName(result.getName());
                         pageFile.setExtension(FilenameUtils.getExtension(result.getName()));
                         pageFile.setSize(Math.round(file.getSize()));

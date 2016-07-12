@@ -154,6 +154,10 @@ input.page-title
    Arbre
    ========================================================================== */
 
+#tree > ul
+{
+    max-height: 600px;
+}
 .tree-container
 {
     position: absolute;

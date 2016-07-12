@@ -23,6 +23,8 @@ public class ContentTemplateEntity {
     @Column(nullable = false, unique = true)
     @Expose private String name;
     @Expose private String description;
+    @Expose @Lob private String includeTop;
+    @Expose @Lob private String includeBottom;
     @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
     private boolean active;
     @Expose
@@ -41,6 +43,7 @@ public class ContentTemplateEntity {
     private BlockEntity block;
 
     @OneToMany(mappedBy = "contentTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("position ASC")
     @Expose
     private List<ContentTemplateFieldsetEntity> contentTemplateFieldset;
 

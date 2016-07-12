@@ -386,16 +386,18 @@ INSERT INTO `fieldset` (`id`, `array`, `deletable`, `description`, `name`, `bloc
 (3, 0, 1, 'simple text', 'simple text', 'FIELD_TEXT'),
 (4, 0, 1, 'textarea', 'simple textarea', 'FIELD_TEXTAREA');
 
-INSERT INTO `content_template` (`id`, `active`, `deletable`, `description`, `name`, `block_name`, `contentType_name`) VALUES
-(1, 1, 0, NULL, 'Basic page', 'TEMPLATE_BASIC_PAGE', 'PAGE'),
-(2, 1, 0, NULL, 'Webcontent', 'TEMPLATE_WEBCONTENT', 'PAGE');
+INSERT INTO `content_template` (`id`, `active`, `deletable`,`includeTop`, `includeBottom`, `description`, `name`, `block_name`, `contentType_name`) VALUES
+(1, 1, 0, NULL, NULL, NULL, 'Basic page', 'TEMPLATE_BASIC_PAGE', 'PAGE'),
+(2, 1, 0, NULL, NULL, NULL, 'Webcontent', 'TEMPLATE_WEBCONTENT', 'PAGE');
 
 INSERT INTO `content_template_fieldset` (`id`, `array`, `name`, `namespace`, `position`, `page_template_id`, `fieldset_id`) VALUES
-(1, 0, 'tinymce', 'main', 0, 1, 1);
+(1, 0, 'editor', '', 0, 1, 1),
+(2, 0, 'intro', '', 1, 2, 4),
+(3, 0, 'editor', '', 2, 2, 1);
 
-INSERT INTO `content` (`id`, `beginDate`, `created`, `enabled`, `endDate`, `menuItem`, `updated`, `name`, `pos`, `contentParent_id`, `contentTemplate_id`, `contentType_name`) VALUES
-(1, NULL, '2016-05-26', b'1', NULL, 1, '2016-05-27', 'Accueil', 0, NULL, 1, 'PAGE'),
-(2, NULL, '2016-05-26', b'1', NULL, 1, '2016-05-27', 'Child', 0, 1, 1, 'PAGE');
+INSERT INTO `content` (`id`, `contentGroup`, `data`, `beginDate`, `created`, `enabled`, `endDate`, `menuItem`, `updated`, `name`, `pos`, `contentParent_id`, `contentTemplate_id`, `contentType_name`) VALUES
+(1, NULL, NULL, NULL, '2016-05-26', b'1', NULL, 1, '2016-05-27', 'Accueil', 0, NULL, 1, 'PAGE'),
+(2, NULL, NULL, NULL, '2016-05-26', b'1', NULL, 1, '2016-05-27', 'Child', 0, 1, 1, 'PAGE');
 
 INSERT INTO `content_data` (`id`, `computedSlug`, `created`, `data`, `updated`, `position`, `slug`, `title`, `version`, `content_id`, `language_locale`) VALUES
 (1, '/home', '2016-05-26', '', '2016-05-27', 0, '/', 'Home', 1, 1, 'en'),
@@ -404,10 +406,13 @@ INSERT INTO `content_data` (`id`, `computedSlug`, `created`, `data`, `updated`, 
 INSERT INTO `input_definition` (`id`, `name`, `sort`, `type`, `validation`, `fieldset_id`) VALUES
 (1, 'editor', 1, 'string', NULL, 1),
 (2, 'date', 1, 'date', NULL, 2),
-(3, 'text', 1, 'string', NULL, 3);
+(3, 'text', 1, 'string', NULL, 3),
+(4, 'textarea', 1, 'string', NULL, 4);
 
 INSERT INTO `input_data` (`id`, `defaultValue`, `hint`, `title`, `validation`, `contentTemplateFieldsetEntity_id`, `fieldset_id`, `inputDefinition_id`) VALUES
-(1, '', '', 'main editor', '', 1, 1, 1);
+(1, '', '', 'main editor', '', 1, 1, 1),
+(2, '', '', 'intro', '', 2, 4, 4),
+(3, '', '', 'editor', '', 3, 1, 1);
 
 INSERT INTO `file_type` (`name`) VALUES
 ('DOWNLOAD'),

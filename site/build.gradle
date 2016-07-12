@@ -3,8 +3,18 @@ apply plugin: 'spring-boot'
 apply plugin: 'war'
 
 war {
-    baseName = 'demo'
-    version = '0.1.0-SNAPSHOT'
+    baseName = 'feantsa'
+    version = '0.1'
+}
+
+jar {
+    baseName = 'feantsa'
+    version =  '0.1'
+}
+
+springBoot {
+    executable = true
+    mainClass= 'be.ttime.StartCMS'
 }
 
 configurations {

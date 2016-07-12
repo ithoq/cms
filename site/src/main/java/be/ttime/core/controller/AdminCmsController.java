@@ -216,8 +216,12 @@ public class AdminCmsController {
 
             // Form data
             Map<String, String> data = new HashMap<>();
-            data.put("dev_top", form.getDevIncludeTop());
-            data.put("dev_bot", form.getDevIncludeBot());
+            //data.put("dev_top", form.getDevIncludeTop());
+            //data.put("dev_bot", form.getDevIncludeBot());
+
+            content.setIncludeTop(form.getDevIncludeTop());
+            content.setIncludeBottom(form.getDevIncludeBot());
+
             data.put("seo_h1", form.getSeoH1());
             data.put("seo_description", form.getSeoDescription());
             data.put("seo_tags", form.getSeoTag());

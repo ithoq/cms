@@ -27,7 +27,7 @@ Cms.prototype.dataTableRenderBoolean = function (data, type, full) {
 Cms.prototype.initDataTableWithSearch = function (params) {
   var defaults = {
     hasSearchInput: true,
-    iDisplayLength: 5,
+    iDisplayLength: 10,
     tableElement: '#data-table',
     searchElement: '#search-table',
   };

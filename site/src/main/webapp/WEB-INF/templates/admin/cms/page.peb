@@ -28,6 +28,33 @@
         </div>
     </div>
 </div>
+<div id="devPortlet" class="panel panel-default">
+    <div class="panel-heading ">
+        <div class="panel-title">Dev options
+        </div>
+        <div class="panel-controls">
+            <ul>
+                <li><a href="#" class="portlet-collapse" data-toggle="collapse"><i class="portlet-icon portlet-icon-collapse"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel-body" style="display:none">
+        <h5>Include</h5>
+        <div id="tabDev" class="tab-pane">
+            <div class="form-group">
+                <label for="comment">Include top:</label>
+                    <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
+                              class="form-control">{{ content.includeTop }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="comment">Include bottom:</label>
+                    <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
+                              class="form-control">{{ content.includeBottom }}</textarea>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="panel panel-default">
     <div class="lang-selector">
         <div class="select-country">
@@ -59,7 +86,6 @@
         <li class="active"><a data-toggle="tab" href="#tabGeneral">{{ message('general') }}</a></li>
         <li><a data-toggle="tab" href="#tabFile" id="tabFileBtn">{{ message('file') }}</a></li>
         <li><a data-toggle="tab" href="#tabGallery" id="tabGalleryBtn">{{ message('gallery') }}</a></li>
-        <li><a data-toggle="tab" href="#tabDev">Dev</a></li>
         <li><a data-toggle="tab" href="#tabSeo">SEO</a></li>
     </ul>
     <div class="tab-content bg-white">
@@ -95,18 +121,6 @@
                 <label for="comment">{{ message('description') }}</label>
                           <textarea id="comment" rows="5" name="seoDescription"
                                     class="form-control">{{ data.seo_description }}</textarea>
-            </div>
-        </div>
-        <div id="tabDev" class="tab-pane">
-            <div class="form-group">
-                <label for="comment">Include top:</label>
-                    <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
-                              class="form-control">{{ contentData.devIncludeTop }}</textarea>
-            </div>
-            <div class="form-group">
-                <label for="comment">Include bottom:</label>
-                    <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
-                              class="form-control">{{ contentData.devIncludeBot }}</textarea>
             </div>
         </div>
         <div id="tabFile" class="tab-pane">
@@ -187,5 +201,8 @@
             formatSelection: renderSelectLanguage,
             formatResult: renderSelectLanguage,
         });
+
+        $('#devPortlet').portlet({collapse:true});
+
     });
 </script>

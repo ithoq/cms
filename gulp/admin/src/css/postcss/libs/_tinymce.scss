@@ -1,0 +1,19 @@
+.mce-window-head .mce-close
+{
+    border: 0;
+    background: none;
+}
+
+div.mce-fullscreen
+{
+    top: 60px!important;
+    right: 0!important;
+    left: 70px!important;
+
+    width: auto!important;
+}
+
+.mce-visualblocks div:not([data-mce-bogus])
+{
+    margin-left: 0;
+}

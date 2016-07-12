@@ -9,6 +9,9 @@ $(function () {
   var counter = 0;
   var $inputContent = $('#inputContent');
   var data = [];
+  var aceEditor;
+  var editorIncludeTop;
+  var editorIncludeBottom;
 
   function loadFieldsetData() {
     for (var i = 0; i < window.fieldsetDef.length; i++) {
@@ -216,6 +219,8 @@ $(function () {
     pageTemplate.id = ($('#template-id').val()) ?  $('#template-id').val() : 0;
     pageTemplate.name = $('#templateName').val();
     pageTemplate.description = $('#fieldsetDescription').val();
+    pageTemplate.includeTop = editorIncludeTop.getSession().getValue().trim();
+    pageTemplate.includeBottom = editorIncludeBottom.getSession().getValue().trim();
     pageTemplate.active = $('#active').is(':checked');
 
     var blockData = {};
@@ -252,11 +257,28 @@ $(function () {
   }
 
   loadFieldsetData();
+
   $select2.select2({
     data: data,
     placeholder: window.placeholder,
   });
 
+  $inputUl.sortable({
+    revert: true,
+  });
+
   aceEditor = $.Cms.initAceEditor();
+
+  editorIncludeTop = $.Cms.initAceEditor({
+      selector: '#ace-editor-top',
+      theme: 'ace/theme/chrome',
+      mode: 'ace/mode/html',
+  });
+
+  editorIncludeBottom = $.Cms.initAceEditor({
+      selector: '#ace-editor-bottom',
+      theme: 'ace/theme/chrome',
+      mode: 'ace/mode/html',
+  });
 
 });

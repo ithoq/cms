@@ -25,6 +25,7 @@ public class ContentDataEntity extends AbstractTimestampEntity {
     private Long version;
     private Integer position;
     private String title;
+    private String intro;
     @Lob
     private String data;
     private String slug;

@@ -11,7 +11,12 @@
 
 @import 'libs/autocomplete';
 @import 'libs/tags';
+@import 'libs/tinymce';
 @import 'modules/page/fieldset';
 @import 'modules/page/template';
 @import 'modules/page/installation';
 @import 'modules/page/webcontent';
+
+@import 'modules/page/webcontent';
+
+@import 'layout/base';

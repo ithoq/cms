@@ -3,6 +3,7 @@ package be.ttime.core.persistence.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "menu")
@@ -18,4 +19,7 @@ public class MenuEntity {
     @Access(AccessType.PROPERTY)
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
     private String name;
+    private String description;
+    @OneToMany(mappedBy = "menu")
+    List<MenuItemEntity> items;
 }

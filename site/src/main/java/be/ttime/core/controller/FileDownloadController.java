@@ -5,6 +5,7 @@ import be.ttime.core.persistence.model.FileEntity;
 import be.ttime.core.persistence.service.IFileService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.FileTypeDetector;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -22,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 @Controller
+@Slf4j
 public class FileDownloadController {
 
     @Autowired
@@ -48,14 +50,22 @@ public class FileDownloadController {
 
     }
 
+
     @RequestMapping(value = "/public/**", method = RequestMethod.GET)
     public void publicFile(HttpServletResponse response, HttpServletRequest request) throws Exception {
+
 
         String requestURI = request.getRequestURI();
         if(requestURI.length() < 8){
             throw new ResourceNotFoundException();
         }
         String name = requestURI.substring(8);
+
+        String mode = env.getProperty("app.mode");
+        if (mode.equals("PRODUCTION")) {
+            log.error("STATIC FILE SHOULD BE SERVE BY THE SERVER IN PRODUCTION : " + name);
+        }
+
 
         File uploadDirectory = CmsUtils.getUploadDirectory(false);
         File file = new File(uploadDirectory.getAbsolutePath() + "/" + name);

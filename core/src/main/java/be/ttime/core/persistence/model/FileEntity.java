@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -13,17 +12,14 @@ import java.util.Set;
 @Table(name = "file")
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id", "name", "description", "serverName"})
-public class FileEntity {
+@EqualsAndHashCode(of = {"id", "name", "description", "serverName"} , callSuper = true)
+public class FileEntity extends AbstractTimestampEntity  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Access(AccessType.PROPERTY)
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
     private long id;
-    @Temporal(TemporalType.DATE)
-    @Column(nullable = false)
-    private Date uploadDate;
     @Column(nullable = false)
     private String name;
     private String description;

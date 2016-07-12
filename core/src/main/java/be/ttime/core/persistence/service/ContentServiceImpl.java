@@ -1,10 +1,12 @@
 package be.ttime.core.persistence.service;
 
 import be.ttime.core.error.ResourceNotFoundException;
+import be.ttime.core.model.PageableResult;
 import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.repository.IContentDataRepository;
 import be.ttime.core.persistence.repository.IContentRepository;
 import be.ttime.core.persistence.repository.IContentTypeRepository;
+import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -54,7 +57,9 @@ public class ContentServiceImpl implements IContentService {
         ContentDataEntity result = query.from(contentDataEntity)
                 .leftJoin(contentDataEntity.commentList).fetch()
                 .leftJoin(contentDataEntity.contentFiles).fetch()
-                .where(contentDataEntity.computedSlug.eq(slug).and(contentDataEntity.language.locale.eq(locale.toString())))
+                .where(contentDataEntity.computedSlug.eq(slug)
+                        .and(contentDataEntity.enabled.eq(true))
+                        .and(contentDataEntity.language.locale.eq(locale.toString())))
                 .singleResult(contentDataEntity);
 //        entityManager.clear();
 
@@ -73,7 +78,6 @@ public class ContentServiceImpl implements IContentService {
             // we add parent to the first result
             result.setContent(parent);
 //            entityManager.close();
-
         }
         return result;
     }
@@ -125,6 +129,42 @@ public class ContentServiceImpl implements IContentService {
         return result;
     }
 
+    @Override
+    public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String category, String contentType, long pageNumber, Long limit, Long offset) {
+        QContentEntity contentEntity = QContentEntity.contentEntity;
+        QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
+        QTaxonomyTermEntity taxonomyTermEntity = QTaxonomyTermEntity.taxonomyTermEntity;
+        JPAQuery query = new JPAQuery(entityManager);
+
+        BooleanBuilder builder = new BooleanBuilder();
+        if(!StringUtils.isEmpty(name)){
+            builder.and(contentDataEntity.title.like("%" + name + "%"));
+        }
+        if(begin != null){
+            builder.and(contentEntity.beginDate.between(begin,end));
+        }
+        if(!StringUtils.isEmpty(contentType)){
+            builder.and(contentEntity.contentType.name.eq(contentType));
+        }
+        if(!StringUtils.isEmpty(category)){
+            builder.and(taxonomyTermEntity.taxonomyType.name.eq("CATEGORY").and(taxonomyTermEntity.name.eq(category)));
+        }
+
+        PageableResult<ContentEntity> pageableResult = new PageableResult<>();
+
+        List<ContentEntity> result = query.from(contentEntity)
+                                    .leftJoin(contentEntity.contentDataList, contentDataEntity).fetch()
+                                    .where(contentDataEntity.language.locale.eq(locale))
+                                    .leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermEntity).fetch()
+                                    .where(contentEntity.endDate.isNull().or(contentEntity.endDate.before(new Date())))
+                                    .where(contentEntity.enabled.eq(true).and(contentDataEntity.enabled.eq(true)).and(builder))
+                                    .limit(limit).offset((pageNumber-1) * offset).list(contentEntity);
+        pageableResult.setResult(result);
+        pageableResult.setTotalResult(query.count());
+        pageableResult.setCurrentPage(pageNumber);
+        pageableResult.setTotalPage((long)Math.ceil((pageableResult.getTotalPage() * 1.0 )/ limit));
+        return result;
+    }
 
     @Override
     /**
@@ -146,9 +186,10 @@ public class ContentServiceImpl implements IContentService {
     @Override
     @Caching(evict = {
             @CacheEvict(value = "content", allEntries = true),
-            @CacheEvict(value = "adminContent", key = "#p.id"),
             @CacheEvict(value = "adminTree", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
+            @CacheEvict(value = "adminContent", key = "#p.id"),
+
     })
     public ContentEntity saveContent(ContentEntity p) {
 
@@ -168,6 +209,13 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "content", allEntries = true),
+            @CacheEvict(value = "adminTree", allEntries = true),
+            @CacheEvict(value = "mainNav", allEntries = true),
+            @CacheEvict(value = "adminContent", allEntries = true),
+
+    })
     public List<ContentEntity> saveContent(List<ContentEntity> pages) {
 
         for (ContentEntity page : pages) {
@@ -234,8 +282,8 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
-    @Cacheable(value = "mainNav", key = "#lang")
-    public String getNavMenu(String lang) {
+    @Cacheable(value = "mainNav")
+    public String getNavMenu(String lang, long depth) {
         QContentEntity contentEntity = QContentEntity.contentEntity;
         JPAQuery query = new JPAQuery(entityManager);
         List<ContentEntity> roots =
@@ -252,7 +300,7 @@ public class ContentServiceImpl implements IContentService {
 
 
         sb.append("<ul class='main-menu' id='main-menu'>");
-        buildNavMenu(roots, sb, lang);
+        buildNavMenu(roots, sb, lang, depth);
         sb.append("</ul>");
 //        entityManager.close();
 //        entityManager2.close();
@@ -308,9 +356,10 @@ public class ContentServiceImpl implements IContentService {
         return contentTypeRepository.exists(contentType);
     }
 
-    private String buildNavMenu(List<ContentEntity> pages, StringBuilder sb, String locale) {
+    private String buildNavMenu(List<ContentEntity> pages, StringBuilder sb, String locale, long depth) {
 
         for (ContentEntity p : pages) {
+
             sb.append("<li>");
             if (!p.getContentDataList().isEmpty()) {
                 ContentDataEntity data = p.getContentDataList().get(locale);
@@ -322,11 +371,11 @@ public class ContentServiceImpl implements IContentService {
                 Set<ContentEntity> childrensSet = p.getContentChildren();
                 List<ContentEntity> childrens = new ArrayList<>();
                 childrens.addAll(childrensSet);
-                if (childrens.size() > 0) {
+                if (childrens.size() > 0 && depth != 0) {
                     // This is bad :(
                     Collections.sort(childrens, (p1, p2) -> Integer.compare(p1.getOrder(), p2.getOrder()));
                     sb.append("<ul class='main-menu-children'>");
-                    buildNavMenu(childrens, sb, locale);
+                    buildNavMenu(childrens, sb, locale, depth - 1);
                     sb.append("</ul>");
                 }
                 sb.append("</li>");

@@ -140,7 +140,7 @@ public class ForceLocalUrlFilter implements Filter {
                 if (appService.getApplicationConfig().isForcedLangInUrl() && !CmsUtils.isAjax(request) && isredirectablePath(requestURI)) {
 
                     String localeUrl = (locale != null) ? locale.toString() : getDefaultLocaleUrlString(isAdmin);
-                    String redirectUrl = "/" + localeUrl + requestURI;
+                    String redirectUrl = "/" + localeUrl + (requestURI.equals("/") ? "" : requestURI);
                     redirectStrategy.sendRedirect(request, response, redirectUrl);
                     return;
                 }

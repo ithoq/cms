@@ -28,6 +28,11 @@ public class ContentEntity extends AbstractTimestampEntity {
     private int order = -1;
     @Column(nullable = false, unique = true)
     private String name;
+    private String contentGroup;
+    private String image;
+    @Lob private String data;
+    @Lob private String includeTop;
+    @Lob private String includeBottom;
     @Column(columnDefinition = "TINYINT(1) default '1'")
     private boolean menuItem = true;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,8 +60,6 @@ public class ContentEntity extends AbstractTimestampEntity {
             inverseJoinColumns = @JoinColumn(name = "taxonomy_term_id", referencedColumnName = "id"))
     private Set<TaxonomyTermEntity> taxonomyTermEntities = new HashSet<>();
 
-    @OneToMany(mappedBy = "content", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ContentDictionaryEntity> dictionaryList;
 
     public void addContentData(ContentDataEntity child) {
         if(contentDataList == null){

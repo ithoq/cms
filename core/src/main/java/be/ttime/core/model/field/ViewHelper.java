@@ -10,6 +10,7 @@ import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import com.github.slugify.Slugify;
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,7 @@ import java.util.Map;
     Render a dynamic field in CMS Page administration.
  */
 @Component
+@Slf4j
 public class ViewHelper {
 
     private static final String FIELD_VIEW_PATH = "/WEB-INF/views/admin/field/";
@@ -115,8 +117,11 @@ public class ViewHelper {
         return builder.toString();
     }
 
-    public String getNavMenu(String locale){
-        String menu = contentService.getNavMenu(locale);
+    public String getNavMenu(String locale, Long depth){
+        if(depth == null){
+            throw new IllegalArgumentException("Nav depth can't bel null");
+        }
+        String menu = contentService.getNavMenu(locale, depth);
         return menu;
     }
 }

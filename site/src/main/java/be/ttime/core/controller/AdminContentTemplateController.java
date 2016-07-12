@@ -146,6 +146,8 @@ public class AdminContentTemplateController {
         content.setActive(contentForm.isActive());
         content.setName(contentForm.getName());
         content.setDescription(contentForm.getDescription());
+        content.setIncludeTop(contentForm.getIncludeTop());
+        content.setIncludeBottom(contentForm.getIncludeBottom());
         content.setDeletable(true);
         // save
         if(content.getId() == 0) {

@@ -1,8 +1,8 @@
-(function ($) {
+(function($) {
     'use strict';
 
     /**
-     * Pages.
+    * Pages.
      * @constructor
      * @property {string}  VERSION      - Build Version.
      * @property {string}  AUTHOR       - Author.
@@ -10,8 +10,8 @@
      * @property {string}  pageScrollElement  - Scroll Element in Page.
      * @property {object}  $body - Cache Body.
      */
-    var Pages = function () {
-        this.VERSION = "2.1.2";
+    var Pages = function() {
+        this.VERSION = "2.1.4";
         this.AUTHOR = "Revox";
         this.SUPPORT = "support@revox.io";
 
@@ -23,10 +23,10 @@
     }
 
     /** @function setUserOS
-     * @description SET User Operating System eg: mac,windows,etc
-     * @returns {string} - Appends OSName to Pages.$body
-     */
-    Pages.prototype.setUserOS = function () {
+    * @description SET User Operating System eg: mac,windows,etc
+    * @returns {string} - Appends OSName to Pages.$body
+    */
+    Pages.prototype.setUserOS = function() {
         var OSName = "";
         if (navigator.appVersion.indexOf("Win") != -1) OSName = "windows";
         if (navigator.appVersion.indexOf("Mac") != -1) OSName = "mac";
@@ -37,10 +37,10 @@
     }
 
     /** @function setUserAgent
-     * @description SET User Device Name to mobile | desktop
-     * @returns {string} - Appends Device to Pages.$body
-     */
-    Pages.prototype.setUserAgent = function () {
+    * @description SET User Device Name to mobile | desktop
+    * @returns {string} - Appends Device to Pages.$body
+    */
+    Pages.prototype.setUserAgent = function() {
         if (navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i)) {
             this.$body.addClass('mobile');
         } else {
@@ -52,53 +52,53 @@
     }
 
     /** @function isVisibleXs
-     * @description Checks if the screen size is XS - Extra Small i.e below W480px
-     * @returns {$Element} - Appends $('#pg-visible-xs') to Body
-     */
-    Pages.prototype.isVisibleXs = function () {
+    * @description Checks if the screen size is XS - Extra Small i.e below W480px
+    * @returns {$Element} - Appends $('#pg-visible-xs') to Body
+    */
+    Pages.prototype.isVisibleXs = function() {
         (!$('#pg-visible-xs').length) && this.$body.append('<div id="pg-visible-xs" class="visible-xs" />');
         return $('#pg-visible-xs').is(':visible');
     }
 
     /** @function isVisibleSm
-     * @description Checks if the screen size is SM - Small Screen i.e Above W480px
-     * @returns {$Element} - Appends $('#pg-visible-sm') to Body
-     */
-    Pages.prototype.isVisibleSm = function () {
+    * @description Checks if the screen size is SM - Small Screen i.e Above W480px
+    * @returns {$Element} - Appends $('#pg-visible-sm') to Body
+    */
+    Pages.prototype.isVisibleSm = function() {
         (!$('#pg-visible-sm').length) && this.$body.append('<div id="pg-visible-sm" class="visible-sm" />');
         return $('#pg-visible-sm').is(':visible');
     }
 
     /** @function isVisibleMd
-     * @description Checks if the screen size is MD - Medium Screen i.e Above W1024px
-     * @returns {$Element} - Appends $('#pg-visible-md') to Body
-     */
-    Pages.prototype.isVisibleMd = function () {
+    * @description Checks if the screen size is MD - Medium Screen i.e Above W1024px
+    * @returns {$Element} - Appends $('#pg-visible-md') to Body
+    */
+    Pages.prototype.isVisibleMd = function() {
         (!$('#pg-visible-md').length) && this.$body.append('<div id="pg-visible-md" class="visible-md" />');
         return $('#pg-visible-md').is(':visible');
     }
 
     /** @function isVisibleLg
-     * @description Checks if the screen size is LG - Large Screen i.e Above W1200px
-     * @returns {$Element} - Appends $('#pg-visible-lg') to Body
-     */
-    Pages.prototype.isVisibleLg = function () {
+    * @description Checks if the screen size is LG - Large Screen i.e Above W1200px
+    * @returns {$Element} - Appends $('#pg-visible-lg') to Body
+    */
+    Pages.prototype.isVisibleLg = function() {
         (!$('#pg-visible-lg').length) && this.$body.append('<div id="pg-visible-lg" class="visible-lg" />');
         return $('#pg-visible-lg').is(':visible');
     }
 
     /** @function getUserAgent
-     * @description Get Current User Agent.
-     * @returns {string} - mobile | desktop
-     */
-    Pages.prototype.getUserAgent = function () {
+    * @description Get Current User Agent.
+    * @returns {string} - mobile | desktop
+    */
+    Pages.prototype.getUserAgent = function() {
         return $('body').hasClass('mobile') ? "mobile" : "desktop";
     }
 
     /** @function setFullScreen
-     * @description Make Browser fullscreen.
-     */
-    Pages.prototype.setFullScreen = function (element) {
+    * @description Make Browser fullscreen.
+    */
+    Pages.prototype.setFullScreen = function(element) {
         // Supports most browsers and their versions.
         var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullscreen;
 
@@ -113,12 +113,12 @@
     }
 
     /** @function getColor
-     * @description Get Color from CSS
-     * @param {string} color - pages color class eg: primary,master,master-light etc.
-     * @param {int} opacity
-     * @returns {rgba}
-     */
-    Pages.prototype.getColor = function (color, opacity) {
+    * @description Get Color from CSS
+    * @param {string} color - pages color class eg: primary,master,master-light etc.
+    * @param {int} opacity
+    * @returns {rgba}
+    */
+    Pages.prototype.getColor = function(color, opacity) {
         opacity = parseFloat(opacity) || 1;
 
         var elem = $('.pg-colors').length ? $('.pg-colors') : $('<div class="pg-colors"></div>').appendTo('body');
@@ -134,23 +134,23 @@
     }
 
     /** @function initSidebar
-     * @description Initialize side bar to open and close
-     * @requires ui/sidebar.js
-     */
-    Pages.prototype.initSidebar = function () {
-        $('[data-pages="sidebar"]').each(function () {
+    * @description Initialize side bar to open and close
+    * @requires ui/sidebar.js
+    */
+    Pages.prototype.initSidebar = function() {
+        $('[data-pages="sidebar"]').each(function() {
             var $sidebar = $(this)
             $sidebar.sidebar($sidebar.data())
         })
     }
 
     /** @function initDropDown
-     * @description Initialize Boot-Strap dropdown Menue
-     * @requires bootstrap.js
-     */
-    Pages.prototype.initDropDown = function () {
+    * @description Initialize Boot-Strap dropdown Menue
+    * @requires bootstrap.js
+    */
+    Pages.prototype.initDropDown = function() {
         // adjust width of each dropdown to match content width
-        $('.dropdown-default').each(function () {
+        $('.dropdown-default').each(function() {
             var btn = $(this).find('.dropdown-menu').siblings('.dropdown-toggle');
             var offset = 0;
 
@@ -167,18 +167,18 @@
     }
 
     /** @function initFormGroupDefault
-     * @description Initialize Pages form group input
-     */
-    Pages.prototype.initFormGroupDefault = function () {
-        $('.form-group.form-group-default').click(function () {
+    * @description Initialize Pages form group input
+    */
+    Pages.prototype.initFormGroupDefault = function() {
+        $('body').on('click','.form-group.form-group-default',function() {
             $(this).find('input').focus();
         });
-        $('body').on('focus', '.form-group.form-group-default :input', function () {
+        $('body').on('focus', '.form-group.form-group-default :input', function() {
             $('.form-group.form-group-default').removeClass('focused');
             $(this).parents('.form-group').addClass('focused');
         });
 
-        $('body').on('blur', '.form-group.form-group-default :input', function () {
+        $('body').on('blur', '.form-group.form-group-default :input', function() {
             $(this).parents('.form-group').removeClass('focused');
             if ($(this).val()) {
                 $(this).closest('.form-group').find('label').addClass('fade');
@@ -187,20 +187,20 @@
             }
         });
 
-        $('.form-group.form-group-default .checkbox, .form-group.form-group-default .radio').hover(function () {
+        $('.form-group.form-group-default .checkbox, .form-group.form-group-default .radio').hover(function() {
             $(this).parents('.form-group').addClass('focused');
-        }, function () {
+        }, function() {
             $(this).parents('.form-group').removeClass('focused');
         });
     }
 
     /** @function initSlidingTabs
-     * @description Initialize Bootstrap Custom Sliding Tabs
-     * @requires bootstrap.js
-     */
-    Pages.prototype.initSlidingTabs = function () {
+    * @description Initialize Bootstrap Custom Sliding Tabs
+    * @requires bootstrap.js
+    */
+    Pages.prototype.initSlidingTabs = function() {
         // TODO: move this to a separate file
-        $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+        $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
             //e = $(e.relatedTarget || e.target).parent().find('a[data-toggle=tab]');
             e = $(e.target).parent().find('a[data-toggle=tab]');
 
@@ -211,86 +211,86 @@
             if (!$(hrefCurrent).is('.slide-left, .slide-right')) return;
             $(hrefCurrent).addClass('sliding');
 
-            setTimeout(function () {
+            setTimeout(function() {
                 $(hrefCurrent).removeClass('sliding');
             }, 100);
         });
     }
     /** @function reponsiveTabs
-     * @description Responsive handlers for Bootstrap Tabs
-     */
-    Pages.prototype.reponsiveTabs = function () {
+    * @description Responsive handlers for Bootstrap Tabs
+    */
+    Pages.prototype.reponsiveTabs = function() {
         //Dropdown FX
-        $('[data-init-reponsive-tabs="dropdownfx"]').each(function () {
+         $('[data-init-reponsive-tabs="dropdownfx"]').each(function() {
             var drop = $(this);
             drop.addClass("hidden-sm hidden-xs");
             var content = '<select class="cs-select cs-skin-slide full-width" data-init-plugin="cs-select">'
-            for (var i = 1; i <= drop.children("li").length; i++) {
-                var li = drop.children("li:nth-child(" + i + ")");
-                var selected = "";
-                if (li.hasClass("active")) {
-                    selected = "selected";
+            for(var i = 1; i <= drop.children("li").length; i++){
+                var li = drop.children("li:nth-child("+i+")");
+                var selected ="";
+                if(li.hasClass("active")){
+                    selected="selected";
                 }
-                content += '<option value="' + li.children('a').attr('href') + '" ' + selected + '>';
+                content +='<option value="'+ li.children('a').attr('href')+'" '+selected+'>';
                 content += li.children('a').text();
                 content += '</option>';
             }
-            content += '</select>'
+            content +='</select>'
             drop.after(content);
             var select = drop.next()[0];
             $(select).on('change', function (e) {
                 var optionSelected = $("option:selected", this);
                 var valueSelected = this.value;
-                drop.find('a[href="' + valueSelected + '"]').tab('show')
+                drop.find('a[href="'+valueSelected+'"]').tab('show')
             })
             $(select).wrap('<div class="nav-tab-dropdown cs-wrapper full-width p-t-10 visible-xs visible-sm"></div>');
             new SelectFx(select);
-        });
+         });
 
         //Tab to Accordian
         $.fn.tabCollapse && $('[data-init-reponsive-tabs="collapse"]').tabCollapse();
     }
 
     /** @function initNotificationCenter
-     * @description Initialize Pages Header Notifcation Dropdown
-     */
-    Pages.prototype.initNotificationCenter = function () {
-        $('body').on('click', '.notification-list .dropdown-menu', function (event) {
+    * @description Initialize Pages Header Notifcation Dropdown
+    */
+    Pages.prototype.initNotificationCenter = function() {
+        $('body').on('click', '.notification-list .dropdown-menu', function(event) {
             event.stopPropagation();
         });
-        $('body').on('click', '.toggle-more-details', function (event) {
+        $('body').on('click', '.toggle-more-details', function(event) {
             var p = $(this).closest('.heading');
-            p.closest('.heading').children('.more-details').stop().slideToggle('fast', function () {
+            p.closest('.heading').children('.more-details').stop().slideToggle('fast', function() {
                 p.toggleClass('open');
             });
         });
     }
 
     /** @function initProgressBars
-     * @description Initialize Pages ProgressBars
-     */
-    Pages.prototype.initProgressBars = function () {
-        $(window).on('load', function () {
+    * @description Initialize Pages ProgressBars
+    */
+    Pages.prototype.initProgressBars = function() {
+        $(window).on('load', function() {
             // Hack: FF doesn't play SVG animations set as background-image
             $('.progress-bar-indeterminate, .progress-circle-indeterminate, .mapplic-pin').hide().show(0);
         });
     }
 
     /** @function initInputFile
-     * @description Initialize File Input for Bootstrap Buttons and Input groups
-     */
-    Pages.prototype.initInputFile = function () {
-        $(document).on('change', '.btn-file :file', function () {
+    * @description Initialize File Input for Bootstrap Buttons and Input groups
+    */
+    Pages.prototype.initInputFile = function() {
+        $(document).on('change', '.btn-file :file', function() {
             var input = $(this),
-                numFiles = input.get(0).files ? input.get(0).files.length : 1,
-                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            numFiles = input.get(0).files ? input.get(0).files.length : 1,
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
             input.trigger('fileselect', [numFiles, label]);
         });
 
-        $('.btn-file :file').on('fileselect', function (event, numFiles, label) {
+        $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
             var input = $(this).parents('.input-group').find(':text'),
                 log = numFiles > 1 ? numFiles + ' files selected' : label;
-            if (input.length) {
+            if( input.length ) {
                 input.val(log);
             } else {
                 $(this).parent().html(log);
@@ -298,10 +298,10 @@
         });
     }
     /** @function initHorizontalMenu
-     * @description Initialize Horizontal Dropdown Menu
-     */
-    Pages.prototype.initHorizontalMenu = function () {
-        $(document).on('click', '.horizontal-menu .bar-inner > ul > li', function () {
+    * @description Initialize Horizontal Dropdown Menu
+    */
+    Pages.prototype.initHorizontalMenu = function(){
+        $(document).on('click', '.horizontal-menu .bar-inner > ul > li', function(){
             $(this).toggleClass('open').siblings().removeClass('open');
         });
 
@@ -309,27 +309,27 @@
             $('.horizontal-menu .bar-inner > ul > li').removeClass('open');
         });
 
-        $('[data-pages="horizontal-menu-toggle"]').on('click touchstart', function (e) {
+        $('[data-pages="horizontal-menu-toggle"]').on('click touchstart', function(e) {
             e.preventDefault();
             $('body').toggleClass('menu-opened');
         });
     }
     /** @function initTooltipPlugin
-     * @description Initialize Bootstrap tooltip
-     * @requires bootstrap.js
-     */
-    Pages.prototype.initTooltipPlugin = function () {
+    * @description Initialize Bootstrap tooltip
+    * @requires bootstrap.js
+    */
+    Pages.prototype.initTooltipPlugin = function() {
         $.fn.tooltip && $('[data-toggle="tooltip"]').tooltip();
     }
     /** @function initSelect2Plugin
-     * @description Initialize select2 dropdown
-     * @requires select2.js
-     */
-    Pages.prototype.initSelect2Plugin = function () {
-        $.fn.select2 && $('[data-init-plugin="select2"]').each(function () {
+    * @description Initialize select2 dropdown
+    * @requires select2.js
+    */
+    Pages.prototype.initSelect2Plugin = function() {
+        $.fn.select2 && $('[data-init-plugin="select2"]').each(function() {
             $(this).select2({
                 minimumResultsForSearch: ($(this).attr('data-disable-search') == 'true' ? -1 : 1)
-            }).on('select2-opening', function () {
+            }).on('select2-opening', function() {
                 $.fn.scrollbar && $('.select2-results').scrollbar({
                     ignoreMobile: false
                 })
@@ -337,20 +337,20 @@
         });
     }
     /** @function initScrollBarPlugin
-     * @description Initialize Global Scroller
-     * @requires jquery-scrollbar.js
-     */
-    Pages.prototype.initScrollBarPlugin = function () {
+    * @description Initialize Global Scroller
+    * @requires jquery-scrollbar.js
+    */
+    Pages.prototype.initScrollBarPlugin = function() {
         $.fn.scrollbar && $('.scrollable').scrollbar({
             ignoreOverlay: false
         });
     }
     /** @function initListView
-     * @description Initialize iOS like List view plugin
-     * @example <caption>data-init-list-view="ioslist"</caption>
-     * @requires jquery-ioslist.js
-     */
-    Pages.prototype.initListView = function () {
+    * @description Initialize iOS like List view plugin
+    * @example <caption>data-init-list-view="ioslist"</caption>
+    * @requires jquery-ioslist.js
+    */
+    Pages.prototype.initListView = function() {
         $.fn.ioslist && $('[data-init-list-view="ioslist"]').ioslist();
         $.fn.scrollbar && $('.list-view-wrapper').scrollbar({
             ignoreOverlay: false
@@ -358,58 +358,58 @@
     }
 
     /** @function initSwitcheryPlugin
-     * @description Initialize iOS like List view plugin
-     * @example <caption>data-init-plugin="switchery"</caption>
-     * @requires Switchery.js
-     */
-    Pages.prototype.initSwitcheryPlugin = function () {
+    * @description Initialize iOS like List view plugin
+    * @example <caption>data-init-plugin="switchery"</caption>
+    * @requires Switchery.js
+    */
+    Pages.prototype.initSwitcheryPlugin = function() {
         // Switchery - ios7 switch
-        window.Switchery && $('[data-init-plugin="switchery"]').each(function () {
+        window.Switchery && $('[data-init-plugin="switchery"]').each(function() {
             var el = $(this);
             new Switchery(el.get(0), {
-                color: (el.data("color") != null ? $.Pages.getColor(el.data("color")) : $.Pages.getColor('success')),
-                size: (el.data("size") != null ? el.data("size") : "default")
+                color: (el.data("color") != null ?  $.Pages.getColor(el.data("color")) : $.Pages.getColor('success')),
+                size : (el.data("size") != null ?  el.data("size") : "default")
             });
         });
     }
 
     /** @function initSelectFxPlugin
-     * @description Initialize iOS like List view plugin
-     * @example <caption>select[data-init-plugin="cs-select"]</caption>
-     */
-    Pages.prototype.initSelectFxPlugin = function () {
-        window.SelectFx && $('select[data-init-plugin="cs-select"]').each(function () {
+    * @description Initialize iOS like List view plugin
+    * @example <caption>select[data-init-plugin="cs-select"]</caption>
+    */
+    Pages.prototype.initSelectFxPlugin = function() {
+        window.SelectFx && $('select[data-init-plugin="cs-select"]').each(function() {
             var el = $(this).get(0);
             $(el).wrap('<div class="cs-wrapper"></div>');
             new SelectFx(el);
         });
     }
     /** @function initUnveilPlugin
-     * @description To load retina images to img tag
-     */
-    Pages.prototype.initUnveilPlugin = function () {
+    * @description To load retina images to img tag
+    */
+    Pages.prototype.initUnveilPlugin = function() {
         // lazy load retina images
         $.fn.unveil && $("img").unveil();
     }
 
     /** @function initValidatorPlugin
-     * @description Inintialize and Overide exsisting jquery-validate methods.
-     * @requires jquery-validate.js
-     */
-    Pages.prototype.initValidatorPlugin = function () {
+    * @description Inintialize and Overide exsisting jquery-validate methods.
+    * @requires jquery-validate.js
+    */
+    Pages.prototype.initValidatorPlugin = function() {
         /**
          * Open the socket.
          * @override
          */
         $.validator && $.validator.setDefaults({
             ignore: "", // validate hidden fields, required for cs-select
-            showErrors: function (errorMap, errorList) {
+            showErrors: function(errorMap, errorList) {
                 var $this = this;
-                $.each(this.successList, function (index, value) {
+                $.each(this.successList, function(index, value) {
                     var parent = $(this).closest('.form-group-attached');
                     if (parent.length) return $(value).popover("hide");
                 });
-                return $.each(errorList, function (index, value) {
+                return $.each(errorList, function(index, value) {
 
                     var parent = $(value.element).closest('.form-group-attached');
                     if (!parent.length) {
@@ -429,14 +429,14 @@
                     $(value.element).popover("show");
                 });
             },
-            onfocusout: function (element) {
+            onfocusout: function(element) {
                 var parent = $(element).closest('.form-group');
                 if ($(element).valid()) {
                     parent.removeClass('has-error');
                     parent.next('.error').remove();
                 }
             },
-            onkeyup: function (element) {
+            onkeyup: function(element) {
                 var parent = $(element).closest('.form-group');
                 if ($(element).valid()) {
                     $(element).removeClass('error');
@@ -447,7 +447,7 @@
                     parent.addClass('has-error');
                 }
             },
-            errorPlacement: function (error, element) {
+            errorPlacement: function(error, element) {
                 var parent = $(element).closest('.form-group');
                 if (parent.hasClass('form-group-default')) {
                     parent.addClass('has-error');
@@ -460,10 +460,9 @@
     }
 
     /** @function init
-     * @description Inintialize all core components.
-     */
-    Pages.prototype.init = function () {
-
+    * @description Inintialize all core components.
+    */
+    Pages.prototype.init = function() {
         // init layout
         this.initSidebar();
         this.initDropDown();
@@ -501,7 +500,7 @@
  * http://www.codrops.com
  */
 ;
-(function (window) {
+(function(window) {
 
     'use strict';
 
@@ -569,12 +568,11 @@
      * jQuery after() in pure JS
      */
     function insertAfter(newNode, referenceNode) {
-        referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-    }
-
-    /**
-     * SelectFx options
-     */
+            referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+        }
+        /**
+         * SelectFx options
+         */
     SelectFx.prototype.options = {
         // if true all the links will open in a new tab.
         // if we want to be redirected when we click an option, we need to define a data-link attr on the option of the native select element
@@ -584,8 +582,7 @@
         // default container is body
         container: 'body',
         // callback when changing the value
-        onChange: function (el) {
-            console.log(el);
+        onChange: function(el) {
             var event = document.createEvent('HTMLEvents');
             event.initEvent('change', true, false);
             el.dispatchEvent(event);
@@ -596,7 +593,7 @@
      * init function
      * initialize and cache some vars
      */
-    SelectFx.prototype._init = function () {
+    SelectFx.prototype._init = function() {
         // check if we are using a placeholder for the native select box
         // we assume the placeholder is disabled and selected by default
         var selectedOpt = this.el.querySelector('option[selected]');
@@ -623,10 +620,9 @@
         // init events
         this._initEvents();
 
-        this.el.onchange = function () {
+        this.el.onchange = function() {
             var index = this.selectedIndex;
             var inputText = this.children[index].innerHTML.trim();
-            console.log(inputText);
         }
 
     }
@@ -634,10 +630,10 @@
     /**
      * creates the structure for the select element
      */
-    SelectFx.prototype._createSelectEl = function () {
+    SelectFx.prototype._createSelectEl = function() {
         var self = this,
             options = '',
-            createOptionHTML = function (el) {
+            createOptionHTML = function(el) {
                 var optclass = '',
                     classes = '',
                     link = '';
@@ -662,7 +658,7 @@
                 return '<li ' + optclass + link + ' data-option data-value="' + el.value + '"><span>' + el.textContent + '</span></li>';
             };
 
-        [].slice.call(this.el.children).forEach(function (el) {
+        [].slice.call(this.el.children).forEach(function(el) {
             if (el.disabled) {
                 return;
             }
@@ -673,7 +669,7 @@
                 options += createOptionHTML(el);
             } else if (tag === 'optgroup') {
                 options += '<li class="cs-optgroup"><span>' + el.label + '</span><ul>';
-                [].slice.call(el.children).forEach(function (opt) {
+                [].slice.call(el.children).forEach(function(opt) {
                     options += createOptionHTML(opt);
                 })
                 options += '</ul></li>';
@@ -697,17 +693,17 @@
     /**
      * initialize the events
      */
-    SelectFx.prototype._initEvents = function () {
+    SelectFx.prototype._initEvents = function() {
         var self = this;
 
         // open/close select
-        this.selPlaceholder.addEventListener('click', function () {
+        this.selPlaceholder.addEventListener('click', function() {
             self._toggleSelect();
         });
 
         // clicking the options
-        this.selOpts.forEach(function (opt, idx) {
-            opt.addEventListener('click', function () {
+        this.selOpts.forEach(function(opt, idx) {
+            opt.addEventListener('click', function() {
                 self.current = idx;
                 self._changeOption();
                 // close select elem
@@ -716,7 +712,7 @@
         });
 
         // close the select element if the target it´s not the select element or one of its descendants..
-        document.addEventListener('click', function (ev) {
+        document.addEventListener('click', function(ev) {
             var target = ev.target;
             if (self._isOpen() && target !== self.selEl && !hasParent(target, self.selEl)) {
                 self._toggleSelect();
@@ -724,7 +720,7 @@
         });
 
         // keyboard navigation events
-        this.selEl.addEventListener('keydown', function (ev) {
+        this.selEl.addEventListener('keydown', function(ev) {
             var keyCode = ev.keyCode || ev.which;
 
             switch (keyCode) {
@@ -733,12 +729,12 @@
                     ev.preventDefault();
                     self._navigateOpts('prev');
                     break;
-                // down key
+                    // down key
                 case 40:
                     ev.preventDefault();
                     self._navigateOpts('next');
                     break;
-                // space key
+                    // space key
                 case 32:
                     ev.preventDefault();
                     if (self._isOpen() && typeof self.preSelCurrent != 'undefined' && self.preSelCurrent !== -1) {
@@ -746,7 +742,7 @@
                     }
                     self._toggleSelect();
                     break;
-                // enter key
+                    // enter key
                 case 13:
                     ev.preventDefault();
                     if (self._isOpen() && typeof self.preSelCurrent != 'undefined' && self.preSelCurrent !== -1) {
@@ -754,7 +750,7 @@
                         self._toggleSelect();
                     }
                     break;
-                // esc key
+                    // esc key
                 case 27:
                     ev.preventDefault();
                     if (self._isOpen()) {
@@ -768,7 +764,7 @@
     /**
      * navigate with up/dpwn keys
      */
-    SelectFx.prototype._navigateOpts = function (dir) {
+    SelectFx.prototype._navigateOpts = function(dir) {
         if (!this._isOpen()) {
             this._toggleSelect();
         }
@@ -789,7 +785,7 @@
      * open/close select
      * when opened show the default placeholder if any
      */
-    SelectFx.prototype._toggleSelect = function () {
+    SelectFx.prototype._toggleSelect = function() {
         var backdrop = this.selEl.querySelector('.cs-backdrop');
         var container = document.querySelector(this.options.container);
         var mask = container.querySelector('.dropdown-mask');
@@ -854,6 +850,7 @@
             this.selEl.data = dummy;
 
 
+
             this.selEl.style.position = 'absolute';
             var offsetselEl = offset(this.selEl);
 
@@ -890,7 +887,7 @@
             this.selEl.style.height = originalHeight + 'px';
             csOptions.style.width = '100%';
 
-            setTimeout(function () {
+            setTimeout(function() {
                 csOptions.style.overflowY = 'auto';
             }, 300);
 
@@ -900,7 +897,7 @@
     /**
      * change option - the new value is set
      */
-    SelectFx.prototype._changeOption = function () {
+    SelectFx.prototype._changeOption = function() {
         // if pre selected current (if we navigate with the keyboard)...
         if (typeof this.preSelCurrent != 'undefined' && this.preSelCurrent !== -1) {
             this.current = this.preSelCurrent;
@@ -940,14 +937,14 @@
     /**
      * returns true if select element is opened
      */
-    SelectFx.prototype._isOpen = function (opt) {
+    SelectFx.prototype._isOpen = function(opt) {
         return classie.has(this.selEl, 'cs-active');
     }
 
     /**
      * removes the focus class from the option
      */
-    SelectFx.prototype._removeFocus = function (opt) {
+    SelectFx.prototype._removeFocus = function(opt) {
         var focusEl = this.selEl.querySelector('li.cs-focus')
         if (focusEl) {
             classie.remove(focusEl, 'cs-focus');
@@ -964,30 +961,30 @@
  * Pages Chat
  * ============================================================ */
 
-(function ($) {
-    'use strict';
-    //To Open Chat When Clicked
-    $('[data-chat-input]').on('keypress', function (e) {
-        if (e.which == 13) {
-            var el = $(this).attr('data-chat-conversation');
-            $(el).append('<div class="message clearfix">' +
-                '<div class="chat-bubble from-me">' + $(this).val() +
-                '</div></div>');
-            $(this).val('');
-        }
-    });
+(function($) {
+  'use strict';
+  //To Open Chat When Clicked
+  $('[data-chat-input]').on('keypress',function(e){
+    if(e.which == 13) {
+       var el = $(this).attr('data-chat-conversation');
+       $(el).append('<div class="message clearfix">'+
+        '<div class="chat-bubble from-me">'+$(this).val()+
+        '</div></div>');
+       $(this).val('');
+    }
+  });
 
 })(window.jQuery);
 /* ============================================================
  * Pages Circular Progress
  * ============================================================ */
 
-(function ($) {
+(function($) {
     'use strict';
     // CIRCULAR PROGRESS CLASS DEFINITION
     // ======================
 
-    var Progress = function (element, options) {
+    var Progress = function(element, options) {
         this.$element = $(element);
         this.options = $.extend(true, {}, $.fn.circularProgress.defaults, options);
 
@@ -1025,7 +1022,7 @@
     }
     Progress.VERSION = "1.0.0";
 
-    Progress.prototype.value = function (val) {
+    Progress.prototype.value = function(val) {
         if (typeof val == 'undefined') return;
 
         var deg = perc2deg(val);
@@ -1048,7 +1045,7 @@
     // CIRCULAR PROGRESS PLUGIN DEFINITION
     // =======================
     function Plugin(option) {
-        return this.filter(':input').each(function () {
+        return this.filter(':input').each(function() {
             var $this = $(this);
             var data = $this.data('pg.circularProgress');
             var options = typeof option == 'object' && option;
@@ -1072,7 +1069,7 @@
     // CIRCULAR PROGRESS NO CONFLICT
     // ====================
 
-    $.fn.circularProgress.noConflict = function () {
+    $.fn.circularProgress.noConflict = function() {
         $.fn.circularProgress = old;
         return this;
     }
@@ -1080,8 +1077,8 @@
     // CIRCULAR PROGRESS DATA API
     //===================
 
-    $(window).on('load', function () {
-        $('[data-pages-progress="circle"]').each(function () {
+    $(window).on('load', function() {
+        $('[data-pages-progress="circle"]').each(function() {
             var $progress = $(this)
             $progress.circularProgress($progress.data())
         })
@@ -1099,17 +1096,17 @@
  * Pages Notifications
  * ============================================================ */
 
-(function ($) {
+(function($) {
 
     'use strict';
 
-    var Notification = function (container, options) {
+    var Notification = function(container, options) {
 
         var self = this;
 
         // Element collection
         self.container = $(container); // 'body' recommended
-        self.notification = $('<div class="pgn"></div>');
+        self.notification = $('<div class="pgn push-on-sidebar-open"></div>');
         self.options = $.extend(true, {}, $.fn.pgNotification.defaults, options);
 
         if (!self.container.find('.pgn-wrapper[data-position=' + this.options.position + ']').length) {
@@ -1214,7 +1211,7 @@
         self.notification.append(self.alert);
 
         // bind to Bootstrap closed event for alerts
-        self.alert.on('closed.bs.alert', function () {
+        self.alert.on('closed.bs.alert', function() {
             self.notification.remove();
             self.options.onClosed();
             // refresh layout after removal
@@ -1225,7 +1222,7 @@
 
     Notification.VERSION = "1.0.0";
 
-    Notification.prototype.show = function () {
+    Notification.prototype.show = function() {
 
         // TODO: add fadeOut animation on show as option
         this.wrapper.prepend(this.notification);
@@ -1235,8 +1232,8 @@
         if (this.options.timeout != 0) {
             var _this = this;
             // settimeout removes scope. use .bind(this)
-            setTimeout(function () {
-                this.notification.fadeOut("slow", function () {
+            setTimeout(function() {
+                this.notification.fadeOut("slow", function() {
                     $(this).remove();
                     _this.options.onClosed();
                 });
@@ -1245,7 +1242,7 @@
 
     };
 
-    $.fn.pgNotification = function (options) {
+    $.fn.pgNotification = function(options) {
         return new Notification(this, options);
     };
 
@@ -1256,30 +1253,29 @@
         type: 'info',
         showClose: true,
         timeout: 4000,
-        onShown: function () {
-        },
-        onClosed: function () {
-        }
+        onShown: function() {},
+        onClosed: function() {}
     }
 })(window.jQuery);
 /* ============================================================
  * Pages Portlet
  * ============================================================ */
 
-(function ($) {
+(function($) {
     'use strict';
     // PORTLET CLASS DEFINITION
     // ======================
 
-    var Portlet = function (element, options) {
+    var Portlet = function(element, options) {
         this.$element = $(element);
         this.options = $.extend(true, {}, $.fn.portlet.defaults, options);
         this.$loader = null;
         this.$body = this.$element.find('.panel-body');
     }
+    
     Portlet.VERSION = "1.0.0";
     // Button actions
-    Portlet.prototype.collapse = function () {
+    Portlet.prototype.collapse = function() {
         var icon = this.$element.find(this.options.collapseButton + ' > i');
         var heading = this.$element.find('.panel-heading');
 
@@ -1296,12 +1292,12 @@
         $.isFunction(this.options.onCollapse) && this.options.onCollapse(this);
     }
 
-    Portlet.prototype.close = function () {
+    Portlet.prototype.close = function() {
         this.$element.remove();
         $.isFunction(this.options.onClose) && this.options.onClose(this);
     }
 
-    Portlet.prototype.maximize = function () {
+    Portlet.prototype.maximize = function() {
         var icon = this.$element.find(this.options.maximizeButton + ' > i');
 
         if (this.$element.hasClass('panel-maximized')) {
@@ -1316,7 +1312,7 @@
     }
 
     // Options
-    Portlet.prototype.refresh = function (refresh) {
+    Portlet.prototype.refresh = function(refresh) {
         var toggle = this.$element.find(this.options.refreshButton);
 
         if (refresh) {
@@ -1368,7 +1364,7 @@
 
             // Start Fix for FF: pre-loading animated to SVGs
             var _loader = this.$loader;
-            setTimeout(function () {
+            setTimeout(function() {
                 this.$loader.remove();
                 this.$element.append(_loader);
             }.bind(this), 300);
@@ -1379,7 +1375,7 @@
 
         } else {
             var _this = this;
-            this.$loader.fadeOut(function () {
+            this.$loader.fadeOut(function() {
                 $(this).remove();
                 if (_this.options.progress == 'circle-lg') {
                     var iconNew = toggle.find('.active');
@@ -1394,7 +1390,7 @@
         }
     }
 
-    Portlet.prototype.error = function (error) {
+    Portlet.prototype.error = function(error) {
         if (error) {
             var _this = this;
             this.$element.pgNotification({
@@ -1403,10 +1399,10 @@
                 position: 'top',
                 timeout: 0,
                 type: 'danger',
-                onShown: function () {
+                onShown: function() {
                     _this.$loader.find('> div').fadeOut()
                 },
-                onClosed: function () {
+                onClosed: function() {
                     _this.refresh(false)
                 }
             }).show();
@@ -1417,7 +1413,7 @@
     // =======================
 
     function Plugin(option) {
-        return this.each(function () {
+        return this.each(function() {
             var $this = $(this);
             var data = $this.data('pg.portlet');
             var options = typeof option == 'object' && option;
@@ -1458,7 +1454,7 @@
     // PORTLET NO CONFLICT
     // ====================
 
-    $.fn.portlet.noConflict = function () {
+    $.fn.portlet.noConflict = function() {
         $.fn.portlet = old;
         return this;
     }
@@ -1466,21 +1462,21 @@
     // PORTLET DATA API
     //===================
 
-    $(document).on('click.pg.portlet.data-api', '[data-toggle="collapse"]', function (e) {
+    $(document).on('click.pg.portlet.data-api', '[data-toggle="collapse"]', function(e) {
         var $this = $(this);
         var $target = $this.closest('.panel');
         if ($this.is('a')) e.preventDefault();
         $target.data('pg.portlet') && $target.portlet('collapse');
     })
 
-    $(document).on('click.pg.portlet.data-api', '[data-toggle="close"]', function (e) {
+    $(document).on('click.pg.portlet.data-api', '[data-toggle="close"]', function(e) {
         var $this = $(this);
         var $target = $this.closest('.panel');
         if ($this.is('a')) e.preventDefault();
         $target.data('pg.portlet') && $target.portlet('close');
     })
 
-    $(document).on('click.pg.portlet.data-api', '[data-toggle="refresh"]', function (e) {
+    $(document).on('click.pg.portlet.data-api', '[data-toggle="refresh"]', function(e) {
         var $this = $(this);
         var $target = $this.closest('.panel');
         if ($this.is('a')) e.preventDefault();
@@ -1489,15 +1485,15 @@
         })
     })
 
-    $(document).on('click.pg.portlet.data-api', '[data-toggle="maximize"]', function (e) {
+    $(document).on('click.pg.portlet.data-api', '[data-toggle="maximize"]', function(e) {
         var $this = $(this);
         var $target = $this.closest('.panel');
         if ($this.is('a')) e.preventDefault();
         $target.data('pg.portlet') && $target.portlet('maximize');
     })
 
-    $(window).on('load', function () {
-        $('[data-pages="portlet"]').each(function () {
+    $(window).on('load', function() {
+        $('[data-pages="portlet"]').each(function() {
             var $portlet = $(this)
             $portlet.portlet($portlet.data())
         })
@@ -1508,14 +1504,14 @@
 /* ============================================================
  * Pages Mobile View
  * ============================================================ */
-(function ($) {
+(function($) {
     'use strict';
 
-    var MobileView = function (element, options) {
+    var MobileView = function(element, options) {
         var self = this;
         self.options = $.extend(true, {}, $.fn.pgMobileViews.defaults, options);
         self.element = $(element);
-        self.element.on('click', function (e) {
+        self.element.on('click', function(e) {
             e.preventDefault();
             var data = self.element.data();
             var el = $(data.viewPort);
@@ -1524,8 +1520,8 @@
                 el.children().last().children('.view').hide();
                 $(data.toggleView).show();
             }
-            else {
-                toView = el.last();
+            else{
+                 toView = el.last();
             }
             el.toggleClass(data.viewAnimation);
             self.options.onNavigate(toView, data.viewAnimation);
@@ -1533,20 +1529,19 @@
         })
         return this; // enable chaining
     };
-    $.fn.pgMobileViews = function (options) {
+    $.fn.pgMobileViews = function(options) {
         return new MobileView(this, options);
     };
 
     $.fn.pgMobileViews.defaults = {
         //Returns Target View & Animation Type
-        onNavigate: function (view, animation) {
-        }
+        onNavigate: function(view, animation) {}
     }
     // MOBILE VIEW DATA API
     //===================
 
-    $(window).on('load', function () {
-        $('[data-navigate="view"]').each(function () {
+    $(window).on('load', function() {
+        $('[data-navigate="view"]').each(function() {
             var $mobileView = $(this)
             $mobileView.pgMobileViews();
         })
@@ -1556,48 +1551,48 @@
  * Pages Quickview Plugin
  * ============================================================ */
 
-(function ($) {
+(function($) {
     'use strict';
     // QUICKVIEW CLASS DEFINITION
     // ======================
 
-    var Quickview = function (element, options) {
+    var Quickview = function(element, options) {
         this.$element = $(element);
         this.options = $.extend(true, {}, $.fn.quickview.defaults, options);
         this.bezierEasing = [.05, .74, .27, .99];
         var _this = this;
 
-        $(this.options.notes).on('click', '.list > ul > li', function (e) {
+        $(this.options.notes).on('click', '.list > ul > li', function(e) {
             var note = $(this).find('.note-preview');
             var note = $(this).find('.note-preview');
             $(_this.options.noteEditor).html(note.html());
             $(_this.options.notes).toggleClass('push');
         });
-        $(this.options.notes).on('click', '.list > ul > li .checkbox', function (e) {
+        $(this.options.notes).on('click', '.list > ul > li .checkbox', function(e) {
             e.stopPropagation();
         });
-        $(this.options.notes).on('click', _this.options.backButton, function (e) {
+        $(this.options.notes).on('click', _this.options.backButton, function(e) {
             $(_this.options.notes).find('.toolbar > li > a').removeClass('active');
             $(_this.options.notes).toggleClass('push');
         });
-        $(this.options.deleteNoteButton).click(function (e) {
+        $(this.options.deleteNoteButton).click(function(e) {
             e.preventDefault();
             $(this).toggleClass('selected');
             $(_this.options.notes).find('.list > ul > li .checkbox').fadeToggle("fast");
             $(_this.options.deleteNoteConfirmButton).fadeToggle("fast").removeClass('hide');
         });
-        $(this.options.newNoteButton).click(function (e) {
+        $(this.options.newNoteButton).click(function(e) {
             e.preventDefault();
             $(_this.options.noteEditor).html('');
         });
 
-        $(this.options.deleteNoteConfirmButton).click(function () {
+        $(this.options.deleteNoteConfirmButton).click(function() {
             var checked = $(_this.options.notes).find('input[type=checkbox]:checked');
-            checked.each(function () {
+            checked.each(function() {
                 $(this).parents('li').remove();
             });
         });
-        $(this.options.notes).on('click', '.toolbar > li > a', function (e) {
+        $(this.options.notes).on('click', '.toolbar > li > a', function(e) {
             //e.preventDefault();
             var command = $(this).attr('data-action');
             document.execCommand(command, false, null);
@@ -1610,7 +1605,7 @@
     // QUICKVIEW PLUGIN DEFINITION
     // =======================
     function Plugin(option) {
-        return this.each(function () {
+        return this.each(function() {
             var $this = $(this);
             var data = $this.data('pg.quickview');
             var options = typeof option == 'object' && option;
@@ -1641,7 +1636,7 @@
     // QUICKVIEW NO CONFLICT
     // ====================
 
-    $.fn.quickview.noConflict = function () {
+    $.fn.quickview.noConflict = function() {
         $.fn.quickview = old;
         return this;
     }
@@ -1649,16 +1644,16 @@
     // QUICKVIEW DATA API
     //===================
 
-    $(window).on('load', function () {
+    $(window).on('load', function() {
 
-        $('[data-pages="quickview"]').each(function () {
+        $('[data-pages="quickview"]').each(function() {
             var $quickview = $(this)
             $quickview.quickview($quickview.data())
         })
     });
 
 
-    $(document).on('click.pg.quickview.data-api touchstart', '[data-toggle="quickview"]', function (e) {
+    $(document).on('click.pg.quickview.data-api touchstart', '[data-toggle="quickview"]', function(e) {
         var elem = $(this).attr('data-toggle-element');
         if (Modernizr.csstransitions) {
             $(elem).toggleClass('open');
@@ -1667,13 +1662,13 @@
             if (!$(elem).hasClass('open-ie')) {
                 $(elem).stop().animate({
                     right: -1 * width
-                }, 400, $.bez([.05, .74, .27, .99]), function () {
+                }, 400, $.bez([.05, .74, .27, .99]), function() {
                     $(elem).addClass('open-ie')
                 });
             } else {
                 $(elem).stop().animate({
                     right: 0
-                }, 400, $.bez([.05, .74, .27, .99]), function () {
+                }, 400, $.bez([.05, .74, .27, .99]), function() {
                     $(elem).removeClass('open-ie')
                 });
             }
@@ -1686,12 +1681,12 @@
  * Pages Parallax Plugin
  * ============================================================ */
 
-(function ($) {
+(function($) {
     'use strict';
     // PARALLAX CLASS DEFINITION
     // ======================
 
-    var Parallax = function (element, options) {
+    var Parallax = function(element, options) {
         this.$element = $(element);
         this.options = $.extend(true, {}, $.fn.parallax.defaults, options);
         this.$coverPhoto = this.$element.find('.cover-photo');
@@ -1708,7 +1703,7 @@
     }
     Parallax.VERSION = "1.0.0";
 
-    Parallax.prototype.animate = function () {
+    Parallax.prototype.animate = function() {
 
         var scrollPos;
         var pagecoverWidth = this.$element.height();
@@ -1743,7 +1738,7 @@
     // PARALLAX PLUGIN DEFINITION
     // =======================
     function Plugin(option) {
-        return this.each(function () {
+        return this.each(function() {
             var $this = $(this);
             var data = $this.data('pg.parallax');
             var options = typeof option == 'object' && option;
@@ -1769,7 +1764,7 @@
     // PARALLAX NO CONFLICT
     // ====================
 
-    $.fn.parallax.noConflict = function () {
+    $.fn.parallax.noConflict = function() {
         $.fn.parallax = old;
         return this;
     }
@@ -1777,15 +1772,15 @@
     // PARALLAX DATA API
     //===================
 
-    $(window).on('load', function () {
+    $(window).on('load', function() {
 
-        $('[data-pages="parallax"]').each(function () {
+        $('[data-pages="parallax"]').each(function() {
             var $parallax = $(this)
             $parallax.parallax($parallax.data())
         })
     });
 
-    $(window).on('scroll', function () {
+    $(window).on('scroll', function() {
         // Disable parallax for Touch devices
         if (Modernizr.touch) {
             return;
@@ -1794,271 +1789,272 @@
     });
 
 })(window.jQuery);
-/* ============================================================
- * Pages Sidebar
- * ============================================================ */
+ /* ============================================================
+  * Pages Sidebar
+  * ============================================================ */
 
-(function ($) {
+ (function($) {
     'use strict';
-    // SIDEBAR CLASS DEFINITION
-    // ======================
+     // SIDEBAR CLASS DEFINITION
+     // ======================
 
-    var Sidebar = function (element, options) {
-        this.$element = $(element);
-        this.$body = $('body');
-        this.options = $.extend(true, {}, $.fn.sidebar.defaults, options);
+    var Sidebar = function(element, options) {
+         this.$element = $(element);
+         this.$body = $('body');
+         this.options = $.extend(true, {}, $.fn.sidebar.defaults, options);
 
-        this.bezierEasing = [.05, .74, .27, .99];
-        this.cssAnimation = true;
-        this.css3d = true;
+         this.bezierEasing = [.05, .74, .27, .99];
+         this.cssAnimation = true;
+         this.css3d = true;
 
-        this.sideBarWidth = 280;
-        this.sideBarWidthCondensed = 280 - 70;
-
-
-        this.$sidebarMenu = this.$element.find('.sidebar-menu > ul');
-        this.$pageContainer = $(this.options.pageContainer);
+         this.sideBarWidth = 280;
+         this.sideBarWidthCondensed = 280 - 70;
 
 
-        if (!this.$sidebarMenu.length) return;
 
-        // apply perfectScrollbar plugin only for desktops
-        ($.Pages.getUserAgent() == 'desktop') && this.$sidebarMenu.scrollbar({
-            ignoreOverlay: false
-        });
+         this.$sidebarMenu = this.$element.find('.sidebar-menu > ul');
+         this.$pageContainer = $(this.options.pageContainer);
 
 
-        if (!Modernizr.csstransitions)
-            this.cssAnimation = false;
-        if (!Modernizr.csstransforms3d)
-            this.css3d = false;
+         if (!this.$sidebarMenu.length) return;
 
-        // Bind events
-        // Toggle sub menus
-        // In Angular Binding is done using a pg-sidebar directive
-        (typeof angular === 'undefined') && $(document).on('click', '.sidebar-menu a', function (e) {
+         // apply perfectScrollbar plugin only for desktops
+         ($.Pages.getUserAgent() == 'desktop') && this.$sidebarMenu.scrollbar({
+             ignoreOverlay: false
+         });
 
-            if ($(this).parent().children('.sub-menu') === false) {
-                return;
-            }
-            var el = $(this);
-            var parent = $(this).parent().parent();
-            var li = $(this).parent();
-            var sub = $(this).parent().children('.sub-menu');
 
-            if (li.hasClass("open active")) {
+         if (!Modernizr.csstransitions)
+             this.cssAnimation = false;
+         if (!Modernizr.csstransforms3d)
+             this.css3d = false;
+
+         // Bind events
+         // Toggle sub menus
+         // In Angular Binding is done using a pg-sidebar directive
+         (typeof angular === 'undefined') && $(document).on('click', '.sidebar-menu a', function(e) {
+
+             if ($(this).parent().children('.sub-menu') === false) {
+                 return;
+             }
+             var el = $(this);
+             var parent = $(this).parent().parent();
+             var li = $(this).parent();
+             var sub = $(this).parent().children('.sub-menu');
+
+             if(li.hasClass("open active")){
                 el.children('.arrow').removeClass("open active");
-                sub.slideUp(200, function () {
+                sub.slideUp(200, function() {
                     li.removeClass("open active");
                 });
 
-            } else {
+             }else{
                 parent.children('li.open').children('.sub-menu').slideUp(200);
                 parent.children('li.open').children('a').children('.arrow').removeClass('open active');
                 parent.children('li.open').removeClass("open active");
                 el.children('.arrow').addClass("open active");
-                sub.slideDown(200, function () {
+                sub.slideDown(200, function() {
                     li.addClass("open active");
 
                 });
-            }
-            //e.preventDefault();
-        });
+             }
+             //e.preventDefault();
+         });
 
-        // Toggle sidebar
-        $('.sidebar-slide-toggle').on('click touchend', function (e) {
-            e.preventDefault();
-            $(this).toggleClass('active');
-            var el = $(this).attr('data-pages-toggle');
-            if (el != null) {
-                $(el).toggleClass('show');
-            }
-        });
+         // Toggle sidebar
+         $('.sidebar-slide-toggle').on('click touchend', function(e) {
+             e.preventDefault();
+             $(this).toggleClass('active');
+             var el = $(this).attr('data-pages-toggle');
+             if (el != null) {
+                 $(el).toggleClass('show');
+             }
+         });
 
-        var _this = this;
+         var _this = this;
 
-        function sidebarMouseEnter(e) {
+         function sidebarMouseEnter(e) {
             var _sideBarWidthCondensed = _this.$body.hasClass("rtl") ? -_this.sideBarWidthCondensed : _this.sideBarWidthCondensed;
 
-            var menuOpenCSS = (this.css3d == true ? 'translate3d(' + _sideBarWidthCondensed + 'px, 0,0)' : 'translate(' + _sideBarWidthCondensed + 'px, 0)');
+             var menuOpenCSS = (this.css3d == true ? 'translate3d(' + _sideBarWidthCondensed + 'px, 0,0)' : 'translate(' + _sideBarWidthCondensed + 'px, 0)');
 
-            if ($.Pages.isVisibleSm() || $.Pages.isVisibleXs()) {
-                return false
-            }
-            if ($('.close-sidebar').data('clicked')) {
-                return;
-            }
-            if (_this.$body.hasClass('menu-pin'))
-                return;
-            if (_this.cssAnimation) {
-                _this.$element.css({
-                    'transform': menuOpenCSS
-                });
-                _this.$body.addClass('sidebar-visible');
-            } else {
-                _this.$element.stop().animate({
-                    left: '0px'
-                }, 400, $.bez(_this.bezierEasing), function () {
-                    _this.$body.addClass('sidebar-visible');
-                });
-            }
-        }
+             if ($.Pages.isVisibleSm() || $.Pages.isVisibleXs()) {
+                 return false
+             }
+             if ($('.close-sidebar').data('clicked')) {
+                 return;
+             }
+             if (_this.$body.hasClass('menu-pin'))
+                 return;
+             if (_this.cssAnimation) {
+                 _this.$element.css({
+                     'transform': menuOpenCSS
+                 });
+                 _this.$body.addClass('sidebar-visible');
+             } else {
+                 _this.$element.stop().animate({
+                     left: '0px'
+                 }, 400, $.bez(_this.bezierEasing), function() {
+                     _this.$body.addClass('sidebar-visible');
+                 });
+             }
+         }
 
-        function sidebarMouseLeave(e) {
+         function sidebarMouseLeave(e) {
             var menuClosedCSS = (_this.css3d == true ? 'translate3d(0, 0,0)' : 'translate(0, 0)');
 
-            if ($.Pages.isVisibleSm() || $.Pages.isVisibleXs()) {
-                return false
-            }
-            if (typeof e != 'undefined') {
-                var target = $(e.target);
-                if (target.parent('.page-sidebar').length) {
-                    return;
-                }
-            }
-            if (_this.$body.hasClass('menu-pin'))
-                return;
+             if ($.Pages.isVisibleSm() || $.Pages.isVisibleXs()) {
+                 return false
+             }
+             if (typeof e != 'undefined') {
+                 var target = $(e.target);
+                 if (target.parent('.page-sidebar').length) {
+                     return;
+                 }
+             }
+             if (_this.$body.hasClass('menu-pin'))
+                 return;
 
-            if ($('.sidebar-overlay-slide').hasClass('show')) {
-                $('.sidebar-overlay-slide').removeClass('show')
-                $("[data-pages-toggle']").removeClass('active')
+             if ($('.sidebar-overlay-slide').hasClass('show')) {
+                 $('.sidebar-overlay-slide').removeClass('show')
+                 $("[data-pages-toggle']").removeClass('active')
 
-            }
+             }
 
-            if (_this.cssAnimation) {
-                _this.$element.css({
-                    'transform': menuClosedCSS
-                });
-                _this.$body.removeClass('sidebar-visible');
-            } else {
+             if (_this.cssAnimation) {
+                 _this.$element.css({
+                     'transform': menuClosedCSS
+                 });
+                 _this.$body.removeClass('sidebar-visible');
+             } else {
 
-                _this.$element.stop().animate({
-                    left: '-' + _this.sideBarWidthCondensed + 'px'
-                }, 400, $.bez(_this.bezierEasing), function () {
+                 _this.$element.stop().animate({
+                     left: '-' + _this.sideBarWidthCondensed + 'px'
+                 }, 400, $.bez(_this.bezierEasing), function() {
 
-                    _this.$body.removeClass('sidebar-visible')
-                    setTimeout(function () {
-                        $('.close-sidebar').data({
-                            clicked: false
-                        });
-                    }, 100);
-                });
-            }
-        }
-
-
-        this.$element.bind('mouseenter mouseleave', sidebarMouseEnter);
-        this.$pageContainer.bind('mouseover', sidebarMouseLeave);
-
-    }
+                     _this.$body.removeClass('sidebar-visible')
+                     setTimeout(function() {
+                         $('.close-sidebar').data({
+                             clicked: false
+                         });
+                     }, 100);
+                 });
+             }
+         }
 
 
-    // Toggle sidebar for mobile view
-    Sidebar.prototype.toggleSidebar = function (toggle) {
-        var timer;
-        var bodyColor = $('body').css('background-color');
-        $('.page-container').css('background-color', bodyColor);
-        if (this.$body.hasClass('sidebar-open')) {
-            this.$body.removeClass('sidebar-open');
-            timer = setTimeout(function () {
-                this.$element.removeClass('visible');
-            }.bind(this), 400);
-        } else {
-            clearTimeout(timer);
-            this.$element.addClass('visible');
-            setTimeout(function () {
-                this.$body.addClass('sidebar-open');
-            }.bind(this), 10);
-            setTimeout(function () {
+         this.$element.bind('mouseenter mouseleave', sidebarMouseEnter);
+         this.$pageContainer.bind('mouseover', sidebarMouseLeave);
+
+     }
+
+
+     // Toggle sidebar for mobile view
+     Sidebar.prototype.toggleSidebar = function(toggle) {
+         var timer;
+         var bodyColor = $('body').css('background-color');
+         $('.page-container').css('background-color', bodyColor);
+         if (this.$body.hasClass('sidebar-open')) {
+             this.$body.removeClass('sidebar-open');
+             timer = setTimeout(function() {
+                 this.$element.removeClass('visible');
+             }.bind(this), 400);
+         } else {
+             clearTimeout(timer);
+             this.$element.addClass('visible');
+             setTimeout(function() {
+                 this.$body.addClass('sidebar-open');
+             }.bind(this), 10);
+             setTimeout(function(){
                 // remove background color
                 $('.page-container').css({'background-color': ''});
-            }, 1000);
+             },1000);
 
-        }
+         }
 
-    }
+     }
 
-    Sidebar.prototype.togglePinSidebar = function (toggle) {
-        if (toggle == 'hide') {
-            this.$body.removeClass('menu-pin');
-        } else if (toggle == 'show') {
-            this.$body.addClass('menu-pin');
-        } else {
-            this.$body.toggleClass('menu-pin');
-        }
+     Sidebar.prototype.togglePinSidebar = function(toggle) {
+         if (toggle == 'hide') {
+             this.$body.removeClass('menu-pin');
+         } else if (toggle == 'show') {
+             this.$body.addClass('menu-pin');
+         } else {
+             this.$body.toggleClass('menu-pin');
+         }
 
-    }
-
-
-    // SIDEBAR PLUGIN DEFINITION
-    // =======================
-    function Plugin(option) {
-        return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('pg.sidebar');
-            var options = typeof option == 'object' && option;
-
-            if (!data) $this.data('pg.sidebar', (data = new Sidebar(this, options)));
-            if (typeof option == 'string') data[option]();
-        })
-    }
-
-    var old = $.fn.sidebar;
-
-    $.fn.sidebar = Plugin;
-    $.fn.sidebar.Constructor = Sidebar;
+     }
 
 
-    $.fn.sidebar.defaults = {
-        pageContainer: '.page-container'
-    }
+     // SIDEBAR PLUGIN DEFINITION
+     // =======================
+     function Plugin(option) {
+         return this.each(function() {
+             var $this = $(this);
+             var data = $this.data('pg.sidebar');
+             var options = typeof option == 'object' && option;
 
-    // SIDEBAR PROGRESS NO CONFLICT
-    // ====================
+             if (!data) $this.data('pg.sidebar', (data = new Sidebar(this, options)));
+             if (typeof option == 'string') data[option]();
+         })
+     }
 
-    $.fn.sidebar.noConflict = function () {
-        $.fn.sidebar = old;
-        return this;
-    }
+     var old = $.fn.sidebar;
 
-    // SIDEBAR PROGRESS DATA API
-    //===================
+     $.fn.sidebar = Plugin;
+     $.fn.sidebar.Constructor = Sidebar;
 
-    $(document).on('click.pg.sidebar.data-api', '[data-toggle-pin="sidebar"]', function (e) {
-        e.preventDefault();
-        var $this = $(this);
-        var $target = $('[data-pages="sidebar"]');
-        $target.data('pg.sidebar').togglePinSidebar();
-        return false;
-    })
-    $(document).on('click.pg.sidebar.data-api touchstart', '[data-toggle="sidebar"]', function (e) {
-        e.preventDefault();
-        var $this = $(this);
-        var $target = $('[data-pages="sidebar"]');
-        $target.data('pg.sidebar').toggleSidebar();
-        return false
-    })
 
-})(window.jQuery);
+     $.fn.sidebar.defaults = {
+         pageContainer: '.page-container'
+     }
+
+     // SIDEBAR PROGRESS NO CONFLICT
+     // ====================
+
+     $.fn.sidebar.noConflict = function() {
+         $.fn.sidebar = old;
+         return this;
+     }
+
+     // SIDEBAR PROGRESS DATA API
+     //===================
+
+     $(document).on('click.pg.sidebar.data-api', '[data-toggle-pin="sidebar"]', function(e) {
+         e.preventDefault();
+         var $this = $(this);
+         var $target = $('[data-pages="sidebar"]');
+         $target.data('pg.sidebar').togglePinSidebar();
+         return false;
+     })
+     $(document).on('click.pg.sidebar.data-api touchstart', '[data-toggle="sidebar"]', function(e) {
+         e.preventDefault();
+         var $this = $(this);
+         var $target = $('[data-pages="sidebar"]');
+         $target.data('pg.sidebar').toggleSidebar();
+         return false
+     })
+
+ })(window.jQuery);
 /* ============================================================
  * Pages Search overlay
  * ============================================================ */
 
-(function ($) {
+(function($) {
 
     'use strict';
 
     // SEARCH CLASS DEFINITION
     // ======================
 
-    var Search = function (element, options) {
+    var Search = function(element, options) {
         this.$element = $(element);
         this.options = $.extend(true, {}, $.fn.search.defaults, options);
         this.init();
     }
     Search.VERSION = "1.0.0";
 
-    Search.prototype.init = function () {
+    Search.prototype.init = function() {
         var _this = this;
         this.pressedKeys = [];
         this.ignoredKeys = [];
@@ -2069,11 +2065,11 @@
         this.$suggestions = this.$element.find(this.options.suggestions);
         this.$brand = this.$element.find(this.options.brand);
 
-        this.$searchField.on('keyup', function (e) {
+        this.$searchField.on('keyup', function(e) {
             _this.$suggestions && _this.$suggestions.html($(this).val());
         });
 
-        this.$searchField.on('keyup', function (e) {
+        this.$searchField.on('keyup', function(e) {
             _this.options.onKeyEnter && _this.options.onKeyEnter(_this.$searchField.val());
             if (e.keyCode == 13) { //Enter pressed
                 e.preventDefault();
@@ -2085,21 +2081,21 @@
 
         });
 
-        this.$closeButton.on('click', function () {
+        this.$closeButton.on('click', function() {
             _this.toggleOverlay('hide');
         });
 
-        this.$element.on('click', function (e) {
+        this.$element.on('click', function(e) {
             if ($(e.target).data('pages') == 'search') {
                 _this.toggleOverlay('hide');
             }
         });
 
-        $(document).on('keypress.pg.search', function (e) {
+        $(document).on('keypress.pg.search', function(e) {
             _this.keypress(e);
         });
 
-        $(document).on('keyup', function (e) {
+        $(document).on('keyup', function(e) {
             // Dismiss overlay on ESC is pressed
             if (_this.$element.is(':visible') && e.keyCode == 27) {
                 _this.toggleOverlay('hide');
@@ -2109,7 +2105,7 @@
     }
 
 
-    Search.prototype.keypress = function (e) {
+    Search.prototype.keypress = function(e) {
 
         e = e || event; // to deal with IE
         var nodeName = e.target.nodeName;
@@ -2126,14 +2122,14 @@
     }
 
 
-    Search.prototype.toggleOverlay = function (action, key) {
+    Search.prototype.toggleOverlay = function(action, key) {
         var _this = this;
         if (action == 'show') {
             this.$element.removeClass("hide");
             this.$element.fadeIn("fast");
             if (!this.$searchField.is(':focus')) {
                 this.$searchField.val(key);
-                setTimeout(function () {
+                setTimeout(function() {
                     this.$searchField.focus();
                     var tmpStr = this.$searchField.val();
                     this.$searchField.val('');
@@ -2147,11 +2143,11 @@
         } else {
             this.$element.fadeOut("fast").addClass("closed");
             this.$searchField.val('').blur();
-            setTimeout(function () {
+            setTimeout(function() {
                 if ((this.$element).is(':visible')) {
                     this.$brand.toggleClass('invisible');
                 }
-                $(document).on('keypress.pg.search', function (e) {
+                $(document).on('keypress.pg.search', function(e) {
                     _this.keypress(e);
                 });
             }.bind(this), 10);
@@ -2163,7 +2159,7 @@
 
 
     function Plugin(option) {
-        return this.each(function () {
+        return this.each(function() {
             var $this = $(this);
             var data = $this.data('pg.search');
             var options = typeof option == 'object' && option;
@@ -2191,12 +2187,12 @@
     // SEARCH NO CONFLICT
     // ====================
 
-    $.fn.search.noConflict = function () {
+    $.fn.search.noConflict = function() {
         $.fn.search = old;
         return this;
     }
 
-    $(document).on('click.pg.search.data-api', '[data-toggle="search"]', function (e) {
+    $(document).on('click.pg.search.data-api', '[data-toggle="search"]', function(e) {
         var $this = $(this);
         var $target = $('[data-pages="search"]');
         if ($this.is('a')) e.preventDefault();
@@ -2205,10 +2201,8 @@
 
 
 })(window.jQuery);
-(function ($) {
+(function($) {
     'use strict';
     // Initialize layouts and plugins
-    $(function () {
-        (typeof angular === 'undefined') && $.Pages.init();
-    });
+    (typeof angular === 'undefined') && $.Pages.init();
 })(window.jQuery);

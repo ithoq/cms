@@ -401,7 +401,7 @@ String.prototype.capitalizeFirstLetter = function () {
   Cms.prototype.initDataTableWithSearch = function (params) {
     var defaults = {
       hasSearchInput: true,
-      iDisplayLength: 5,
+      iDisplayLength: 10,
       tableElement: '#data-table',
       searchElement: '#search-table',
     };
@@ -638,14 +638,20 @@ String.prototype.capitalizeFirstLetter = function () {
     var defaults = {
       selector: '#content',
       theme: 'modern',
-      height: 200,
-      content_css: '/public/assets/css/style.css' ,
+      relative_urls: false,
+      entities: "",
+      visualblocks_default_state: false,
+      entity_encoding: "raw",
+      height: 300,
+      paste_as_text: true,
+      content_css: ['/public/assets/css/editor.css' , '/public/assets/css/style.css'] ,
       plugins: [
         'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
-        'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-        'save table contextmenu directionality emoticons template paste textcolor',
+        'searchreplace wordcount visualblocks visualchars ace_beautify fullscreen insertdatetime media nonbreaking',
+        'save table contextmenu directionality emoticons template paste textcolor jsplus_templates',
+        'jsplus_bootstrap_include,jsplus_bootstrap_show_blocks,jsplus_bootstrap_block_conf,jsplus_bootstrap_templates,jsplus_bootstrap_button, jsplus_bootstrap_alert, jsplus_bootstrap_col_move_left, jsplus_bootstrap_col_move_right, jsplus_bootstrap_delete_col, jsplus_bootstrap_delete_row, jsplus_bootstrap_include, jsplus_bootstrap_row_add_down, jsplus_bootstrap_row_add_up, jsplus_bootstrap_row_move_down, jsplus_bootstrap_row_move_up',
       ],
-      toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons',
+      toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media fullpage | forecolor backcolor | jsplus_templates | fullscreen | jsplus_bootstrap_show_blocks,jsplus_bootstrap_block_conf,jsplus_bootstrap_templates,jsplus_bootstrap_button, , jsplus_bootstrap_alert, jsplus_bootstrap_col_move_left, jsplus_bootstrap_col_move_right, jsplus_bootstrap_delete_col, jsplus_bootstrap_delete_row, jsplus_bootstrap_include, jsplus_bootstrap_row_add_down, jsplus_bootstrap_row_add_up, jsplus_bootstrap_row_move_down, jsplus_bootstrap_row_move_up',
     };
     var settings = $.extend({}, defaults, params);
     return tinymce.init(settings);

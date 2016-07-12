@@ -207,7 +207,8 @@ public class AdminWebContentController {
                 if( !form.getThumbnail().isEmpty()){
                     File uploadedFile = CmsUtils.uploadFile(form.getThumbnail(), false, form.getContentType().toLowerCase() + "/" + form.getContentId());
                     String resultPath = CmsUtils.getFilePath(uploadedFile, "public") + "/" + uploadedFile.getName();
-                    data.put("image_preview", resultPath.substring(1));
+                    //data.put("image_preview", resultPath.substring(1));
+                    content.setImage(resultPath.substring(1));
                 }
                 // existing
                 else{
@@ -216,8 +217,12 @@ public class AdminWebContentController {
             }
             ContentTemplateEntity ct = contentTemplateService.find(content.getContentTemplate().getId());
             PageData pageData = CmsUtils.fillData(ct.getContentTemplateFieldset(), request);
-            data.put("dev_top", form.getDevIncludeTop());
-            data.put("dev_bot", form.getDevIncludeBot());
+            //data.put("dev_top", form.getDevIncludeTop());
+            //data.put("dev_bot", form.getDevIncludeBot());
+
+            content.setIncludeTop(form.getDevIncludeTop());
+            content.setIncludeBottom(form.getDevIncludeBot());
+
             data.put("seo_h1", form.getSeoH1());
             data.put("seo_description", form.getSeoDescription());
             data.put("seo_tags", form.getSeoTag());
