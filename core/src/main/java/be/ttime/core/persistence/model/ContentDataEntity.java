@@ -3,7 +3,6 @@ package be.ttime.core.persistence.model;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.util.*;
@@ -25,6 +24,7 @@ public class ContentDataEntity extends AbstractTimestampEntity {
     private Long version;
     private Integer position;
     private String title;
+    @Column(length = 2000)
     private String intro;
     @Lob
     private String data;
@@ -49,7 +49,7 @@ public class ContentDataEntity extends AbstractTimestampEntity {
     public Map<String, List<FileEntity>> getFileByGroupMap(){
         Map<String, List<FileEntity>> result = new HashMap<>();
         for (FileEntity f : contentFiles) {
-            if(!StringUtils.isEmpty(f.getFileGroup()) && f.getFileType().getName().equals("DOWNLOAD")){
+            if(f.getFileType().getName().equals("DOWNLOAD")){
                 List<FileEntity> list = result.get(f.getFileGroup());
                 if(list == null){
                     list = new ArrayList<>();

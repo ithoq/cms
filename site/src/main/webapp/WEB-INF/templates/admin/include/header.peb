@@ -24,14 +24,12 @@
     </div>
     <div class="pull-right">
         <div class="visible-lg visible-md m-t-10">
-            <div class="pull-left p-r-10 p-t-10 fs-16 font-heading"><span class="semi-bold">{{ user.email }}</div>
+            <div class="pull-left p-r-10 p-t-10 fs-16 font-heading"><span class="semi-bold">{{ user.email }}</span></div>
             <div class="dropdown pull-right">
                 <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         class="profile-dropdown-toggle"><span class="thumbnail-wrapper d32 circular inline m-t-5"><img
-                                src="/resources/admin/img/avatar/avatar_small-men.png" alt=""
-                                data-src="/resources/admin/img/avatar/avatar_small-men.png"
-                                data-src-retina="/resources/admin/img/avatar/avatar_small2x-men.png" width="32"
-                                height="32"></span></button>
+                                src="{% if user.avatar is not empty %}/public{{ user.avatar }}{% else %}/resources/admin/img/avatar/avatar_small-men.png{% endif %}" alt="user avatar"
+                                data-src="{% if user.avatar is not empty %}/public{{ user.avatar }}{% else %}/resources/admin/img/avatar/avatar_small-men.png{% endif %}" width="32" height="32"></span></button>
                 <ul role="menu" class="dropdown-menu profile-dropdown">
                     <li><a href="#"><i class="pg-settings_small"></i> {{ message('settings') }}</a></li>
                     <li class="bg-master-lighter"><a href="/logout?isAdmin=true" class="clearfix"><span

@@ -93,7 +93,7 @@
         <div id="tabGeneral" class="tab-pane active">
             <div class="form-group form-group-default required">
                 <label>{{ message('admin.pageTitle') }} ({{ message('menu') }})</label>
-                <input type="text" class="form-control" name="seoTitle" value="{{ contentData.title }}">
+                <input type="text" class="form-control" name="pageDataTitle" value="{{ contentData.title }}">
             </div>
             <div class="form-group form-group-default required">
                 <label>Slug </label><i data-placement="right" title="" data-toggle="tooltip" type="button"

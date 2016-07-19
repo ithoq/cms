@@ -7,7 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface IUserRepository extends JpaRepository<UserEntity, Long>, QueryDslPredicateExecutor<UserEntity> {
+
+    List<UserEntity> findByOrderByEnabledDescLastNameAsc();
+
+    List<UserEntity> findByEnabledTrueAndAccountNonExpiredTrueAndAccountNonLockedTrueOrderByLastName();
 
     UserEntity findByUsername(String username);
 

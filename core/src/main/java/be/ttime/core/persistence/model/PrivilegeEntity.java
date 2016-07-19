@@ -30,6 +30,10 @@ public class PrivilegeEntity {
 
     private String name;
 
+    private String description;
+
+    private String section;
+
     public PrivilegeEntity() {
         super();
     }

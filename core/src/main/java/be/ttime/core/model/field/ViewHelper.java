@@ -1,9 +1,7 @@
 package be.ttime.core.model.field;
 
-import be.ttime.core.persistence.model.ContentTemplateEntity;
-import be.ttime.core.persistence.model.ContentTemplateFieldsetEntity;
-import be.ttime.core.persistence.model.FieldsetEntity;
-import be.ttime.core.persistence.model.InputDataEntity;
+import be.ttime.core.model.PageableResult;
+import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.util.CmsUtils;
@@ -15,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /*
     Render a dynamic field in CMS Page administration.
@@ -123,5 +118,13 @@ public class ViewHelper {
         }
         String menu = contentService.getNavMenu(locale, depth);
         return menu;
+    }
+
+    public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String category, List<String> contentType, Long pageNumber, Long limit, Long offset){
+
+
+        PageableResult<ContentEntity> result = contentService.findWebContent(locale, begin, end, name, category, contentType, pageNumber, limit, offset);
+
+        return result;
     }
 }

@@ -14,7 +14,7 @@ public class GlobalInitializer {
 
     @InitBinder
     public void globalBinder(WebDataBinder webDataBinder) {
-        SimpleDateFormat df = new SimpleDateFormat(CmsUtils.DATETIME_FORMAT);
+        SimpleDateFormat df = new SimpleDateFormat(CmsUtils.DATE_FORMAT);
         //indulgence
         df.setLenient(true);
         webDataBinder.registerCustomEditor(Date.class, new CustomDateEditor(df, true));

@@ -1,0 +1,71 @@
+{% extends 'admin/master' %}
+{% set activeNav = 'group' %}
+{% set title = message('admin.editGroup') %}
+
+{% block content %}
+
+
+    <form id="groupForm" action="/admin/group/edit" method="POST" data-parsley-validate="">
+        {{ csrf | raw }}
+        <input type="hidden" name="id" value="{{ role.id }}">
+        <div class="panel panel-default group-form">
+
+            <div class="panel-body">
+                <h2>{% if role is null  %}Create group{% else %}Edit group :{% endif %}</h2>
+                <hr class="section">
+                <div class="form-group form-group-default m-b-20 required">
+                    <label for="name">Name</label>
+                    <input id="name" name="name" type="text" class="form-control" value="{{ role.name }}">
+                </div>
+                <div class="form-group m-t-10">
+                    <label>Description</label>
+                    <textarea rows="4" class="form-control" id="description" name="description">{{ role.description }}</textarea>
+                </div>
+                <fieldset>
+                    <legend>General:</legend>
+                    <div class="row">
+                        {% for p in privileges.get("general") %}
+                            <div class="col-md-3 col-xs-6">
+                                <div class="form-group m-b-20 required">
+                                    <div class="checkbox">
+                                        <input type="checkbox" {% if role.privileges contains p %}checked="checked"{%  endif %} id="{{ p.id }}" name="privileges" value="{{ p.id }}">
+                                        <label for="{{ p.id }}">{{ p.name}}</label>{% if p.description is not empty %} <i data-placement="right" data-toggle="tooltip" data-original-title="{{p.description}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+                {% for entry in privileges %}
+                    {%  if entry.key != "general" and entry.key is not empty %}
+                        {% if entry.value.size() > 0 %}
+                            <fieldset>
+                                <legend>{{ entry.key }}</legend>
+                                <div class="row">
+                                    {% for p in entry.value %}
+                                        <div class="col-md-3 col-xs-6">
+                                            <div class="form-group m-b-20 required">
+                                                <div class="checkbox">
+                                                    <input type="checkbox" {% if role.privileges contains p %}checked="checked"{%  endif %} id="{{ p.id }}" name="privileges" value="{{ p.id }}">
+                                                    <label for="{{ p.id }}">{{p.name}}</label>{% if p.description is not empty %} <i data-placement="right" data-toggle="tooltip" data-original-title="{{p.description}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </fieldset>
+                        {%  endif %}
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+            <div class="panel-footer">
+                <button type="submit" class="btn btn-success">send</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock content %}
+{% block bottom %}
+    <script src="/resources/admin/js/page/user-edit.js"></script>
+{% endblock bottom %}

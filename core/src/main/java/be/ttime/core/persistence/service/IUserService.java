@@ -49,4 +49,8 @@ public interface IUserService extends UserDetailsService {
     void changeUserPassword(UserEntity user, String password);
 
     boolean checkIfValidOldPassword(UserEntity user, String password);
+
+    String jsonAdminContent();
+
+    UserEntity findById(Long id);
 }

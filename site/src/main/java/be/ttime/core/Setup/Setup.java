@@ -2,13 +2,17 @@ package be.ttime.core.setup;
 
 import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.model.BlockTypeEntity;
+import be.ttime.core.persistence.model.PrivilegeEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IBlockService;
+import be.ttime.core.persistence.service.IRoleService;
 import be.ttime.core.util.CmsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +31,9 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
 
     @Autowired
     private IBlockService blockService;
+
+    @Autowired
+    private IRoleService roleService;
 
     private static final String INSTALLATION_SCRIPT = "setup/script.sql";
 
@@ -84,5 +91,13 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
                 log.error("Error during db initialisation ", e);
             }
         }
+
+        // load all privilege
+        final List<GrantedAuthority> authorities = new ArrayList<>();
+        for (PrivilegeEntity privilegeEntity : roleService.findAllPrivilege()) {
+            authorities.add(new SimpleGrantedAuthority(privilegeEntity.getName()));
+        }
+        CmsUtils.setFullPrivilegeList(authorities);
+
     }
 }

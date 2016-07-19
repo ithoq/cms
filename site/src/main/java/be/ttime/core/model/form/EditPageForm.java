@@ -13,6 +13,8 @@ public class EditPageForm {
     @NotEmpty
     private String name;
     @NotEmpty
+    private String pageDataTitle;
+    @NotEmpty
     private String slug;
 
     private String devIncludeTop;

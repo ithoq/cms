@@ -5,6 +5,7 @@ import be.ttime.core.persistence.model.ContentTemplateFieldsetEntity;
 import be.ttime.core.persistence.model.FieldsetEntity;
 import be.ttime.core.persistence.repository.IContentTemplateFieldsetRepository;
 import be.ttime.core.persistence.repository.IFieldsetRepository;
+import be.ttime.core.util.CmsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -87,11 +88,9 @@ public class FieldsetServiceImpl implements IFieldsetService {
         // reload tree like this : table.ajax.reload()
         for (FieldsetEntity f : fieldsets) {
             row = Json.createObjectBuilder();
-            //row.add("DT_RowId", "x"); // add an name
-            //row.add("DT_RowClass", "x"); // add a class
             row.add("DT_RowData", Json.createObjectBuilder().add("id", f.getId()));
-            row.add("name", f.getName());
-            row.add("description", f.getDescription() != null ? f.getDescription() : "" );
+            row.add("name", CmsUtils.emptyStringIfnull(f.getName()));
+            row.add("description", CmsUtils.emptyStringIfnull(f.getDescription()));
             row.add("deletable", f.isDeletable());
             data.add(row);
         }

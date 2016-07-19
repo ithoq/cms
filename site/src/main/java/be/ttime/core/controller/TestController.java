@@ -1,12 +1,13 @@
 package be.ttime.core.controller;
 
+import be.ttime.core.persistence.model.UserEntity;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.persistence.service.IMessageService;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import be.ttime.core.persistence.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 @Controller
@@ -29,40 +27,29 @@ public class TestController {
     private IApplicationService applicationService;
 
     @Autowired
+    private IUserService userService;
+
+    @Autowired
     private IMessageService messageService;
 
     @Autowired
     private MessageSource messages;
 
-    @RequestMapping(value = "/testCsrf", method = RequestMethod.GET)
-    public String testCsrf(ModelMap model, HttpServletRequest request, Locale localeRequest) {
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @RequestMapping(value = "/en/resetAdmin", method = RequestMethod.GET)
+    @ResponseBody
+    public String testCsrf(ModelMap model, HttpServletRequest request, Locale localeRequest) throws Exception {
 
-        Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String input = "2016-05-26 17:36:48";
-        Date d = null;
+        UserEntity user = userService.findByUsernameOrEmail("fcipolla@ttime.be");
+        if(user == null)
+            throw new Exception("ADMIN NOT EXIST");
 
+        user.setPassword(bCryptPasswordEncoder.encode("mrshink,1532"));
+        userService.save(user);
 
-        try {
-            d = formatter.parse(input);
-        } catch (ParseException e) {
-            d = new Date();
-        }
-
-        String result = gson.toJson(d);
-
-
-        Date resultDate = gson.fromJson(result, Date.class);
-
-        //String test = format.format(d);
-
-        model.put("date", d );
-
-        model.put("result", resultDate );
-
-
-        return "csrf";
+        return "Admin reset";
     }
 
     @RequestMapping(value = "/testCsrf", method = RequestMethod.POST)

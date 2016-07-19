@@ -2,6 +2,7 @@ package be.ttime.core.persistence.service;
 
 import be.ttime.core.persistence.model.ContentTemplateEntity;
 import be.ttime.core.persistence.repository.IContentTemplateRepository;
+import be.ttime.core.util.CmsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -79,8 +80,8 @@ public class ContentTemplateServiceImpl implements IContentTemplateService {
         for (ContentTemplateEntity c : contentTemplateEntityList) {
             row = Json.createObjectBuilder();
             row.add("DT_RowData", Json.createObjectBuilder().add("id", c.getId()));
-            row.add("name", c.getName());
-            row.add("description", c.getDescription() != null ? c.getDescription() : "");
+            row.add("name", CmsUtils.emptyStringIfnull(c.getName()));
+            row.add("description", CmsUtils.emptyStringIfnull(c.getDescription()));
             row.add("deletable", c.isDeletable());
             data.add(row);
         }

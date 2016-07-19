@@ -131,8 +131,6 @@ public class AdminWebContentController {
             template = contentTemplateService.findByName("Webcontent");
         }
 
-
-
         model.put("template", template);
         model.put("initialTags", gson.toJson(tags));
         model.put("initialCategories", gson.toJson(categories));
@@ -196,6 +194,7 @@ public class AdminWebContentController {
             content.setEndDate(end);
 
             contentData.setTitle(form.getTitle());
+            contentData.setIntro(form.getIntro());
             contentData.setSlug(slugify.slugify(form.getSlug()));
             contentData.setComputedSlug(getComputedSlug(form.getContentType(), form.getSlug(), begin, contentData.getLanguage().getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));
 

@@ -108,11 +108,10 @@ public class InstallController {
         user.setEmail(form.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(form.getPassword()));
 
-        Collection<RoleEntity> roles = new ArrayList<>();
+        Set<RoleEntity> roles = new HashSet<>();
         roles.add(role);
 
         user.setRoles(roles);
-
 
         userService.save(user);
 

@@ -1,4 +1,3 @@
-
 <nav data-pages="sidebar" class="page-sidebar">
     <div class="sidebar-header"><a href="/admin/cms"><img src="/resources/admin/img/logo-white.png" alt="logo" data-src="/resources/admin/img/logo-white.png" data-src-retina="/resources/admin/img/logo-white-2x.png" width="78" height="22" class="brand"></a>
         <div class="sidebar-header-controls">
@@ -29,6 +28,8 @@
                     </li>
                 </ul>
             </li>
+            <li><a href="/admin/user" class="detailed"><span class="title">User</span><span class="details">User management</span></a><span class="icon-thumbnail"><i class="fa fa-user"></i></span></li>
+            <li><a href="/admin/group" class="detailed"><span class="title">Group</span><span class="details">Group management</span></a><span class="icon-thumbnail"><i class="fa fa-key"></i></span></li>
         </ul>
         <div class="clearfix"></div>
     </div>

@@ -3,6 +3,8 @@ package be.ttime.core.config.security;
 import be.ttime.core.error.IpLockedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.WebAttributes;
@@ -22,7 +24,10 @@ public class AuthenticationFailureHandler extends SimpleUrlAuthenticationFailure
 
     @Override
     public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException exception) throws IOException, ServletException {
-        setDefaultFailureUrl("/login?error=true");
+
+        String isAdmin = request.getParameter("isAdmin");
+        String url = (isAdmin.equals("true") ? "/admin/login" : "/login");
+        setDefaultFailureUrl( url +"?error=true");
 
         super.onAuthenticationFailure(request, response, exception);
 
@@ -31,11 +36,14 @@ public class AuthenticationFailureHandler extends SimpleUrlAuthenticationFailure
         String errorMessage = null;
 
         if (exception instanceof LockedException) {
-            errorMessage = messages.getMessage("error.auth.disabled", null, request.getLocale());
-        } else if (exception instanceof IpLockedException) {
-            errorMessage = messages.getMessage("error.auth.ipBlocked", null, request.getLocale());
+            errorMessage = messages.getMessage("error.auth.disabled", null, LocaleContextHolder.getLocale());
+        } else if (exception instanceof DisabledException){
+            errorMessage = messages.getMessage("error.auth.disabled", null, LocaleContextHolder.getLocale());
+        }
+        else if (exception instanceof IpLockedException) {
+            errorMessage = messages.getMessage("error.auth.ipBlocked", null, LocaleContextHolder.getLocale());
         } else {
-            errorMessage = messages.getMessage("error.auth.badCredentials", null, request.getLocale());
+            errorMessage = messages.getMessage("error.auth.badCredentials", null, LocaleContextHolder.getLocale());
         }
 
         request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, errorMessage);

@@ -4,7 +4,8 @@
 
 {% block content %}
 
-    <h4>Créer un nouveau fieldset</h4>
+
+    <h4>{% if fieldset is null  %}Create fieldset{% else %}Edit fieldset{% endif %}</h4>
     <hr class="section">
     <form id="fieldsetForm" action="" method="POST">
         {{ csrf | raw }}

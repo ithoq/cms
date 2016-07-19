@@ -22,6 +22,7 @@ public class AdminWebContentForm {
     private String previousFile;
     private MultipartFile thumbnail;
     private String title;
+    private String intro;
     @NotEmpty
     private String slug;
     private String devIncludeTop;

@@ -2,6 +2,7 @@ package be.ttime.core.persistence.service;
 
 import be.ttime.core.persistence.model.FileEntity;
 import be.ttime.core.persistence.repository.IFileRepository;
+import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.FileExtensionUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,11 +63,11 @@ public class FileServiceImpl implements IFileService {
             //row.add("DT_RowId", "x"); // add an name
             //row.add("DT_RowClass", "x"); // add a class
             row.add("DT_RowData", Json.createObjectBuilder().add("id", file.getId()));
-            row.add("name", file.getName());
-            row.add("description", file.getDescription() != null ? file.getDescription() : "");
+            row.add("name", CmsUtils.emptyStringIfnull(file.getName()));
+            row.add("description", CmsUtils.emptyStringIfnull(file.getDescription()));
             row.add("active", file.isEnabled());
-            row.add("type", FileExtensionUtils.getFileImage(file.getExtension()));
-            row.add("size", FileUtils.byteCountToDisplaySize(file.getSize()));
+            row.add("type", CmsUtils.emptyStringIfnull(FileExtensionUtils.getFileImage(file.getExtension())));
+            row.add("size", CmsUtils.emptyStringIfnull(FileUtils.byteCountToDisplaySize(file.getSize())));
             data.add(row);
         }
 

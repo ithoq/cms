@@ -20,6 +20,7 @@ public class CachingConfig extends CachingConfigurerSupport {
 
         final SizeOfPolicyConfiguration sizeOfPolicyConfiguration = new SizeOfPolicyConfiguration();
         sizeOfPolicyConfiguration.maxDepth(100);
+        sizeOfPolicyConfiguration.maxDepthExceededBehavior(SizeOfPolicyConfiguration.MaxDepthExceededBehavior.ABORT);
 
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
 

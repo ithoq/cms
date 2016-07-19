@@ -9,10 +9,12 @@ import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.persistence.service.IContentTemplateService;
+import be.ttime.core.service.ApplicationMailer;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +44,10 @@ public class CmsController {
 
     @Autowired
     private PebbleUtils pebbleUtils;
+
+    @Autowired
+    @Qualifier("mailService")
+    private ApplicationMailer applicationMailer;
 
     @RequestMapping(method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String page(ModelMap model, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
@@ -94,9 +100,11 @@ public class CmsController {
 
         //PageableResult<ContentEntity> result = contentService.findWebContent(locale.toString(), null, null, null, null , "NEWS", 1, 1L, 0L);
 
+        //applicationMailer.sendMail("fcipolla@ttime.be", "Test d'application email", "Ceci est le body de mon email!");
 
         model.put("include_top", include_top.toString() );
         model.put("include_bottom", include_bottom.toString());
+
         return pebbleUtils.parseBlock(master, model);
     }
   

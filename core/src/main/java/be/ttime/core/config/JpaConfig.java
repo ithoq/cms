@@ -54,11 +54,16 @@ public class JpaConfig {
         config.setJdbcUrl(env.getProperty("dataSource.url"));
         config.setUsername(env.getProperty("dataSource.username"));
         config.setPassword(env.getProperty("dataSource.password"));
+        config.setLeakDetectionThreshold(8000);
+        config.setIdleTimeout(10000);
+        config.setConnectionTimeout(10000);
+
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
-        config.setMaximumPoolSize(10); // for a little website
+        int poolsize= Integer.parseInt(env.getProperty("hikari.pool.size"));
+        config.setMaximumPoolSize(poolsize); // for a little website
         // maybe interseting : config.setIdleTimeout();
 
         return new HikariDataSource(config);

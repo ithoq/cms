@@ -14,7 +14,7 @@ configurations {
 sourceSets {
     generated {
         java {
-            srcDirs = ['src/main/generated']
+            //srcDirs = ['src/main/generated']
         }
     }
     main {
@@ -24,7 +24,7 @@ sourceSets {
 
 idea {
     module {
-        sourceDirs += file('src/main/generated')
+        //sourceDirs += file('src/main/generated')
     }
 }
 
@@ -59,7 +59,7 @@ dependencies {
     compile('com.github.slugify:slugify:2.1.4')
     compile('com.google.code.gson:gson:2.6.2')
     compile('com.h2database:h2')
-    compile('com.mitchellbosecke:pebble-spring4:2.2.1')
+    compile('com.mitchellbosecke:pebble-spring4:2.2.2')
     compile('com.mysema.querydsl:querydsl-jpa:3.6.9')
     //compile('com.rometools:rome:1.5.1')
     compile('com.zaxxer:HikariCP:2.4.3')
@@ -68,6 +68,7 @@ dependencies {
     compile('commons-io:commons-io:2.4')
     compile('cz.jirutka.validator:validator-collection:2.1.6')
     compile('javax.mail:javax.mail-api:1.5.5')
+    compile('com.sun.mail:javax.mail:1.5.5')
     compile('net.sf.ehcache:ehcache:2.10.1')
     compile('org.apache.commons:commons-collections4:4.1')
     compile('org.apache.commons:commons-lang3:3.4')

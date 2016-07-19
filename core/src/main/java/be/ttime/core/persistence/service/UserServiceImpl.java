@@ -18,10 +18,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -43,8 +48,8 @@ public class UserServiceImpl implements IUserService {
     private IVerificationTokenRepository verificationTokenRepository;
     @Autowired
     private IPasswordResetTokenRepository passwordResetTokenRepository;
-    @Autowired
-    private EntityManagerFactory entityManagerFactory;
+    @PersistenceContext(unitName = "core")
+    private EntityManager entityManager;
 
     /*
 
@@ -73,10 +78,14 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public UserEntity findById(Long id) {
+        return userRepository.findOne(id);
+    }
+
+    @Override
     @Cacheable(value = "user", key = "#email")
     public UserEntity findByUsernameOrEmail(String email) {
 
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         JPAQuery query = new JPAQuery(entityManager);
         QUserEntity qUserEntity = QUserEntity.userEntity;
         QRoleEntity qRoleEntity = QRoleEntity.roleEntity;
@@ -263,6 +272,48 @@ public class UserServiceImpl implements IUserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String jsonAdminContent() {
+
+        List<UserEntity> userEntityList = userRepository.findByOrderByEnabledDescLastNameAsc();
+        JsonArrayBuilder data = Json.createArrayBuilder();
+        JsonObjectBuilder row;
+
+        for (UserEntity u : userEntityList) {
+            row = Json.createObjectBuilder();
+            row.add("DT_RowData", Json.createObjectBuilder().add("id", u.getId()));
+            row.add("name", CmsUtils.emptyStringIfnull(u.getLastName()));
+            row.add("firstname", CmsUtils.emptyStringIfnull(u.getFirstName()));
+            row.add("email",  CmsUtils.emptyStringIfnull(u.getEmail()));
+            row.add("active", u.isEnabled());
+            row.add("locked", !u.isAccountNonLocked());
+            StringBuilder rolesBuilder = new StringBuilder();
+            /*final Collection<? extends GrantedAuthority> authorities = u.getAuthorities();
+
+            for (GrantedAuthority authority : authorities) {
+                if (roles.length() != 0) {
+                    roles.append(" ,");
+                }
+                roles.append(authority.getAuthority().replace("_PRIVILEGE", ""));
+            }*/
+            Collection<RoleEntity> roles = u.getRoles();
+            for (RoleEntity role : roles) {
+                if (rolesBuilder.length() != 0) {
+                    rolesBuilder.append(" ,");
+                }
+                rolesBuilder.append(role.getName().replace("ROLE_", ""));
+
+            }
+            row.add("role", CmsUtils.emptyStringIfnull(rolesBuilder.toString()));
+
+
+
+            data.add(row);
+        }
+
+        return Json.createObjectBuilder().add("data", data).build().toString();
     }
 
 }

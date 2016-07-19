@@ -2,6 +2,7 @@ package be.ttime.core.persistence.service;
 
 import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.repository.IBlockRepository;
+import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -91,8 +92,8 @@ public class BlockServiceImpl implements IBlockService {
             //row.add("DT_RowId", "x"); // add an name
             //row.add("DT_RowClass", "x"); // add a class
             row.add("DT_RowData", Json.createObjectBuilder().add("id", block.getName()));
-            row.add("name", (StringUtils.isEmpty(block.getDisplayName()) ? block.getName(): block.getDisplayName()));
-            row.add("type", block.getBlockType().getName());
+            row.add("name", CmsUtils.emptyStringIfnull(StringUtils.isEmpty(block.getDisplayName()) ? block.getName(): block.getDisplayName()));
+            row.add("type", CmsUtils.emptyStringIfnull(block.getBlockType().getName()));
             row.add("dynamic", block.isDynamic());
             row.add("deletable", block.isDeletable());
             data.add(row);

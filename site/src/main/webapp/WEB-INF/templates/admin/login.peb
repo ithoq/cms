@@ -46,14 +46,15 @@
             <p class="p-t-35">Sign into your account</p>
             <!-- START Login Form-->
             <form id="form-login" role="form" action="/login" class="p-t-15" method="post">
+                <input type="hidden" value="true" name="isAdmin">
                 <!-- START Form Control-->
                 {{ csrf | raw }}
                 <div class="message">
                     <!-- use param.error assuming FormLoginConfigurer#failureUrl contains the query parameter error -->
                     {% if get.error is not null %}
-                        <div>
-                            Failed to login.
-                            Reason: {{ session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION").message }}
+                        <div class="alert alert-danger">
+                            <h4>Failed to login</h4>
+                            {{ session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION") }}
                         </div>
                     {% endif %}
                     <!-- the configured LogoutConfigurer#logoutSuccessUrl is /login?logout and contains the query param logout -->

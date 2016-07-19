@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    include shared/head.jade
+
+  body.fixed-header
+    include shared/nav.jade
+    .page-container
+      include shared/header.jade
+      .page-content-wrapper
+        - var pageName = 'Gestion des pages'
+
+        include shared/breadcrumb.jade
+        .container-fluid.container-fixed-lg.expanded
+          .row
+            .col-md-12
+              h2 User form
+
+
+        include shared/footer.jade
+    include shared/bottom.jade
+
+      

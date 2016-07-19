@@ -54,7 +54,7 @@ public class ContentEntity extends AbstractTimestampEntity {
     )
     private Set<PrivilegeEntity> privileges;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "content_term",
             joinColumns = @JoinColumn(name = "content_id", referencedColumnName = "id") ,
             inverseJoinColumns = @JoinColumn(name = "taxonomy_term_id", referencedColumnName = "id"))

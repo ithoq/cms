@@ -42,7 +42,13 @@ var postcssTask = function () {
     return gulp.src(paths.srcMain)
         .pipe(postcss(processors))
         .on('error', handleErrors)
-        .pipe(gulpif(production, nano({discardComments: {removeAll: true}})))
+        .pipe(gulpif(production, nano({
+          discardComments: {removeAll: true},
+          zindex: false,
+          discardUnused: false,
+          mergeIdents: false,
+          reduceIdents: false,
+        })))
         .pipe(rename("style.css"))
         .pipe(gulp.dest(paths.dest))
         .pipe(browserSync.stream())

@@ -235,7 +235,7 @@ public class AdminCmsController {
             Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
             contentData.setData(gson.toJson(pageData));
 
-            contentData.setTitle(form.getName());
+            contentData.setTitle(form.getPageDataTitle());
             contentData.setSlug(form.getSlug());
 
             contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, appLanguage.getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));

@@ -1,6 +1,7 @@
 package be.ttime.core.persistence.model;
 
 import be.ttime.core.persistence.converter.UserGenderConverter;
+import be.ttime.core.util.CmsUtils;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -9,10 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "user")
@@ -34,6 +32,7 @@ public class UserEntity extends AbstractTimestampEntity implements UserDetails {
     private String firstName;
     private String lastName;
     private String userTitle;
+    private String avatar;
     @Column(unique = true, nullable = false)
     private String email;
     private String street1;
@@ -66,10 +65,11 @@ public class UserEntity extends AbstractTimestampEntity implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     @Fetch(FetchMode.JOIN)
-    private Collection<RoleEntity> roles;
+    private Set<RoleEntity> roles;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getGrantedAuthorities(getPrivileges(roles));
+        boolean isSuperAdmin = CmsUtils.hasGroup(this, CmsUtils.ROLE_SUPER_ADMIN);
+        return isSuperAdmin ? CmsUtils.fullPrivilegeList : getGrantedAuthorities(getPrivileges(roles));
     }
 
     private final List<String> getPrivileges(final Collection<RoleEntity> roles) {
@@ -84,8 +84,8 @@ public class UserEntity extends AbstractTimestampEntity implements UserDetails {
         return privileges;
     }
 
-    private final List<GrantedAuthority> getGrantedAuthorities(final List<String> privileges) {
-        final List<GrantedAuthority> authorities = new ArrayList<>();
+    private final Set<GrantedAuthority> getGrantedAuthorities(final List<String> privileges) {
+        final Set<GrantedAuthority> authorities = new HashSet<>();
         for (final String privilege : privileges) {
             authorities.add(new SimpleGrantedAuthority(privilege));
         }

@@ -15,6 +15,8 @@ import org.hibernate.Session;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.ui.ModelMap;
@@ -67,21 +69,42 @@ public class CmsUtils {
 
     public final static String HEADER_VALIDATION_FAILED = "Validation-Failed";
 
+    public final static String ROLE_SUPER_ADMIN = "ROLE_SUPER_ADMIN";
+
+    public static List<GrantedAuthority> fullPrivilegeList;
+
+    public static void setFullPrivilegeList(List<GrantedAuthority> list){
+        fullPrivilegeList = list;
+    }
+
     public static void fillModelMap(ModelMap model, HttpServletRequest request) {
+        Date now = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(now);
         model.put("attr", CmsUtils.getAttributes(request));
         model.put("get", CmsUtils.getParameters(request));
         model.put("csrf", CmsUtils.getCsrfInput(request));
         model.put("session", request.getSession(false));
         model.put("user", CmsUtils.getCurrentUser());
         model.put("locale", LocaleContextHolder.getLocale().toString());
+        model.put("now", now);
+        model.put("now_year", cal.get(Calendar.YEAR));
+
     }
 
+    public static String capitalizeFirstLetter(String original) {
+        String trimedString = original.trim();
+        if (trimedString == null || trimedString.length() == 0) {
+            return original;
+        }
+        return trimedString.substring(0, 1).toUpperCase() + trimedString.substring(1).toLowerCase();
+    }
+
+    public static String emptyStringIfnull(String value){
+        return StringUtils.isEmpty(value) ? "" : value;
+    }
     public static void fillModelAndView(ModelAndView model, HttpServletRequest request) {
-        model.addObject("attr", CmsUtils.getAttributes(request));
-        model.addObject("get", CmsUtils.getParameters(request));
-        model.addObject("csrf", CmsUtils.getCsrfInput(request));
-        model.addObject("session", request.getSession(false));
-        model.addObject("user", CmsUtils.getCurrentUser());
+        fillModelMap(model.getModelMap(), request);
     }
 
     public static String getCsrfInput(HttpServletRequest request) {
@@ -139,6 +162,50 @@ public class CmsUtils {
             }
         }
         return custom;
+    }
+
+    /*
+
+     */
+    public static boolean hasGroup(String role) {
+        UserEntity user = getCurrentUser();
+        if(user == null)
+            return false;
+
+        for (RoleEntity roleEntity : user.getRoles()) {
+            if(roleEntity.getName().equals(role))
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean hasGroup(UserEntity user, String role) {
+        if(user == null)
+            return false;
+
+        for (RoleEntity roleEntity : user.getRoles()) {
+            if(roleEntity.getName().equals(role))
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean hasPrivilege(String role) {
+        // get security context from thread local
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context == null)
+            return false;
+
+        Authentication authentication = context.getAuthentication();
+        if (authentication == null)
+            return false;
+
+        for (GrantedAuthority auth : authentication.getAuthorities()) {
+            if (role.equals(auth.getAuthority()))
+                return true;
+        }
+
+        return false;
     }
 
     public static Path getResourceFilePath(String resourceName) throws URISyntaxException {

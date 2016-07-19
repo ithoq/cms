@@ -1,0 +1,132 @@
+{% extends 'admin/master' %}
+{% set activeNav = 'cms' %}
+{% set title = message('admin.editUser') %}
+
+{% block content %}
+
+
+    <form id="userForm" action="/admin/user/edit" method="POST" enctype="multipart/form-data" data-parsley-validate="">
+        {{ csrf | raw }}
+        <input type="hidden" name="id" value="{{ editUser.id }}">
+        <div class="panel panel-default">
+
+            <div class="panel-body">
+                <h2>{% if editUser is null  %}Create user{% else %}Edit user{% endif %}</h2>
+                <hr class="section">
+
+                <div class="row">
+                    <div class="col-md-6 p-r-50">
+                        <fieldset>
+                            <legend>General:</legend>
+                            <div class="form-group">
+                                <label class="control-label">Avatar</label>
+                                <input type="hidden" name="previousFile" value="{{editUser.avatar}}">
+                                {% if editUser.avatar is not empty %}
+                                    <h5>{{ editUser.avatar }}</h5>
+                                    <img src="/public/{{ editUser.avatar }}" alt="image" class="w150 img-circle">
+                                {% endif %}
+                                <input id="avatar" name="avatar" type="file" class="">
+                            </div>
+                            <div class="form-group m-b-20 required">
+                                <label for="lastName">{{ message('name') }}</label>
+                                <input id="lastName" name="lastName" value="{{ editUser.lastname }}" type="text" required class="form-control">
+                            </div>
+                            <div class="form-group m-b-20 required">
+                                <label for="firstname">{{ message('firstname') }}</label>
+                                <input id="firstName" name="firstName" value="{{ editUser.firstname }}" type="text" required class="form-control">
+                            </div>
+                            <div class="form-group m-b-20 required">
+                                <label for="email">{{ message('email') }}</label>
+                                <input id="email" name="email" type="email" value="{{ editUser.email }}" required class="form-control">
+                            </div>
+                            <div class="form-group m-b-20">
+                                <label>Birthday</label>
+                                <div class="input-group date">
+                                    <input type="text" class="form-control" value="{{ _birthday }}" id="birthday" name="birthday" data-plugin="datepicker">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                </div>
+                            </div>
+                            <div class="form-group m-b-20">
+                                <label>{{ message('gender') }}</label>
+                                <div class="radio radio-success">
+                                    <input type="radio" {% if editUser.gender is empty or editUser.gender == "MALE"%}checked="checked"{% endif %} value="MALE" name="gender" id="male">
+                                    <label for="male">Male</label>
+                                    <input type="radio"  {% if editUser.gender == "FEMALE" %}checked="checked"{% endif %} value="FEMALE" name="gender" id="female">
+                                    <label for="female">Female</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend>Address:</legend>
+                            <div class="form-group m-b-20 required">
+                                <label for="street">{{ message('street') }}</label>
+                                <input id="street" name="street" type="text" value="{{ editUser.street1 }}" class="form-control">
+                            </div>
+                            <div class="form-group m-b-20 required">
+                                <label for="city">{{ message('city') }}</label>
+                                <input id="city" name="city" type="text" value="{{ editUser.city }}" class="form-control">
+                            </div>
+                            <div class="form-group m-b-20 required">
+                                <label for="zip">{{ message('zip') }}</label>
+                                <input id="zip" name="zip" type="text" value="{{ editUser.zip }}" class="form-control">
+                            </div>
+                            <div class="form-group m-b-20 required">
+                                <label for="country">{{ message('country') }}</label>
+                                <input id="country" name="country" type="text" value="{{ editUser.countryName }}" class="form-control">
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                        <fieldset>
+                            <legend>Security:</legend>
+                            <div class="form-group m-b-20 required">
+                                <div class="checkbox">
+                                    <input type="checkbox" {% if editUser is empty or editUser.enabled %}checked="checked"{%  endif %} id="enabled" name="enabled">
+                                    <label for="enabled">User is enabled</label>
+                                </div>
+                            </div>
+                            <div class="form-group m-b-20 required">
+                                <label for="password">{{ message('password') }}</label>
+                                <input id="password" name="password" type="password" {% if editUser is null %}required{% endif %} class="form-control">
+                            </div>
+                            <div class="form-group m-b-20 required">
+                                <label for="passwordVerification">{{ message('password verification') }}</label>
+                                <input id="passwordVerification" name="passwordVerification" type="password" data-parsley-equalto="#password" class="form-control">
+                            </div>
+                            <div class="form-group form-group-default form-group-default-select2 r">
+                                <label for="group">Group</label>
+                                <select id="group" name="group" multiple data-init-plugin="select2" class="full-width">
+                                    {% for ur in editUser.getroles()   %}
+
+                                        {% if ur.name == "ROLE_SUPER_ADMIN" %}
+                                            <option value="ROLE_SUPER_ADMIN" selected>SUPER ADMIN</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% for role in roleList  %}
+                                        <option value="{{ role.getName() }}" {% if editUser.getroles() contains role %}selected{% endif %}>{{ role.getName() }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+
+                        </fieldset>
+                        <fieldset>
+                            <legend>Misc:</legend>
+                            <div class="form-group m-t-10">
+                                <label>Comment</label>
+                                <textarea rows="3" class="form-control" id="comment" name="comment">{{ editUser.comment }}</textarea>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button type="submit" class="btn btn-success">send</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock content %}
+{% block bottom %}
+    <script src="/resources/admin/js/page/user-edit.js"></script>
+{% endblock bottom %}

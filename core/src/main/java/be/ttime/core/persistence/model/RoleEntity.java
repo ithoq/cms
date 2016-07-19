@@ -1,5 +1,6 @@
 package be.ttime.core.persistence.model;
 
+import com.google.gson.annotations.Expose;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,9 +22,15 @@ public class RoleEntity {
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
     private long id;
     @Column(nullable = false)
+    @Expose
     private String name;
 
+    private String description;
+    @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
+    private boolean deletable;
+
     @ManyToMany(fetch = FetchType.EAGER)
+    @OrderBy("section ASC, name ASC")
     @JoinTable(name = "roles_privileges", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
     private Set<PrivilegeEntity> privileges = new HashSet<>();
 

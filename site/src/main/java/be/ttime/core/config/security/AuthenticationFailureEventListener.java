@@ -20,7 +20,6 @@ public class AuthenticationFailureEventListener implements ApplicationListener<A
             userService.updateFailIpAttempts(auth.getRemoteAddress());
         }
         userService.updateFailUserAttempts(e.getAuthentication().getName());
-
     }
 
 }

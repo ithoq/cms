@@ -97,3 +97,29 @@ mark
     width: 35px!important;
     height: 33px!important;
 }
+
+
+.form-group
+{
+    .checkbox label,
+    .radio label
+    {
+        font-weight: 400;
+    }
+}
+
+fieldset
+{
+    margin-top: 20px;
+    margin-left: 20px;
+
+    legend
+    {
+        font-size: 19px;
+
+        margin-left: -20px;
+        padding-bottom: 7px;
+
+        border-width: 2px;
+    }
+}

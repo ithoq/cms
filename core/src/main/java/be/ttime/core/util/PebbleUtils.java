@@ -8,6 +8,7 @@ import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class PebbleUtils {
 
         PebbleTemplate compiledTemplate = getCompiledTemplate(block.getName());
         Writer writer = new StringWriter();
-        compiledTemplate.evaluate(writer, model);
+        compiledTemplate.evaluate(writer, model, LocaleContextHolder.getLocale());
         return writer.toString();
 
     }
