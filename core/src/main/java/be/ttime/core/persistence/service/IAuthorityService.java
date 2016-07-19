@@ -1,28 +1,33 @@
 package be.ttime.core.persistence.service;
 
-import be.ttime.core.persistence.model.PrivilegeEntity;
+import be.ttime.core.persistence.model.GroupEntity;
 import be.ttime.core.persistence.model.RoleEntity;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public interface IAuthorityService {
 
-    RoleEntity addRole(RoleEntity role);
-
-    PrivilegeEntity createPrivilegeIfNotFound(String name);
-
-    PrivilegeEntity addPrivilege(PrivilegeEntity privilege);
-
-    RoleEntity createRoleIfNotFound(String name, Collection<PrivilegeEntity> privileges);
-
-    void deleteRole(Long id);
-
-    void deleteRole(RoleEntity role);
-
-    void deletePrivilege(Long id);
-
-    void deletePrivilege(PrivilegeEntity privilege);
-
+    GroupEntity findGroupByName(String name);
+    GroupEntity findGroupById(Long id);
     RoleEntity findRoleByName(String name);
+    RoleEntity findRoleById(Long id);
+
+    List<GroupEntity> findAllGroup();
+    List<RoleEntity> findAllRole();
+
+    GroupEntity saveGroup(GroupEntity group);
+    List<GroupEntity> saveGroups(List<GroupEntity> groups);
+
+    RoleEntity saveRole(RoleEntity role);
+    List<RoleEntity> saveRoles(List<RoleEntity> roles);
+
+    List<GroupEntity> findAllClientGroup();
+
+    String jsonAdminGroup();
+
+    Map<String, List<RoleEntity>> getRoleByGroup();
+
+    void deleteGroup(Long id);
 
 }

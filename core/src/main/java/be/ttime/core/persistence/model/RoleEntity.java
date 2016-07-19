@@ -1,12 +1,12 @@
 package be.ttime.core.persistence.model;
 
-import com.google.gson.annotations.Expose;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
@@ -17,25 +17,25 @@ import java.util.Set;
 public class RoleEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Access(AccessType.PROPERTY)
     @Column(nullable = false, columnDefinition = "SMALLINT(11) UNSIGNED")
     private long id;
-    @Column(nullable = false)
-    @Expose
+    @ManyToMany(mappedBy = "roles")
+    private Collection<GroupEntity> groups;
+    @ManyToMany(mappedBy = "roles")
+    private Set<FileEntity> files;
+    @ManyToMany(mappedBy = "roles")
+    private Set<ContentEntity> pages;
+
     private String name;
 
+    @Column(nullable = false, columnDefinition = "TINYINT(1) default '0'")
+    private boolean superAdmin;
+
     private String description;
-    @Column(nullable = false, columnDefinition = "TINYINT(1) default '1'")
-    private boolean deletable;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @OrderBy("section ASC, name ASC")
-    @JoinTable(name = "roles_privileges", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
-    private Set<PrivilegeEntity> privileges = new HashSet<>();
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<UserEntity> users;
+    private String section;
 
     public RoleEntity() {
         super();

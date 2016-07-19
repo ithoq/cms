@@ -69,6 +69,7 @@ public class CmsUtils {
 
     public final static String HEADER_VALIDATION_FAILED = "Validation-Failed";
 
+    public final static String GROUP_SUPER_ADMIN = "GROUP_SUPER_ADMIN";
     public final static String ROLE_SUPER_ADMIN = "ROLE_SUPER_ADMIN";
 
     public static List<GrantedAuthority> fullPrivilegeList;
@@ -172,25 +173,29 @@ public class CmsUtils {
         if(user == null)
             return false;
 
-        for (RoleEntity roleEntity : user.getRoles()) {
-            if(roleEntity.getName().equals(role))
+        for (GroupEntity groupEntity : user.getGroups()) {
+            if(groupEntity.getName().equals(role))
                 return true;
         }
         return false;
+    }
+
+    public static boolean isSuperAdmin(){
+        return hasGroup(CmsUtils.GROUP_SUPER_ADMIN);
     }
 
     public static boolean hasGroup(UserEntity user, String role) {
         if(user == null)
             return false;
 
-        for (RoleEntity roleEntity : user.getRoles()) {
-            if(roleEntity.getName().equals(role))
+        for (GroupEntity groupEntity : user.getGroups()) {
+            if(groupEntity.getName().equals(role))
                 return true;
         }
         return false;
     }
 
-    public static boolean hasPrivilege(String role) {
+    public static boolean hasRole(String role) {
         // get security context from thread local
         SecurityContext context = SecurityContextHolder.getContext();
         if (context == null)

@@ -337,18 +337,18 @@ INSERT INTO `translation` (`id`, `value`, `language_locale`, `message_id`) VALUE
 (217, 'event management', 'fr', 109),
 (218, 'gestion des événements', 'en', 109);
 
-INSERT INTO `privilege` (`id`, `name`, `description`) VALUES
-(1, 'USER_PRIVILEGE', ''),
-(2, 'ADMIN_PRIVILEGE', ''),
-(3, 'SEO_PRIVILEGE', ''),
-(4, 'SUPER_ADMIN_PRIVILEGE', '');
+INSERT INTO `role` (`id`, `name`, `description`, `section`, `superAdmin`) VALUES
+(1, 'ROLE_MEMBER', '', 'general', 0),
+(2, 'ROLE_ADMIN', '', 'general', 0),
+(3, 'ROLE_SEO', '', 'general', 0),
+(4, 'ROLE_SUPER_ADMIN', '', '', 1);
 
-INSERT INTO `role` (`id`, `name`, `description`, `deletable` ) VALUES
-(1, 'ROLE_USER', '', 0),
-(2, 'ROLE_ADMIN', '', 0),
-(3, 'ROLE_SUPER_ADMIN', '', 0);
+INSERT INTO `userGroup` (`id`, `name`, `description`, `deletable` ) VALUES
+(1, 'GROUP_MEMBER', '', 0),
+(2, 'GROUP_ADMIN', '', 0),
+(3, 'GROUP_SUPER_ADMIN', '', 0);
 
-INSERT INTO `roles_privileges` (`role_id`, `privilege_id`) VALUES
+INSERT INTO `group_role` (`userGroup_id`, `role_id`) VALUES
 (1, 1),
 (2, 1),
 (2, 2),

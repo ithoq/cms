@@ -2,10 +2,10 @@ package be.ttime.core.controller;
 
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.model.form.AdminEditUser;
-import be.ttime.core.persistence.model.RoleEntity;
+import be.ttime.core.persistence.model.GroupEntity;
 import be.ttime.core.persistence.model.UserEntity;
 import be.ttime.core.persistence.service.IApplicationService;
-import be.ttime.core.persistence.service.IRoleService;
+import be.ttime.core.persistence.service.IAuthorityService;
 import be.ttime.core.persistence.service.IUserService;
 import be.ttime.core.util.CmsUtils;
 import com.google.gson.Gson;
@@ -45,7 +45,7 @@ public class AdminUserManagement {
     @Autowired
     private IApplicationService applicationService;
     @Autowired
-    private IRoleService roleService;
+    private IAuthorityService authorityService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -67,7 +67,6 @@ public class AdminUserManagement {
         UserEntity userEntity;
 
         //UserEntity currentUser = CmsUtils.getCurrentUser();
-        boolean isSuperAdmin = CmsUtils.hasGroup(CmsUtils.ROLE_SUPER_ADMIN);
 
         if (result.hasErrors()) {
             throw new IllegalArgumentException("Error in form");
@@ -114,18 +113,18 @@ public class AdminUserManagement {
             userEntity.setEnabled(form.isEnabled());
 
             if(!StringUtils.isEmpty(form.getGroup())) {
-                Set<RoleEntity> roles = new HashSet<>();
+                Set<GroupEntity> roles = new HashSet<>();
                 String[] rolesString = form.getGroup().split(",");
                 for (String r : rolesString) {
-                    if(r.equals(CmsUtils.ROLE_SUPER_ADMIN)){
-                        if(!isSuperAdmin){
+                    if(r.equals(CmsUtils.GROUP_SUPER_ADMIN)){
+                        if(!CmsUtils.isSuperAdmin()){
                             continue;
                         }
                     }
-                    RoleEntity roleEntity = roleService.findRoleByName(r);
+                    GroupEntity roleEntity = authorityService.findGroupByName(r);
                     roles.add(roleEntity);
                 }
-                userEntity.setRoles(roles);
+                userEntity.setGroups(roles);
             }
             userEntity = userService.save(userEntity);
         }
@@ -158,15 +157,29 @@ public class AdminUserManagement {
 
             model.put("editUser", user);
             List<String> userRoles = new ArrayList<>();
-            for (RoleEntity roleEntity : user.getRoles()) {
+            for (GroupEntity roleEntity : user.getGroups()) {
                 userRoles.add(roleEntity.getName());
             }
             /*model.put("userRoles", gson.toJson(userRoles));*/
 
         }
 
-        model.put("roleList", roleService.findAllClientRole());
+        model.put("groupList", authorityService.findAllClientGroup());
         return VIEWPATH + "edit";
     }
 
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public void delete(@PathVariable("id") Long id, HttpServletResponse response) {
+
+        if (id == null) {
+            response.setStatus(500);
+        }
+        try {
+            userService.delete(id);
+        } catch (Exception e) {
+            response.setStatus(500);
+        }
+    }
 }

@@ -1,9 +1,10 @@
 package be.ttime.core.controller;
 
 import be.ttime.core.error.ResourceNotFoundException;
-import be.ttime.core.persistence.model.PrivilegeEntity;
+import be.ttime.core.persistence.model.GroupEntity;
 import be.ttime.core.persistence.model.RoleEntity;
-import be.ttime.core.persistence.service.IRoleService;
+import be.ttime.core.persistence.service.IAuthorityService;
+import be.ttime.core.util.CmsUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +24,10 @@ import java.util.Set;
 @Controller
 @RequestMapping(value = "/admin/group")
 @Slf4j
-public class AdminPrivilegeController {
+public class AdminGroupController {
 
     @Autowired
-    private IRoleService roleService;
+    private IAuthorityService authorityService;
     private final static String VIEWPATH = "admin/group/";
 
 
@@ -39,7 +40,7 @@ public class AdminPrivilegeController {
     @ResponseBody
     public String getjson(HttpServletResponse response) {
 
-        return roleService.jsonAdminGroup();
+        return authorityService.jsonAdminGroup();
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
@@ -51,44 +52,48 @@ public class AdminPrivilegeController {
     public String edit(@PathVariable("id") Long id, ModelMap model) {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().disableHtmlEscaping().create();
         if (id != null) {
-            RoleEntity role = roleService.findRoleById(id);
+            GroupEntity group = authorityService.findGroupById(id);
 
-            if (role == null) {
+            if (group == null) {
                 throw new ResourceNotFoundException("Role with id \" + id + \" not found!\"");
 
             }
 
-            model.put("role", role);
+            model.put("group", group);
         }
-        model.put("privileges", roleService.getPrivelegeByGroup());
+        model.put("rolesByGroup", authorityService.getRoleByGroup());
+        model.put("isSuperAdmin", CmsUtils.isSuperAdmin());
         return VIEWPATH + "edit";
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String edit(ModelMap model, Long id, String name, String description, Long[] privileges, HttpServletRequest request) throws ResourceNotFoundException {
-        RoleEntity role;
+    public String edit(ModelMap model, Long id, String name, String description, Long[] roles, HttpServletRequest request) throws ResourceNotFoundException {
+        GroupEntity role;
         if(id != null){
-            role = roleService.findRoleById(id);
+            role = authorityService.findGroupById(id);
 
             if(role == null){
                 throw new ResourceNotFoundException("User with id \" + id + \" not found!\"");
             }
         } else{
-            role = new RoleEntity();
+            role = new GroupEntity();
         }
 
-        Set<PrivilegeEntity> privilegeEntityList = new HashSet<>();
-        PrivilegeEntity privilegeEntity;
-        for (Long privilegeId : privileges) {
-            privilegeEntity = roleService.findPrivilegeById(privilegeId);
-            if(privilegeEntity==null)
-                throw new IllegalArgumentException("privilege with id " + privilegeId + " is not found");
-            privilegeEntityList.add(privilegeEntity);
+        boolean isSuperAdmin = CmsUtils.isSuperAdmin();
+        Set<RoleEntity> roleEntityList = new HashSet<>();
+        RoleEntity roleEntity;
+        for (Long roleId : roles) {
+            roleEntity = authorityService.findRoleById(roleId);
+            if(roleEntity ==null)
+                throw new IllegalArgumentException("role with id " + roleId + " is not found");
+            if(!isSuperAdmin && roleEntity.isSuperAdmin())
+                continue;
+            roleEntityList.add(roleEntity);
         }
         role.setName(name);
         role.setDescription(description);
-        role.setPrivileges(privilegeEntityList);
-        role = roleService.saveRole(role);
+        role.setRoles(roleEntityList);
+        role = authorityService.saveGroup(role);
         return "redirect:/admin/group/edit/" + role.getId() ;
     }
 }

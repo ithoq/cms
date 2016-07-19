@@ -3,10 +3,10 @@ package be.ttime.core.controller;
 import be.ttime.core.model.form.InstallCmsForm;
 import be.ttime.core.persistence.model.ApplicationConfigEntity;
 import be.ttime.core.persistence.model.ApplicationLanguageEntity;
-import be.ttime.core.persistence.model.RoleEntity;
+import be.ttime.core.persistence.model.GroupEntity;
 import be.ttime.core.persistence.model.UserEntity;
 import be.ttime.core.persistence.service.IApplicationService;
-import be.ttime.core.persistence.service.IRoleService;
+import be.ttime.core.persistence.service.IAuthorityService;
 import be.ttime.core.persistence.service.IUserService;
 import be.ttime.core.util.CmsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class InstallController {
     @Autowired
     private IUserService userService;
     @Autowired
-    private IRoleService roleService;
+    private IAuthorityService authorityService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private  Map<String, ApplicationLanguageEntity> langMap;
@@ -99,8 +99,7 @@ public class InstallController {
         appConfig.setForcedLangInUrl(form.isLangInUrl());
         applicationService.saveApplicationConfig(appConfig);
 
-
-        RoleEntity role = roleService.findRoleByName("ROLE_SUPER_ADMIN");
+        GroupEntity role = authorityService.findGroupByName("GROUP_SUPER_ADMIN");
 
         UserEntity user = new UserEntity();
         user.setFirstName(form.getFirstname());
@@ -108,10 +107,10 @@ public class InstallController {
         user.setEmail(form.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(form.getPassword()));
 
-        Set<RoleEntity> roles = new HashSet<>();
+        Set<GroupEntity> roles = new HashSet<>();
         roles.add(role);
 
-        user.setRoles(roles);
+        user.setGroups(roles);
 
         userService.save(user);
 

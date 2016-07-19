@@ -48,11 +48,11 @@ public class ContentEntity extends AbstractTimestampEntity {
     private ContentTypeEntity contentType;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Lazy for now (not used in the current version)
     @JoinTable(
-            name = "content_privilege",
+            name = "content_role",
             joinColumns = @JoinColumn(name = "content_id"),
-            inverseJoinColumns = @JoinColumn(name = "privilege_id")
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<PrivilegeEntity> privileges;
+    private Set<RoleEntity> roles;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "content_term",

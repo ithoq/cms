@@ -14,17 +14,11 @@ configurations {
 sourceSets {
     generated {
         java {
-            //srcDirs = ['src/main/generated']
+            srcDirs = ['src/main/generated']
         }
     }
     main {
         compileClasspath += configurations.providedCompile
-    }
-}
-
-idea {
-    module {
-        //sourceDirs += file('src/main/generated')
     }
 }
 
@@ -55,6 +49,7 @@ clean {
 }
 
 dependencies {
+    //compile sourceSets.generated.output//java.srcDirs
     compile('ch.qos.logback:logback-classic:1.1.5')
     compile('com.github.slugify:slugify:2.1.4')
     compile('com.google.code.gson:gson:2.6.2')

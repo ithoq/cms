@@ -63,22 +63,22 @@ public class UserEntity extends AbstractTimestampEntity implements UserDetails {
     @ManyToOne
     private CompanyEntity company;
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "userGroup_id", referencedColumnName = "id"))
     @Fetch(FetchMode.JOIN)
-    private Set<RoleEntity> roles;
+    private Set<GroupEntity> groups;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        boolean isSuperAdmin = CmsUtils.hasGroup(this, CmsUtils.ROLE_SUPER_ADMIN);
-        return isSuperAdmin ? CmsUtils.fullPrivilegeList : getGrantedAuthorities(getPrivileges(roles));
+        boolean isSuperAdmin = CmsUtils.hasGroup(this, CmsUtils.GROUP_SUPER_ADMIN);
+        return isSuperAdmin ? CmsUtils.fullPrivilegeList : getGrantedAuthorities(getPrivileges(groups));
     }
 
-    private final List<String> getPrivileges(final Collection<RoleEntity> roles) {
+    private final List<String> getPrivileges(final Collection<GroupEntity> roles) {
         final List<String> privileges = new ArrayList<>();
-        final List<PrivilegeEntity> collection = new ArrayList<>();
-        for (final RoleEntity role : roles) {
-            collection.addAll(role.getPrivileges());
+        final List<RoleEntity> collection = new ArrayList<>();
+        for (final GroupEntity role : roles) {
+            collection.addAll(role.getRoles());
         }
-        for (final PrivilegeEntity item : collection) {
+        for (final RoleEntity item : collection) {
             privileges.add(item.getName());
         }
         return privileges;

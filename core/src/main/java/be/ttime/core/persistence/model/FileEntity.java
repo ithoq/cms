@@ -50,9 +50,9 @@ public class FileEntity extends AbstractTimestampEntity  {
     private boolean enabled = true;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // lazy because not used for now !
     @JoinTable(
-            name = "file_privilege",
+            name = "file_role",
             joinColumns = @JoinColumn(name = "file_id"),
-            inverseJoinColumns = @JoinColumn(name = "privilege_id")
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<PrivilegeEntity> privileges;
+    private Set<RoleEntity> roles;
 }

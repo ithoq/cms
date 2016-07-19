@@ -22,6 +22,12 @@ configurations {
     providedRuntime
     executableWarDeps
 }
+/*
+idea {
+    module {
+        sourceDirs += file('src/main/generated')
+    }
+}*/
 
 dependencies {
     compile project(':core')

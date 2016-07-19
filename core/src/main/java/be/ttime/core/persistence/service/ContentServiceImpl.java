@@ -72,7 +72,7 @@ public class ContentServiceImpl implements IContentService {
                     .leftJoin(contentEntity.contentParent).fetch()
                             //.leftJoin(contentEntity.contentTemplate).fetch()
                             //.leftJoin(contentEntity.dictionaryList).fetch()
-                    .leftJoin(contentEntity.privileges).fetch()
+                    .leftJoin(contentEntity.roles).fetch()
                             //.leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermDataEntity).fetch()
                     .leftJoin(contentEntity.taxonomyTermEntities).fetch()
                     .singleResult(contentEntity);
@@ -118,11 +118,11 @@ public class ContentServiceImpl implements IContentService {
                 .leftJoin(contentEntity.contentParent).fetch()
                 .leftJoin(contentEntity.contentTemplate).fetch()
                         //.leftJoin(contentEntity.dictionaryList).fetch()
-                .leftJoin(contentEntity.privileges).fetch()
+                .leftJoin(contentEntity.roles).fetch()
                 .leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermDataEntity).fetch()
                 .leftJoin(taxonomyTermDataEntity.termDataList).fetch()
                 .singleResult(contentEntity);
-//        entityManager.close();
+//        entityManager.close(); inte
 
         if(result.getContentParent() != null){
             Hibernate.initialize(result.getContentParent().getContentDataList());
@@ -161,6 +161,7 @@ public class ContentServiceImpl implements IContentService {
                                     .where(contentEntity.enabled.eq(true).and(contentDataEntity.enabled.eq(true)).and(builder))
                                     .orderBy(contentEntity.beginDate.desc())
                                     .limit(limit).offset((pageNumber-1) * offset).list(contentEntity);
+
         pageableResult.setResult(result);
         pageableResult.setTotalResult(query.count());
         pageableResult.setCurrentPage(pageNumber);

@@ -88,11 +88,11 @@ public class UserServiceImpl implements IUserService {
 
         JPAQuery query = new JPAQuery(entityManager);
         QUserEntity qUserEntity = QUserEntity.userEntity;
-        QRoleEntity qRoleEntity = QRoleEntity.roleEntity;
+        QGroupEntity qGroupEntity = QGroupEntity.groupEntity;
         UserEntity user = query
                 .from(qUserEntity)
-                .leftJoin(qUserEntity.roles, qRoleEntity).fetch()
-                .leftJoin(qRoleEntity.privileges).fetch()
+                .leftJoin(qUserEntity.groups, qGroupEntity).fetch()
+                .leftJoin(qGroupEntity.roles).fetch()
                 .where(qUserEntity.email.eq(email)).singleResult(qUserEntity);
         return user;
     }
@@ -298,8 +298,8 @@ public class UserServiceImpl implements IUserService {
                 }
                 roles.append(authority.getAuthority().replace("_PRIVILEGE", ""));
             }*/
-            Collection<RoleEntity> roles = u.getRoles();
-            for (RoleEntity role : roles) {
+            Collection<GroupEntity> roles = u.getGroups();
+            for (GroupEntity role : roles) {
                 if (rolesBuilder.length() != 0) {
                     rolesBuilder.append(" ,");
                 }

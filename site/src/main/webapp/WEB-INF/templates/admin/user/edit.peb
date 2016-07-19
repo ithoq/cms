@@ -102,8 +102,8 @@
                                             <option value="ROLE_SUPER_ADMIN" selected>SUPER ADMIN</option>
                                         {% endif %}
                                     {% endfor %}
-                                    {% for role in roleList  %}
-                                        <option value="{{ role.getName() }}" {% if editUser.getroles() contains role %}selected{% endif %}>{{ role.getName() }}</option>
+                                    {% for group in groupList  %}
+                                        <option value="{{ group.getName() }}" {% if editUser.groups() contains group %}selected{% endif %}>{{ group.getName() }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
