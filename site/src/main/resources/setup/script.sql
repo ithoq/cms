@@ -337,11 +337,23 @@ INSERT INTO `translation` (`id`, `value`, `language_locale`, `message_id`) VALUE
 (217, 'event management', 'fr', 109),
 (218, 'gestion des événements', 'en', 109);
 
-INSERT INTO `role` (`id`, `name`, `description`, `section`, `superAdmin`) VALUES
-(1, 'ROLE_MEMBER', '', 'general', 0),
-(2, 'ROLE_ADMIN', '', 'general', 0),
-(3, 'ROLE_SEO', '', 'general', 0),
-(4, 'ROLE_SUPER_ADMIN', '', '', 1);
+INSERT INTO `role` (`id`, `description`, `name`, `section`, `superAdmin`) VALUES
+(1, NULL, 'ROLE_MEMBER', 'general', 0),
+(2, NULL, 'ROLE_ADMIN', 'general', 0),
+(3, NULL, 'ROLE_ADMIN_SEO', 'private', 1),
+(4, NULL, 'ROLE_SUPER_ADMIN', 'private', 1),
+(5, NULL, 'ROLE_ADMIN_CMS', 'general', 0),
+(6, NULL, 'ROLE_ADMIN_FILE', 'general', 0),
+(7, NULL, 'ROLE_ADMIN_FILE_DELETE', 'general', 0),
+(8, NULL, 'ROLE_ADMIN_CMS_DELETE', 'general', 0),
+(9, NULL, 'ROLE_ADMIN_WEBCONTENT', 'general', 0),
+(10, NULL, 'ROLE_ADMIN_WEBCONTENT_DELETE', 'general', 0),
+(11, NULL, 'ROLE_ADMIN_USER', 'general', 0),
+(12, NULL, 'ROLE_ADMIN_USER_DELETE', 'general', 0),
+(13, NULL, 'ROLE_ADMIN_BLOCK', 'private', 0),
+(14, NULL, 'ROLE_ADMIN_BLOCK_DELETE', 'private', 1),
+(15, NULL, 'ROLE_ADMIN_GROUP', 'general', 0),
+(16, NULL, 'ROLE_ADMIN_GROUP_DELETE', 'private', 1);
 
 INSERT INTO `userGroup` (`id`, `name`, `description`, `deletable` ) VALUES
 (1, 'GROUP_MEMBER', '', 0),

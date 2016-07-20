@@ -14,10 +14,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,11 +72,26 @@ public class CmsUtils {
     public final static String HEADER_VALIDATION_FAILED = "Validation-Failed";
 
     public final static String GROUP_SUPER_ADMIN = "GROUP_SUPER_ADMIN";
+
+    public final static String ROLE_MEMBER = "ROLE_MEMBER";
+    public final static String ROLE_ADMIN = "ROLE_ADMIN";
+    public final static String ROLE_ADMIN_SEO = "ROLE_ADMIN_SEO";
     public final static String ROLE_SUPER_ADMIN = "ROLE_SUPER_ADMIN";
+    public final static String ROLE_ADMIN_CMS = "ROLE_ADMIN_CMS";
+    public final static String ROLE_ADMIN_CMS_FILE = "ROLE_ADMIN_CMS_FILE";
+    public final static String ROLE_ADMIN_CMS_DELETE = "ROLE_ADMIN_CMS_DELETE";
+    public final static String ROLE_ADMIN_WEBCONTENT = "ROLE_ADMIN_WEBCONTENT";
+    public final static String ROLE_ADMIN_WEBCONTENT_DELETE = "ROLE_ADMIN_WEBCONTENT_DELETE";
+    public final static String ROLE_ADMIN_USER = "ROLE_ADMIN_USER";
+    public final static String ROLE_ADMIN_USER_DELETE = "ROLE_ADMIN_USER_DELETE";
+    public final static String ROLE_ADMIN_BLOCK = "ROLE_ADMIN_BLOCK";
+    public final static String ROLE_ADMIN_BLOCK_DELETE = "ROLE_ADMIN_BLOCK_DELETE";
+    public final static String ROLE_ADMIN_GROUP = "ROLE_ADMIN_GROUP";
+    public final static String ROLE_ADMIN_GROUP_DELETE = "ROLE_ADMIN_GROUP_DELETE";
 
     public static List<GrantedAuthority> fullPrivilegeList;
 
-    public static void setFullPrivilegeList(List<GrantedAuthority> list){
+    public static void setFullPrivilegeList(List<GrantedAuthority> list) {
         fullPrivilegeList = list;
     }
 
@@ -101,9 +118,10 @@ public class CmsUtils {
         return trimedString.substring(0, 1).toUpperCase() + trimedString.substring(1).toLowerCase();
     }
 
-    public static String emptyStringIfnull(String value){
+    public static String emptyStringIfnull(String value) {
         return StringUtils.isEmpty(value) ? "" : value;
     }
+
     public static void fillModelAndView(ModelAndView model, HttpServletRequest request) {
         fillModelMap(model.getModelMap(), request);
     }
@@ -170,48 +188,68 @@ public class CmsUtils {
      */
     public static boolean hasGroup(String role) {
         UserEntity user = getCurrentUser();
-        if(user == null)
+        if (user == null)
             return false;
 
         for (GroupEntity groupEntity : user.getGroups()) {
-            if(groupEntity.getName().equals(role))
+            if (groupEntity.getName().equals(role))
                 return true;
         }
         return false;
     }
 
-    public static boolean isSuperAdmin(){
+    public static boolean isSuperAdmin() {
         return hasGroup(CmsUtils.GROUP_SUPER_ADMIN);
     }
 
     public static boolean hasGroup(UserEntity user, String role) {
-        if(user == null)
+        if (user == null)
             return false;
 
         for (GroupEntity groupEntity : user.getGroups()) {
-            if(groupEntity.getName().equals(role))
+            if (groupEntity.getName().equals(role))
                 return true;
         }
         return false;
+    }
+
+    /* need to test */
+    public static boolean isLogged(){
+        return getCurrentUser() != null ? true : false;
     }
 
     public static boolean hasRole(String role) {
         // get security context from thread local
-        SecurityContext context = SecurityContextHolder.getContext();
-        if (context == null)
-            return false;
-
-        Authentication authentication = context.getAuthentication();
-        if (authentication == null)
-            return false;
-
-        for (GrantedAuthority auth : authentication.getAuthorities()) {
-            if (role.equals(auth.getAuthority()))
+        UserEntity currentUser = getCurrentUser();
+        if(currentUser != null && currentUser.getAuthorities().contains(role)){
                 return true;
         }
 
         return false;
     }
+
+    public static boolean hasAnyRole(Collection<String> roles) {
+        UserEntity currentUser = getCurrentUser();
+
+        if(currentUser != null) {
+            for (String role : roles) {
+                if(currentUser.getAuthorities().contains(role))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+
+    public static boolean hasRoles(Collection<String> roles) {
+        UserEntity currentUser = getCurrentUser();
+
+        if(currentUser != null && currentUser.getAuthorities().contains(roles)){
+            return true;
+        }
+        return false;
+    }
+
 
     public static Path getResourceFilePath(String resourceName) throws URISyntaxException {
         return Paths.get(ClassLoader.getSystemResource(resourceName).toURI());
@@ -271,15 +309,15 @@ public class CmsUtils {
 
     public static String computeSlug(final ContentEntity content, final ContentDataEntity contentData, final String locale, final boolean forceLang) {
         String slug = StringUtils.trimToEmpty(computeSlugWithSlashes(content, contentData, locale, forceLang)).replaceAll("/+", "/");
-        return (slug.length()> 1 ) ? slug.replaceAll("/+$", "") : slug;
+        return (slug.length() > 1) ? slug.replaceAll("/+$", "") : slug;
     }
 
     private static String computeSlugWithSlashes(final ContentEntity content, final ContentDataEntity contentData, final String locale, final boolean forceLang) {
         final ContentEntity parent = content.getContentParent();
         if (parent == null) {
-            if(forceLang){
+            if (forceLang) {
                 return "/" + locale.toString() + contentData.getSlug();
-            } else{
+            } else {
                 return contentData.getSlug();
             }
 
@@ -290,13 +328,12 @@ public class CmsUtils {
         }
     }
 
-    public static String getFilePath(File file, String limit){
+    public static String getFilePath(File file, String limit) {
 
         File parent = file.getParentFile();
-        if(limit.equals(parent.getName())){
+        if (limit.equals(parent.getName())) {
             return "";
-        }
-        else{
+        } else {
             return getFilePath(parent, limit) + "/" + parent.getName();
         }
     }
@@ -316,18 +353,18 @@ public class CmsUtils {
         String baseName = FilenameUtils.getBaseName(uploadFile.getOriginalFilename());
         String prefix = slg.slugify(baseName);
         File serverFile = null;
-        if(isPrivate) {
-            if(prefix.length() < 3){
+        if (isPrivate) {
+            if (prefix.length() < 3) {
                 prefix += "___";
             }
             serverFile = File.createTempFile(prefix, "." + ext, getUploadDirectory(isPrivate));
         } else {
             String filePath = getUploadDirectory(false).getAbsolutePath();
-            if(!StringUtils.isEmpty(prePath)){
+            if (!StringUtils.isEmpty(prePath)) {
                 filePath += "/" + prePath;
             }
             filePath += "/" + prefix + "." + ext;
-            serverFile= new File(filePath);
+            serverFile = new File(filePath);
         }
         serverFile.getParentFile().mkdirs();
         BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
@@ -336,7 +373,7 @@ public class CmsUtils {
         return serverFile;
     }
 
-    public static File getUploadDirectory(boolean isPrivate){
+    public static File getUploadDirectory(boolean isPrivate) {
         // check if upload path exist
         File fileDir = new File((isPrivate) ? UPLOAD_DIRECTORY_PRIVATE : UPLOAD_DIRECTORY_PUBLIC);
 
@@ -344,27 +381,26 @@ public class CmsUtils {
             try {
                 FileUtils.forceMkdir(fileDir);
             } catch (IOException e) {
-                log.error("Impossible to create the upload directory : " + fileDir.getPath(),e);
+                log.error("Impossible to create the upload directory : " + fileDir.getPath(), e);
                 return null;
             }
         }
         return fileDir;
     }
 
-    public static Date parseDate(String date,String time){
-        if(StringUtils.isEmpty(date)){
+    public static Date parseDate(String date, String time) {
+        if (StringUtils.isEmpty(date)) {
             return null;
         }
-        if(StringUtils.isEmpty(time)){
+        if (StringUtils.isEmpty(time)) {
             time = "00:00:00";
-        }
-        else{
+        } else {
             // il manque le premier 0
-            if(time.length() == 4){
+            if (time.length() == 4) {
                 time = "0" + time;
             }
             // il manque les secondes
-            if(time.length() == 5){
+            if (time.length() == 5) {
                 time += ":00";
             }
         }
@@ -374,16 +410,16 @@ public class CmsUtils {
 
         try {
             dateBegin = df.parse(dateString);
-        }catch (ParseException e){
-            dateBegin= null;
+        } catch (ParseException e) {
+            dateBegin = null;
         }
         return dateBegin;
     }
 
-    public static PageData fillData(PageData pageData, List<ContentTemplateFieldsetEntity> contentTemplateFieldset, HttpServletRequest request ) throws IOException, ParseException{
+    public static PageData fillData(PageData pageData, List<ContentTemplateFieldsetEntity> contentTemplateFieldset, HttpServletRequest request) throws IOException, ParseException {
 
         Slugify slg = new Slugify();
-        if(pageData == null) {
+        if (pageData == null) {
             pageData = new PageData();
         }
         SimpleDateFormat dateFormatter = new SimpleDateFormat(CmsUtils.DATE_FORMAT);
@@ -464,12 +500,40 @@ public class CmsUtils {
         return pageData;
     }
 
-    public static PageData fillData(List<ContentTemplateFieldsetEntity> contentTemplateFieldset, HttpServletRequest request ) throws IOException, ParseException{
+    public static PageData fillData(List<ContentTemplateFieldsetEntity> contentTemplateFieldset, HttpServletRequest request) throws IOException, ParseException {
         return fillData(null, contentTemplateFieldset, request);
     }
 
-    public static String twoDigit(int number){
+    public static String twoDigit(int number) {
         return String.format("%02d", number);
+    }
+
+    public static UserEntity getPrincipal(SessionRegistry sessionRegistry, UserEntity user) {
+        for (Object principal : sessionRegistry.getAllPrincipals()) {
+            final UserEntity loggedUser = (UserEntity) principal;
+            if (loggedUser.getId() == user.getId())
+                return loggedUser;
+        }
+        return null;
+    }
+
+    public static boolean userIsLogged(SessionRegistry sessionRegistry, UserEntity user){
+        return getPrincipal(sessionRegistry, user) != null ? true : false;
+    }
+
+    public static void updateSessionUser(UserEntity user){
+        Authentication newAuth = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+    }
+
+    public static void expireSession(SessionRegistry sessionRegistry, UserEntity user){
+        UserEntity principal = getPrincipal(sessionRegistry, user);
+        if(principal != null) {
+            List<SessionInformation> allSessions = sessionRegistry.getAllSessions(principal, false);
+            for (SessionInformation session : allSessions) {
+                session.expireNow();
+            }
+        }
     }
 
 }

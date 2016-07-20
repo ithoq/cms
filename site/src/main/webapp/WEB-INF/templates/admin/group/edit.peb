@@ -24,12 +24,12 @@
                 <fieldset>
                     <legend>Super Admin :</legend>
                     <div class="row">
-                        {% for role in rolesByGroup.get("super admin") %}
+                        {% for role in rolesByGroup.get("private") %}
                             <div class="col-md-3 col-xs-6">
                                 <div class="form-group m-b-20 required">
                                     <div class="checkbox">
                                         <input type="checkbox" {% if group.roles contains role %}checked="checked"{%  endif %} id="{{ role.id }}" name="roles" value="{{ role.id }}">
-                                        <label for="{{ role.id }}">{{ role.name}}</label>{% if role.description is not empty %} <i data-placement="right" data-toggle="tooltip" data-original-title="{{role.description}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
+                                        <label for="{{ role.id }}">{{ role.name | replace({"ROLE_" : ""})}}</label>{% if role.description is not empty %} <i data-placement="right" data-toggle="tooltip" data-original-title="{{role.description}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -44,7 +44,7 @@
                                 <div class="form-group m-b-20 required">
                                     <div class="checkbox">
                                         <input type="checkbox" {% if group.roles contains role %}checked="checked"{%  endif %} id="{{ role.id }}" name="roles" value="{{ role.id }}">
-                                        <label for="{{ role.id }}">{{ role.name}}</label>{% if role.description is not empty %} <i data-placement="right" data-toggle="tooltip" data-original-title="{{role.description}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
+                                        <label for="{{ role.id }}">{{ role.name | replace({"ROLE_" : ""})}}</label>{% if role.description is not empty %} <i data-placement="right" data-toggle="tooltip" data-original-title="{{role.description}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -52,7 +52,7 @@
                     </div>
                 </fieldset>
                 {% for entry in rolesByGroup %}
-                    {%  if entry.key != "general" and entry.key != "super admin"  and entry.key is not empty %}
+                    {%  if entry.key != "general" and entry.key != "private"  and entry.key is not empty %}
                         {% if entry.value.size() > 0 %}
                             <fieldset>
                                 <legend>{{ entry.key }}</legend>
@@ -62,7 +62,7 @@
                                             <div class="form-group m-b-20 required">
                                                 <div class="checkbox">
                                                     <input type="checkbox" {% if group.roles contains role %}checked="checked"{%  endif %} id="{{ role.id }}" name="roles" value="{{ role.id }}">
-                                                    <label for="{{ role.id }}">{{ role.name}}</label>{% if role.description is not empty %} <i data-placement="right" data-toggle="tooltip" data-original-title="{{role.description}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
+                                                    <label for="{{ role.id }}">{{ role.name | replace({"ROLE_" : ""})}}</label>{% if role.description is not empty %} <i data-placement="right" data-toggle="tooltip" data-original-title="{{role.description}}" class="fa fa-info-circle txt-transform-reset"></i>{% endif %}
                                                 </div>
                                             </div>
                                         </div>
