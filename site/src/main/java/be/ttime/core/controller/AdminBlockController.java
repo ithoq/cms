@@ -7,6 +7,7 @@ import be.ttime.core.persistence.service.IBlockService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/admin/block")
+@PreAuthorize("hasRole('ROLE_ADMIN_BLOCK')")
 public class AdminBlockController {
 
     private final static String VIEWPATH = "admin/block/";

@@ -17,8 +17,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -58,12 +61,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+ /*¨
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+  */
+
+    @Bean
+    public SessionRegistry getSessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         //auth.inMemoryAuthentication().withUser("user").password("pass").roles("ADMIN");
         //auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder());
         auth.authenticationProvider(authenticationProvider).userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder());
     }
+
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -81,20 +97,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/install").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().permitAll()
-            .and()
+                .and()
                 .formLogin()
                 //.loginPage("/login")
                 .defaultSuccessUrl("/")
                 .failureUrl("/login?error=true")
                 //.successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
-            .and()
+                .and()
                 //.exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 .rememberMe()
                 .tokenRepository(tokenRepository)
                 .tokenValiditySeconds(15 * 24 * 60 * 60) // 15 days
-            .and()
-                .exceptionHandling().authenticationEntryPoint(loginEntryPoint);
+                .and()
+                .exceptionHandling().authenticationEntryPoint(loginEntryPoint)
+                .and()
+                .sessionManagement()
+                .maximumSessions(1)
+                .expiredUrl("/login?expired")
+        ;//.sessionRegistry(getSessionRegistry());
+
             /*.and()
                 .logout().logoutSuccessHandler(logoutSuccessHandler);
 */

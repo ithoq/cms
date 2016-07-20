@@ -350,7 +350,7 @@ INSERT INTO `role` (`id`, `description`, `name`, `section`, `superAdmin`) VALUES
 (10, NULL, 'ROLE_ADMIN_WEBCONTENT_DELETE', 'general', 0),
 (11, NULL, 'ROLE_ADMIN_USER', 'general', 0),
 (12, NULL, 'ROLE_ADMIN_USER_DELETE', 'general', 0),
-(13, NULL, 'ROLE_ADMIN_BLOCK', 'private', 0),
+(13, NULL, 'ROLE_ADMIN_BLOCK', 'general', 0),
 (14, NULL, 'ROLE_ADMIN_BLOCK_DELETE', 'private', 1),
 (15, NULL, 'ROLE_ADMIN_GROUP', 'general', 0),
 (16, NULL, 'ROLE_ADMIN_GROUP_DELETE', 'private', 1);

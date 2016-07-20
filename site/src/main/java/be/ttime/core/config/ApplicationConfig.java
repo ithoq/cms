@@ -62,8 +62,7 @@ public class ApplicationConfig {
         return new PebbleEngine.Builder()
                 .cacheActive(appMode.equals("PRODUCTION"))
                 .loader(stringLoader())
-                .extension(pebbleExtension)
-                .extension(springExtension())
+                .extension(pebbleExtension, springExtension())
                 .build();
     }
 

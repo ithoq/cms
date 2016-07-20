@@ -3,6 +3,7 @@ package be.ttime.core.config;
 import be.ttime.core.config.condition.H2Condition;
 import be.ttime.core.handler.AddModelParamsInterceptor;
 import be.ttime.core.handler.UrlLocaleResolver;
+import be.ttime.core.pebble.ext.PebbleExtension;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mitchellbosecke.pebble.PebbleEngine;
@@ -67,6 +68,9 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
 
     @Autowired
     private AddModelParamsInterceptor paramsInterceptor;
+
+    @Autowired
+    private PebbleExtension pebbleExtension;
 
     @Value("${app.mode}")
     private String appMode;
@@ -165,7 +169,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
 
     @Bean(name = "pebbleEngine")
     public PebbleEngine pebbleEngine() {
-        return new PebbleEngine.Builder().loader(templateLoader()).extension(springExtension()).cacheActive(appMode.equals("PRODUCTION")).build();
+        return new PebbleEngine.Builder().loader(templateLoader()).extension(springExtension(), pebbleExtension).cacheActive(appMode.equals("PRODUCTION")).build();
     }
 
     @Bean

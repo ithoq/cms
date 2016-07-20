@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -28,6 +29,7 @@ import java.util.Set;
 @Controller
 @RequestMapping(value = "/admin/group")
 @Slf4j
+@PreAuthorize("hasRole('ROLE_ADMIN_GROUP')")
 public class AdminGroupController {
 
     @Autowired

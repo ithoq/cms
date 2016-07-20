@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,6 +47,8 @@ public class UserServiceImpl implements IUserService {
     private IIpAttemptsRespository ipAttemptsRespository;
     @Autowired
     private IVerificationTokenRepository verificationTokenRepository;
+    @Autowired
+    private SessionRegistry sessionRegistry;
     @Autowired
     private IPasswordResetTokenRepository passwordResetTokenRepository;
     @PersistenceContext(unitName = "core")
@@ -102,12 +105,11 @@ public class UserServiceImpl implements IUserService {
             @CacheEvict(value = "user", key = "#user.email"),
     })
     public UserEntity save(UserEntity user) {
-        return userRepository.save(user);
-    }
-
-    @Override
-    public void delete(Long id) {
-        userRepository.delete(id);
+        UserEntity editedUser = userRepository.save(user);
+        if(CmsUtils.userIsLogged(sessionRegistry, editedUser)){
+            CmsUtils.updateSessionUser(editedUser);
+        }
+        return editedUser;
     }
 
     @Override
@@ -115,6 +117,8 @@ public class UserServiceImpl implements IUserService {
             @CacheEvict(value = "user", key = "#user.email"),
     })
     public void delete(UserEntity user) {
+
+        CmsUtils.expireSession(sessionRegistry, user);
         userRepository.delete(user);
     }
 

@@ -22,6 +22,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -42,6 +43,7 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "/admin/cms")
 @Slf4j
+@PreAuthorize("hasRole('ROLE_ADMIN_CMS')")
 public class AdminCmsController {
 
     private final static String VIEWPATH = "admin/cms/";

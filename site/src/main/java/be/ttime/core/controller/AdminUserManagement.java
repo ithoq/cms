@@ -13,6 +13,7 @@ import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -36,6 +37,7 @@ import java.util.Set;
 @Controller
 @RequestMapping(value = "/admin/user")
 @Slf4j
+@PreAuthorize("hasRole('ROLE_ADMIN_USER')")
 public class AdminUserManagement {
 
 

@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -35,6 +36,7 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/admin/webContent")
 @Slf4j
+@PreAuthorize("hasRole('WEBCONTENT')")
 public class AdminWebContentController {
 
     private final static String VIEWPATH = "admin/webContent/";

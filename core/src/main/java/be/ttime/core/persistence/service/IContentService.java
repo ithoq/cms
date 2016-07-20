@@ -4,6 +4,7 @@ import be.ttime.core.model.PageableResult;
 import be.ttime.core.persistence.model.ContentDataEntity;
 import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.model.ContentTypeEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Date;
 import java.util.List;
@@ -11,27 +12,30 @@ import java.util.Locale;
 
 public interface IContentService {
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN_CMS', 'ROLE_ADMIN_WEBCONTENT')")
     ContentEntity saveContent(ContentEntity p);
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN_CMS', 'ROLE_ADMIN_WEBCONTENT')")
     List<ContentEntity> saveContent(List<ContentEntity> pages);
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN_CMS', 'ROLE_ADMIN_WEBCONTENT')")
+    List<ContentDataEntity> saveContentData(List<ContentDataEntity> contents);
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN_CMS', 'ROLE_ADMIN_WEBCONTENT')")
+    ContentDataEntity saveContentData(ContentDataEntity content);
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN_CMS_DELETE', 'ROLE_ADMIN_WEBCONTENT_DELETE')")
+    void deleteContent(Long id) throws Exception;
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN_CMS_DELETE', 'ROLE_ADMIN_WEBCONTENT_DELETE')")
+    void deleteContentData(Long id) throws Exception;
 
     String getNavMenu(String lang, long depth);
 
     String getPagesTree();
-
-    void deleteContent(Long id) throws Exception;
-
-    void deleteContentData(Long id) throws Exception;
 
     ContentEntity findContentAdmin(Long id);
 
     ContentEntity findContentAndContentData(Long id, String locale);
 
     String getContentJsonByTypeAndLocale(String type, String locale) throws Exception;
-
-    List<ContentDataEntity> saveContentData(List<ContentDataEntity> contents);
-
-    ContentDataEntity saveContentData(ContentDataEntity content);
 
     ContentEntity findContent(Long id);
 

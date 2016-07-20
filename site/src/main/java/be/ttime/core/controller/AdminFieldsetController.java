@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -31,6 +32,7 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/admin/fieldset")
 @Slf4j
+@PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
 public class AdminFieldsetController {
 
     @Autowired

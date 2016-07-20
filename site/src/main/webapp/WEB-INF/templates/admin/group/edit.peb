@@ -4,6 +4,9 @@
 
 {% block content %}
 
+    {% if isAnonymous() %}
+        <h1> SUPER ADMIN MOTHER FUCKER </h1>
+    {%  endif %}
 
     <form id="groupForm" action="/admin/group/edit" method="POST" data-parsley-validate="">
         {{ csrf | raw }}

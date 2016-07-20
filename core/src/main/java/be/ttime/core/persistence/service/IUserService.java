@@ -12,8 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public interface IUserService extends UserDetailsService {
     UserEntity save(UserEntity user);
 
-    void delete(Long id);
-
     void delete(UserEntity user);
 
     void updateFailUserAttempts(String username);

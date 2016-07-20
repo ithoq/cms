@@ -1,19 +1,24 @@
 package be.ttime.core.persistence.service;
 
 import be.ttime.core.error.ForbiddenException;
-import be.ttime.core.persistence.model.RoleEntity;
 import be.ttime.core.persistence.model.GroupEntity;
-import be.ttime.core.persistence.repository.IRoleRepository;
+import be.ttime.core.persistence.model.RoleEntity;
 import be.ttime.core.persistence.repository.IGroupRepository;
+import be.ttime.core.persistence.repository.IRoleRepository;
 import be.ttime.core.util.CmsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -63,21 +68,25 @@ public class AuthorityServiceImpl implements IAuthorityService {
     }
 
     @Override
+    @Caching(evict = { @CacheEvict(value = "user", allEntries = true) })
     public GroupEntity saveGroup(GroupEntity role) {
         return groupRepository.save(role);
     }
 
     @Override
+    @Caching(evict = { @CacheEvict(value = "user", allEntries = true) })
     public List<GroupEntity> saveGroups(List<GroupEntity> roles) {
         return groupRepository.save(roles);
     }
 
     @Override
+    @Caching(evict = { @CacheEvict(value = "user", allEntries = true) })
     public RoleEntity saveRole(RoleEntity privilege) {
         return roleRepository.save(privilege);
     }
 
     @Override
+    @Caching(evict = { @CacheEvict(value = "user", allEntries = true) })
     public List<RoleEntity> saveRoles(List<RoleEntity> privileges) {
         return roleRepository.save(privileges);
     }

@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -59,6 +60,7 @@ public class AdminFileController {
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN_FILE_DELETE')")
     public String deleteFile(@PathVariable("id") long urlId, HttpServletResponse response) throws Exception {
 
         if (urlId == 0) {
@@ -76,6 +78,7 @@ public class AdminFileController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN_FILE')")
     public String editFile(long id, String name, String description, HttpServletResponse response) throws Exception {
 
         if (id == 0 || StringUtils.isEmpty(name)) {
@@ -100,6 +103,7 @@ public class AdminFileController {
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST, produces="application/json")
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN_FILE')")
     public Map<String, String> upload(MultipartHttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
         Map<String, String> jsonResponse = new HashMap<>();
         jsonResponse.put("status", "error");

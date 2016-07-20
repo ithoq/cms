@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
@@ -183,9 +184,6 @@ public class CmsUtils {
         return custom;
     }
 
-    /*
-
-     */
     public static boolean hasGroup(String role) {
         UserEntity user = getCurrentUser();
         if (user == null)
@@ -221,7 +219,7 @@ public class CmsUtils {
     public static boolean hasRole(String role) {
         // get security context from thread local
         UserEntity currentUser = getCurrentUser();
-        if(currentUser != null && currentUser.getAuthorities().contains(role)){
+        if(currentUser != null && currentUser.getAuthorities().contains(new SimpleGrantedAuthority(role))){
                 return true;
         }
 
@@ -233,20 +231,27 @@ public class CmsUtils {
 
         if(currentUser != null) {
             for (String role : roles) {
-                if(currentUser.getAuthorities().contains(role))
+                if(currentUser.getAuthorities().contains(new SimpleGrantedAuthority(role)))
                     return true;
             }
         }
         return false;
     }
 
+    private static Collection<SimpleGrantedAuthority> getSimpleGrantedAuthorityList(Collection<String> roles){
+        Collection<SimpleGrantedAuthority> result = new ArrayList<>();
+        for (String role : roles) {
+            result.add(new SimpleGrantedAuthority(role));
+        }
+        return result;
+    }
 
     public static boolean hasRoles(Collection<String> roles) {
         UserEntity currentUser = getCurrentUser();
 
-        if(currentUser != null && currentUser.getAuthorities().contains(roles)){
-            return true;
-        }
+        if(currentUser != null)
+            return currentUser.getAuthorities().containsAll(getSimpleGrantedAuthorityList(roles));
+
         return false;
     }
 

@@ -6,10 +6,13 @@
     </div>
     <div class="sidebar-menu">
         <ul class="menu-items">
+        {% if hasRole("ROLE_ADMIN_CMS") %}
             <li class="m-t-30"><a href="/admin/cms" class="detailed"><span class="title">CMS</span><span class="details">{{ message('admin.pagesManagement') }}</span></a><span class="icon-thumbnail">cms</span></li>
+        {% endif %}
+        {% if hasRole("ROLE_ADMIN_BLOCK") %}
             <li><a href="/admin/block" class="detailed"><span class="title">{{ message('admin.blocks') | capitalize }}</span><span class="details">{{ message('admin.blocksManagement') }}</span></a><span class="icon-thumbnail"><i class="fa fa-th-large"></i></span></li>
-            <li><a href="/admin/contentTemplate" class="detailed"><span class="title">Template</span><span class="details">add/edit template</span></a><span class="icon-thumbnail">T</span></li>
-            <li><a href="/admin/fieldset" class="detailed"><span class="title">Fieldset</span><span class="details">add/edit fieldset</span></a><span class="icon-thumbnail">F</span></li>
+        {% endif %}
+        {% if hasRole("ROLE_ADMIN_WEBCONTENT") %}
             <li>
                 <a href="javascript:;"><span class="title">Web content</span><span class=" arrow"></span></a>
                 <span class="icon-thumbnail"><i class="pg-form"></i></span>
@@ -28,8 +31,17 @@
                     </li>
                 </ul>
             </li>
+        {% endif %}
+        {% if hasRole("ROLE_ADMIN_USER") %}
             <li><a href="/admin/user" class="detailed"><span class="title">User</span><span class="details">User management</span></a><span class="icon-thumbnail"><i class="fa fa-user"></i></span></li>
+        {% endif %}
+        {% if hasRole("ROLE_ADMIN_GROUP") %}
             <li><a href="/admin/group" class="detailed"><span class="title">Group</span><span class="details">Group management</span></a><span class="icon-thumbnail"><i class="fa fa-key"></i></span></li>
+        {% endif %}
+        {% if hasRole("ROLE_SUPER_ADMIN") %}
+                <li><a href="/admin/contentTemplate" class="detailed"><span class="title">Template</span><span class="details">add/edit template</span></a><span class="icon-thumbnail">T</span></li>
+                <li><a href="/admin/fieldset" class="detailed"><span class="title">Fieldset</span><span class="details">add/edit fieldset</span></a><span class="icon-thumbnail">F</span></li>
+        {% endif %}
         </ul>
         <div class="clearfix"></div>
     </div>
