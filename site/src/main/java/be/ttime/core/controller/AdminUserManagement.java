@@ -177,7 +177,8 @@ public class AdminUserManagement {
             response.setStatus(500);
         }
         try {
-            userService.delete(id);
+            UserEntity user = userService.findById(id);
+            userService.delete(user);
         } catch (Exception e) {
             response.setStatus(500);
         }

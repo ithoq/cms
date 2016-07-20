@@ -3,12 +3,15 @@ package be.ttime.core.controller;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.persistence.model.GroupEntity;
 import be.ttime.core.persistence.model.RoleEntity;
+import be.ttime.core.persistence.model.UserEntity;
 import be.ttime.core.persistence.service.IAuthorityService;
+import be.ttime.core.persistence.service.IUserService;
 import be.ttime.core.util.CmsUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -28,6 +32,13 @@ public class AdminGroupController {
 
     @Autowired
     private IAuthorityService authorityService;
+
+    @Autowired
+    private IUserService userService;
+
+    @Autowired
+    private SessionRegistry sessionRegistry;
+
     private final static String VIEWPATH = "admin/group/";
 
 
@@ -94,6 +105,17 @@ public class AdminGroupController {
         role.setDescription(description);
         role.setRoles(roleEntityList);
         role = authorityService.saveGroup(role);
+
+        /* RELOAD THE RIGHT */
+        List<Object> loggedUsers = sessionRegistry.getAllPrincipals();
+        for (Object principal : loggedUsers) {
+            if(principal != null && principal instanceof UserEntity) {
+                final UserEntity loggedUser = (UserEntity) principal;
+                UserEntity databaseUser = userService.findById(loggedUser.getId());
+                CmsUtils.updateSessionUser(databaseUser);
+            }
+        }
+
         return "redirect:/admin/group/edit/" + role.getId() ;
     }
 }
