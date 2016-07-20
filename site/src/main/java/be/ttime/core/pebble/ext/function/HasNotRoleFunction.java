@@ -8,8 +8,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class HasAnyRoleFunction implements Function {
-
+/**
+ * Created by fabricecipolla on 20/07/16.
+ */
+public class HasNotRoleFunction implements Function {
 
     @Override
     public List<String> getArgumentNames() {
@@ -18,6 +20,7 @@ public class HasAnyRoleFunction implements Function {
 
     @Override
     public Object execute(Map<String, Object> args) {
+
         Object o = args.get("0");
         if(o == null || (!(o instanceof Collection) && !(o instanceof String)))
             throw new IllegalArgumentException();
@@ -30,6 +33,6 @@ public class HasAnyRoleFunction implements Function {
             roles = Collections.singleton((String)o);
         }
 
-        return CmsUtils.hasAnyRole(roles);
+        return !CmsUtils.hasRoles(roles);
     }
 }

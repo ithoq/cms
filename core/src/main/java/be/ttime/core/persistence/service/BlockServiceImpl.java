@@ -76,13 +76,13 @@ public class BlockServiceImpl implements IBlockService {
 
     @Override
     @Cacheable(value = "blockJson", key = "#type")
-    public String jsonBlockArray(String type) {
+    public String jsonBlockArray(String type, boolean dynamic) {
 
         List<BlockEntity> blocks = null;
         if(type == null || type.equals("all")){
             blocks = blockRepository.findAll();
         } else{
-            blocks = blockRepository.findAllByBlockTypeName(type);
+            blocks = blockRepository.findAllByBlockTypeNameAndDynamic(type, false);
         }
         JsonArrayBuilder data = Json.createArrayBuilder();
         JsonObjectBuilder row;

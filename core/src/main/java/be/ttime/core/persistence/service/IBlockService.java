@@ -20,5 +20,5 @@ public interface IBlockService {
     @PreAuthorize("hasRole('ROLE_ADMIN_BLOCK')")
     List<BlockEntity> save(List<BlockEntity> blocks);
 
-    String jsonBlockArray(String type);
+    String jsonBlockArray(String type, boolean dynamic);
 }

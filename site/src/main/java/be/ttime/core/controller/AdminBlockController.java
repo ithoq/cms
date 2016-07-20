@@ -4,6 +4,7 @@ import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.model.BlockTypeEntity;
 import be.ttime.core.persistence.repository.IBlockTypeRepository;
 import be.ttime.core.persistence.service.IBlockService;
+import be.ttime.core.util.CmsUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -40,6 +41,7 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     public void deleteBlock(@PathVariable("id") String id, HttpServletResponse response) {
 
         if (id == null) {
@@ -54,6 +56,7 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     public void addBlock(BlockEntity block, HttpServletResponse response) {
         block.setBlockType(new BlockTypeEntity("CONTENT"));
         pageBlockRepository.save(block);
@@ -64,7 +67,7 @@ public class AdminBlockController {
     @ResponseBody
     public String getjson(HttpServletResponse response) {
 
-        return pageBlockRepository.jsonBlockArray("all");
+        return (CmsUtils.isSuperAdmin())? pageBlockRepository.jsonBlockArray("all", true) : pageBlockRepository.jsonBlockArray("CONTENT", false);
     }
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

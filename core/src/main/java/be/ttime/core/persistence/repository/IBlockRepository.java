@@ -9,4 +9,5 @@ import java.util.List;
 public interface IBlockRepository extends JpaRepository<BlockEntity, String>, QueryDslPredicateExecutor<BlockEntity> {
 
     List<BlockEntity> findAllByBlockTypeName(String type);
+    List<BlockEntity> findAllByBlockTypeNameAndDynamic(String type, boolean dynamic);
 }

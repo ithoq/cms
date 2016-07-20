@@ -379,7 +379,6 @@ INSERT INTO `content_type` (`name`) VALUES
 
 INSERT INTO `block_type` (`name`) VALUES
 ('CONTENT'),
-('NAVIGATION'),
 ('PAGE_TEMPLATE'),
 ('SYSTEM'),
 ('FIELDSET');

@@ -50,8 +50,10 @@
                 </div>
             </div>
         </div>
+
         <div class="col-sm-4">
             <div class="panel panel-default">
+                {% if hasRole("ROLE_SUPER_ADMIN") %}
                 <div class="panel-heading">
                     <div class="panel-block-title m-b-30">
                         <h2>{{ message('admin.newBlock') | capitalize }}</h2>
@@ -73,6 +75,18 @@
                         <button type="submit" class="btn btn-success btn-block m-t-5">{{ message('add') }}</button>
                     </form>
                 </div>
+                {% else %}
+                <div class="panel-heading">
+                    <div class="panel-block-title m-b-30">
+                        <h2>{{ message('admin.block') | capitalize }}</h2>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <p>Blocks are areas of a page used in multiple pages (like the footer or a sidebar).</p>
+
+                    <p>When you make change on a block, you will see the repercussion on all page that use this block.</p>
+                </div>
+            {% endif %}
             </div>
         </div>
     </div>
@@ -89,7 +103,7 @@
             <div class="changeTypeContainer">
                 {% verbatim %}{{#dynamic}}{% endverbatim %}
                 <span class="label label-success">{{ message('dynamic') }}</span>
-                <span id="changeType" class="label changeType" data-dynamic="true" {% verbatim %}data-id="{{ name }}"{% endverbatim %}>Statique</span>
+                <span {% if hasRole("ROLE_SUPER_ADMIN") %}id="changeType"{% endif %} class="label changeType" data-dynamic="true" {% verbatim %}data-id="{{ name }}"{% endverbatim %}>Statique</span>
                 {% verbatim %}
             {{/dynamic}}
             {{^ dynamic}}
@@ -111,17 +125,20 @@
             </div>
             <div class="form-group form-group-default form-group-default-select2">
                 <label for="selectType">{{ message('type') }}</label>
-                <select id="selectType" name="blockType" data-disable-search="true" class="full-width">
-                    <option value="CONTENT">{{ message('content') }}</option>
-                    <option value="PAGE_TEMPLATE">{{ message('PAGE_TEMPLATE') }}</option>
-                    <option value="SYSTEM">{{ message('PAGE_TEMPLATE') }}</option>
+                <select id="selectType" name="blockType" data-disable-search="true" class="full-width" {% if hasNotRole("ROLE_SUPER_ADMIN") %}disabled{% endif %}>
+                    <option value="CONTENT">{{ message('CONTENT') }}</option>
+                    {% if hasRole("ROLE_SUPER_ADMIN") %}
+                        <option value="FIELDSET">{{ message('FIELDSET') }}</option>
+                        <option value="PAGE_TEMPLATE">{{ message('PAGE_TEMPLATE') }}</option>
+                        <option value="SYSTEM">{{ message('SYSTEM') }}</option>
+                    {% endif %}
                 </select>
             </div>
             <div class="form-group form-group-default m-b-20 required">
                 <label>{{ message('name') }}</label>
-                {% verbatim %}
-            <input value="{{ name }}" type="text" name="name" class="form-control" />
-            {% endverbatim %}
+
+            {% verbatim %}<input value="{{ name }}" type="text" name="name" class="form-control" {% endverbatim %} {% if hasNotRole("ROLE_SUPER_ADMIN") %}disabled{% endif %} />
+
             </div>
             <div class="form-group">
                 <label for="content-block">{{ message('content') }}</label>

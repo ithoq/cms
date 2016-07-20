@@ -1,8 +1,6 @@
 package be.ttime.core.pebble.ext;
 
-import be.ttime.core.pebble.ext.function.HasAnyRoleFunction;
-import be.ttime.core.pebble.ext.function.HasRoleFunction;
-import be.ttime.core.pebble.ext.function.IsAnonymousFunction;
+import be.ttime.core.pebble.ext.function.*;
 import com.mitchellbosecke.pebble.extension.AbstractExtension;
 import com.mitchellbosecke.pebble.extension.Function;
 import org.springframework.stereotype.Component;
@@ -17,8 +15,10 @@ public class PebbleExtension extends AbstractExtension {
         Map<String, Function> functions = new HashMap<>();
 
         functions.put("hasRole", new HasRoleFunction());
+        functions.put("hasNotRole", new HasNotRoleFunction());
         functions.put("hasAnyRole", new HasAnyRoleFunction());
         functions.put("isAnonymous", new IsAnonymousFunction());
+        functions.put("isLogged", new isLoggedFunction());
 
         return functions;
     }
