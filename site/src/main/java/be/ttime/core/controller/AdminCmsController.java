@@ -191,10 +191,9 @@ public class AdminCmsController {
         ContentDataEntity contentData;
 
         Long id = form.getContentId();
-
+        response.setStatus(500);
         // des erreurs ?
         if (result.hasErrors()) {
-            response.setStatus(500);
             return ControllerUtils.getValidationErrorsInUl(result.getFieldErrors());
         } else {
 
@@ -243,6 +242,7 @@ public class AdminCmsController {
 
             contentService.saveContent(content);
             contentService.saveContentData(contentData);
+            response.setStatus(200);
         }
 
         return "OK";
