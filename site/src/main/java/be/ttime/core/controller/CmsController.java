@@ -56,11 +56,11 @@ public class CmsController {
         //GET DATA WITH FILES,DIC,COMMENTS,...
         ContentDataEntity contentData = contentService.findBySlug(path, locale);
 
-        ContentEntity contentParent = contentData.getContent();
-
         if (contentData == null || !contentData.isEnabled()) {
             throw new ResourceNotFoundException();
         }
+
+        ContentEntity contentParent = contentData.getContent();
 
         // TODO: Vérifier les droits
 

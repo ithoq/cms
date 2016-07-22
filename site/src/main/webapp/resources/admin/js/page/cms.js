@@ -232,6 +232,7 @@
     // Save a page
     $pageForm.on('click', '#savePageBtn', function () {
       var id = $('#contentId').val();
+      var dataId = $('#contentDataId').val();
       $.Cms.ajax({
         formJqueryElement: $pageForm,
         successMessage: 'The page was saved successfully!',
@@ -239,6 +240,7 @@
         formReset: false,
         onSuccess: function () {
           treeCache.reload();
+          reloadPage(id, dataId);
         },
       });
     });

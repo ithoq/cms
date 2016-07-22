@@ -2,6 +2,7 @@ package be.ttime.core.model.field;
 
 import be.ttime.core.model.PageableResult;
 import be.ttime.core.persistence.model.*;
+import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.util.CmsUtils;
@@ -10,6 +11,7 @@ import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -30,6 +32,8 @@ public class ViewHelper {
     private IBlockService blockService;
     @Autowired
     private IContentService contentService;
+    @Autowired
+    private IApplicationService applicationService;
 
     public static boolean isJSONValid(String JSON_STRING) {
         try {
@@ -126,5 +130,14 @@ public class ViewHelper {
         PageableResult<ContentEntity> result = contentService.findWebContent(locale, begin, end, name, category, contentType, pageNumber, limit, offset);
 
         return result;
+    }
+
+    public String getLanguageName(String code){
+        Locale locale = applicationService.getLanguagesMap().get(code);
+        return locale.getDisplayName(LocaleContextHolder.getLocale());
+    }
+
+    public Locale getLocale(String code){
+        return  applicationService.getLanguagesMap().get(code);
     }
 }

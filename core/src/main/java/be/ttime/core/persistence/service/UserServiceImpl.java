@@ -8,6 +8,7 @@ import be.ttime.core.persistence.repository.*;
 import be.ttime.core.util.CmsUtils;
 import com.mysema.query.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -40,6 +41,7 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private IUserRepository userRepository;
     @Autowired
+    @Qualifier("passwordEncoder")
     private PasswordEncoder passwordEncoder;
     @Autowired
     private IUsersAttemptsRepository usersAttemptsRepository;

@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUrlLogoutSuccessHandler logoutSuccessHandler;
 
-    @Bean
+    @Bean(name = "passwordEncoder")
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }

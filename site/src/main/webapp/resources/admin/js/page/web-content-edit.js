@@ -213,7 +213,6 @@ $(function () {
   $('#categories').tagEditor({
     placeholder: 'Enter categories ...',
     initialTags: initialCategories,
-    maxTags: 1,
     autocomplete: { source: categories, minLength: 2, delay: 0 },
   });
 

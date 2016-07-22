@@ -57,17 +57,35 @@
 </div>
 <div class="panel panel-default">
     <div class="lang-selector">
+        <div class="checkbox check-success">
+            <input id="contentActive" type="checkbox" checked="checked" value="{{ contentData.active }}">
+            <label for="contentActive">{{ message('active') }}</label>
+        </div>
         <div class="select-country">
-            <select id="selectLanguage" name="selectLanguage">
-                {% for lang in beans.applicationService.getSiteLanguages() %}
-                    <option id="{{ lang.getLanguage() }}" value="{{ lang.getLanguage() }}"
-                            {% if lang.toString() == contentLocale %}selected{% endif %}>{{ lang.getDisplayLanguage() }}</option>
-                {% endfor %}
-            </select>
-            <div class="checkbox check-success">
-                <input id="contentActive" type="checkbox" checked="checked" value="{{ contentData.active }}">
-                <label for="contentActive">{{ message('active') }}</label>
-            </div>
+            {% if content.contentDataList.size == 1 %}
+                <div class="solo-lang"><span><img src="/resources/admin/img/flags/en.png" class="img-flag">English (en)</span></div>
+            {% else %}
+                <select id="selectLanguage" name="selectLanguage">
+                    {% for entry in content.contentDataList %}
+                        <option id="{{ entry.key }}" value="{{ entry.key }}" {% if entry.key == contentLocale %}selected{% endif %}>{{ beans.viewHelper.getLanguageName(entry.key) }} ({{ entry.key }})</option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+            {% if beans.applicationService.getSiteLanguages.size != content.contentDataList.size %}
+                <div class="dropdown add-lang">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <ul class="dropdown-menu drop-create-lang">
+                        <div class="title">add new language</div>
+                        {% for lang in beans.applicationService.getSiteLanguages() %}
+                            {% if content.contentDataList contains lang.toString() %}{% else %}
+                                <li class="creatlang" data-id="{{ lang }}" value="{{ lang}}"><div class="solo-lang"><span><img src="/resources/admin/img/flags/{{ lang }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(lang.toString()) }} ({{ lang }})</span></div></li>
+                            {% endif %}
+                        {% endfor %}
+
+                    </ul>
+                </div>
+            {% endif %}
             <div class="operation-box">
                 {% if content.pageChildren is empty %}
                     <button type="button" data-toggle="modal" data-target="#modalSlideLeft"
@@ -79,6 +97,7 @@
                     </button>
                 {% endif %}
                 <button id="savePageBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i></button>
+                <a href="{{ contentData.computedSlug }}" target="_blank" class="btn btn-default"><i class="fa fa-eye"></i></a>
             </div>
         </div>
     </div>
@@ -96,23 +115,20 @@
                 <input type="text" class="form-control" name="pageDataTitle" value="{{ contentData.title }}">
             </div>
             <div class="form-group form-group-default required">
+                <label>H1</label>
+                <input type="text" class="form-control" name="seoH1" value="{{ data.seo_title }}">
+            </div>
+            {{ beans.viewHelper.renderField(template, data) | raw }}
+        </div>
+        <div id="tabSeo" class="tab-pane">
+
+            <div class="form-group form-group-default required">
                 <label>Slug </label><i data-placement="right" title="" data-toggle="tooltip" type="button"
                                        data-original-title="Label unique, pour identifier un élément. Exemple : http://www.exemple.com/blog/le-titre-de-mon-article où la chaîne de caractères le-titre-de-mon-article est le slug"
                                        class="fa fa-info-circle"></i>
                 <input required type="text" id="pageSlug" name="slug" value="{{ contentData.slug }}" class="form-control">
             </div>
 
-            <h2>Template fields</h2>
-            <hr class="section">
-            {{ beans.viewHelper.renderField(template, data) | raw }}
-
-
-        </div>
-        <div id="tabSeo" class="tab-pane">
-            <div class="form-group form-group-default required">
-                <label>H1</label>
-                <input type="text" class="form-control" name="seoH1" value="{{ data.seo_title }}">
-            </div>
             <div class="form-group form-group-default">
                 <label>Tag </label>
                 <input type="text" class="form-control" name="seoTag" value="{{ data.seo_tags }}">

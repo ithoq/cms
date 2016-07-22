@@ -1,9 +1,6 @@
 package be.ttime;
 
-import be.ttime.core.config.ApplicationConfig;
-import be.ttime.core.config.CachingConfig;
-import be.ttime.core.config.SecurityConfig;
-import be.ttime.core.config.WebMvcConfig;
+import be.ttime.core.config.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.system.ApplicationPidFileWriter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +11,7 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @Import({
         ApplicationConfig.class,
+        TestConfig.class,
         CachingConfig.class,
         SecurityConfig.class,
         WebMvcConfig.class

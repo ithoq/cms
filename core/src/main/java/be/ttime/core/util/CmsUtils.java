@@ -313,12 +313,20 @@ public class CmsUtils {
     }
 
     public static String computeSlug(final ContentEntity content, final ContentDataEntity contentData, final String locale, final boolean forceLang) {
+        if(StringUtils.isEmpty(contentData.getSlug())){
+            throw new IllegalArgumentException("Slug should not be empty!");
+        }
         String slug = StringUtils.trimToEmpty(computeSlugWithSlashes(content, contentData, locale, forceLang)).replaceAll("/+", "/");
         return (slug.length() > 1) ? slug.replaceAll("/+$", "") : slug;
     }
 
     private static String computeSlugWithSlashes(final ContentEntity content, final ContentDataEntity contentData, final String locale, final boolean forceLang) {
         final ContentEntity parent = content.getContentParent();
+        boolean malFormed = contentData.getSlug().charAt(0) != '/';
+        if(malFormed){
+            log.error("Slug malformed (missing /) : contentData with id : " + contentData.getId());
+        }
+        String slug = malFormed ? '/' + contentData.getSlug() : contentData.getSlug();
         if (parent == null) {
             if (forceLang) {
                 return "/" + locale.toString() + contentData.getSlug();
