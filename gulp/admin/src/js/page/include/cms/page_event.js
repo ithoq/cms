@@ -1,13 +1,18 @@
 // Delete a page
 $('#btnDeletePage').click(function () {
   var id = $('#contentDataId').val();
+  var contentId = $('#contentId').val();
   var params = {
     url: '/admin/cms/page/delete/' + id,
     type: 'DELETE',
     successMessage: 'The page was deleted successfully!',
     onSuccess: function (data) {
       $.Cms.removeAllTinyMce(); // must do before dom is deleted (bug Firefox)
-      $pageForm.empty();
+      if(data=== "empty"){
+        $pageForm.empty();
+      } else{
+        reloadPage(contentId);
+      }
       treeCache.reload();
     },
   };
@@ -33,6 +38,23 @@ $pageForm.on('click', '#savePageBtn', function () {
       reloadPage(id, dataId);
     },
   });
+});
+
+$pageForm.on('click', '.creatlang', function () {
+  reloadPage($('#contentId').val(), $(this).data('id'));
+});
+
+$pageForm.on('click', '#preview', function () {
+  var $form = $(this).closest('form').clone();
+  console.log($form);
+  var $csrf = $('[name=_csrf]').first().clone();
+  console.log($csrf);
+  $csrf.attr('id', 'csrf');
+  $form.append($csrf);
+  $form.attr('target', '_blank');
+  $form.attr('action', '/admin/cms/preview');
+  console.log($form);
+  $form.submit();
 });
 
 // change language

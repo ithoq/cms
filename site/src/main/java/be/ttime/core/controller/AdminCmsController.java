@@ -8,13 +8,16 @@ import be.ttime.core.model.form.EditPageForm;
 import be.ttime.core.model.form.EditPagePositionForm;
 import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.service.IApplicationService;
+import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.persistence.service.IContentTemplateService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.ControllerUtils;
+import be.ttime.core.util.PebbleUtils;
 import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mitchellbosecke.pebble.error.PebbleException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +57,11 @@ public class AdminCmsController {
     private IContentTemplateService contentTemplateService;
     @Autowired
     private IApplicationService applicationService;
+    @Autowired
+    private IBlockService blockService;
+
+    @Autowired
+    private PebbleUtils pebbleUtils;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String home(ModelMap model) {
@@ -85,7 +94,10 @@ public class AdminCmsController {
             contentData = new ContentDataEntity();
             contentData.setContent(content);
             contentData.setLanguage(appLanguage);
-            contentService.saveContentData(contentData);
+            contentData = contentService.saveContentData(contentData);
+
+            // reload the content
+            content = contentService.findContentAdmin(id);
         }
 
         if (!StringUtils.isEmpty(contentData.getData())) {
@@ -94,7 +106,7 @@ public class AdminCmsController {
 
         ContentTemplateEntity template = contentTemplateService.find(content.getContentTemplate().getId());
         model.put("template", template);
-
+        model.put("allTemplates", contentTemplateService.findAllByTypeLike("PAGE%"));
         model.put("content", content);
         model.put("contentData", contentData);
         model.put("contentLocale", appLanguage.getLocale());
@@ -106,6 +118,7 @@ public class AdminCmsController {
     @ResponseBody
     public String deletePage(@PathVariable("id") long urlId, HttpServletResponse response) throws Exception {
 
+        String result = "";
         if (urlId == 0) {
             response.setStatus(500);
             return "L'id de la page n'existe pas";
@@ -118,6 +131,7 @@ public class AdminCmsController {
             if(size <=1){
                 // delete the content
                 contentService.deleteContent(content.getId());
+                result = "empty";
             } else {
                 // delete the content data
                 contentService.deleteContentData(urlId);
@@ -128,7 +142,7 @@ public class AdminCmsController {
             return "An error occurred, please try later";
         }
 
-        return "delete";
+        return result;
     }
 
     private static String slugify(final String input) throws PagePersistenceException {
@@ -158,6 +172,7 @@ public class AdminCmsController {
             contentData.setLanguage(language);
             contentData.setTitle(pageTitle + '_' + language.getLocale());
             contentData.setSlug("/" + slug);
+            contentData.setEnabled(true);
 
             ContentEntity parent;
             if (form.getParentId() >= 0) {
@@ -189,8 +204,27 @@ public class AdminCmsController {
     @ResponseBody
     public String postPage(@PathVariable("id") Long urlId, @Valid EditPageForm form, BindingResult result, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        ContentEntity content;
-        ContentDataEntity contentData;
+        Long id = form.getContentId();
+        response.setStatus(500);
+        // des erreurs ?
+        if (result.hasErrors()) {
+            return ControllerUtils.getValidationErrorsInUl(result.getFieldErrors());
+        } else {
+            ContentEntity content = contentService.findContentAdmin(form.getContentId());
+            ContentDataEntity contentData = contentService.findContentData(form.getContentDataId());
+            fillPageForm(form, request, content, contentData);
+
+            contentService.saveContent(content);
+            contentService.saveContentData(contentData);
+            response.setStatus(200);
+        }
+
+        return "OK";
+    }
+
+    @RequestMapping(value = "/preview", method = RequestMethod.POST)
+    @ResponseBody
+    public String preview(@Valid EditPageForm form, BindingResult result, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException, PebbleException {
 
         Long id = form.getContentId();
         response.setStatus(500);
@@ -199,55 +233,48 @@ public class AdminCmsController {
             return ControllerUtils.getValidationErrorsInUl(result.getFieldErrors());
         } else {
 
-            content = contentService.findContentAdmin(form.getContentId());
-            contentData = contentService.findContentData(form.getContentDataId());
-            if (content == null || contentData == null) {
-                throw new Exception("Page or Content can't by null");
+            ContentEntity content = contentService.findContentAdmin(form.getContentId());
+            ContentDataEntity contentData = contentService.findContentData(form.getContentDataId());
+            fillPageForm(form, request, content, contentData);
+
+            model.put("title", contentData.getTitle());
+            if (!org.springframework.util.StringUtils.isEmpty(contentData.getData())) {
+                HashMap<String, Object> data = CmsUtils.parseData(contentData.getData());
+                model.put("data", data);
             }
 
-            ApplicationLanguageEntity appLanguage = applicationService.getSiteApplicationLanguageMap().get(contentData.getLanguage().getLocale());
-            if (appLanguage == null) {
-                appLanguage = applicationService.getDefaultSiteApplicationLanguage();
+            CmsUtils.fillModelMap(model,request);
+            model.put("contentData", contentData);
+            model.put("content", content);
+            // Pas grave pour les perfs car les blocks seront dans le cache
+            BlockEntity master = blockService.find(CmsUtils.BLOCK_PAGE_MASTER);
+            ContentTemplateEntity templateEntity = contentTemplateService.find(content.getContentTemplate().getId());
+            BlockEntity blockTemplate = blockService.find(templateEntity.getBlock().getName());
+
+            model.put("main",  pebbleUtils.parseBlock(blockTemplate, model));
+
+            StringBuilder include_top = new StringBuilder();
+            StringBuilder include_bottom = new StringBuilder();
+
+            if(!StringUtils.isEmpty(templateEntity.getIncludeTop())){
+                include_top.append(templateEntity.getIncludeTop());
+            }
+            if(!StringUtils.isEmpty(content.getIncludeTop())){
+                include_top.append('\n').append(content.getIncludeTop());
             }
 
-            // retrieve data
-            ContentTemplateEntity template = contentTemplateService.find(content.getContentTemplate().getId());
+            if(!StringUtils.isEmpty(templateEntity.getIncludeBottom())){
+                include_bottom.append(templateEntity.getIncludeBottom());
+            }
+            if(!StringUtils.isEmpty(content.getIncludeBottom())){
+                include_bottom.append('\n').append(content.getIncludeBottom());
+            }
 
-            PageData pageData = CmsUtils.fillData(template.getContentTemplateFieldset(), request);
+            model.put("include_top", include_top.toString() );
+            model.put("include_bottom", include_bottom.toString());
 
-            // Form data
-            Map<String, String> data = new HashMap<>();
-            //data.put("dev_top", form.getDevIncludeTop());
-            //data.put("dev_bot", form.getDevIncludeBot());
-
-            content.setIncludeTop(form.getDevIncludeTop());
-            content.setIncludeBottom(form.getDevIncludeBot());
-
-            data.put("seo_h1", form.getSeoH1());
-            data.put("seo_description", form.getSeoDescription());
-            data.put("seo_tags", form.getSeoTag());
-            pageData.getDataString().putAll(data);
-
-            content.setName(form.getName());
-
-            content.setMenuItem(form.isMenuItem());
-            content.setEnabled(form.isEnabled());
-
-            Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
-            contentData.setData(gson.toJson(pageData));
-
-            contentData.setTitle(form.getPageDataTitle());
-            contentData.setSlug(form.getSlug());
-
-            contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, appLanguage.getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));
-
-
-            contentService.saveContent(content);
-            contentService.saveContentData(contentData);
-            response.setStatus(200);
+            return pebbleUtils.parseBlock(master, model);
         }
-
-        return "OK";
     }
 
     @RequestMapping(value = "/page/updatePosition", method = RequestMethod.POST)
@@ -288,5 +315,49 @@ public class AdminCmsController {
 
         contentService.saveContent(pages);
         return "Ok";
+    }
+
+    private void fillPageForm(EditPageForm form, HttpServletRequest request, ContentEntity content, ContentDataEntity contentData ) throws IOException, ParseException {
+
+        // retrieve data
+        ContentTemplateEntity template = contentTemplateService.find(form.getTemplateId());
+        content.setContentTemplate(template);
+
+        if (content == null || contentData == null || template == null) {
+            throw new IllegalArgumentException("The page, the content or the template is incorrect!");
+        }
+
+        ApplicationLanguageEntity appLanguage = applicationService.getSiteApplicationLanguageMap().get(contentData.getLanguage().getLocale());
+        if (appLanguage == null) {
+            appLanguage = applicationService.getDefaultSiteApplicationLanguage();
+        }
+
+        PageData pageData = CmsUtils.fillData(template.getContentTemplateFieldset(), request);
+
+        // Form data
+        Map<String, String> data = new HashMap<>();
+
+
+        content.setIncludeTop(form.getDevIncludeTop());
+        content.setIncludeBottom(form.getDevIncludeBot());
+
+        data.put("seo_h1", form.getSeoH1());
+        data.put("seo_description", form.getSeoDescription());
+        data.put("seo_tags", form.getSeoTag());
+        pageData.getDataString().putAll(data);
+
+        content.setName(form.getName());
+
+        content.setMenuItem(form.isMenuItem());
+        content.setEnabled(form.isEnabled());
+
+        Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
+        contentData.setData(gson.toJson(pageData));
+
+        contentData.setTitle(form.getPageDataTitle());
+        contentData.setSlug(form.getSlug());
+        contentData.setEnabled(form.isContentDataEnabled());
+        contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, appLanguage.getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));
+
     }
 }

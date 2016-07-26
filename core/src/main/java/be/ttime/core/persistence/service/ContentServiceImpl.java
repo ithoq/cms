@@ -27,7 +27,7 @@ import java.util.*;
 
 //import javax.persistence.EntityManagerFactory;
 
-@Service
+@Service(value = "contentService")
 @Transactional
 public class ContentServiceImpl implements IContentService {
 
@@ -59,6 +59,7 @@ public class ContentServiceImpl implements IContentService {
                 .leftJoin(contentDataEntity.commentList).fetch()
                 .leftJoin(contentDataEntity.contentFiles).fetch()
                 .where(contentDataEntity.computedSlug.eq(slug)
+                        .and(contentDataEntity.content.enabled.eq(true))
                         .and(contentDataEntity.enabled.eq(true))
                         .and(contentDataEntity.language.locale.eq(locale.toString())))
                 .singleResult(contentDataEntity);
@@ -114,6 +115,7 @@ public class ContentServiceImpl implements IContentService {
         JPAQuery query = new JPAQuery(entityManager);
         ContentEntity result = query.from(contentEntity)
                 .leftJoin(contentEntity.contentDataList, contentDataEntity).fetch()
+                .leftJoin(contentEntity.contentChildren).fetch()
                 .where(contentEntity.id.eq(id))
                 .leftJoin(contentEntity.contentParent).fetch()
                 .leftJoin(contentEntity.contentTemplate).fetch()
@@ -191,7 +193,8 @@ public class ContentServiceImpl implements IContentService {
             @CacheEvict(value = "content", allEntries = true),
             @CacheEvict(value = "adminTree", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
-            @CacheEvict(value = "adminContent", key = "#p.id"),
+            //@CacheEvict(value = "adminContent", key = "#p.id"),
+            @CacheEvict(value = "adminContent", allEntries = true),
 
     })
     public ContentEntity saveContent(ContentEntity p) {
@@ -232,7 +235,7 @@ public class ContentServiceImpl implements IContentService {
     @Caching(evict = {
             @CacheEvict(value = "content", allEntries = true),
             @CacheEvict(value = "adminTree", allEntries = true),
-            @CacheEvict(value = "adminContent", key = "#id"),
+            @CacheEvict(value = "adminContent", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
     })
     public void deleteContent(Long id) throws Exception {
@@ -260,6 +263,12 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "content", allEntries = true),
+            @CacheEvict(value = "adminTree", allEntries = true),
+            @CacheEvict(value = "adminContent", allEntries = true),
+            @CacheEvict(value = "mainNav", allEntries = true),
+    })
     public void deleteContentData(Long id) throws Exception {
         contentDataRepository.delete(id);
     }
@@ -269,6 +278,7 @@ public class ContentServiceImpl implements IContentService {
             @CacheEvict(value = "content", allEntries = true),
             @CacheEvict(value = "adminTree", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
+            @CacheEvict(value = "adminContent", allEntries = true),
     })
     public List<ContentDataEntity> saveContentData(List<ContentDataEntity> contents) {
         return contentDataRepository.save(contents);
@@ -279,6 +289,7 @@ public class ContentServiceImpl implements IContentService {
             @CacheEvict(value = "content", allEntries = true),
             @CacheEvict(value = "adminTree", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
+            @CacheEvict(value = "adminContent", allEntries = true),
     })
     public ContentDataEntity saveContentData(ContentDataEntity content) {
         return contentDataRepository.save(content);
@@ -374,6 +385,34 @@ public class ContentServiceImpl implements IContentService {
     @Override
     public boolean contentTypeExist(String contentType) {
         return contentTypeRepository.exists(contentType);
+    }
+
+    @Override
+    public boolean contentCanBeDeleted(ContentEntity content, ContentDataEntity contentDataEntity) {
+        ContentEntity temp;
+        JPAQuery query;
+        String locale = contentDataEntity.getLanguage().getLocale();
+        QContentEntity contentEntity = QContentEntity.contentEntity;
+        QContentDataEntity qContentDataEntity = QContentDataEntity.contentDataEntity;
+
+        for (ContentEntity c : content.getContentChildren()) {
+
+            query = new JPAQuery(entityManager);
+
+            long result =
+                    query.from(contentEntity)
+                            .leftJoin(contentEntity.contentDataList, qContentDataEntity)
+                            .where(contentEntity.id.eq(c.getId())
+                                    .and(qContentDataEntity.language.locale.eq(locale))
+                            )
+                            .count();
+
+            if(result > 0){
+                return false;
+            }
+
+        }
+        return true;
     }
 
     private String buildNavMenu(List<ContentEntity> pages, StringBuilder sb, String locale, long depth) {

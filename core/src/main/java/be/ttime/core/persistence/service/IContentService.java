@@ -33,6 +33,8 @@ public interface IContentService {
 
     ContentEntity findContentAdmin(Long id);
 
+    boolean contentCanBeDeleted(ContentEntity content, ContentDataEntity contentDataEntity);
+
     ContentEntity findContentAndContentData(Long id, String locale);
 
     String getContentJsonByTypeAndLocale(String type, String locale) throws Exception;

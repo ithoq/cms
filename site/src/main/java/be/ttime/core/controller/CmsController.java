@@ -60,8 +60,7 @@ public class CmsController {
             throw new ResourceNotFoundException();
         }
 
-        ContentEntity contentParent = contentData.getContent();
-
+        ContentEntity content = contentData.getContent();
         // TODO: Vérifier les droits
 
         model.put("title", contentData.getTitle());
@@ -73,13 +72,13 @@ public class CmsController {
 
         CmsUtils.fillModelMap(model,request);
         model.put("contentData", contentData);
-        model.put("content", contentParent);
+        model.put("content", content);
         // Pas grave pour les perfs car les blocks seront dans le cache
         BlockEntity master = blockService.find(CmsUtils.BLOCK_PAGE_MASTER);
         ContentTemplateEntity templateEntity = contentTemplateService.find(contentData.getContent().getContentTemplate().getId());
-        BlockEntity content = blockService.find(templateEntity.getBlock().getName());
+        BlockEntity blockTemplate = blockService.find(templateEntity.getBlock().getName());
 
-        model.put("main",  pebbleUtils.parseBlock(content, model));
+        model.put("main",  pebbleUtils.parseBlock(blockTemplate, model));
 
         StringBuilder include_top = new StringBuilder();
         StringBuilder include_bottom = new StringBuilder();
@@ -87,15 +86,15 @@ public class CmsController {
         if(!StringUtils.isEmpty(templateEntity.getIncludeTop())){
             include_top.append(templateEntity.getIncludeTop());
         }
-        if(!StringUtils.isEmpty(contentParent.getIncludeTop())){
-            include_top.append('\n').append(contentParent.getIncludeTop());
+        if(!StringUtils.isEmpty(content.getIncludeTop())){
+            include_top.append('\n').append(content.getIncludeTop());
         }
 
         if(!StringUtils.isEmpty(templateEntity.getIncludeBottom())){
             include_bottom.append(templateEntity.getIncludeBottom());
         }
-        if(!StringUtils.isEmpty(contentParent.getIncludeBottom())){
-            include_bottom.append('\n').append(contentParent.getIncludeBottom());
+        if(!StringUtils.isEmpty(content.getIncludeBottom())){
+            include_bottom.append('\n').append(content.getIncludeBottom());
         }
 
         //PageableResult<ContentEntity> result = contentService.findWebContent(locale.toString(), null, null, null, null , "NEWS", 1, 1L, 0L);

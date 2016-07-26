@@ -84,4 +84,5 @@ public class ContentEntity extends AbstractTimestampEntity {
         }
         return result;
     }
+
 }

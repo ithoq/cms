@@ -10,6 +10,7 @@ public class EditPageForm {
 
     private Long contentId;
     private Long contentDataId;
+    private Long templateId;
     @NotEmpty
     private String name;
     @NotEmpty
@@ -25,4 +26,5 @@ public class EditPageForm {
     private String seoDescription;
     private boolean menuItem;
     private boolean enabled;
+    private boolean contentDataEnabled;
 }

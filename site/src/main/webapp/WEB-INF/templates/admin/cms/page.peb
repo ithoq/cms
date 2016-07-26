@@ -9,17 +9,17 @@
                    class="page-title light-input">
             <div class="title-page-sub">
                 <div class="checkbox check-success checkbox-circle">
-                    <input id="checkbox_enabled" name="enabled" type="checkbox"
-                           {% if content.enabled %}checked{% endif %} />
-                    <label for="checkbox_enabled">{{ message('menu') }} <i data-placement="bottom" title=""
+                    <input id="checkbox_menuItem" name="menuItem" type="checkbox"
+                           {% if content.menuItem %}checked{% endif %} />
+                    <label for="checkbox_menuItem">{{ message('menu') }} <i data-placement="bottom" title=""
                                                                            data-toggle="tooltip" type="button"
                                                                            data-original-title="Affiche la page dans le menu"
                                                                            class="fa fa-info-circle"></i></label>
                 </div>
                 <div class="checkbox check-success checkbox-circle">
-                    <input id="checkbox_menuItem" name="menuItem" type="checkbox"
-                           {% if content.menuItem %}checked{% endif %} />
-                    <label for="checkbox_menuItem">{{ message('active') }} <i data-placement="bottom" title=""
+                    <input id="checkbox_enabled" name="enabled" type="checkbox"
+                           {% if content.enabled %}checked{% endif %} />
+                    <label for="checkbox_enabled">{{ message('active') }} <i data-placement="bottom" title=""
                                                                               data-toggle="tooltip" type="button"
                                                                               data-original-title="Page activée"
                                                                               class="fa fa-info-circle"> </i></label>
@@ -34,12 +34,17 @@
         </div>
         <div class="panel-controls">
             <ul>
-                <li><a href="#" class="portlet-collapse" data-toggle="collapse"><i class="portlet-icon portlet-icon-collapse"></i></a>
-                </li>
+                <li><a href="#" class="portlet-collapse" data-toggle="collapse"><i class="portlet-icon portlet-icon-collapse"></i></a></li>
             </ul>
         </div>
     </div>
     <div class="panel-body" style="display:none">
+        <h5>Template</h5>
+        <select id="selectTemplate" name="templateId" data-placeholder="Select Country" data-init-plugin="select2" class="full-width">
+            {% for t in allTemplates %}
+                <option value="{{ t.id }}" {%  if t.id == template.id %}selected{% endif %}>{{ t.name }}</option>
+            {% endfor %}
+        </select>
         <h5>Include</h5>
         <div id="tabDev" class="tab-pane">
             <div class="form-group">
@@ -58,9 +63,10 @@
 <div class="panel panel-default">
     <div class="lang-selector">
         <div class="checkbox check-success">
-            <input id="contentActive" type="checkbox" checked="checked" value="{{ contentData.active }}">
-            <label for="contentActive">{{ message('active') }}</label>
+            <input id="contentDataEnabled" name="contentDataEnabled" type="checkbox" {% if contentData.enabled == true %}checked{% endif %}>
+            <label for="contentDataEnabled">{{ message('active') }}</label>
         </div>
+
         <div class="select-country">
             {% if content.contentDataList.size == 1 %}
                 <div class="solo-lang"><span><img src="/resources/admin/img/flags/en.png" class="img-flag">English (en)</span></div>
@@ -82,22 +88,23 @@
                                 <li class="creatlang" data-id="{{ lang }}" value="{{ lang}}"><div class="solo-lang"><span><img src="/resources/admin/img/flags/{{ lang }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(lang.toString()) }} ({{ lang }})</span></div></li>
                             {% endif %}
                         {% endfor %}
-
                     </ul>
                 </div>
             {% endif %}
             <div class="operation-box">
-                {% if content.pageChildren is empty %}
+                {% if beans.contentService.contentCanBeDeleted(content, contentData)   %}
                     <button type="button" data-toggle="modal" data-target="#modalSlideLeft"
                             class="btn btn-default btn-delete"><i class="fa fa-trash-o"></i></button>
                 {% else %}
                     <button type="button" class="btn disabled" style="opacity: 0.3;pointer-events: auto;"
                             data-toggle="tooltip" data-placement="bottom"
-                            title="Impossible de supprimer une page ayant des enfants"><i class="fa fa-trash-o"></i>
-                    </button>
+                            title="Impossible de supprimer une page ayant des enfants"><i class="fa fa-trash-o"></i></button>
                 {% endif %}
                 <button id="savePageBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i></button>
-                <a href="{{ contentData.computedSlug }}" target="_blank" class="btn btn-default"><i class="fa fa-eye"></i></a>
+                {% if content.enabled and contentData.enabled %}
+                <a href="{{ contentData.computedSlug }}" target="_blank" class="btn btn-default"><i class="fa fa-link"></i></a>
+                {% endif %}
+                <button type="button" id="preview" class="btn btn-default"><i class="fa fa-eye"></i></button>
             </div>
         </div>
     </div>
