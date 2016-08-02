@@ -2,6 +2,7 @@ package be.ttime.core.util;
 
 import be.ttime.core.model.field.PageData;
 import be.ttime.core.persistence.model.*;
+import be.ttime.core.persistence.service.IApplicationService;
 import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -96,7 +97,7 @@ public class CmsUtils {
         fullPrivilegeList = list;
     }
 
-    public static void fillModelMap(ModelMap model, HttpServletRequest request) {
+    public static void fillModelMap(ModelMap model, HttpServletRequest request, IApplicationService applicationService) {
         Date now = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(now);
@@ -108,7 +109,8 @@ public class CmsUtils {
         model.put("locale", LocaleContextHolder.getLocale().toString());
         model.put("now", now);
         model.put("now_year", cal.get(Calendar.YEAR));
-
+        model.put("defaultSiteLang", applicationService.getDefaultSiteLang());
+        model.put("siteLang", applicationService.getSiteLanguages());
     }
 
     public static String capitalizeFirstLetter(String original) {
@@ -123,8 +125,8 @@ public class CmsUtils {
         return StringUtils.isEmpty(value) ? "" : value;
     }
 
-    public static void fillModelAndView(ModelAndView model, HttpServletRequest request) {
-        fillModelMap(model.getModelMap(), request);
+    public static void fillModelAndView(ModelAndView model, HttpServletRequest request, IApplicationService applicationService) {
+        fillModelMap(model.getModelMap(), request, applicationService);
     }
 
     public static String getCsrfInput(HttpServletRequest request) {

@@ -2,6 +2,7 @@ package be.ttime.core.controller;
 
 
 import be.ttime.core.persistence.model.BlockEntity;
+import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
@@ -25,6 +26,8 @@ public class LoginController {
 
     @Autowired
     private IBlockService blockService;
+    @Autowired
+    private IApplicationService applicationService;
 
     @Autowired
     private PebbleUtils pebbleUtils;
@@ -36,7 +39,7 @@ public class LoginController {
         BlockEntity master = blockService.find(CmsUtils.BLOCK_PAGE_MASTER);
         BlockEntity login = blockService.find(CmsUtils.BLOCK_PAGE_LOGIN);
 
-        CmsUtils.fillModelMap(model,request);
+        CmsUtils.fillModelMap(model,request, applicationService);
 
         model.put("title", "login");
         model.put("main", pebbleUtils.parseBlock(login, model));
@@ -49,7 +52,7 @@ public class LoginController {
     @RequestMapping(value = "/admin/login", method = RequestMethod.GET)
     public String home(ModelMap model, HttpServletRequest request)
     {
-        CmsUtils.fillModelMap(model,request);
+        CmsUtils.fillModelMap(model,request, applicationService);
         return "admin/login";
     }
 

@@ -1,5 +1,6 @@
 <input id="contentId" type="hidden" name="contentId" value="{{ content.id }}"/>
 <input id="contentDataId" type="hidden" name="contentDataId" value="{{ contentData.id }}"/>
+
 <div class="panel panel-default">
     <div id="btn-expand" class="button btn btn-expand"><i aria-hidden="true" class="fa fa-expand"></i></div>
     <div class="panel-body">
@@ -11,23 +12,29 @@
                 <div class="checkbox check-success checkbox-circle">
                     <input id="checkbox_menuItem" name="menuItem" type="checkbox"
                            {% if content.menuItem %}checked{% endif %} />
-                    <label for="checkbox_menuItem">{{ message('menu') }} <i data-placement="bottom" title=""
-                                                                           data-toggle="tooltip" type="button"
-                                                                           data-original-title="Affiche la page dans le menu"
-                                                                           class="fa fa-info-circle"></i></label>
+                    <label for="checkbox_menuItem">{{ message('menu') }} <i data-placement="bottom" title="" data-toggle="tooltip" type="button" data-original-title="Affiche la page dans le menu" class="fa fa-info-circle"></i></label>
                 </div>
                 <div class="checkbox check-success checkbox-circle">
                     <input id="checkbox_enabled" name="enabled" type="checkbox"
                            {% if content.enabled %}checked{% endif %} />
-                    <label for="checkbox_enabled">{{ message('active') }} <i data-placement="bottom" title=""
-                                                                              data-toggle="tooltip" type="button"
-                                                                              data-original-title="Page activée"
-                                                                              class="fa fa-info-circle"> </i></label>
+                    <label for="checkbox_enabled">{{ message('active') }} <i data-placement="bottom" title="" data-toggle="tooltip" type="button" data-original-title="Page activée" class="fa fa-info-circle"> </i></label>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<h1>roles</h1>
+<!--
+<ul>
+{% for role in beans.contentService.getRoleForContent(content) %}
+    <li>{{ role }}</li>
+{% endfor %}
+</ul>
+-->
+
+{% if beans.contentService.contentIsVisible(content, contentData) == false   %}
+    <div class="alert alert-warning"><h3>This page is not visible</h3></div>
+{% endif %}
 <div id="devPortlet" class="panel panel-default">
     <div class="panel-heading ">
         <div class="panel-title">Dev options
@@ -69,7 +76,7 @@
 
         <div class="select-country">
             {% if content.contentDataList.size == 1 %}
-                <div class="solo-lang"><span><img src="/resources/admin/img/flags/en.png" class="img-flag">English (en)</span></div>
+                <div class="solo-lang"><span><img src="/resources/admin/img/flags/{{ contentLocale }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(contentLocale) }} ({{ contentLocale }})</span></div>
             {% else %}
                 <select id="selectLanguage" name="selectLanguage">
                     {% for entry in content.contentDataList %}
@@ -85,14 +92,14 @@
                         <div class="title">add new language</div>
                         {% for lang in beans.applicationService.getSiteLanguages() %}
                             {% if content.contentDataList contains lang.toString() %}{% else %}
-                                <li class="creatlang" data-id="{{ lang }}" value="{{ lang}}"><div class="solo-lang"><span><img src="/resources/admin/img/flags/{{ lang }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(lang.toString()) }} ({{ lang }})</span></div></li>
+                                <li {% if content.getContentParent() != null and content.getContentParent().getContentDataList().get(lang) is empty %}class="lang-disabled" data-placement="bottom" data-toggle="tooltip"  data-original-title="The parent of this page doesn't have a content in this language"{%  else %}class="creatlang"{% endif %} data-id="{{ lang }}" value="{{lang}}" ><div class="solo-lang"><span><img src="/resources/admin/img/flags/{{ lang }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(lang.toString()) }} ({{ lang }})</span></div></li>
                             {% endif %}
                         {% endfor %}
                     </ul>
                 </div>
             {% endif %}
             <div class="operation-box">
-                {% if beans.contentService.contentCanBeDeleted(content, contentData)   %}
+                {% if beans.contentService.contentCanBeDeleted(content, contentData.language.locale)   %}
                     <button type="button" data-toggle="modal" data-target="#modalSlideLeft"
                             class="btn btn-default btn-delete"><i class="fa fa-trash-o"></i></button>
                 {% else %}
@@ -100,6 +107,7 @@
                             data-toggle="tooltip" data-placement="bottom"
                             title="Impossible de supprimer une page ayant des enfants"><i class="fa fa-trash-o"></i></button>
                 {% endif %}
+
                 <button id="savePageBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i></button>
                 {% if content.enabled and contentData.enabled %}
                 <a href="{{ contentData.computedSlug }}" target="_blank" class="btn btn-default"><i class="fa fa-link"></i></a>

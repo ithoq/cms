@@ -133,6 +133,21 @@ input.page-title
 
             text-align: center;background: #e6e6e6;
         }
+
+        .lang-disabled
+        {
+            opacity: .4;
+            color: #adadad;
+            background: red;
+            .solo-lang:hover
+            {
+                cursor: not-allowed!important;
+            }
+            img
+            {
+                opacity: .3;
+            }
+        }
     }
 }
 

@@ -6,6 +6,7 @@ import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.model.ContentTypeEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -33,7 +34,11 @@ public interface IContentService {
 
     ContentEntity findContentAdmin(Long id);
 
-    boolean contentCanBeDeleted(ContentEntity content, ContentDataEntity contentDataEntity);
+    boolean contentCanBeDeleted(ContentEntity content, String contentDataLocale);
+
+    boolean contentIsVisible(ContentEntity content, ContentDataEntity contentDataEntity);
+
+    Collection<String> contentRequiredRole(ContentEntity content);
 
     ContentEntity findContentAndContentData(Long id, String locale);
 
@@ -48,6 +53,8 @@ public interface IContentService {
     List<ContentTypeEntity> findAllContentType();
 
     boolean contentTypeExist(String contentType);
+
+    Collection<String> getRoleForContent(ContentEntity content);
 
     PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String category, List<String> contentType, Long pageNumber, Long limit, Long offset);
 

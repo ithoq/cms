@@ -12,4 +12,5 @@ public class CreatePageForm {
     private String name;
     private Long parentId = -1L;
     private Long templateId;
+    private String pageLangId;
 }

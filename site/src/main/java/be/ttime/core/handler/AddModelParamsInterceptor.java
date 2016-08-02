@@ -44,7 +44,7 @@ public class AddModelParamsInterceptor extends HandlerInterceptorAdapter {
             boolean viewNameStartsWithRedirect = (modelAndView.getViewName() == null ? false : modelAndView.getViewName().startsWith(UrlBasedViewResolver.REDIRECT_URL_PREFIX));
 
             if (modelAndView.hasView() && !isRedirectView && !viewNameStartsWithRedirect) {
-                    CmsUtils.fillModelAndView(modelAndView, request);
+                    CmsUtils.fillModelAndView(modelAndView, request, applicationService);
             }
         }
     }

@@ -26,7 +26,7 @@ public class ContentEntity extends AbstractTimestampEntity {
     private boolean enabled = true;
     @Column(name = "pos", nullable = false)
     private int order = -1;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
     private String contentGroup;
     private String image;

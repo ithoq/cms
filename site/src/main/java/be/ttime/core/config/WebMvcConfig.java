@@ -199,6 +199,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport implements ServletC
     /**
      * Set the resource directory
      */
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 

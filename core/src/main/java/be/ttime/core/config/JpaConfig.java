@@ -54,9 +54,9 @@ public class JpaConfig {
         config.setJdbcUrl(env.getProperty("dataSource.url"));
         config.setUsername(env.getProperty("dataSource.username"));
         config.setPassword(env.getProperty("dataSource.password"));
-        config.setLeakDetectionThreshold(8000);
-        config.setIdleTimeout(10000);
-        config.setConnectionTimeout(10000);
+        //config.setLeakDetectionThreshold(8000);
+        //config.setIdleTimeout(10000);
+        //config.setConnectionTimeout(10000);
 
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");

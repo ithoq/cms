@@ -20,6 +20,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
@@ -92,6 +93,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .ignoringAntMatchers("/plugin/**");
         */
+        http.csrf().disable();
+        http.headers().frameOptions().sameOrigin();
         http.authorizeRequests()
                 .antMatchers("/admin/login").permitAll()
                 .antMatchers("/admin/install").permitAll()

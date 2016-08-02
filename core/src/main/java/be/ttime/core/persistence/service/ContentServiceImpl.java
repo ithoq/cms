@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -38,6 +39,8 @@ public class ContentServiceImpl implements IContentService {
     private IContentDataRepository contentDataRepository;
     @Autowired
     private IContentTypeRepository contentTypeRepository;
+    @Autowired
+    private ApplicationContext applicationContext;
 //    @Autowired
 //    private EntityManagerFactory entityManagerFactory;
 
@@ -388,10 +391,9 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
-    public boolean contentCanBeDeleted(ContentEntity content, ContentDataEntity contentDataEntity) {
+    public boolean contentCanBeDeleted(ContentEntity content, String contentDataLocale) {
         ContentEntity temp;
         JPAQuery query;
-        String locale = contentDataEntity.getLanguage().getLocale();
         QContentEntity contentEntity = QContentEntity.contentEntity;
         QContentDataEntity qContentDataEntity = QContentDataEntity.contentDataEntity;
 
@@ -403,7 +405,7 @@ public class ContentServiceImpl implements IContentService {
                     query.from(contentEntity)
                             .leftJoin(contentEntity.contentDataList, qContentDataEntity)
                             .where(contentEntity.id.eq(c.getId())
-                                    .and(qContentDataEntity.language.locale.eq(locale))
+                                    .and(qContentDataEntity.language.locale.eq(contentDataLocale))
                             )
                             .count();
 
@@ -415,10 +417,73 @@ public class ContentServiceImpl implements IContentService {
         return true;
     }
 
+    @Override
+    public boolean contentIsVisible(ContentEntity content, ContentDataEntity contentData) {
+        // force to call cache
+        ContentEntity parent = null;
+        ContentDataEntity data = null;
+
+        if(!content.isEnabled() || !contentData.isEnabled())
+            return false;
+
+        Long parentId = content.getContentParent() == null ? 0L : content.getContentParent().getId();
+        while(true){
+            // no more parent
+            if(parentId == 0) {
+                return true;
+            }
+            parent = applicationContext.getBean(IContentService.class).findContentAdmin(parentId);
+            data = parent.getContentDataList().get(contentData.getLanguage().getLocale());
+
+            if(!parent.isEnabled()){
+                return false;
+            }
+
+            if(data != null && !data.isEnabled()) {
+                return false;
+            }
+
+            parentId = parent.getContentParent() == null ? 0L : parent.getContentParent().getId();
+        }
+    }
+
+    @Override
+    public Collection<String> getRoleForContent(ContentEntity content) {
+        JPAQuery query = new JPAQuery(entityManager);
+        Collection<String> result = new HashSet<>();
+
+        Set<RoleEntity> roles = content.getRoles();
+        for (RoleEntity role : roles) {
+            result.add(role.getName());
+        }
+
+        ContentEntity parent = null;
+        Long parentId = content.getContentParent() == null ? 0L : content.getContentParent().getId();
+        while(true){
+            // no more parent
+            if(parentId == 0) {
+                break;
+            }
+            parent = applicationContext.getBean(IContentService.class).findContentAdmin(parentId);
+
+            Set<RoleEntity> parentRoles = parent.getRoles();
+            for (RoleEntity role : parentRoles) {
+                result.add(role.getName());
+            }
+
+            parentId = parent.getContentParent() == null ? 0L : parent.getContentParent().getId();
+        }
+        return result;
+    }
+
+    @Override
+    public Collection<String> contentRequiredRole(ContentEntity content) {
+        return null;
+    }
+
     private String buildNavMenu(List<ContentEntity> pages, StringBuilder sb, String locale, long depth) {
 
         for (ContentEntity p : pages) {
-
             sb.append("<li>");
             if (!p.getContentDataList().isEmpty()) {
                 ContentDataEntity data = p.getContentDataList().get(locale);

@@ -15,6 +15,7 @@ import be.ttime.core.util.PebbleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,8 +62,9 @@ public class CmsController {
         }
 
         ContentEntity content = contentData.getContent();
-        // TODO: Vérifier les droits
-
+        if(!CmsUtils.hasRoles(contentService.getRoleForContent(content))){
+            throw new AccessDeniedException("you don't have the required privileges to perform this action");
+        }
         model.put("title", contentData.getTitle());
         if (!StringUtils.isEmpty(contentData.getData())) {
             HashMap<String, Object> data = CmsUtils.parseData(contentData.getData());
@@ -70,7 +72,7 @@ public class CmsController {
             //model.put("dataArray", pageData.getDataArray());
         }
 
-        CmsUtils.fillModelMap(model,request);
+        CmsUtils.fillModelMap(model,request, applicationService);
         model.put("contentData", contentData);
         model.put("content", content);
         // Pas grave pour les perfs car les blocks seront dans le cache

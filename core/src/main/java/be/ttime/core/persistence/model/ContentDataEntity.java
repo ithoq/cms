@@ -29,6 +29,7 @@ public class ContentDataEntity extends AbstractTimestampEntity {
     @Lob
     private String data;
     private String slug;
+    @Column(unique = true)
     private String computedSlug;
     @Column(columnDefinition = "TINYINT(1) default '1'")
     private boolean enabled = true;

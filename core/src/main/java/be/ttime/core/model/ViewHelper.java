@@ -1,6 +1,7 @@
-package be.ttime.core.model.field;
+package be.ttime.core.model;
 
-import be.ttime.core.model.PageableResult;
+import be.ttime.core.error.ForbiddenException;
+import be.ttime.core.model.field.PageData;
 import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IBlockService;
@@ -139,5 +140,17 @@ public class ViewHelper {
 
     public Locale getLocale(String code){
         return  applicationService.getLanguagesMap().get(code);
+    }
+
+    public boolean userHasRole(ContentEntity content){
+        return CmsUtils.hasRoles(contentService.getRoleForContent(content));
+    }
+
+    public void checkRole(ContentEntity content){
+        boolean result = userHasRole(content);
+        result = false;
+        if(!result){
+            throw new ForbiddenException();
+        }
     }
 }

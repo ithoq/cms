@@ -630,7 +630,8 @@ String.prototype.capitalizeFirstLetter = function () {
     $(document).bind('dragover', dragEvent);
     $($inputFile).fileupload(jqMultiUploadConf);
   };
-  
+
+
 
   // jscs:disable maximumLineLength
   
@@ -642,8 +643,36 @@ String.prototype.capitalizeFirstLetter = function () {
       entities: "",
       visualblocks_default_state: false,
       entity_encoding: "raw",
+      language: 'en',
       height: 300,
       paste_as_text: true,
+      file_browser_callback : function(field_name, url, type, win) {
+
+        // from http://andylangton.co.uk/blog/development/get-viewport-size-width-and-height-javascript
+        var w = window,
+            d = document,
+            e = d.documentElement,
+            g = d.getElementsByTagName('body')[0],
+            x = w.innerWidth || e.clientWidth || g.clientWidth,
+            y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+
+        var cmsURL = '/admin/fileManager/index.html?&field_name='+field_name+'&langCode='+tinymce.settings.language;
+
+        /*
+        if(type == 'image') {
+          cmsURL = cmsURL + "&type=images";
+        }*/
+
+        tinyMCE.activeEditor.windowManager.open({
+          file : cmsURL,
+          title : 'Filemanager',
+          width : x * 0.8,
+          height : y * 0.8,
+          resizable : "yes",
+          close_previous : "no"
+        });
+
+      },
       content_css: ['/public/assets/css/editor.css' , '/public/assets/css/style.css'] ,
       plugins: [
         'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',

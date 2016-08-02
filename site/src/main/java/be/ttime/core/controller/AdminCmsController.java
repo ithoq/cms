@@ -82,22 +82,45 @@ public class AdminCmsController {
             throw new ResourceNotFoundException();
 
         ContentEntity content = contentService.findContentAdmin(id);
+        /*ContentEntity contentParent = null;
+        if(content.getContentParent() != null){
+            contentParent = contentService.findContentAdmin(content.getContentParent().getId());
+        }*/
+        ContentDataEntity contentData = null;
 
-        ApplicationLanguageEntity appLanguage = applicationService.getSiteApplicationLanguageMap().get(locale);
-        if (appLanguage == null) {
+        ApplicationLanguageEntity appLanguage = null;
+
+        // if we try to display a lang
+        if (!StringUtils.isEmpty(locale)) {
+            appLanguage = applicationService.getSiteApplicationLanguageMap().get(locale);
+            if (appLanguage == null) {
+                log.debug("incorrect language : " + locale + " for the content with id : " + content.getId());
+                appLanguage = applicationService.getDefaultSiteApplicationLanguage();
+            }
+
+            contentData = content.getContentDataList().get(appLanguage.getLocale());
+            if(contentData == null) {
+                contentData = new ContentDataEntity();
+                contentData.setContent(content);
+                contentData.setLanguage(appLanguage);
+                contentData.setTitle(content.getName());
+
+                Slugify slugify = new Slugify();
+                contentData.setSlug(slugify.slugify(content.getName()));
+                contentData = contentService.saveContentData(contentData);
+
+
+                // reload the content
+                content = contentService.findContentAdmin(id);
+            }
+        } else {
             appLanguage = applicationService.getDefaultSiteApplicationLanguage();
-        }
-
-        ContentDataEntity contentData = content.getContentDataList().get(appLanguage.getLocale());
-
-        if (contentData == null) {
-            contentData = new ContentDataEntity();
-            contentData.setContent(content);
-            contentData.setLanguage(appLanguage);
-            contentData = contentService.saveContentData(contentData);
-
-            // reload the content
-            content = contentService.findContentAdmin(id);
+            contentData = content.getContentDataList().get(appLanguage.getLocale());
+            if(contentData == null) {
+                Map.Entry<String, ContentDataEntity> entry = content.getContentDataList().entrySet().iterator().next();
+                contentData = entry.getValue();
+                appLanguage = applicationService.getSiteApplicationLanguageMap().get(entry.getKey());
+            }
         }
 
         if (!StringUtils.isEmpty(contentData.getData())) {
@@ -165,7 +188,7 @@ public class AdminCmsController {
             ContentEntity content = new ContentEntity();
             content.setName(form.getName());
 
-            ApplicationLanguageEntity language = applicationService.getDefaultSiteApplicationLanguage();
+            ApplicationLanguageEntity language = applicationService.getSiteApplicationLanguageMap().get(form.getPageLangId());
             String pageTitle = form.getName();
             String slug = slugify(pageTitle);
             ContentDataEntity contentData = new ContentDataEntity();
@@ -176,7 +199,7 @@ public class AdminCmsController {
 
             ContentEntity parent;
             if (form.getParentId() >= 0) {
-                parent = contentService.findContentAndContentData(form.getParentId(), applicationService.getDefaultSiteApplicationLanguage().getLocale());
+                parent = contentService.findContentAndContentData(form.getParentId(), form.getPageLangId());
                 if (parent == null) {
                     throw new PagePersistenceException("Create page - parent not exist with id " + form.getParentId());
                 }
@@ -243,7 +266,7 @@ public class AdminCmsController {
                 model.put("data", data);
             }
 
-            CmsUtils.fillModelMap(model,request);
+            CmsUtils.fillModelMap(model,request, applicationService);
             model.put("contentData", contentData);
             model.put("content", content);
             // Pas grave pour les perfs car les blocks seront dans le cache
