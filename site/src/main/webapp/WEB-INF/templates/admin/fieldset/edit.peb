@@ -106,9 +106,9 @@
 </script>
     {% endverbatim %}
     {%  if inputsJson is not empty %}
-    <script>
-        var inputs = {{ inputsJson | raw }}
-    </script>
+        <script>
+            var inputs = {{ inputsJson | raw }}
+        </script>
     {% endif %}
-    <script src="/resources/admin/js/page/fieldset-edit.js"></script>
+    <script src="/public/cms/js/page/fieldset-edit.js"></script>
 {% endblock bottom %}

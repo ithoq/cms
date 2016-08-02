@@ -49,5 +49,5 @@
     </div>
 {% endblock content %}
 {% block bottom %}
-    <script src="/resources/admin/js/page/user-home.js"></script>
+    <script src="/public/cms/js/page/user-home.js"></script>
 {% endblock bottom %}

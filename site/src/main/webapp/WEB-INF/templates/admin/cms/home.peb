@@ -138,5 +138,5 @@
 {% endblock content %}
 
 {% block bottom %}
-    <script src="/resources/admin/js/page/cms.js"></script>
+    <script src="/public/cms/js/page/cms.js"></script>
 {% endblock bottom %}

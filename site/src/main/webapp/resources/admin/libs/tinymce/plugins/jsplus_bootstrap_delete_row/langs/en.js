@@ -1,1 +1,0 @@
-window['jsplus_bootstrap_delete_row_i18n'] =   {    delete_row: 'Delete row',    delete_col: 'Delete column',};

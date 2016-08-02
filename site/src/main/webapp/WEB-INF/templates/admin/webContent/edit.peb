@@ -31,7 +31,7 @@
                     <select id="selectLanguage" name="selectLanguage">
                         {% for lang in beans.applicationService.getSiteLanguages() %}
                             <option id="{{ lang.getLanguage() }}" value="{{ lang.getLanguage() }}"
-                            {% if lang.toString() == contentLocale %}selected{% endif %}>{{ lang.getDisplayLanguage() }}</option>
+                                    {% if lang.toString() == contentLocale %}selected{% endif %}>{{ lang.getDisplayLanguage() }}</option>
                         {% endfor %}
                     </select>
                     <div class="checkbox check-success">
@@ -129,20 +129,20 @@
                     </div>
                     <div class="form-group">
                         <label for="comment">{{ message('description') }}</label>
-                          <textarea id="comment" rows="5" name="seoDescription"
-                                    class="form-control">{{ data.seo_description }}</textarea>
+                        <textarea id="comment" rows="5" name="seoDescription"
+                                  class="form-control">{{ data.seo_description }}</textarea>
                     </div>
                 </div>
                 <div id="tabDev" class="tab-pane">
                     <div class="form-group">
                         <label for="comment">Include top:</label>
-                          <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
-                                    class="form-control">{{ data.dev_top }}</textarea>
+                        <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
+                                  class="form-control">{{ data.dev_top }}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="comment">Include bottom:</label>
-                          <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
-                                    class="form-control">{{ data.dev_bot }}</textarea>
+                        <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
+                                  class="form-control">{{ data.dev_bot }}</textarea>
                     </div>
                 </div>
                 <div id="tabFile" class="tab-pane">
@@ -221,5 +221,5 @@
         var initialTags= {{ initialTags | raw }};
         var initialCategories= {{ initialCategories | raw }};
     </script>
-    <script src="/resources/admin/js/page/web-content-edit.js"></script>
+    <script src="/public/cms/js/page/web-content-edit.js"></script>
 {% endblock bottom %}

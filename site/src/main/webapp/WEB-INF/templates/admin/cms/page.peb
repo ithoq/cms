@@ -56,13 +56,13 @@
         <div id="tabDev" class="tab-pane">
             <div class="form-group">
                 <label for="comment">Include top:</label>
-                    <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
-                              class="form-control">{{ content.includeTop }}</textarea>
+                <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
+                          class="form-control">{{ content.includeTop }}</textarea>
             </div>
             <div class="form-group">
                 <label for="comment">Include bottom:</label>
-                    <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
-                              class="form-control">{{ content.includeBottom }}</textarea>
+                <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
+                          class="form-control">{{ content.includeBottom }}</textarea>
             </div>
         </div>
     </div>
@@ -76,7 +76,7 @@
 
         <div class="select-country">
             {% if content.contentDataList.size == 1 %}
-                <div class="solo-lang"><span><img src="/resources/admin/img/flags/{{ contentLocale }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(contentLocale) }} ({{ contentLocale }})</span></div>
+                <div class="solo-lang"><span><img src="/public/cms/img/flags/{{ contentLocale }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(contentLocale) }} ({{ contentLocale }})</span></div>
             {% else %}
                 <select id="selectLanguage" name="selectLanguage">
                     {% for entry in content.contentDataList %}
@@ -92,7 +92,7 @@
                         <div class="title">add new language</div>
                         {% for lang in beans.applicationService.getSiteLanguages() %}
                             {% if content.contentDataList contains lang.toString() %}{% else %}
-                                <li {% if content.getContentParent() != null and content.getContentParent().getContentDataList().get(lang) is empty %}class="lang-disabled" data-placement="bottom" data-toggle="tooltip"  data-original-title="The parent of this page doesn't have a content in this language"{%  else %}class="creatlang"{% endif %} data-id="{{ lang }}" value="{{lang}}" ><div class="solo-lang"><span><img src="/resources/admin/img/flags/{{ lang }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(lang.toString()) }} ({{ lang }})</span></div></li>
+                                <li {% if content.getContentParent() != null and content.getContentParent().getContentDataList().get(lang) is empty %}class="lang-disabled" data-placement="bottom" data-toggle="tooltip"  data-original-title="The parent of this page doesn't have a content in this language"{%  else %}class="creatlang"{% endif %} data-id="{{ lang }}" value="{{lang}}" ><div class="solo-lang"><span><img src="/public/cms/img/flags/{{ lang }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(lang.toString()) }} ({{ lang }})</span></div></li>
                             {% endif %}
                         {% endfor %}
                     </ul>
@@ -110,7 +110,7 @@
 
                 <button id="savePageBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i></button>
                 {% if content.enabled and contentData.enabled %}
-                <a href="{{ contentData.computedSlug }}" target="_blank" class="btn btn-default"><i class="fa fa-link"></i></a>
+                    <a href="{{ contentData.computedSlug }}" target="_blank" class="btn btn-default"><i class="fa fa-link"></i></a>
                 {% endif %}
                 <button type="button" id="preview" class="btn btn-default"><i class="fa fa-eye"></i></button>
             </div>
@@ -150,8 +150,8 @@
             </div>
             <div class="form-group">
                 <label for="comment">{{ message('description') }}</label>
-                          <textarea id="comment" rows="5" name="seoDescription"
-                                    class="form-control">{{ data.seo_description }}</textarea>
+                <textarea id="comment" rows="5" name="seoDescription"
+                          class="form-control">{{ data.seo_description }}</textarea>
             </div>
         </div>
         <div id="tabFile" class="tab-pane">
@@ -222,7 +222,7 @@
 
         var renderSelectLanguage = function (data) {
             var $state = $(
-                    '<span><img src="/resources/admin/img/flags/' + data.id.toLowerCase() + '.png" class="img-flag" /> ' + data.text + '</span>'
+                    '<span><img src="/public/cms/img/flags/' + data.id.toLowerCase() + '.png" class="img-flag" /> ' + data.text + '</span>'
             );
             return $state;
         };

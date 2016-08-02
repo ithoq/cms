@@ -44,5 +44,5 @@
     </div>
 {% endblock content %}
 {% block bottom %}
-    <script src="/resources/admin/js/page/group-home.js"></script>
+    <script src="/public/cms/js/page/group-home.js"></script>
 {% endblock bottom %}

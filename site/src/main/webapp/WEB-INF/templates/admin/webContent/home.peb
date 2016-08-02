@@ -50,5 +50,5 @@
         var contentType = '{{contentType}}';
         var locale = '{{ locale }}';
     </script>
-    <script src="/resources/admin/js/page/web-content-home.js"></script>
+    <script src="/public/cms/js/page/web-content-home.js"></script>
 {% endblock bottom %}

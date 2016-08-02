@@ -54,39 +54,39 @@
         <div class="col-sm-4">
             <div class="panel panel-default">
                 {% if hasRole("ROLE_SUPER_ADMIN") %}
-                <div class="panel-heading">
-                    <div class="panel-block-title m-b-30">
-                        <h2>{{ message('admin.newBlock') | capitalize }}</h2>
+                    <div class="panel-heading">
+                        <div class="panel-block-title m-b-30">
+                            <h2>{{ message('admin.newBlock') | capitalize }}</h2>
+                        </div>
                     </div>
-                </div>
-                <div class="panel-body">
-                    <form id="createBlockForm" data-parsley-validate role="form" action="/admin/block/add"
-                          method="post">
-                        {{ csrf | raw }}
-                        <div class="form-group form-group-default m-b-20 required">
-                            <label for="createFormName">{{ message('id') }}</label>
-                            <input id="createFormName" type="text" name="name" class="form-control" required>
-                        </div>
-                        <div class="form-group form-group-default m-b-20 required">
-                            <label for="createFormDisplayName">{{ message('name') }}</label>
-                            <input id="createFormDisplayName" type="text" name="displayName" class="form-control" required>
-                        </div>
-                        <hr class="section m-t-5 light">
-                        <button type="submit" class="btn btn-success btn-block m-t-5">{{ message('add') }}</button>
-                    </form>
-                </div>
+                    <div class="panel-body">
+                        <form id="createBlockForm" data-parsley-validate role="form" action="/admin/block/add"
+                              method="post">
+                            {{ csrf | raw }}
+                            <div class="form-group form-group-default m-b-20 required">
+                                <label for="createFormName">{{ message('id') }}</label>
+                                <input id="createFormName" type="text" name="name" class="form-control" required>
+                            </div>
+                            <div class="form-group form-group-default m-b-20 required">
+                                <label for="createFormDisplayName">{{ message('name') }}</label>
+                                <input id="createFormDisplayName" type="text" name="displayName" class="form-control" required>
+                            </div>
+                            <hr class="section m-t-5 light">
+                            <button type="submit" class="btn btn-success btn-block m-t-5">{{ message('add') }}</button>
+                        </form>
+                    </div>
                 {% else %}
-                <div class="panel-heading">
-                    <div class="panel-block-title m-b-30">
-                        <h2>{{ message('admin.block') | capitalize }}</h2>
+                    <div class="panel-heading">
+                        <div class="panel-block-title m-b-30">
+                            <h2>{{ message('admin.block') | capitalize }}</h2>
+                        </div>
                     </div>
-                </div>
-                <div class="panel-body">
-                    <p>Blocks are areas of a page used in multiple pages (like the footer or a sidebar).</p>
+                    <div class="panel-body">
+                        <p>Blocks are areas of a page used in multiple pages (like the footer or a sidebar).</p>
 
-                    <p>When you make change on a block, you will see the repercussion on all page that use this block.</p>
-                </div>
-            {% endif %}
+                        <p>When you make change on a block, you will see the repercussion on all page that use this block.</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -137,7 +137,7 @@
             <div class="form-group form-group-default m-b-20 required">
                 <label>{{ message('name') }}</label>
 
-            {% verbatim %}<input value="{{ name }}" type="text" name="name" class="form-control" {% endverbatim %} {% if hasNotRole("ROLE_SUPER_ADMIN") %}disabled{% endif %} />
+                {% verbatim %}<input value="{{ name }}" type="text" name="name" class="form-control" {% endverbatim %} {% if hasNotRole("ROLE_SUPER_ADMIN") %}disabled{% endif %} />
 
             </div>
             <div class="form-group">
@@ -164,5 +164,5 @@
             </div>
     </script>
 
-    <script src="/resources/admin/js/page/block.js"></script>
+    <script src="/public/cms/js/page/block.js"></script>
 {% endblock bottom %}

@@ -1,1 +1,0 @@
-window['jsplus_bootstrap_show_blocks_i18n'] =   {    bootstrap_show_blocks: 'Показать Bootstrap блоки',    foundation_show_blocks: 'Показать Foundation блоки'};

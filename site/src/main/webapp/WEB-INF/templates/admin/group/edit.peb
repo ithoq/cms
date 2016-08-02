@@ -85,5 +85,5 @@
 
 {% endblock content %}
 {% block bottom %}
-    <script src="/resources/admin/js/page/user-edit.js"></script>
+    <script src="/public/cms/js/page/user-edit.js"></script>
 {% endblock bottom %}

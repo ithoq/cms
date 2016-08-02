@@ -3,8 +3,6 @@
 {% set title = message('admin.editUser') %}
 
 {% block content %}
-
-
     <form id="userForm" action="/admin/user/edit" method="POST" enctype="multipart/form-data" data-parsley-validate="">
         {{ csrf | raw }}
         <input type="hidden" name="id" value="{{ editUser.id }}">
@@ -128,5 +126,5 @@
 
 {% endblock content %}
 {% block bottom %}
-    <script src="/resources/admin/js/page/user-edit.js"></script>
+    <script src="/public/cms/js/page/user-edit.js"></script>
 {% endblock bottom %}
