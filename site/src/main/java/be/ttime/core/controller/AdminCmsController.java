@@ -342,7 +342,7 @@ public class AdminCmsController {
             }
             p.setContentParent(contentParent);
             //p.setLevel(form.getLevel()[i]);
-            p.setOrder(form.getPosition()[i]);
+            p.setPosition(form.getPosition()[i]);
             pages.add(p);
         }
 

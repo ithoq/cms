@@ -125,6 +125,26 @@ public class ViewHelper {
         return menu;
     }
 
+    public Map<String, List<FileEntity>> getFileByGroupMap(ContentDataEntity data){
+        Map<String, List<FileEntity>> result = new HashMap<>();
+        for (FileEntity f : data.getContentFiles()) {
+            if(f.getFileType().getName().equals("DOWNLOAD")){
+                List<FileEntity> list = result.get(f.getFileGroup());
+                if(list == null){
+                    list = new ArrayList<>();
+                }
+                list.add(f);
+                result.put(f.getFileGroup(), list);
+            }
+        }
+        return result;
+    }
+
+    public String getBlock(String id){
+        BlockEntity blockEntity = blockService.find(id);
+        return blockEntity == null ? null : blockEntity.getContent();
+    }
+
     public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String category, List<String> contentType, Long pageNumber, Long limit, Long offset){
 
 
@@ -204,20 +224,23 @@ public class ViewHelper {
         return result;
     }
 
-    public ContentDataEntity getNextBrotherData(ContentEntity entity, String code){
+    public ContentDataEntity getNextBrotherData(ContentEntity entity, String code, boolean selfInclude) {
         ContentEntity parent = entity.getContentParent();
         ContentDataEntity nextData = null;
         boolean next = false;
         ContentDataEntity data;
         for (ContentEntity c : contentService.findByContentParentOrderByOrderAsc(parent)) {
-            if(c.getId() == entity.getId()) {
-                next=true;
-                continue;
+            if (!selfInclude) {
+                if (c.getId() == entity.getId()) {
+                    next = true;
+                    continue;
+                }
             }
-            if(next){
+
+            if (next) {
                 ContentEntity contentAdmin = contentService.findContentAdmin(c.getId());
                 data = contentAdmin.getContentDataList().get(code);
-                if(data != null){
+                if (data != null) {
                     nextData = data;
                     break;
                 }
@@ -225,7 +248,9 @@ public class ViewHelper {
         }
         return nextData;
     }
+
     public ContentDataEntity getPreviousBrotherData(ContentEntity entity, String code){
+        if(entity == null) return null;
         ContentEntity parent = entity.getContentParent();
         ContentDataEntity previousData = null;
         ContentDataEntity data;
@@ -239,5 +264,12 @@ public class ViewHelper {
             if(data != null) previousData=data;
         }
         return previousData;
+    }
+
+    public ContentDataEntity getContentData(Long id, String code){
+        ContentEntity contentAdmin = contentService.findContentAdmin(id);
+        if (contentAdmin == null) return null;
+
+        return contentAdmin.getContentDataList().get(code);
     }
 }

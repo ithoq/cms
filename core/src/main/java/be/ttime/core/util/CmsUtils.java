@@ -109,6 +109,7 @@ public class CmsUtils {
         model.put("locale", LocaleContextHolder.getLocale().toString());
         model.put("now", now);
         model.put("now_year", cal.get(Calendar.YEAR));
+        model.put("uri", request.getRequestURI());
         model.put("defaultSiteLang", applicationService.getDefaultSiteLang());
         model.put("siteLang", applicationService.getSiteLanguages());
     }

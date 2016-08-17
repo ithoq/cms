@@ -45,20 +45,4 @@ public class ContentDataEntity extends AbstractTimestampEntity {
 
     @OneToMany(mappedBy = "contentData", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CommentEntity> commentList;
-
-    // TODO : something better than this
-    public Map<String, List<FileEntity>> getFileByGroupMap(){
-        Map<String, List<FileEntity>> result = new HashMap<>();
-        for (FileEntity f : contentFiles) {
-            if(f.getFileType().getName().equals("DOWNLOAD")){
-                List<FileEntity> list = result.get(f.getFileGroup());
-                if(list == null){
-                    list = new ArrayList<>();
-                }
-                list.add(f);
-                result.put(f.getFileGroup(), list);
-            }
-        }
-        return result;
-    }
 }

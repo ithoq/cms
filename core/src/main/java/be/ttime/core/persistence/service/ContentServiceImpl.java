@@ -136,7 +136,6 @@ public class ContentServiceImpl implements IContentService {
         JPAQuery query = new JPAQuery(entityManager);
         ContentEntity result = query.from(contentEntity)
                 .leftJoin(contentEntity.contentDataList, contentDataEntity).fetch()
-                .leftJoin(contentEntity.contentChildren).fetch()
                 .where(contentEntity.id.eq(id))
                 .leftJoin(contentEntity.contentParent).fetch()
                 .leftJoin(contentEntity.contentTemplate).fetch()
@@ -144,19 +143,27 @@ public class ContentServiceImpl implements IContentService {
                 .leftJoin(contentEntity.roles).fetch()
                 .leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermDataEntity).fetch()
                 .leftJoin(taxonomyTermDataEntity.termDataList).fetch()
-                .orderBy(contentEntity.order.asc(), contentEntity.contentChildren.any().order.asc())
+                .orderBy(contentEntity.position.asc(), contentEntity.contentChildren.any().position.asc())
                 .singleResult(contentEntity);
 //        entityManager.close(); inte
 
         if(result.getContentParent() != null){
             Hibernate.initialize(result.getContentParent().getContentDataList());
         }
+        if(result.getContentChildren() != null){
+            Hibernate.initialize(result.getContentChildren());
+        }
+
+        result.getContentDataList().forEach((k,v) ->{
+          Hibernate.initialize(v.getContentFiles());
+        });
+
         return result;
     }
 
     @Override
     public List<ContentEntity> findByContentParentOrderByOrderAsc(ContentEntity parent) {
-        return contentRepository.findByContentParentOrderByOrderAsc(parent);
+        return contentRepository.findByContentParentOrderByPositionAsc(parent);
     }
 
     @Override
@@ -229,12 +236,12 @@ public class ContentServiceImpl implements IContentService {
         if (p.getId() == 0) {
             ContentEntity parent = p.getContentParent();
 
-            ContentEntity result = contentRepository.findFirstByContentParentOrderByOrderDesc(parent);
+            ContentEntity result = contentRepository.findFirstByContentParentOrderByPositionDesc(parent);
 
             if (result == null) {
-                p.setOrder(0);
+                p.setPosition(0);
             } else {
-                p.setOrder(result.getOrder() + 1);
+                p.setPosition(result.getPosition() + 1);
             }
         }
 
@@ -277,12 +284,12 @@ public class ContentServiceImpl implements IContentService {
         // delete
         contentRepository.delete(id);
 
-        List<ContentEntity> pages = contentRepository.findByContentParentOrderByOrderAsc(current.getContentParent());
+        List<ContentEntity> pages = contentRepository.findByContentParentOrderByPositionAsc(current.getContentParent());
 
         if (pages.size() > 0) {
             int counter = 0;
             for (ContentEntity p : pages) {
-                p.setOrder(counter);
+                p.setPosition(counter);
                 counter++;
             }
             contentRepository.save(pages);
@@ -338,7 +345,7 @@ public class ContentServiceImpl implements IContentService {
                         .and(contentEntity.contentType.name.like("PAGE%"))
                         .and(contentDataEntity.language.locale.eq(lang))
                 )
-                .orderBy(contentEntity.order.asc())
+                .orderBy(contentEntity.position.asc())
                 .list(contentEntity);
 
         query = new JPAQuery(entityManager);
@@ -352,7 +359,7 @@ public class ContentServiceImpl implements IContentService {
                                 .and(contentEntity.contentType.name.like("PAGE%"))
                                 .and(contentDataEntity.language.locale.eq(lang))
                         )
-                        .orderBy(contentEntity.order.asc())
+                        .orderBy(contentEntity.position.asc())
                         .list(contentEntity);
 
         StringBuilder sb = new StringBuilder();
@@ -396,7 +403,7 @@ public class ContentServiceImpl implements IContentService {
     @Cacheable(value = "adminTree")
     public String getPagesTree() {
         List<ContentEntity> pages = contentRepository.findAllByContentTypeName("PAGE%"); // force first level cache
-        List<ContentEntity> roots = contentRepository.findByContentTypeNameLikeAndContentParentIsNullOrderByOrderAsc("PAGE%");
+        List<ContentEntity> roots = contentRepository.findByContentTypeNameLikeAndContentParentIsNullOrderByPositionAsc("PAGE%");
         StringBuilder sb = new StringBuilder();
 
         sb.append("[");
@@ -533,12 +540,10 @@ public class ContentServiceImpl implements IContentService {
                 } else {
                     sb.append("<span>" + data.getTitle() + "</span>");
                 }
-                Set<ContentEntity> childrensSet = p.getContentChildren();
-                List<ContentEntity> childrens = new ArrayList<>();
-                childrens.addAll(childrensSet);
+                List<ContentEntity> childrens = p.getContentChildren();
                 if (childrens.size() > 0 && depth != 0) {
                     // This is bad :(
-                    Collections.sort(childrens, (p1, p2) -> Integer.compare(p1.getOrder(), p2.getOrder()));
+                    Collections.sort(childrens, (p1, p2) -> Integer.compare(p1.getPosition(), p2.getPosition()));
                     sb.append("<ul class='main-menu-children'>");
                     buildNavMenu(childrens, sb, locale, depth - 1);
                     sb.append("</ul>");
@@ -559,16 +564,15 @@ public class ContentServiceImpl implements IContentService {
             first = false;
 
             sb.append("{ \"title\": \"").append(p.getName()).append("\", \"key\": \"").append(p.getId()).append("\"");
-            Set<ContentEntity> childrensSet = p.getContentChildren();
-            List<ContentEntity> childrens = new ArrayList<>();
-            childrens.addAll(childrensSet);
+            List<ContentEntity> childrens = p.getContentChildren();
+
             if (childrens.size() > 0) {
                 if (level <= MAX_EXPANDED_TREE_LEVEL) {
                     sb.append(", \"expanded\":true");
                 }
                 sb.append(", \"folder\":true");
                 // This is bad :(
-                Collections.sort(childrens, (p1, p2) -> Integer.compare(p1.getOrder(), p2.getOrder()));
+                Collections.sort(childrens, (p1, p2) -> Integer.compare(p1.getPosition(), p2.getPosition()));
 
                 sb.append(", \"children\" : [");
                 buildJsonTree(childrens, sb, true, level + 1);

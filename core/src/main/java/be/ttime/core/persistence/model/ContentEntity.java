@@ -25,7 +25,7 @@ public class ContentEntity extends AbstractTimestampEntity {
     private Date endDate;
     private boolean enabled = true;
     @Column(name = "pos", nullable = false)
-    private int order = -1;
+    private int position = -1;
     @Column(nullable = false)
     private String name;
     private String contentGroup;
@@ -38,7 +38,8 @@ public class ContentEntity extends AbstractTimestampEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private ContentEntity contentParent;
     @OneToMany(mappedBy = "contentParent")
-    private Set<ContentEntity> contentChildren;
+    @OrderBy("position ASC")
+    private List<ContentEntity> contentChildren;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "content", cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKeyColumn(name="language_locale")
     private Map<String, ContentDataEntity> contentDataList = new HashMap<>();
