@@ -126,5 +126,5 @@
 
 {% endblock content %}
 {% block bottom %}
-    <script src="/public/cms/js/page/user-edit.js"></script>
+    <script src="/resources/cms/js/page/user-edit.js"></script>
 {% endblock bottom %}

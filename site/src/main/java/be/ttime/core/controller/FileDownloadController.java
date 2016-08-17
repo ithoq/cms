@@ -1,11 +1,13 @@
 package be.ttime.core.controller;
 
+import be.fabriceci.fmc.util.FileManagerUtils;
 import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.persistence.model.FileEntity;
 import be.ttime.core.persistence.service.IFileService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.FileTypeDetector;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -70,7 +72,7 @@ public class FileDownloadController {
         File uploadDirectory = CmsUtils.getUploadDirectory(false);
         File file = new File(uploadDirectory.getAbsolutePath() + "/" + name);
         if(file.exists()){
-            String mimeType = fileTypeDetector.probeContentType(file.toPath());
+            String mimeType = FileManagerUtils.mimetypes.get(FilenameUtils.getExtension(file.getName()));//fileTypeDetector.probeContentType(file.toPath());
 
             response.setContentType(mimeType != null ? mimeType : "application/octet-stream");
             response.setHeader("Content-Disposition", "inline; filename=\"" + file.getName() + "\"");
@@ -79,7 +81,7 @@ public class FileDownloadController {
             FileCopyUtils.copy(inputStream, response.getOutputStream());
         }
         else{
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException(requestURI);
         }
     }
 

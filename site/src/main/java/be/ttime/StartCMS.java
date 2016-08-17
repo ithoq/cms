@@ -29,7 +29,6 @@ public class StartCMS extends SpringBootServletInitializer {
                 new SpringApplication(StartCMS.class);
         springApplication.addListeners(new ApplicationPidFileWriter("app.pid"));
         springApplication.run(args);
-
     }
 
     @Override

@@ -3,9 +3,9 @@ package be.ttime.core.setup;
 import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.model.BlockTypeEntity;
 import be.ttime.core.persistence.model.RoleEntity;
+import be.ttime.core.persistence.repository.IBlockRepository;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.persistence.service.IAuthorityService;
-import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.util.CmsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
     private IApplicationService applicationService;
 
     @Autowired
-    private IBlockService blockService;
+    private IBlockRepository repository;
 
     @Autowired
     private IAuthorityService authorityService;
@@ -57,33 +57,33 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
                 // base blocks
                 List<BlockEntity> blocks = new ArrayList<>();
                 blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_MASTER, "master", CmsUtils.getResourceFileContent("setup/master.twig"), true, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_SYSTEM), null));
-                blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_LOGIN, "login", CmsUtils.getResourceFileContent("setup/login.twig"), true, true, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_SYSTEM), null));
+                blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_LOGIN, "login", CmsUtils.getResourceFileContent("setup/login.twig"), true, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_SYSTEM), null));
 
-                BlockEntity fieldText =  blockService.find(CmsUtils.BLOCK_FIELD_TEXT);
+                BlockEntity fieldText =  repository.findOne(CmsUtils.BLOCK_FIELD_TEXT);
                 fieldText.setContent(CmsUtils.getResourceFileContent("setup/field_text.twig"));
                 blocks.add(fieldText);
 
-                BlockEntity fieldTextarea =  blockService.find(CmsUtils.BLOCK_FIELD_TEXTAREA);
+                BlockEntity fieldTextarea =  repository.findOne(CmsUtils.BLOCK_FIELD_TEXTAREA);
                 fieldTextarea.setContent(CmsUtils.getResourceFileContent("setup/field_textarea.twig"));
                 blocks.add(fieldTextarea);
 
-                BlockEntity fieldTiny =  blockService.find(CmsUtils.BLOCK_FIELD_TINYMCE);
+                BlockEntity fieldTiny =  repository.findOne(CmsUtils.BLOCK_FIELD_TINYMCE);
                 fieldTiny.setContent(CmsUtils.getResourceFileContent("setup/field_tinymce.twig"));
                 blocks.add(fieldTiny);
 
-                BlockEntity fieldDate =  blockService.find(CmsUtils.BLOCK_FIELD_DATEPICKER);
+                BlockEntity fieldDate =  repository.findOne(CmsUtils.BLOCK_FIELD_DATEPICKER);
                 fieldDate.setContent(CmsUtils.getResourceFileContent("setup/field_datepicker.twig"));
                 blocks.add(fieldDate);
 
-                BlockEntity simplePage =  blockService.find(CmsUtils.BLOCK_TEMPLATE_BASIC_PAGE);
+                BlockEntity simplePage =  repository.findOne(CmsUtils.BLOCK_TEMPLATE_BASIC_PAGE);
                 simplePage.setContent(CmsUtils.getResourceFileContent("setup/tpl_basic_page.twig"));
                 blocks.add(simplePage);
 
-                BlockEntity webcontentPage =  blockService.find(CmsUtils.BLOCK_TEMPLATE_WEBCONTENT);
+                BlockEntity webcontentPage =  repository.findOne(CmsUtils.BLOCK_TEMPLATE_WEBCONTENT);
                 webcontentPage.setContent(CmsUtils.getResourceFileContent("setup/tpl_webcontent.twig"));
                 blocks.add(webcontentPage);
 
-                blockService.save(blocks);
+                repository.save(blocks);
 
                 cacheManager.clearAll();
 

@@ -12,10 +12,11 @@ import be.ttime.core.persistence.service.IContentTemplateService;
 import be.ttime.core.service.ApplicationMailer;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
+import com.mitchellbosecke.pebble.spring4.context.Beans;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.context.ApplicationContext;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,29 +51,44 @@ public class CmsController {
     @Qualifier("mailService")
     private ApplicationMailer applicationMailer;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @RequestMapping(method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String page(ModelMap model, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
 
         final String path = request.getRequestURI();
         //GET DATA WITH FILES,DIC,COMMENTS,...
-        ContentDataEntity contentData = contentService.findBySlug(path, locale);
-
-        if (contentData == null || !contentData.isEnabled()) {
+        ContentEntity content = contentService.findBySlug(path, locale);
+        ContentDataEntity contentData = content.getContentDataList().get(locale.toString());
+        String templateName =  content.getContentTemplate().getName().toLowerCase();
+        if (content == null || !content.isEnabled() || !contentData.isEnabled() || templateName.equals("folder")) {
             throw new ResourceNotFoundException();
         }
 
-        ContentEntity content = contentData.getContent();
+        /*
+        Example
         if(!CmsUtils.hasRoles(contentService.getRoleForContent(content))){
+
             throw new AccessDeniedException("you don't have the required privileges to perform this action");
-        }
+        }*/
         model.put("title", contentData.getTitle());
         if (!StringUtils.isEmpty(contentData.getData())) {
             HashMap<String, Object> data = CmsUtils.parseData(contentData.getData());
+
+            if(templateName.equals("link")){
+                String URL = (String) data.get("_text");
+                response.sendRedirect(URL);
+                return null;
+            }
+
             model.put("data", data);
             //model.put("dataArray", pageData.getDataArray());
         }
 
         CmsUtils.fillModelMap(model,request, applicationService);
+        model.put("beans", new Beans(applicationContext));
+
         model.put("contentData", contentData);
         model.put("content", content);
         // Pas grave pour les perfs car les blocks seront dans le cache
@@ -81,6 +97,7 @@ public class CmsController {
         BlockEntity blockTemplate = blockService.find(templateEntity.getBlock().getName());
 
         model.put("main",  pebbleUtils.parseBlock(blockTemplate, model));
+
 
         StringBuilder include_top = new StringBuilder();
         StringBuilder include_bottom = new StringBuilder();

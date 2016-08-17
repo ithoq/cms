@@ -1,6 +1,8 @@
 package be.ttime.core.controller;
 
-import be.ttime.core.model.fm.FileManager;
+import be.fabriceci.fmc.IFileManager;
+import be.fabriceci.fmc.error.FileManagerException;
+import be.fabriceci.fmc.impl.FileManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -34,10 +36,9 @@ public class AdminFileManagerController {
     }
 
     @RequestMapping(value = "/api")
-    public void fm(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void fm(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException, FileManagerException {
 
-
-        FileManager fm = new FileManager(servletContext, LocaleContextHolder.getLocale());
+        IFileManager fm = new FileManager(servletContext, LocaleContextHolder.getLocale());
 
         fm.handleRequest(request, response);
     }

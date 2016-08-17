@@ -6,31 +6,31 @@
     <title>Administration - login</title>
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <link rel="apple-touch-icon" href="/public/cms/img/ico/favicon-60x60.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/public/cms/img/ico/favicon-76x76.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/public/cms/img/ico/favicon-120x120.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/public/cms/img/ico/favicon-152x152.png">
-    <link rel="icon" type="image/x-icon" href="/public/cms/img/ico/favicon.ico">
+    <link rel="apple-touch-icon" href="/resources/cms/img/ico/favicon-60x60.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/resources/cms/img/ico/favicon-76x76.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/resources/cms/img/ico/favicon-120x120.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/resources/cms/img/ico/favicon-152x152.png">
+    <link rel="icon" type="image/x-icon" href="/resources/cms/img/ico/favicon.ico">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
 
-    <link href="/public/cms/libs/pace/pace-theme-flash.css" rel="stylesheet" type="text/css">
-    <link href="/public/cms/libs/boostrapv3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="/public/cms/libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="/resources/cms/libs/pace/pace-theme-flash.css" rel="stylesheet" type="text/css">
+    <link href="/resources/cms/libs/boostrapv3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/resources/cms/libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-    <link href="/public/cms/libs/pages/css/pages-icons.css" rel="stylesheet" type="text/css">
-    <link href="/public/cms/libs/pages/css/pages.css" rel="stylesheet" type="text/css" class="main-stylesheet">
-    <link href="/public/cms/css/style.css" rel="stylesheet" type="text/css">
-    <script src="/public/cms/libs/jQuery/jquery-2.2.4.min.js"></script>
-    <script src="/public/cms/libs/parsley/parsley.js"></script>
+    <link href="/resources/cms/libs/pages/css/pages-icons.css" rel="stylesheet" type="text/css">
+    <link href="/resources/cms/libs/pages/css/pages.css" rel="stylesheet" type="text/css" class="main-stylesheet">
+    <link href="/resources/cms/css/style.css" rel="stylesheet" type="text/css">
+    <script src="/resources/cms/libs/jQuery/jquery-2.2.4.min.js"></script>
+    <script src="/resources/cms/libs/parsley/parsley.js"></script>
 </head>
 <body class="fixed-header">
 <div class="login-wrapper">
     <!-- START Login Background Pic Wrapper-->
     <div class="bg-pic">
-        <!-- START Background Pic--><img src="/public/cms/img/ny-wallpaper.jpg" alt="" class="lazy">
+        <!-- START Background Pic--><img src="/resources/cms/img/ny-wallpaper.jpg" alt="" class="lazy">
         <!-- END Background Pic-->
         <!-- START Background Caption-->
         <div class="bg-caption pull-bottom sm-pull-bottom text-white p-l-20 m-b-20">
@@ -42,7 +42,7 @@
     <!-- END Login Background Pic Wrapper-->
     <!-- START Login Right Container-->
     <div class="login-container bg-white">
-        <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40"><img src="/public/cms/img/logo-dark.png" alt="logo" data-src="/public/cms/img/logo-dark.png" data-src-retina="/public/cms/img/logo-dark-2x.png" width="78" height="22">
+        <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40"><img src="/resources/cms/img/logo-dark.png" alt="logo" data-src="/resources/cms/img/logo-dark.png" data-src-retina="/resources/cms/img/logo-dark-2x.png" width="78" height="22">
             <p class="p-t-35">Sign into your account</p>
             <!-- START Login Form-->
             <form id="form-login" role="form" action="/login" class="p-t-15" method="post">
@@ -94,7 +94,7 @@
         </div>
     </div>
 </div>
-<script src="/public/cms/libs/pages/js/pages.js"></script>
-<script src="/public/cms/js/main.js"></script>
+<script src="/resources/cms/libs/pages/js/pages.js"></script>
+<script src="/resources/cms/js/main.js"></script>
 </body>
 </html>

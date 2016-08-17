@@ -53,6 +53,17 @@ mark
     background-color: #a4fff6;
 }
 
+.select2-disabled
+{
+    opacity: .2!important;
+    background: none;
+
+    .select2-result-label
+    {
+        cursor: not-allowed!important;
+    }
+}
+
 .select2-search-field
 {
     margin: 3px 0 0 10px !important;

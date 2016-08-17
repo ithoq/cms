@@ -31,7 +31,8 @@ idea {
 
 dependencies {
     compile project(':core')
-    compile project(':plugins:foo')
+    //compile project(':plugins:foo')
+    compile project(':fmconnector')
     providedCompile('org.projectlombok:lombok:1.16.8')
     providedRuntime('javax.servlet:javax.servlet-api:3.1.0')
     testCompile('junit:junit:4.12')

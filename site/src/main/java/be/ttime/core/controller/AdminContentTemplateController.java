@@ -146,6 +146,8 @@ public class AdminContentTemplateController {
         content.setContentType(new ContentTypeEntity(CmsUtils.CONTENT_TYPE_PAGE));
 
         content.setActive(contentForm.isActive());
+        content.setUseFiles(contentForm.isUseFiles());
+        content.setUseGallery(contentForm.isUseGallery());
         content.setName(contentForm.getName());
         content.setDescription(contentForm.getDescription());
         content.setIncludeTop(contentForm.getIncludeTop());

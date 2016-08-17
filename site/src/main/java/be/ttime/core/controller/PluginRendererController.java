@@ -1,14 +1,6 @@
 package be.ttime.core.controller;
 
-import be.ttime.core.modules.CmsModule;
-import be.ttime.core.modules.ModuleRenderingException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-
+/*
 @Controller
 @RequestMapping("/plugin")
 public class PluginRendererController {
@@ -26,4 +18,4 @@ public class PluginRendererController {
         return module.render(data);
     }
 
-}
+}*/

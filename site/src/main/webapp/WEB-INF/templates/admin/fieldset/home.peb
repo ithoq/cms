@@ -44,5 +44,5 @@
     </div>
 {% endblock content %}
 {% block bottom %}
-    <script src="/public/cms/js/page/fieldset-home.js"></script>
+    <script src="/resources/cms/js/page/fieldset-home.js"></script>
 {% endblock bottom %}

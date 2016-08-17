@@ -1,0 +1,74 @@
+{% set haveParent = contentParentId != null %}
+<div class="modal-dialog">
+    <div class="modal-content-wrapper">
+        <div class="modal-content">
+            <div class="modal-header clearfix text-left p-b-25">
+                <button type="button" data-dismiss="modal" aria-hidden="true" class="close"><i class="pg-close fs-14"></i></button>
+                <h4>{{ message('admin.newPage') }}</h4>
+                <hr class="section">
+            </div>
+            <div class="modal-body">
+                <form id="createPageForm" role="form" method="post" action="/admin/cms/page/create">
+                    <div class="form-group form-group-default m-b-20 required">
+                        <label>{{ message('name') }}</label>
+                        <input id="createPageName" name="name" type="text" required class="form-control">
+                    </div>
+
+                    {% if beans.applicationService.getSiteLanguages.size > 1 %}
+                    <div class="form-group form-group-default form-group-default-select2 required js-page">
+                        <label for="selectPageLang">{{ message('language') }}</label>
+                        <select id="selectPageLang" name="pageLangId" data-init-plugin="select2" class="full-width">
+                            {% for lang in beans.applicationService.getSiteLanguages() %}
+                                <option title="ceci est un test" value="{{ lang }}" {% if lang.toString() == defaultSiteLang %}selected{% endif %} {% if haveParent and content.contentDataList.containsKey(lang.toString()) == false %}disabled{% endif %}>{{ beans.viewHelper.getLanguageName(lang.toString()) }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% else %}
+                        <input type="hidden" name="pageLangId" value="{{ defaultSiteLang }}">
+                    {% endif %}
+
+                    <h5>{{ message('level') }}</h5>
+                    <div class="radio radio-success">
+                         <span id="radio-parent-container">
+                             <input id="radio-root" type="radio" value="-1" name="parentId" {% if haveParent == false %}checked{% endif %}>
+                             <label for="radio-root">{{ message('admin.rootPage') }}</label>
+                             {% if haveParent %}
+                                <input id="radio-parent" type="radio" value="{{ contentParentId }}" checked name="parentId">
+                                <label for="radio-parent">Child of : {{ content.name }}</label></span><span id="radio-root-container">
+                             {%  endif %}
+                        </span>
+                    </div>
+                    <h5>{{ message('admin.pageParam') }}</h5>
+
+                    <div class="form-group form-group-default form-group-default-select2 required js-page">
+                        <label for="selectTemplate">{{ message('template') }}</label>
+
+                        <select id="selectTemplate" name="templateId" data-init-plugin="select2" class="full-width">
+                            <optgroup label="Templates">
+                            {% for t in templates %}
+                                <option value="{{ t.id }}">{{ t.name }}</option>
+                            {% endfor %}
+                            </optgroup>
+                            <optgroup label="Others">
+                                <option value="LINK">Link</option>
+                                <option value="NONE">None</option>
+                            </optgroup>
+
+                        </select>
+                    </div>
+                </form>
+                <hr class="section m-t-5 light">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <button type="button" data-dismiss="modal"
+                                class="btn btn-danger btn-block m-t-5">{{ message('cancel') }}</button>
+                    </div>
+                    <div class="col-sm-6">
+                        <button type="button" id="btnFormCeatePage"
+                                class="btn btn-success btn-block m-t-5">{{ message('save') }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -221,5 +221,5 @@
         var initialTags= {{ initialTags | raw }};
         var initialCategories= {{ initialCategories | raw }};
     </script>
-    <script src="/public/cms/js/page/web-content-edit.js"></script>
+    <script src="/resources/cms/js/page/web-content-edit.js"></script>
 {% endblock bottom %}

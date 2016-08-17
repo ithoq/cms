@@ -110,5 +110,5 @@
             var inputs = {{ inputsJson | raw }}
         </script>
     {% endif %}
-    <script src="/public/cms/js/page/fieldset-edit.js"></script>
+    <script src="/resources/cms/js/page/fieldset-edit.js"></script>
 {% endblock bottom %}

@@ -3,10 +3,10 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>File Manager</title>
-    <link rel="stylesheet" type="text/css" href="/public/cms/libs/RichFilemanager-master/styles/reset.css" />
-    <link rel="stylesheet" type="text/css" href="/public/cms/libs/RichFilemanager-master/scripts/jquery.filetree/src/jQueryFileTree.css" />
-    <link rel="stylesheet" type="text/css" href="/public/cms/libs/RichFilemanager-master/scripts/jquery.contextmenu/dist/jquery.contextMenu.min.css" />
-    <link rel="stylesheet" type="text/css" href="/public/cms/libs/RichFilemanager-master/scripts/custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/cms/libs/RichFilemanager-master/styles/reset.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/cms/libs/RichFilemanager-master/scripts/jquery.filetree/src/jQueryFileTree.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/cms/libs/RichFilemanager-master/scripts/jquery.contextmenu/dist/jquery.contextMenu.min.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/cms/libs/RichFilemanager-master/scripts/custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" />
 
     <style type="text/css">
         .fm-container #loading-wrap {
@@ -17,7 +17,7 @@
             top: 0;
             left: 0;
             display: block;
-            background: white url(/public/cms/libs/RichFilemanager-master/images/wait30trans.gif) no-repeat center center;
+            background: white url(/resources/cms/libs/RichFilemanager-master/images/wait30trans.gif) no-repeat center center;
             z-index: 999;
         }
     </style>
@@ -73,34 +73,34 @@
             <div style="clear: both"></div>
         </div>
 
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jquery-1.11.3.min.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jquery-ui.min.js"></script> <!-- build for drag&drop only -->
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jquery-browser.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jquery.splitter/jquery.splitter-1.5.1.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jquery.filetree/src/jQueryFileTree.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jquery.contextmenu/dist/jquery.contextMenu.min.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jquery.impromptu/dist/jquery-impromptu.min.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/TinySort/dist/tinysort.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/TinySort/dist/jquery.tinysort.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/javascript-templates/js/tmpl.min.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jquery-ui.min.js"></script> <!-- build for drag&drop only -->
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jquery-browser.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jquery.splitter/jquery.splitter-1.5.1.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jquery.filetree/src/jQueryFileTree.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jquery.contextmenu/dist/jquery.contextMenu.min.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jquery.impromptu/dist/jquery-impromptu.min.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/TinySort/dist/tinysort.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/TinySort/dist/jquery.tinysort.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/javascript-templates/js/tmpl.min.js"></script>
         <!-- Load jquery file upload library -->
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/vendor/jquery.ui.widget.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/canvas-to-blob.min.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/load-image.all.min.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/jquery.fileupload.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/jquery.fileupload-process.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/jquery.fileupload-image.js"></script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/jquery.fileupload-validate.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/vendor/jquery.ui.widget.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/canvas-to-blob.min.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/load-image.all.min.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/jquery.iframe-transport.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/jquery.fileupload.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/jquery.fileupload-process.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/jquery.fileupload-image.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/jQuery-File-Upload/js/jquery.fileupload-validate.js"></script>
         <!-- Load filemanager script -->
 
         <script>
             window._FMConfig = {
-                pluginPath: "/public/cms/libs/RichFilemanager-master",
+                pluginPath: "/resources/cms/libs/RichFilemanager-master",
             };
         </script>
-        <script type="text/javascript" src="/public/cms/libs/RichFilemanager-master/scripts/filemanager.js"></script>
-        <script src="/public/cms/js/main.js"></script>
+        <script type="text/javascript" src="/resources/cms/libs/RichFilemanager-master/scripts/filemanager.js"></script>
+        <script src="/resources/cms/js/main.js"></script>
     </div>
 </div>
 </body>

@@ -1,3 +1,5 @@
-include 'core', 'site', 'plugins:foo'
-
+include 'core', 'site'
+//, 'plugins:foo'
+include ':fmconnector'
+project(':fmconnector').projectDir = new File(settingsDir, '../fmconnector')
 rootProject.name = 'cms'

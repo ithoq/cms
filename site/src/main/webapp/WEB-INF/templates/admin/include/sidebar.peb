@@ -1,5 +1,5 @@
 <nav data-pages="sidebar" class="page-sidebar">
-    <div class="sidebar-header"><a href="/admin/cms"><img src="/public/cms/img/logo-white.png" alt="logo" data-src="/public/cms/img/logo-white.png" data-src-retina="/public/cms/img/logo-white-2x.png" width="78" height="22" class="brand"></a>
+    <div class="sidebar-header"><a href="/admin/cms"><img src="/resources/cms/img/logo-white.png" alt="logo" data-src="/resources/cms/img/logo-white.png" data-src-retina="/resources/cms/img/logo-white-2x.png" width="78" height="22" class="brand"></a>
         <div class="sidebar-header-controls">
             <button type="button" data-toggle-pin="sidebar" class="btn btn-link visible-lg-inline"><i class="fa fs-12"></i></button>
         </div>

@@ -7,18 +7,18 @@
         </div>
         <div class="pull-center hidden-md hidden-lg">
             <div class="header-inner">
-                <div class="brand inline"><img src="/public/cms/img/logo-dark.png" alt="logo"
-                                               data-src="/public/cms/img/logo-dark.png"
-                                               data-src-retina="/public/cms/img/logo-dark-2x.png" width="78"
+                <div class="brand inline"><img src="/resources/cms/img/logo-dark.png" alt="logo"
+                                               data-src="/resources/cms/img/logo-dark.png"
+                                               data-src-retina="/resources/cms/img/logo-dark-2x.png" width="78"
                                                height="22"></div>
             </div>
         </div>
     </div>
     <div class="pull-left sm-table hidden-xs hidden-sm">
         <div class="header-inner">
-            <div class="brand inline"><img src="/public/cms/img/logo-dark.png" alt="logo"
-                                           data-src="/public/cms/img/logo-dark.png"
-                                           data-src-retina="/public/cms/img/logo-dark-2x.png" width="78"
+            <div class="brand inline"><img src="/resources/cms/img/logo-dark.png" alt="logo"
+                                           data-src="/resources/cms/img/logo-dark.png"
+                                           data-src-retina="/resources/cms/img/logo-dark-2x.png" width="78"
                                            height="22"></div>
         </div>
     </div>
@@ -28,8 +28,8 @@
             <div class="dropdown pull-right">
                 <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         class="profile-dropdown-toggle"><span class="thumbnail-wrapper d32 circular inline m-t-5"><img
-                                src="{% if user.avatar is not empty %}/public{{ user.avatar }}{% else %}/public/cms/img/avatar/avatar_small-men.png{% endif %}" alt="user avatar"
-                                data-src="{% if user.avatar is not empty %}/public{{ user.avatar }}{% else %}/public/cms/img/avatar/avatar_small-men.png{% endif %}" width="32" height="32"></span></button>
+                                src="{% if user.avatar is not empty %}/public{{ user.avatar }}{% else %}/resources/cms/img/avatar/avatar_small-men.png{% endif %}" alt="user avatar"
+                                data-src="{% if user.avatar is not empty %}/public{{ user.avatar }}{% else %}/resources/cms/img/avatar/avatar_small-men.png{% endif %}" width="32" height="32"></span></button>
                 <ul role="menu" class="dropdown-menu profile-dropdown">
                     <li><a href="#"><i class="pg-settings_small"></i> {{ message('settings') }}</a></li>
                     <li class="bg-master-lighter"><a href="/logout?isAdmin=true" class="clearfix"><span

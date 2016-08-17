@@ -47,12 +47,22 @@ public class ContentServiceImpl implements IContentService {
     @PersistenceContext(unitName = "core")
     private EntityManager entityManager;
 
-    @Override
-    @Cacheable(value = "content", key = "#slug")
+
     /**
      * Public page / when user request a page
      */
-    public ContentDataEntity findBySlug(String slug, Locale locale) {
+    @Override
+    public ContentEntity findBySlug(String slug, Locale locale) {
+
+        Long contentId = applicationContext.getBean(IContentService.class).getContentDataIdBySlug(slug, locale);
+        if(contentId == null)
+            return null;
+
+        return applicationContext.getBean(IContentService.class).findContentAdmin(contentId);
+
+        /*
+
+        return
 
         QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
         QContentEntity contentEntity = QContentEntity.contentEntity;
@@ -85,6 +95,14 @@ public class ContentServiceImpl implements IContentService {
 //            entityManager.close();
         }
         return result;
+        */
+    }
+
+
+    @Cacheable(value = "content", key = "#slug + '-' + #locale.toString()")
+    public Long getContentDataIdBySlug(String slug, Locale locale){
+        ContentDataEntity result = contentDataRepository.findByComputedSlugAndLanguageLocale(slug, locale.toString());
+        return result == null ? null : result.getContent().getId();
     }
 
     @Override
@@ -111,7 +129,7 @@ public class ContentServiceImpl implements IContentService {
     @Cacheable(value = "adminContent", key = "#id")
     public ContentEntity findContentAdmin(Long id) {
         QContentEntity contentEntity = QContentEntity.contentEntity;
-        QContentEntity parentEntity = QContentEntity.contentEntity;
+        QContentEntity contentChildren = QContentEntity.contentEntity;
         QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
         QTaxonomyTermEntity taxonomyTermDataEntity = QTaxonomyTermEntity.taxonomyTermEntity;
 //        EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -126,6 +144,7 @@ public class ContentServiceImpl implements IContentService {
                 .leftJoin(contentEntity.roles).fetch()
                 .leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermDataEntity).fetch()
                 .leftJoin(taxonomyTermDataEntity.termDataList).fetch()
+                .orderBy(contentEntity.order.asc(), contentEntity.contentChildren.any().order.asc())
                 .singleResult(contentEntity);
 //        entityManager.close(); inte
 
@@ -133,6 +152,11 @@ public class ContentServiceImpl implements IContentService {
             Hibernate.initialize(result.getContentParent().getContentDataList());
         }
         return result;
+    }
+
+    @Override
+    public List<ContentEntity> findByContentParentOrderByOrderAsc(ContentEntity parent) {
+        return contentRepository.findByContentParentOrderByOrderAsc(parent);
     }
 
     @Override
@@ -308,6 +332,7 @@ public class ContentServiceImpl implements IContentService {
         List<ContentEntity> pages =  query.from(contentEntity)
                 //.leftJoin(contentEntity.taxonomyTermEntities).fetch()  - i think bad for performance
                 .leftJoin(contentEntity.contentDataList, contentDataEntity).fetch()
+                .leftJoin(contentEntity.contentTemplate).fetch()
                 .where(contentEntity.enabled.eq(true)
                         .and(contentEntity.menuItem.eq(true))
                         .and(contentEntity.contentType.name.like("PAGE%"))
@@ -483,16 +508,31 @@ public class ContentServiceImpl implements IContentService {
 
     private String buildNavMenu(List<ContentEntity> pages, StringBuilder sb, String locale, long depth) {
 
+        boolean isFolder = false;
+        boolean isLink = false;
         for (ContentEntity p : pages) {
+            isFolder = p.getContentTemplate().getName().toLowerCase().equals("folder");
+            isLink = p.getContentTemplate().getName().toLowerCase().equals("link");
             sb.append("<li>");
             if (!p.getContentDataList().isEmpty()) {
                 ContentDataEntity data = p.getContentDataList().get(locale);
                 if(data == null) break;
-                sb.append("<a href='");
-                sb.append(data.getComputedSlug());
-                sb.append("'>");
-                sb.append(data.getTitle());
-                sb.append("</a>");
+                if(!isFolder) {
+                    sb.append("<a href=\"");
+                    if (isLink) {
+
+                        sb.append((String)CmsUtils.parseData(data.getData()).get("_text"));
+                        sb.append("\" target=\"_blank\">");
+                    } else {
+                        sb.append(data.getComputedSlug());
+                        sb.append("\">");
+                    }
+
+                    sb.append(data.getTitle());
+                    sb.append("</a>");
+                } else {
+                    sb.append("<span>" + data.getTitle() + "</span>");
+                }
                 Set<ContentEntity> childrensSet = p.getContentChildren();
                 List<ContentEntity> childrens = new ArrayList<>();
                 childrens.addAll(childrensSet);

@@ -48,7 +48,7 @@ public interface IContentService {
 
     ContentDataEntity findContentData(Long id);
 
-    ContentDataEntity findBySlug(String slug, Locale locale);
+    ContentEntity findBySlug(String slug, Locale locale);
 
     List<ContentTypeEntity> findAllContentType();
 
@@ -58,4 +58,7 @@ public interface IContentService {
 
     PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String category, List<String> contentType, Long pageNumber, Long limit, Long offset);
 
+    Long getContentDataIdBySlug(String slug, Locale locale);
+
+    List<ContentEntity> findByContentParentOrderByOrderAsc(ContentEntity parent);
 }

@@ -3,11 +3,11 @@
 {% set title = 'Dashboard' %}
 
 {% block head %}
-    <link href="/public/cms/libs/fancytree/dist/skin-fab/ui.fancytree.css" rel="stylesheet" type="text/css"
+    <link href="/resources/cms/libs/fancytree/dist/skin-fab/ui.fancytree.css" rel="stylesheet" type="text/css"
           media="screen">
-    <script src="/public/cms/libs/fancytree/dist/jquery.fancytree-all.min.js"></script>
-    <script src="/public/cms/libs/jqUpload/js/jquery.iframe-transport.js"></script>
-    <script src="/public/cms/libs/jqUpload/js/jquery.fileupload.js"></script>
+    <script src="/resources/cms/libs/fancytree/dist/jquery.fancytree-all.min.js"></script>
+    <script src="/resources/cms/libs/jqUpload/js/jquery.iframe-transport.js"></script>
+    <script src="/resources/cms/libs/jqUpload/js/jquery.fileupload.js"></script>
 {% endblock head %}
 
 {% block modal %}

@@ -153,4 +153,91 @@ public class ViewHelper {
             throw new ForbiddenException();
         }
     }
+
+    public List<ContentDataEntity> getChildrensData(Long id, String code){
+        return getChildrensData(contentService.findContentAdmin(id), code);
+    }
+
+    public List<ContentDataEntity> getChildrensData(ContentEntity entity, String code){
+        List<ContentDataEntity> result = new ArrayList<>();
+        ContentDataEntity data;
+        for (ContentEntity c : entity.getContentChildren()) {
+            ContentEntity contentAdmin = contentService.findContentAdmin(c.getId());
+            data = contentAdmin.getContentDataList().get(code);
+            if(data != null) result.add(data);
+        }
+        return result;
+    }
+
+    public List<ContentDataEntity> getBrothersData(ContentEntity entity, String code){
+        List<ContentDataEntity> result = new ArrayList<>();
+        ContentEntity parent = entity.getContentParent();
+        ContentDataEntity data;
+        for (ContentEntity c : contentService.findByContentParentOrderByOrderAsc(parent)) {
+            if(c.getId() == entity.getId())
+                continue;
+            ContentEntity contentAdmin = contentService.findContentAdmin(c.getId());
+            data = contentAdmin.getContentDataList().get(code);
+            if(data != null ) result.add(data);
+        }
+        return result;
+    }
+
+    public List<ContentDataEntity> getParentsData(ContentEntity entity, String code){
+        List<ContentDataEntity> result = new ArrayList<>();
+        ContentEntity parent = entity.getContentParent();
+        if(parent == null) return null;
+
+        if(parent.getContentParent().getId() == 0) {
+            parent = null;
+        } else {
+            parent = contentService.findContentAdmin(parent.getContentParent().getId());
+        }
+
+        ContentDataEntity data;
+        for (ContentEntity c : contentService.findByContentParentOrderByOrderAsc(parent)) {
+
+            ContentEntity contentAdmin = contentService.findContentAdmin(c.getId());
+            data = contentAdmin.getContentDataList().get(code);
+            if(data != null) result.add(data);
+        }
+        return result;
+    }
+
+    public ContentDataEntity getNextBrotherData(ContentEntity entity, String code){
+        ContentEntity parent = entity.getContentParent();
+        ContentDataEntity nextData = null;
+        boolean next = false;
+        ContentDataEntity data;
+        for (ContentEntity c : contentService.findByContentParentOrderByOrderAsc(parent)) {
+            if(c.getId() == entity.getId()) {
+                next=true;
+                continue;
+            }
+            if(next){
+                ContentEntity contentAdmin = contentService.findContentAdmin(c.getId());
+                data = contentAdmin.getContentDataList().get(code);
+                if(data != null){
+                    nextData = data;
+                    break;
+                }
+            }
+        }
+        return nextData;
+    }
+    public ContentDataEntity getPreviousBrotherData(ContentEntity entity, String code){
+        ContentEntity parent = entity.getContentParent();
+        ContentDataEntity previousData = null;
+        ContentDataEntity data;
+        for (ContentEntity c : contentService.findByContentParentOrderByOrderAsc(parent)) {
+            if(c.getId() == entity.getId()) {
+                break;
+            }
+
+            ContentEntity contentAdmin = contentService.findContentAdmin(c.getId());
+            data = contentAdmin.getContentDataList().get(code);
+            if(data != null) previousData=data;
+        }
+        return previousData;
+    }
 }

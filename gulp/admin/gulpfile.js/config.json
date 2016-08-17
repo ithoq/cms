@@ -2,7 +2,7 @@
   "root": {
     "src": "./src",
     "dest": "./public",
-    "destProd": "../../site/src/main/webapp/resources/admin"
+    "destProd": "../../site/src/main/webapp/resources/cms"
   },
   "tasks": {
     "browserSync": {

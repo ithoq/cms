@@ -76,7 +76,7 @@
 
         <div class="select-country">
             {% if content.contentDataList.size == 1 %}
-                <div class="solo-lang"><span><img src="/public/cms/img/flags/{{ contentLocale }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(contentLocale) }} ({{ contentLocale }})</span></div>
+                <div class="solo-lang"><span><img src="/resources/cms/img/flags/{{ contentLocale }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(contentLocale) }} ({{ contentLocale }})</span></div>
             {% else %}
                 <select id="selectLanguage" name="selectLanguage">
                     {% for entry in content.contentDataList %}
@@ -92,7 +92,7 @@
                         <div class="title">add new language</div>
                         {% for lang in beans.applicationService.getSiteLanguages() %}
                             {% if content.contentDataList contains lang.toString() %}{% else %}
-                                <li {% if content.getContentParent() != null and content.getContentParent().getContentDataList().get(lang) is empty %}class="lang-disabled" data-placement="bottom" data-toggle="tooltip"  data-original-title="The parent of this page doesn't have a content in this language"{%  else %}class="creatlang"{% endif %} data-id="{{ lang }}" value="{{lang}}" ><div class="solo-lang"><span><img src="/public/cms/img/flags/{{ lang }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(lang.toString()) }} ({{ lang }})</span></div></li>
+                                <li {% if content.getContentParent() != null and content.getContentParent().getContentDataList().get(lang) is empty %}class="lang-disabled" data-placement="bottom" data-toggle="tooltip"  data-original-title="The parent of this page doesn't have a content in this language"{%  else %}class="creatlang"{% endif %} data-id="{{ lang }}" value="{{lang}}" ><div class="solo-lang"><span><img src="/resources/cms/img/flags/{{ lang }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(lang.toString()) }} ({{ lang }})</span></div></li>
                             {% endif %}
                         {% endfor %}
                     </ul>
@@ -118,8 +118,12 @@
     </div>
     <ul class="nav nav-tabs nav-tabs-linetriangle bg-white">
         <li class="active"><a data-toggle="tab" href="#tabGeneral">{{ message('general') }}</a></li>
+        {% if content.contentTemplate.useFiles %}
         <li><a data-toggle="tab" href="#tabFile" id="tabFileBtn">{{ message('file') }}</a></li>
+        {% endif %}
+        {% if content.contentTemplate.useGallery %}
         <li><a data-toggle="tab" href="#tabGallery" id="tabGalleryBtn">{{ message('gallery') }}</a></li>
+        {% endif %}
         <li><a data-toggle="tab" href="#tabSeo">SEO</a></li>
     </ul>
     <div class="tab-content bg-white">
@@ -154,6 +158,7 @@
                           class="form-control">{{ data.seo_description }}</textarea>
             </div>
         </div>
+        {% if content.contentTemplate.useFiles %}
         <div id="tabFile" class="tab-pane">
             <div class="upload-container" data-type="DOWNLOAD" data-id="{{ contentData.id }}" data-table="tableFiles">
                 <input style="display:none" class="fileupload" type="file" name="files[]"
@@ -184,7 +189,8 @@
                 </tbody>
             </table>
         </div>
-
+        {% endif %}
+        {% if content.contentTemplate.useFiles %}
         <div id="tabGallery" class="tab-pane">
             <div class="upload-container" data-type="GALLERY" data-id="{{ contentData.id }}" data-table="tableGallery">
                 <input style="display:none" class="fileupload" type="file" name="files[]"
@@ -215,6 +221,7 @@
                 </tbody>
             </table>
         </div>
+        {%  endif %}
     </div>
 </div>
 <script>
@@ -222,7 +229,7 @@
 
         var renderSelectLanguage = function (data) {
             var $state = $(
-                    '<span><img src="/public/cms/img/flags/' + data.id.toLowerCase() + '.png" class="img-flag" /> ' + data.text + '</span>'
+                    '<span><img src="/resources/cms/img/flags/' + data.id.toLowerCase() + '.png" class="img-flag" /> ' + data.text + '</span>'
             );
             return $state;
         };

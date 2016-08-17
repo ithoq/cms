@@ -7,7 +7,9 @@ import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -21,15 +23,20 @@ import java.util.Map;
 public class PebbleUtils {
 
     @Autowired
-    public PebbleEngine pebbleStringEngine;
+    @Qualifier("pebbleStringEngine")
+    private PebbleEngine pebbleStringEngine;
     @Autowired
-    public IBlockService blockService;
+    private IBlockService blockService;
+    @Autowired
+    ApplicationContext applicationContext;
 
     public String parseBlock(BlockEntity block, Map<String, Object> model) throws IOException, PebbleException {
         if (model == null) {
             model = new HashMap<>(10);
         }
 
+        // force to pass in the cache
+        PebbleUtils utils = applicationContext.getBean(this.getClass());
         PebbleTemplate compiledTemplate = getCompiledTemplate(block.getName());
         Writer writer = new StringWriter();
         compiledTemplate.evaluate(writer, model, LocaleContextHolder.getLocale());

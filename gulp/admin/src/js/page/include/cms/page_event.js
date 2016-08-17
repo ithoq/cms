@@ -63,7 +63,7 @@ $pageForm.on('change', '#selectLanguage', function () {
 });
 
 // Create Page
-$('#btnFormCeatePage').click(function () {
+$modalCreateNewPage.on('click', '#btnFormCeatePage', function () {
   $.Cms.ajax({
     formElement: '#createPageForm',
     successMessage: 'The page was created successfully!',
@@ -84,23 +84,20 @@ $('#btnFormCeatePage').click(function () {
 
 // Open Modal Form
 $('#btnCreatePage').click(function () {
-  var node = treeCache.getActiveNode();
-  var $containerParent = $('#radio-parent-container');
-  var $containerRoot = $('#radio-root-container');
-  $containerParent.show();
-  $containerRoot.show();
-  if (node) {
-    var title = node.title;
-    var parentId = node.key;
-    $('#radio-parent').val(parentId).prop('checked', true);
-    $containerParent.find('label').html('Child of : ' + title);
-  } else {
-    $containerParent.hide();
-    $('#radio-root').prop('checked', true);
-  }
 
-  $selectType.val('Page').trigger('change');
-  $modalCreateNewPage.modal('show');
+  var activeNode = treeCache.getActiveNode();
+  $.Cms.ajax({
+    url: '/admin/cms/modalCreate',
+    type: 'get',
+    data : { contentParentId : activeNode ? activeNode.key : null},
+    onSuccess: function (data, status, response) {
+      $modalCreateNewPage.html(data);
+      $modalCreateNewPage.modal('show');
+
+      var $elem = $modalCreateNewPage.find("[data-init-plugin='select2']");
+      $elem.select2();
+    },
+  });
 });
 
 $selectType.on('change', function () {

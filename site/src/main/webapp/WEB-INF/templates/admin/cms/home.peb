@@ -7,73 +7,7 @@
 
 {% block modal %}
     {{ csrf | raw }}
-    <div id="modalCreateNewPage" tabindex="-1" role="dialog" aria-hidden="true"
-         class="modal fade slide-up disable-scroll">
-        <div class="modal-dialog">
-            <div class="modal-content-wrapper">
-                <div class="modal-content">
-                    <div class="modal-header clearfix text-left p-b-25">
-                        <button type="button" data-dismiss="modal" aria-hidden="true" class="close"><i
-                                    class="pg-close fs-14"></i></button>
-                        <h4>{{ message('admin.newPage') }}</h4>
-                        <hr class="section">
-                    </div>
-                    <div class="modal-body">
-                        <form id="createPageForm" role="form" method="post" action="/admin/cms/page/create">
-                            <div class="form-group form-group-default m-b-20 required">
-                                <label>{{ message('name') }}</label>
-                                <input id="createPageName" name="name" type="text" required class="form-control">
-                            </div>
-                            <div class="form-group form-group-default form-group-default-select2 required js-page">
-                                <label for="selectPageLang">{{ message('language') }}</label>
-                                {% if siteLang.size > 1 %}
-                                    <select id="selectPageLang" name="pageLangId" data-init-plugin="select2" class="full-width">
-                                        {% for lang in siteLang %}
-                                            <option value="{{ lang }}" {% if lang.toString() equals defaultSiteLang %}selected{% endif %}>{{ beans.viewHelper.getLanguageName(lang.toString()) }}</option>
-                                        {% endfor %}
-                                    </select>
-                                {% else %}
-                                    <input type="hidden" name="pageLangId value="{{ defaultSiteLang }}">
-                                {% endif %}
-                            </div>
-                            <h5>{{ message('level') }}</h5>
-                            <div class="radio radio-success">
-                                 <span id="radio-parent-container">
-                                 <input id="radio-parent" type="radio" value="{{ value }}" name="parentId">
-                                 <label for="radio-parent">{{ name }}</label></span><span id="radio-root-container">
-                                 <input id="radio-root" type="radio" value="-1" name="parentId">
-                                 <label for="radio-root">{{ message('admin.rootPage') }}</label></span>
-                            </div>
-                            <h5>{{ message('admin.pageParam') }}</h5>
-
-                            <div class="form-group form-group-default form-group-default-select2 required js-page">
-                                <label for="selectTemplate">{{ message('template') }}</label>
-
-                                <select id="selectTemplate" name="templateId" data-init-plugin="select2" class="full-width">
-                                    {% for t in templates %}
-                                        <option value="{{ t.id }}">{{ t.name }}</option>
-                                    {% else %}
-                                        <option value="-1"></option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </form>
-                        <hr class="section m-t-5 light">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <button type="button" data-dismiss="modal"
-                                        class="btn btn-danger btn-block m-t-5">{{ message('cancel') }}</button>
-                            </div>
-                            <div class="col-sm-6">
-                                <button type="button" id="btnFormCeatePage"
-                                        class="btn btn-success btn-block m-t-5">{{ message('save') }}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="modalCreateNewPage" tabindex="-1" role="dialog" aria-hidden="true" class="modal fade slide-up disable-scroll"></div>
     <div id="modalSlideLeft" tabindex="-1" role="dialog" aria-hidden="true"
          class="modal fade slide-right slide-right-center">
         <div class="modal-dialog modal-sm">
@@ -108,8 +42,7 @@
     <div class="tree-container">
         <div class="panel panel-default panel-tree">
             <div class="panel-heading">
-                <div class="panel-title"><span>{{ message('admin.tree') }}</span><span id="matches"
-                                                                                       class="label label-info"></span>
+                <div class="panel-title"><span>{{ message('admin.tree') }}</span><span id="matches" class="label label-info"></span>
                     <button id="btnCreatePage" type="button" class="btn btn-success m-t-5 pull-right"><i
                                 class="fa fa-plus-circle"></i></button>
                     <hr class="section">
@@ -138,5 +71,5 @@
 {% endblock content %}
 
 {% block bottom %}
-    <script src="/public/cms/js/page/cms.js"></script>
+    <script src="/resources/cms/js/page/cms.js"></script>
 {% endblock bottom %}

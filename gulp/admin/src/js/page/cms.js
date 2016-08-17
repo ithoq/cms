@@ -10,7 +10,6 @@
   var $pageForm;
 
   //=include include/cms/page_function.js
-
   //=include include/cms/tree_function.js
 
   $(function () {
@@ -24,9 +23,7 @@
     $modalCreateNewPage = $('#modalCreateNewPage');
 
     //=include include/cms/tree_event.js
-
     //=include include/cms/page_event.js
-
     //=include include/cms/datatables_event.js
   });
 })(jQuery);

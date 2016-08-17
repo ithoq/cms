@@ -69,11 +69,21 @@ public class AdminCmsController {
         return VIEWPATH + "home";
     }
 
+    @RequestMapping(value = "/modalCreate", method = RequestMethod.GET)
+    public String getTree(ModelMap model, Long contentParentId) {
+        model.put("templates", contentTemplateService.findAllByTypeLike("PAGE%"));
+        model.put("contentParentId", contentParentId);
+
+        if(contentParentId != null) model.put("content", contentService.findContentAdmin(contentParentId));
+        return VIEWPATH + "modalCreate";
+    }
+
     @RequestMapping(value = "/tree", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String getTree() {
         return contentService.getPagesTree();
     }
+
 
     @RequestMapping(value = "/page/{id}", method = RequestMethod.GET)
     public String getPage(ModelMap model, @PathVariable("id") Long id, String locale) throws Exception {
@@ -245,7 +255,7 @@ public class AdminCmsController {
         return "OK";
     }
 
-    @RequestMapping(value = "/preview", method = RequestMethod.POST)
+    @RequestMapping(value = "/preview", method = RequestMethod.POST, produces = "text/html;charset=UTF-8")
     @ResponseBody
     public String preview(@Valid EditPageForm form, BindingResult result, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException, PebbleException {
 
