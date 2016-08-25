@@ -36,7 +36,7 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/admin/webContent")
 @Slf4j
-@PreAuthorize("hasRole('WEBCONTENT')")
+@PreAuthorize("hasRole('ROLE_ADMIN_WEBCONTENT')")
 public class AdminWebContentController {
 
     private final static String VIEWPATH = "admin/webContent/";

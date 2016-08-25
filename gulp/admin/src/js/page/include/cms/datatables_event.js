@@ -6,7 +6,7 @@ $pageForm.on('click', '#tabFileBtn', function () {
     var options = {};
     options.elementId = tableFileId;
     options.$element = $tableFiles;
-    options.type = 'DOWNLOAD';
+    options.type = 'D';
     options.searchElementId = '#search-table-files';
 
     initDataTable(options);
@@ -21,7 +21,7 @@ $pageForm.on('click', '#tabGalleryBtn', function () {
     var options = {};
     options.elementId = tableGalleryId;
     options.$element = $tableGallery;
-    options.type = 'GALLERY';
+    options.type = 'G';
     options.searchElementId = '#search-table-gallery';
 
     initDataTable(options);
@@ -62,7 +62,7 @@ function initDataTable(options) {
         aTargets: [3],
         className: 'center',
         mRender: function (data, type, full) {
-          return '<img class="imgType" src="/resources/admin/img/files-icons/' +
+          return '<img class="imgType" src="/resources/cms/img/files-icons/' +
                   data + '" />';
         },
       },

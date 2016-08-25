@@ -210,8 +210,9 @@
     $('#btnDeletePage').click(function () {
       var id = $('#contentDataId').val();
       var contentId = $('#contentId').val();
+      var url = (id) ? '/admin/cms/page/delete/' + id : '/admin/cms/page/deleteContent/' + contentId;
       var params = {
-        url: '/admin/cms/page/delete/' + id,
+        url: url,
         type: 'DELETE',
         successMessage: 'The page was deleted successfully!',
         onSuccess: function (data) {
@@ -330,7 +331,7 @@
         var options = {};
         options.elementId = tableFileId;
         options.$element = $tableFiles;
-        options.type = 'DOWNLOAD';
+        options.type = 'D';
         options.searchElementId = '#search-table-files';
     
         initDataTable(options);
@@ -345,7 +346,7 @@
         var options = {};
         options.elementId = tableGalleryId;
         options.$element = $tableGallery;
-        options.type = 'GALLERY';
+        options.type = 'G';
         options.searchElementId = '#search-table-gallery';
     
         initDataTable(options);
@@ -386,7 +387,7 @@
             aTargets: [3],
             className: 'center',
             mRender: function (data, type, full) {
-              return '<img class="imgType" src="/resources/admin/img/files-icons/' +
+              return '<img class="imgType" src="/resources/cms/img/files-icons/' +
                       data + '" />';
             },
           },

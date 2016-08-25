@@ -1,19 +1,8 @@
 package be.ttime.core.util;
 
-import org.apache.tika.Tika;
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.detect.Detector;
-import org.apache.tika.io.TikaInputStream;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.mime.MediaType;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.nio.file.Path;
-
 /**
  * Detects the mime type of files (ideally based on marker in file content)
- */
+
 @Component
 public class FileTypeDetector extends java.nio.file.spi.FileTypeDetector {
 
@@ -41,3 +30,4 @@ public class FileTypeDetector extends java.nio.file.spi.FileTypeDetector {
         return tika.detect(file);
     }
 }
+ */

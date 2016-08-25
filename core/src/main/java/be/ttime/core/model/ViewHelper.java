@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*
     Render a dynamic field in CMS Page administration.
@@ -125,18 +126,27 @@ public class ViewHelper {
         return menu;
     }
 
-    public Map<String, List<FileEntity>> getFileByGroupMap(ContentDataEntity data){
+    public Map<String, List<FileEntity>> getDownloadFileByGroupMap(ContentDataEntity data){
         Map<String, List<FileEntity>> result = new HashMap<>();
         for (FileEntity f : data.getContentFiles()) {
-            if(f.getFileType().getName().equals("DOWNLOAD")){
-                List<FileEntity> list = result.get(f.getFileGroup());
+            if(f.getFileType().equals("D")){
+                String group = f.getFileGroup();
+                //if(group == null) group = "default";
+                List<FileEntity> list = result.get(group);
                 if(list == null){
                     list = new ArrayList<>();
                 }
                 list.add(f);
-                result.put(f.getFileGroup(), list);
+                result.put(group, list);
             }
         }
+        return result;
+    }
+
+    public List<FileEntity> getDownloadFile(ContentDataEntity data){
+        List<FileEntity> result;
+        result = new ArrayList<>();
+        result.addAll(data.getContentFiles().stream().filter(f -> f.getFileType().equals("D")).collect(Collectors.toList()));
         return result;
     }
 
@@ -189,13 +199,15 @@ public class ViewHelper {
         return result;
     }
 
-    public List<ContentDataEntity> getBrothersData(ContentEntity entity, String code){
+    public List<ContentDataEntity> getBrothersData(ContentEntity entity, String code, boolean selfInclude){
         List<ContentDataEntity> result = new ArrayList<>();
         ContentEntity parent = entity.getContentParent();
         ContentDataEntity data;
         for (ContentEntity c : contentService.findByContentParentOrderByOrderAsc(parent)) {
-            if(c.getId() == entity.getId())
-                continue;
+            if(!selfInclude) {
+                if (c.getId() == entity.getId())
+                    continue;
+            }
             ContentEntity contentAdmin = contentService.findContentAdmin(c.getId());
             data = contentAdmin.getContentDataList().get(code);
             if(data != null ) result.add(data);
@@ -224,17 +236,15 @@ public class ViewHelper {
         return result;
     }
 
-    public ContentDataEntity getNextBrotherData(ContentEntity entity, String code, boolean selfInclude) {
+    public ContentDataEntity getNextBrotherData(ContentEntity entity, String code) {
         ContentEntity parent = entity.getContentParent();
         ContentDataEntity nextData = null;
         boolean next = false;
         ContentDataEntity data;
         for (ContentEntity c : contentService.findByContentParentOrderByOrderAsc(parent)) {
-            if (!selfInclude) {
-                if (c.getId() == entity.getId()) {
-                    next = true;
-                    continue;
-                }
+            if (c.getId() == entity.getId()) {
+                next = true;
+                continue;
             }
 
             if (next) {
@@ -272,4 +282,5 @@ public class ViewHelper {
 
         return contentAdmin.getContentDataList().get(code);
     }
+
 }

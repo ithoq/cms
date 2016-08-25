@@ -52,7 +52,7 @@ public class FileServiceImpl implements IFileService {
         if(type == null){
             files = pageFileRepository.findByContentDataEntityId(contentDataId);
         } else{
-            files = pageFileRepository.findByContentDataEntityIdAndFileTypeName(contentDataId, type);
+            files = pageFileRepository.findByContentDataEntityIdAndFileType(contentDataId, type);
         }
 
         JsonArrayBuilder data = Json.createArrayBuilder();

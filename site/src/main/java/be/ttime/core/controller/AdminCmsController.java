@@ -92,6 +92,7 @@ public class AdminCmsController {
             throw new ResourceNotFoundException();
 
         ContentEntity content = contentService.findContentAdmin(id);
+
         /*ContentEntity contentParent = null;
         if(content.getContentParent() != null){
             contentParent = contentService.findContentAdmin(content.getContentParent().getId());
@@ -126,14 +127,14 @@ public class AdminCmsController {
         } else {
             appLanguage = applicationService.getDefaultSiteApplicationLanguage();
             contentData = content.getContentDataList().get(appLanguage.getLocale());
-            if(contentData == null) {
+            if(contentData == null && content.getContentDataList().size() > 0) {
                 Map.Entry<String, ContentDataEntity> entry = content.getContentDataList().entrySet().iterator().next();
                 contentData = entry.getValue();
                 appLanguage = applicationService.getSiteApplicationLanguageMap().get(entry.getKey());
             }
         }
 
-        if (!StringUtils.isEmpty(contentData.getData())) {
+        if(contentData != null && !StringUtils.isEmpty(contentData.getData())) {
             model.put("data", CmsUtils.parseStringToPageDate(contentData.getData()));
         }
 
@@ -149,7 +150,7 @@ public class AdminCmsController {
 
     @RequestMapping(value = "/page/delete/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public String deletePage(@PathVariable("id") long urlId, HttpServletResponse response) throws Exception {
+    public String deleteContentData(@PathVariable("id") long urlId, HttpServletResponse response) throws Exception {
 
         String result = "";
         if (urlId == 0) {
@@ -161,14 +162,40 @@ public class AdminCmsController {
             ContentDataEntity contentData = contentService.findContentData(urlId);
             ContentEntity content = contentService.findContentAdmin(contentData.getContent().getId());
             int size = content.getContentDataList().size();
-            if(size <=1){
+
+            contentService.deleteContentData(urlId);
+
+            if(size ==1){
                 // delete the content
                 contentService.deleteContent(content.getId());
                 result = "empty";
-            } else {
-                // delete the content data
-                contentService.deleteContentData(urlId);
             }
+        } catch (Exception e) {
+            response.setStatus(500);
+            return "An error occurred, please try later";
+        }
+
+        return result;
+    }
+
+    @RequestMapping(value = "/page/deleteContent/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public String deleteContent(@PathVariable("id") long urlId, HttpServletResponse response) throws Exception {
+
+        String result = "";
+        if (urlId == 0) {
+            response.setStatus(500);
+            return "L'id de la page n'existe pas";
+        }
+
+        try {
+            ContentEntity content = contentService.findContentAdmin(urlId);
+            if(content == null || content.getContentDataList().size() > 0){
+                response.setStatus(500);
+                return "An error occurred, please try later";
+            }
+
+            contentService.deleteContent(content.getId());
 
         } catch (Exception e) {
             response.setStatus(500);

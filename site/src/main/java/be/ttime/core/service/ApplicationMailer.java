@@ -12,7 +12,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 
 @Service("mailService")
-public class ApplicationMailer {
+public class ApplicationMailer implements IMailer {
 
     @Value("${email.from}")
     private String fromAdresse;

@@ -1,13 +1,12 @@
 package be.ttime.core.controller;
 
+import be.fabriceci.fmc.util.FileManagerUtils;
 import be.ttime.core.model.form.AdminFileUploadForm;
 import be.ttime.core.persistence.model.ContentDataEntity;
 import be.ttime.core.persistence.model.FileEntity;
-import be.ttime.core.persistence.model.FileTypeEntity;
 import be.ttime.core.persistence.service.IContentService;
 import be.ttime.core.persistence.service.IFileService;
 import be.ttime.core.util.CmsUtils;
-import be.ttime.core.util.FileTypeDetector;
 import com.google.common.collect.Iterators;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -42,9 +41,6 @@ public class AdminFileController {
 
     @Value("${page.file.directory}")
     private String fileDirectory;
-
-    @Autowired
-    private FileTypeDetector fileTypeDetector;
 
     @Autowired
     private IContentService contentService;
@@ -148,7 +144,7 @@ public class AdminFileController {
                 file = uploadForm.getFiles()[i];
                 if (!file.isEmpty()) {
                     String name = file.getOriginalFilename();
-                    uploadForm.checkMimtypes(fileTypeDetector, name);
+                    String ext = FilenameUtils.getExtension(name);
                     try {
 
                         // Upload the file
@@ -157,16 +153,15 @@ public class AdminFileController {
                         FileEntity pageFile = new FileEntity();
                         pageFile.setName(FilenameUtils.getName(name));
                         pageFile.setServerName(result.getName());
-                        pageFile.setExtension(FilenameUtils.getExtension(result.getName()));
+                        pageFile.setExtension(ext);
                         pageFile.setSize(Math.round(file.getSize()));
-                        pageFile.setMimeType(uploadForm.getMimeTypes()[i]);
+                        pageFile.setMimeType(FileManagerUtils.getMimeTypeByExt(ext));
                         if(uploadForm.getPageId() != null){
                             ContentDataEntity c = contentService.findContentData(uploadForm.getPageId());
                             pageFile.setContentDataEntity(c);
                         }
 
-                        String fileType = request.getParameter("type");
-                        pageFile.setFileType(new FileTypeEntity(fileType));
+                        pageFile.setFileType(request.getParameter("type"));
 
                         pageFiles.add(pageFile);
                     } catch (IOException e) {

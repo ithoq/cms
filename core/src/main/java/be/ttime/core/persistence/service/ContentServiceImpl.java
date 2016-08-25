@@ -282,11 +282,13 @@ public class ContentServiceImpl implements IContentService {
         if (current.getContentChildren().size() > 0)
             throw new Exception("Page with id = " + id + " has children !");
         // delete
+        ContentEntity parent = current.getContentParent();
+
+        current.getRoles()
         contentRepository.delete(id);
 
-        List<ContentEntity> pages = contentRepository.findByContentParentOrderByPositionAsc(current.getContentParent());
-
-        if (pages.size() > 0) {
+        List<ContentEntity> pages = contentRepository.findByContentParentOrderByPositionAsc(parent);
+        if (pages != null && pages.size() > 0) {
             int counter = 0;
             for (ContentEntity p : pages) {
                 p.setPosition(counter);
@@ -455,7 +457,7 @@ public class ContentServiceImpl implements IContentService {
         ContentEntity parent = null;
         ContentDataEntity data = null;
 
-        if(!content.isEnabled() || !contentData.isEnabled())
+        if(!content.isEnabled() || contentData == null || !contentData.isEnabled())
             return false;
 
         Long parentId = content.getContentParent() == null ? 0L : content.getContentParent().getId();

@@ -47,7 +47,7 @@ public class ContentEntity extends AbstractTimestampEntity {
     private ContentTemplateEntity contentTemplate;
     @ManyToOne(fetch = FetchType.LAZY)
     private ContentTypeEntity contentType;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Lazy for now (not used in the current version)
+    @ManyToMany(fetch = FetchType.EAGER) // Lazy for now (not used in the current version)
     @JoinTable(
             name = "content_role",
             joinColumns = @JoinColumn(name = "content_id"),
@@ -55,7 +55,7 @@ public class ContentEntity extends AbstractTimestampEntity {
     )
     private Set<RoleEntity> roles;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "content_term",
             joinColumns = @JoinColumn(name = "content_id", referencedColumnName = "id") ,
             inverseJoinColumns = @JoinColumn(name = "taxonomy_term_id", referencedColumnName = "id"))

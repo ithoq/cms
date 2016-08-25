@@ -2,8 +2,9 @@
 $('#btnDeletePage').click(function () {
   var id = $('#contentDataId').val();
   var contentId = $('#contentId').val();
+  var url = (id) ? '/admin/cms/page/delete/' + id : '/admin/cms/page/deleteContent/' + contentId;
   var params = {
-    url: '/admin/cms/page/delete/' + id,
+    url: url,
     type: 'DELETE',
     successMessage: 'The page was deleted successfully!',
     onSuccess: function (data) {

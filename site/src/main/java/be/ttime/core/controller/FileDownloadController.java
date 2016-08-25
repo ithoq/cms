@@ -5,7 +5,6 @@ import be.ttime.core.error.ResourceNotFoundException;
 import be.ttime.core.persistence.model.FileEntity;
 import be.ttime.core.persistence.service.IFileService;
 import be.ttime.core.util.CmsUtils;
-import be.ttime.core.util.FileTypeDetector;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,9 +32,6 @@ public class FileDownloadController {
 
     @Autowired
     private IFileService pageFileService;
-
-    @Autowired
-    private FileTypeDetector fileTypeDetector;
 
     @RequestMapping(value = "/download/{name}", method = RequestMethod.GET)
     public void downloadFileByName(HttpServletResponse response, @PathVariable("name") String name, Boolean force) throws Exception {
