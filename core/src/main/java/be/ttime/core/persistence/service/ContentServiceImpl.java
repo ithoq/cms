@@ -480,6 +480,28 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
+    public boolean contentIsPrivate(ContentEntity content) {
+        // force to call cache
+        ContentEntity parent = null;
+
+        if(content.isMemberOnly())
+            return true;
+
+        Long parentId = content.getContentParent() == null ? 0L : content.getContentParent().getId();
+        while(true){
+            // no more parent
+            if(parentId == 0) {
+                return false;
+            }
+            parent = applicationContext.getBean(IContentService.class).findContentAdmin(parentId);
+            if(parent.isMemberOnly()){
+                return true;
+            }
+            parentId = parent.getContentParent() == null ? 0L : parent.getContentParent().getId();
+        }
+    }
+
+    @Override
     public boolean contentIsVisible(ContentEntity content, ContentDataEntity contentData) {
         // force to call cache
         ContentEntity parent = null;

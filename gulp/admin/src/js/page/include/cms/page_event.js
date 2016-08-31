@@ -56,6 +56,10 @@ $pageForm.on('click', '#preview', function () {
   $form.attr('action', '/admin/cms/preview');
   console.log($form);
   $form.submit();
+
+  /*   var dataId = $('#contentDataId').val();
+  window.open("/admin/cms/preview/" + dataId); 
+  */
 });
 
 // change language

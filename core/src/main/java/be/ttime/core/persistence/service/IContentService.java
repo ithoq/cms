@@ -38,6 +38,8 @@ public interface IContentService {
 
     boolean contentIsVisible(ContentEntity content, ContentDataEntity contentDataEntity);
 
+    boolean contentIsPrivate(ContentEntity content);
+
     Collection<String> contentRequiredRole(ContentEntity content);
 
     ContentEntity findContentAndContentData(Long id, String locale);

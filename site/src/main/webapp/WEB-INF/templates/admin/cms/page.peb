@@ -19,11 +19,16 @@
                            {% if content.enabled %}checked{% endif %} />
                     <label for="checkbox_enabled">{{ message('active') }} <i data-placement="bottom" title="" data-toggle="tooltip" type="button" data-original-title="Page activée" class="fa fa-info-circle"> </i></label>
                 </div>
+                <div class="checkbox check-success checkbox-circle">
+                    <input id="checkbox_memberOnly" name="memberOnly" type="checkbox"
+                           {% if content.memberOnly %}checked{% endif %} />
+                    <label for="checkbox_memberOnly">{{ message('memberOnly') }} <i data-placement="bottom" title="" data-toggle="tooltip" type="button" data-original-title="Uniquement visible pour les membres" class="fa fa-info-circle"> </i></label>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<h1>roles</h1>
+
 <!--
 <ul>
 {% for role in beans.contentService.getRoleForContent(content) %}
@@ -31,9 +36,11 @@
 {% endfor %}
 </ul>
 -->
-
+{% if beans.contentService.contentIsPrivate(content) == true   %}
+    <div class="alert alert-warning"><i class="fa fa-lock" aria-hidden="true"></i>This page is <strong>private</strong></div>
+{% endif %}
 {% if beans.contentService.contentIsVisible(content, contentData) == false   %}
-    <div class="alert alert-warning"><h3>This page is not visible</h3></div>
+    <div class="alert alert-danger"><i class="fa fa-eye-slash" aria-hidden="true"></i>This page is <strong>not visible</strong></div>
 {% endif %}
 <div id="devPortlet" class="panel panel-default">
     <div class="panel-heading ">

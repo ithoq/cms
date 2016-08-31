@@ -26,5 +26,6 @@ public class EditPageForm {
     private String seoDescription;
     private boolean menuItem;
     private boolean enabled;
+    private boolean memberOnly;
     private boolean contentDataEnabled;
 }

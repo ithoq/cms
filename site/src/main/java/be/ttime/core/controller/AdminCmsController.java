@@ -410,6 +410,7 @@ public class AdminCmsController {
 
         content.setMenuItem(form.isMenuItem());
         content.setEnabled(form.isEnabled());
+        content.setMemberOnly(form.isMemberOnly());
 
         Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
         contentData.setData(gson.toJson(pageData));
