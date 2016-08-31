@@ -289,13 +289,13 @@ public class ViewHelper {
     }
 
     public String getPageableNavigation(PageableResult result, HttpServletRequest request, Long delta){
-        return getPageableNavigation(result, request, delta, false, "pagination");
+        return getPageableNavigation(result, request, delta, "pagination", true, true);
     }
 
-    public String getPageableNavigation(PageableResult result, HttpServletRequest request, Long delta, boolean limit){
-        return getPageableNavigation(result, request, delta, limit, "pagination");
+    public String getPageableNavigation(PageableResult result, HttpServletRequest request, Long delta, boolean preNext, boolean firstEnd){
+        return getPageableNavigation(result, request, delta, "pagination", preNext, firstEnd);
     }
-    public String getPageableNavigation(PageableResult pageableResult, HttpServletRequest request, Long delta, boolean limit, String ulClass){
+    public String getPageableNavigation(PageableResult pageableResult, HttpServletRequest request, Long delta, String ulClass, boolean preNext, boolean firstEnd){
 
         StringBuilder sb = new StringBuilder();
         String queryString = request.getQueryString();
@@ -326,10 +326,12 @@ public class ViewHelper {
 
         boolean btnPrevious = false;
         boolean btnFirst = false;
-        if(min > 1){
+
+        if(preNext && min > 1){
             btnPrevious = true;
         }
-        if(min > 2){
+
+        if(firstEnd && min > 2){
             btnFirst = true;
         }
         boolean btnNext = false;
@@ -353,10 +355,10 @@ public class ViewHelper {
         for(; min < (max+1) ; min++){
             addPaginationLi(sb, currentPage, min, map, null, null);
         }
-        if(btnNext){
+        if(preNext && btnNext){
             addPaginationLi(sb, -1, currentPage - 1 , map, "next", ">");
         }
-        if(btnEnd){
+        if(firstEnd && btnEnd){
             addPaginationLi(sb, -1, totalPage, map, "last", "...");
         }
         sb.append("</ul></nav>");
