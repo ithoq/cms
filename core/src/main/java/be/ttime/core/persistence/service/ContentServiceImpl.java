@@ -9,6 +9,7 @@ import be.ttime.core.persistence.repository.IContentTypeRepository;
 import be.ttime.core.util.CmsUtils;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.expr.BooleanExpression;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -167,11 +168,12 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
-    public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String category, List<String> contentType, Long pageNumber, Long limit, Long offset) {
+    public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String type, String category, String tags, String contentType, Long pageNumber, Long limit) {
         QContentEntity contentEntity = QContentEntity.contentEntity;
         QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
         QTaxonomyTermEntity taxonomyTermEntity = QTaxonomyTermEntity.taxonomyTermEntity;
         JPAQuery query = new JPAQuery(entityManager);
+
 
         BooleanBuilder builder = new BooleanBuilder();
         if(!StringUtils.isEmpty(name)){
@@ -180,12 +182,39 @@ public class ContentServiceImpl implements IContentService {
         if(begin != null){
             builder.and(contentEntity.beginDate.between(begin,end));
         }
+        if(!StringUtils.isEmpty(contentType)) {
+            builder.and(contentEntity.contentType.name.in(contentType.split(",")));
+        }
 
-        builder.and(contentEntity.contentType.name.in(contentType));
-
+        /*
         if(!StringUtils.isEmpty(category)){
             builder.and(taxonomyTermEntity.taxonomyType.name.eq("CATEGORY").and(taxonomyTermEntity.name.eq(category)));
+        }*/
+
+        BooleanExpression categoryBool = null;
+        BooleanExpression typeBool = null;
+        BooleanExpression tagBool = null;
+        BooleanExpression taxonomieBool = null;
+
+        if(!StringUtils.isEmpty(category)){
+            categoryBool = taxonomyTermEntity.taxonomyType.name.eq("CATEGORY").and(taxonomyTermEntity.name.in(category.split(",")));
         }
+        if(!StringUtils.isEmpty(type)){
+            typeBool = taxonomyTermEntity.taxonomyType.name.eq("TYPE").and(taxonomyTermEntity.name.in(type.split(",")));
+        }
+        if(!StringUtils.isEmpty(tags)){
+            tagBool = taxonomyTermEntity.taxonomyType.name.eq("TAG").and(taxonomyTermEntity.name.in(tags.split(",")));
+        }
+
+        if(categoryBool != null) {
+            taxonomieBool = categoryBool.or(tagBool).or(typeBool);
+        } else if(tagBool != null){
+            taxonomieBool = tagBool.or(typeBool);
+        } else if(typeBool != null){
+            taxonomieBool = typeBool;
+        }
+
+        builder.and(taxonomieBool);
 
         PageableResult<ContentEntity> pageableResult = new PageableResult<>();
 
@@ -196,12 +225,12 @@ public class ContentServiceImpl implements IContentService {
                                     .where(contentEntity.endDate.isNull().or(contentEntity.endDate.before(new Date())))
                                     .where(contentEntity.enabled.eq(true).and(contentDataEntity.enabled.eq(true)).and(builder))
                                     .orderBy(contentEntity.beginDate.desc())
-                                    .limit(limit).offset((pageNumber-1) * offset).list(contentEntity);
+                                    .limit(limit).offset((pageNumber-1) * limit).distinct().list(contentEntity);
 
         pageableResult.setResult(result);
         pageableResult.setTotalResult(query.count());
         pageableResult.setCurrentPage(pageNumber);
-        pageableResult.setTotalPage((long)Math.ceil((pageableResult.getTotalPage() * 1.0 )/ limit));
+        pageableResult.setTotalPage(((long)Math.ceil((pageableResult.getTotalResult() * 1.0 )/ limit)));
         return pageableResult;
     }
 
@@ -284,7 +313,6 @@ public class ContentServiceImpl implements IContentService {
         // delete
         ContentEntity parent = current.getContentParent();
 
-        current.getRoles()
         contentRepository.delete(id);
 
         List<ContentEntity> pages = contentRepository.findByContentParentOrderByPositionAsc(parent);

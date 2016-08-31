@@ -6,6 +6,7 @@ import be.ttime.core.persistence.service.IApplicationService;
 import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedHashTreeMap;
 import com.ibatis.common.jdbc.ScriptRunner;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,8 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -103,6 +106,7 @@ public class CmsUtils {
         cal.setTime(now);
         model.put("attr", CmsUtils.getAttributes(request));
         model.put("get", CmsUtils.getParameters(request));
+        model.put("request", request);
         model.put("csrf", CmsUtils.getCsrfInput(request));
         model.put("session", request.getSession(false));
         model.put("user", CmsUtils.getCurrentUser());
@@ -558,5 +562,46 @@ public class CmsUtils {
             ip = request.getRemoteAddr();
         }
         return ip;
+    }
+
+    public static  Map<String, String> queryStringToMap(String queryString){
+        Map<String, String> queryMap = new LinkedHashTreeMap<>();
+        try {
+            for (String pair : queryString.split("&")) {
+                int eq = pair.indexOf("=");
+                if (eq < 0) {
+                    // key with no value
+                    queryMap.put(URLDecoder.decode(pair, "UTF-8"), "");
+                }
+                else {
+                    // key=value
+                    String key = URLDecoder.decode(pair.substring(0, eq), "UTF-8");
+                    String value = URLDecoder.decode(pair.substring(eq + 1), "UTF-8");
+                    queryMap.put(key, value);
+                }
+            }
+        } catch(UnsupportedEncodingException e) {
+            log.error("URLDecoder", e);
+        }
+        return queryMap;
+    }
+
+    public static String mapToQueryString(Map<String,String> map){
+        StringBuilder sb = new StringBuilder();
+        try {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (sb.length() > 0) {
+                    sb.append('&');
+                }
+                sb.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                if (!StringUtils.isEmpty(entry.getValue())) {
+                    sb.append('=');
+                    sb.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                }
+            }
+        } catch(UnsupportedEncodingException e) {
+            log.error("URLDecoder", e);
+        }
+        return sb.toString();
     }
 }

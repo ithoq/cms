@@ -56,7 +56,7 @@ public interface IContentService {
 
     Collection<String> getRoleForContent(ContentEntity content);
 
-    PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String category, List<String> contentType, Long pageNumber, Long limit, Long offset);
+    PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String type, String category, String tags, String contentType, Long pageNumber, Long limit);
 
     Long getContentDataIdBySlug(String slug, Locale locale);
 

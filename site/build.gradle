@@ -2,6 +2,9 @@ apply plugin: 'java'
 apply plugin: 'spring-boot'
 apply plugin: 'war'
 
+targetCompatibility = '1.8'
+sourceCompatibility = '1.8'
+
 war {
     baseName = 'feantsa'
     version = '0.1'
