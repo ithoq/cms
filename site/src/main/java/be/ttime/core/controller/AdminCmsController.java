@@ -65,13 +65,14 @@ public class AdminCmsController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String home(ModelMap model) {
-        model.put("templates", contentTemplateService.findAllByTypeLike("PAGE%"));
         return VIEWPATH + "home";
     }
 
     @RequestMapping(value = "/modalCreate", method = RequestMethod.GET)
     public String getTree(ModelMap model, Long contentParentId) {
         model.put("templates", contentTemplateService.findAllByTypeLike("PAGE%"));
+        model.put("linkTemplate", contentTemplateService.findByName("Link"));
+        model.put("folderTemplate", contentTemplateService.findByName("Folder"));
         model.put("contentParentId", contentParentId);
 
         if(contentParentId != null) model.put("content", contentService.findContentAdmin(contentParentId));

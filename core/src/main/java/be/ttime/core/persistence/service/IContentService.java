@@ -36,6 +36,8 @@ public interface IContentService {
 
     boolean contentCanBeDeleted(ContentEntity content, String contentDataLocale);
 
+    boolean contentIsVisible(ContentEntity content);
+
     boolean contentIsVisible(ContentEntity content, ContentDataEntity contentDataEntity);
 
     boolean contentIsPrivate(ContentEntity content);

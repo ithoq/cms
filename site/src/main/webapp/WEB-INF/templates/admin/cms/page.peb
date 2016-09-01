@@ -36,7 +36,7 @@
 {% endfor %}
 </ul>
 -->
-{% if beans.contentService.contentIsPrivate(content) == true   %}
+{% if beans.contentService.contentIsPrivate(content) == true %}
     <div class="alert alert-warning"><i class="fa fa-lock" aria-hidden="true"></i>This page is <strong>private</strong></div>
 {% endif %}
 {% if beans.contentService.contentIsVisible(content, contentData) == false   %}

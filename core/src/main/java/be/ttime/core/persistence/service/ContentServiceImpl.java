@@ -180,6 +180,7 @@ public class ContentServiceImpl implements IContentService {
             builder.and(contentDataEntity.title.like("%" + name + "%"));
         }
         if(begin != null){
+            if(end == null) end = new Date();
             builder.and(contentEntity.beginDate.between(begin,end));
         }
         if(!StringUtils.isEmpty(contentType)) {
@@ -419,7 +420,7 @@ public class ContentServiceImpl implements IContentService {
         // reload tree like this : table.ajax.reload()
         for (ContentEntity c : contentEntities) {
             row = Json.createObjectBuilder();
-            row.add("DT_RowData", Json.createObjectBuilder().add("id", c.getId()));
+            row.add("DT_RowData", Json.createObjectBuilder().add("id", c.getId()).add("contentDataId", c.getContentDataList().get(locale).getId()));
             row.add("active", c.isEnabled());
             row.add("title", CmsUtils.emptyStringIfnull(c.getContentDataList().get(locale).getTitle()));
             row.add("category", "TO DO");
@@ -496,6 +497,29 @@ public class ContentServiceImpl implements IContentService {
             parent = applicationContext.getBean(IContentService.class).findContentAdmin(parentId);
             if(parent.isMemberOnly()){
                 return true;
+            }
+            parentId = parent.getContentParent() == null ? 0L : parent.getContentParent().getId();
+        }
+    }
+
+    @Override
+    public boolean contentIsVisible(ContentEntity content) {
+        // force to call cache
+        ContentEntity parent = null;
+
+        if(!content.isEnabled())
+            return false;
+
+        Long parentId = content.getContentParent() == null ? 0L : content.getContentParent().getId();
+        while(true){
+            // no more parent
+            if(parentId == 0) {
+                return true;
+            }
+            parent = applicationContext.getBean(IContentService.class).findContentAdmin(parentId);
+
+            if(!parent.isEnabled()){
+                return false;
             }
             parentId = parent.getContentParent() == null ? 0L : parent.getContentParent().getId();
         }
@@ -610,15 +634,26 @@ public class ContentServiceImpl implements IContentService {
     private String buildJsonTree(List<ContentEntity> pages, StringBuilder sb, boolean first, int level) {
 
         for (ContentEntity p : pages) {
+
+            boolean isFolderPage = false;
+            boolean isInvisible = false;
+            boolean isLocked = false;
+
             if (!first) {
                 sb.append(",");
             }
             first = false;
 
-            sb.append("{ \"title\": \"").append(p.getName()).append("\", \"key\": \"").append(p.getId()).append("\"");
+            sb
+                .append("{ \"title\": \"")
+                .append(p.getName())
+                .append("\", \"key\": \"")
+                .append(p.getId()).append("\"");
+
             List<ContentEntity> childrens = p.getContentChildren();
 
             if (childrens.size() > 0) {
+                isFolderPage= true;
                 if (level <= MAX_EXPANDED_TREE_LEVEL) {
                     sb.append(", \"expanded\":true");
                 }
@@ -630,6 +665,30 @@ public class ContentServiceImpl implements IContentService {
                 buildJsonTree(childrens, sb, true, level + 1);
                 sb.append("]");
             }
+
+            isLocked = this.contentIsPrivate(p);
+            isInvisible = !this.contentIsVisible(p);
+            String icon = "";
+            String name = p.getName();
+            String template = p.getContentTemplate().getName().toLowerCase();
+            boolean isFolder = p.getContentTemplate().getName().toLowerCase().equals("folder");
+            boolean isLink = p.getContentTemplate().getName().toLowerCase().equals("link");
+
+            if(isFolder){ icon= "folder.png";}
+            else if(isLink){ icon= "link.png"; }
+            else if(!isFolderPage && !isLocked && !isInvisible){ icon= "file.png"; }
+            else if(!isFolderPage && !isLocked && isInvisible) { icon= "hidden.png"; }
+            else if(!isFolderPage && isLocked && !isInvisible) { icon= "lock.png"; }
+            else if(!isFolderPage && isLocked && isInvisible) { icon= "lock-invisible.png"; }
+            else if(isFolderPage && !isLocked && !isInvisible){ icon= "folder-page.png"; }
+            else if(isFolderPage && !isLocked && isInvisible) { icon= "folder-invisible.png"; }
+            else if(isFolderPage && isLocked && !isInvisible) { icon= "folder-locked.png"; }
+            else if(isFolderPage && isLocked && isInvisible) { icon= "folder-invisble-locked.png"; }
+
+            sb.append(",\"icon\": \"")
+            .append("/resources/cms/img/tree/" + icon + "\"");
+
+
             sb.append("}");
         }
 

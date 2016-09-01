@@ -81,13 +81,56 @@ var defineGlobal = function (id, ref) {
   define(id, [], function () { return ref; });
 };
 /*jsc
-["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u"]
+["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w"]
 jsc*/
 defineGlobal("1", tinymce.ThemeManager);
 defineGlobal("2", tinymce.util.Delay);
-defineGlobal("b", tinymce.util.Tools);
-defineGlobal("c", tinymce.ui.Factory);
-defineGlobal("d", tinymce.DOM);
+defineGlobal("c", tinymce.util.Tools);
+defineGlobal("d", tinymce.ui.Factory);
+defineGlobal("e", tinymce.DOM);
+/**
+ * Type.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2016 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+define("j", [
+], function () {
+	var isType = function (type) {
+		return function (value) {
+			return typeof value === type;
+		};
+	};
+
+	var isArray = function (value) {
+		return Array.isArray(value);
+	};
+
+	var isNull = function (value) {
+		return value === null;
+	};
+
+	var isObject = function (predicate) {
+		return function (value) {
+			return !isNull(value) && !isArray(value) && predicate(value);
+		};
+	};
+
+	return {
+		isString: isType("string"),
+		isNumber: isType("number"),
+		isBoolean: isType("boolean"),
+		isFunction: isType("function"),
+		isObject: isObject(isType("object")),
+		isNull: isNull,
+		isArray: isArray
+	};
+});
+
 /**
  * Toolbar.js
  *
@@ -98,10 +141,11 @@ defineGlobal("d", tinymce.DOM);
  * Contributing: http://www.tinymce.com/contributing
  */
 
-define("e", [
-	"b",
-	"c"
-], function (Tools, Factory) {
+define("f", [
+	"c",
+	"d",
+	"j"
+], function (Tools, Factory, Type) {
 	var setActiveItem = function (item, name) {
 		return function(state, args) {
 			var nodeName, i = args.parents.length;
@@ -161,6 +205,16 @@ define("e", [
 		};
 	};
 
+	var itemsToArray = function (items) {
+		if (Type.isArray(items)) {
+			return items;
+		} else if (Type.isString(items)) {
+			return items.split(/[ ,]/);
+		}
+
+		return [];
+	};
+
 	var create = function (editor, name, items) {
 		var toolbarItems = [], buttonGroup;
 
@@ -168,7 +222,7 @@ define("e", [
 			return;
 		}
 
-		Tools.each(items.split(/[ ,]/), function(item) {
+		Tools.each(itemsToArray(items), function(item) {
 			var itemName;
 
 			if (item == '|') {
@@ -179,12 +233,12 @@ define("e", [
 					toolbarItems.push(item);
 					buttonGroup = null;
 				} else {
-					if (!buttonGroup) {
-						buttonGroup = {type: 'buttongroup', items: []};
-						toolbarItems.push(buttonGroup);
-					}
-
 					if (editor.buttons[item]) {
+						if (!buttonGroup) {
+							buttonGroup = {type: 'buttongroup', items: []};
+							toolbarItems.push(buttonGroup);
+						}
+
 						itemName = item;
 						item = editor.buttons[itemName];
 
@@ -215,7 +269,7 @@ define("e", [
 	};
 });
 
-defineGlobal("m", tinymce.util.Promise);
+defineGlobal("o", tinymce.util.Promise);
 /**
  * Uuid.js
  *
@@ -230,7 +284,7 @@ defineGlobal("m", tinymce.util.Promise);
  * Generates unique ids this is the same as in core but since
  * it's not exposed as a global we can't access it.
  */
-define("n", [
+define("p", [
 ], function() {
 	var count = 0;
 
@@ -261,7 +315,7 @@ define("n", [
  * Contributing: http://www.tinymce.com/contributing
  */
 
-define("s", [
+define("u", [
 ], function () {
 	/**
 	 * Returns a range bookmark. This will convert indexed bookmarks into temporary span elements with
@@ -382,8 +436,8 @@ define("s", [
 
 
 
-defineGlobal("t", tinymce.dom.TreeWalker);
-defineGlobal("u", tinymce.dom.RangeUtils);
+defineGlobal("v", tinymce.dom.TreeWalker);
+defineGlobal("w", tinymce.dom.RangeUtils);
 /**
  * Unlink.js
  *
@@ -400,11 +454,11 @@ defineGlobal("u", tinymce.dom.RangeUtils);
  * instead of:
  *  a[b<a href="x">c]d</a>e -> a[bc]<a href="x">d</a>e
  */
-define("o", [
-	"s",
-	"b",
-	"t",
-	"u"
+define("q", [
+	"u",
+	"c",
+	"v",
+	"w"
 ], function (Bookmark, Tools, TreeWalker, RangeUtils) {
 	var getSelectedElements = function (rootElm, startNode, endNode) {
 		var walker, node, elms = [];
@@ -479,9 +533,9 @@ define("o", [
  * Contributing: http://www.tinymce.com/contributing
  */
 
-define("k", [
-	"n",
-	"o"
+define("m", [
+	"p",
+	"q"
 ], function (Uuid, Unlink) {
 	var createTableHtml = function (cols, rows) {
 		var x, y, html;
@@ -586,7 +640,7 @@ define("k", [
  * Contributing: http://www.tinymce.com/contributing
  */
 
-define("p", [
+define("r", [
 ], function () {
 	var isDomainLike = function (href) {
 		return /^www\.|\.(com|org|edu|gov|uk|net|ca|de|jp|fr|au|us|ru|ch|it|nl|se|no|es|mil)$/i.test(href.trim());
@@ -614,12 +668,12 @@ define("p", [
  * Contributing: http://www.tinymce.com/contributing
  */
 
-define("f", [
-	"b",
+define("g", [
 	"c",
+	"d",
+	"o",
 	"m",
-	"k",
-	"p"
+	"r"
 ], function (Tools, Factory, Promise, Actions, UrlType) {
 	var focusFirstTextBox = function (form) {
 		form.find('textbox').eq(0).each(function (ctrl) {
@@ -707,7 +761,7 @@ define("f", [
 	};
 });
 
-defineGlobal("q", tinymce.geom.Rect);
+defineGlobal("s", tinymce.geom.Rect);
 /**
  * Convert.js
  *
@@ -718,7 +772,7 @@ defineGlobal("q", tinymce.geom.Rect);
  * Contributing: http://www.tinymce.com/contributing
  */
 
-define("r", [
+define("t", [
 ], function () {
 	var fromClientRect = function (clientRect) {
 		return {
@@ -756,10 +810,10 @@ define("r", [
  * Contributing: http://www.tinymce.com/contributing
  */
 
-define("g", [
-	"d",
-	"q",
-	"r"
+define("h", [
+	"e",
+	"s",
+	"t"
 ], function (DOM, Rect, Convert) {
 	var toAbsolute = function (rect) {
 		var vp = DOM.getViewPort();
@@ -818,9 +872,9 @@ define("g", [
  * Contributing: http://www.tinymce.com/contributing
  */
 
-define("h", [
-	"q",
-	"r"
+define("i", [
+	"s",
+	"t"
 ], function (Rect, Convert) {
 	var result = function (rect, position) {
 		return {
@@ -897,10 +951,88 @@ define("h", [
 		return panelRect;
 	};
 
+	var defaultHandler = function (rects) {
+		return rects.panelRect;
+	};
+
 	return {
 		calcInsert: calcInsert,
 		calc: calc,
-		userConstrain: userConstrain
+		userConstrain: userConstrain,
+		defaultHandler: defaultHandler
+	};
+});
+
+/**
+ * EditorSettings.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2016 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+define("a", [
+	"j"
+], function (Type) {
+	var validDefaultOrDie = function (value, predicate) {
+		if (predicate(value)) {
+			return true;
+		}
+
+		throw new Error('Default value doesn\'t match requested type.');
+	};
+
+	var getByTypeOr = function (predicate) {
+		return function (editor, name, defaultValue) {
+			var settings = editor.settings;
+			validDefaultOrDie(defaultValue, predicate);
+			return name in settings && predicate(settings[name]) ? settings[name] : defaultValue;
+		};
+	};
+
+	var splitNoEmpty = function (str, delim) {
+		return str.split(delim).filter(function (item) {
+			return item.length > 0;
+		});
+	};
+
+	var itemsToArray = function (value, defaultValue) {
+		var stringToItemsArray = function (value) {
+			return typeof value === 'string' ? splitNoEmpty(value, /[ ,]/) : value;
+		};
+
+		var boolToItemsArray = function (value, defaultValue) {
+			return value === false ? [ ] : defaultValue;
+		};
+
+		if (Type.isArray(value)) {
+			return value;
+		} else if (Type.isString(value)) {
+			return stringToItemsArray(value);
+		} else if (Type.isBoolean(value)) {
+			return boolToItemsArray(value, defaultValue);
+		}
+
+		return defaultValue;
+	};
+
+	var getToolbarItemsOr = function (predicate) {
+		return function (editor, name, defaultValue) {
+			var value = name in editor.settings ? editor.settings[name] : defaultValue;
+			validDefaultOrDie(defaultValue, predicate);
+			return itemsToArray(value, defaultValue);
+		};
+	};
+
+	return {
+		// TODO: Add Option based getString, getBool if merged with core
+		getStringOr: getByTypeOr(Type.isString),
+		getBoolOr: getByTypeOr(Type.isBoolean),
+		getNumberOr: getByTypeOr(Type.isNumber),
+		getHandlerOr: getByTypeOr(Type.isFunction),
+		getToolbarItemsOr: getToolbarItemsOr(Type.isArray)
 	};
 });
 
@@ -915,17 +1047,18 @@ define("h", [
  */
 
 define("3", [
-	"b",
 	"c",
 	"d",
 	"e",
 	"f",
 	"g",
-	"h"
-], function (Tools, Factory, DOM, Toolbar, Forms, Measure, Layout) {
+	"h",
+	"i",
+	"a"
+], function (Tools, Factory, DOM, Toolbar, Forms, Measure, Layout, EditorSettings) {
 	return function () {
-		var DEFAULT_TEXT_SELECTION_ITEMS = 'bold italic | quicklink h2 h3 blockquote';
-		var DEFAULT_INSERT_TOOLBAR_ITEMS = 'quickimage quicktable';
+		var DEFAULT_TEXT_SELECTION_ITEMS = ['bold', 'italic', '|', 'quicklink', 'h2', 'h3', 'blockquote'];
+		var DEFAULT_INSERT_TOOLBAR_ITEMS = ['quickimage', 'quicktable'];
 		var panel, currentRect;
 
 		var createToolbars = function (editor, toolbars) {
@@ -934,23 +1067,22 @@ define("3", [
 			});
 		};
 
-		var getTextSelectionToolbarItems = function (settings) {
-			var value = settings.selection_toolbar;
-			return value ? value : DEFAULT_TEXT_SELECTION_ITEMS;
+		var getTextSelectionToolbarItems = function (editor) {
+			return EditorSettings.getToolbarItemsOr(editor, 'selection_toolbar', DEFAULT_TEXT_SELECTION_ITEMS);
 		};
 
-		var getInsertToolbarItems = function (settings) {
-			var value = settings.insert_toolbar;
-			return value ? value : DEFAULT_INSERT_TOOLBAR_ITEMS;
+		var getInsertToolbarItems = function (editor) {
+			return EditorSettings.getToolbarItemsOr(editor, 'insert_toolbar', DEFAULT_INSERT_TOOLBAR_ITEMS);
+		};
+
+		var hasToolbarItems = function (toolbar) {
+			return toolbar.items().length > 0;
 		};
 
 		var create = function (editor, toolbars) {
-			var items, settings = editor.settings;
-
-			items = createToolbars(editor, toolbars);
-			items = items.concat([
-				Toolbar.create(editor, 'text', getTextSelectionToolbarItems(settings)),
-				Toolbar.create(editor, 'insert', getInsertToolbarItems(settings)),
+			var items = createToolbars(editor, toolbars).concat([
+				Toolbar.create(editor, 'text', getTextSelectionToolbarItems(editor)),
+				Toolbar.create(editor, 'insert', getInsertToolbarItems(editor)),
 				Forms.createQuickLinkForm(editor, hide)
 			]);
 
@@ -966,7 +1098,7 @@ define("3", [
 				autofix: true,
 				fixed: true,
 				border: 1,
-				items: items,
+				items: Tools.grep(items, hasToolbarItems),
 				oncancel: function() {
 					editor.focus();
 				}
@@ -1016,7 +1148,10 @@ define("3", [
 			if (toolbars.length > 0) {
 				toolbars[0].show();
 				panel.reflow();
+				return true;
 			}
+
+			return false;
 		};
 
 		var showPanelAt = function (panel, id, editor, targetRect) {
@@ -1024,9 +1159,13 @@ define("3", [
 
 			showPanel(panel);
 			panel.items().hide();
-			showToolbar(panel, id);
 
-			userConstainHandler = editor.settings.inline_toolbar_position_handler;
+			if (!showToolbar(panel, id)) {
+				hide(panel);
+				return;
+			}
+
+			userConstainHandler = EditorSettings.getHandlerOr(editor, 'inline_toolbar_position_handler', Layout.defaultHandler);
 			contentAreaRect = Measure.getContentAreaRect(editor);
 			panelRect = DOM.getRect(panel.getEl());
 
@@ -1040,7 +1179,6 @@ define("3", [
 				panelRect = result.rect;
 				currentRect = targetRect;
 				movePanelTo(panel, Layout.userConstrain(userConstainHandler, targetRect, contentAreaRect, panelRect));
-
 				togglePositionClass(panel, result.position);
 			} else {
 				hide(panel);
@@ -1054,7 +1192,11 @@ define("3", [
 		var showForm = function (editor, id) {
 			if (panel) {
 				panel.items().hide();
-				showToolbar(panel, id);
+
+				if (!showToolbar(panel, id)) {
+					hide(panel);
+					return;
+				}
 
 				var contentAreaRect, panelRect, result, userConstainHandler;
 
@@ -1062,7 +1204,7 @@ define("3", [
 				panel.items().hide();
 				showToolbar(panel, id);
 
-				userConstainHandler = editor.settings.inline_toolbar_position_handler;
+				userConstainHandler = EditorSettings.getHandlerOr(editor, 'inline_toolbar_position_handler', Layout.defaultHandler);
 				contentAreaRect = Measure.getContentAreaRect(editor);
 				panelRect = DOM.getRect(panel.getEl());
 
@@ -1071,7 +1213,6 @@ define("3", [
 				if (result) {
 					panelRect = result.rect;
 					movePanelTo(panel, Layout.userConstrain(userConstainHandler, currentRect, contentAreaRect, panelRect));
-
 					togglePositionClass(panel, result.position);
 				}
 			}
@@ -1133,8 +1274,8 @@ define("3", [
  * Contributing: http://www.tinymce.com/contributing
  */
 
-define("i", [
-	"m"
+define("k", [
+	"o"
 ], function (Promise) {
 	var blobToBase64 = function (blob) {
 		return new Promise(function(resolve) {
@@ -1165,8 +1306,8 @@ define("i", [
  * Contributing: http://www.tinymce.com/contributing
  */
 
-define("j", [
-	"m"
+define("l", [
+	"o"
 ], function (Promise) {
 	var pickFile = function () {
 		return new Promise(function (resolve) {
@@ -1208,9 +1349,9 @@ define("j", [
 
 define("4", [
 	"3",
-	"i",
-	"j",
-	"k"
+	"k",
+	"l",
+	"m"
 ], function (Panel, Conversions, Picker, Actions) {
 	var addHeaderButtons = function (editor) {
 		var formatBlock = function (name) {
@@ -1277,7 +1418,7 @@ define("4", [
 	};
 });
 
-defineGlobal("l", tinymce.EditorManager);
+defineGlobal("n", tinymce.EditorManager);
 /**
  * SkinLoader.js
  *
@@ -1289,8 +1430,8 @@ defineGlobal("l", tinymce.EditorManager);
  */
 
 define("5", [
-	"l",
-	"d"
+	"n",
+	"e"
 ], function (EditorManager, DOM) {
 	var fireSkinLoaded = function (editor, callback) {
 		var done = function () {
@@ -1305,9 +1446,18 @@ define("5", [
 		}
 	};
 
-	var load = function (editor, skin, callback) {
-		var baseUrl = EditorManager.baseURL;
-		var skinUrl = baseUrl + '/skins/' + skin;
+	var urlFromName = function (name) {
+		var prefix = EditorManager.baseURL + '/skins/';
+		return name ? prefix + name : prefix + 'lightgray';
+	};
+
+	var toAbsoluteUrl = function (editor, url) {
+		return editor.documentBaseURI.toAbsolute(url);
+	};
+
+	var load = function (editor, callback) {
+		var settings = editor.settings;
+		var skinUrl = settings.skin_url ? toAbsoluteUrl(editor, settings.skin_url) : urlFromName(settings.skin);
 
 		var done = function () {
 			fireSkinLoaded(editor, callback);
@@ -1376,7 +1526,7 @@ define("8", [
 
 define("6", [
 	"8",
-	"g"
+	"h"
 ], function (Matcher, Measure) {
 	// textSelection :: String -> (Editor -> Matcher.result | Null)
 	var textSelection = function (id) {
@@ -1432,7 +1582,7 @@ define("6", [
 
 define("7", [
 	"8",
-	"g"
+	"h"
 ], function (Matcher, Measure) {
 	// element :: Element, [PredicateId] -> (Editor -> Matcher.result | Null)
 	var element = function (element, predicateIds) {
@@ -1501,8 +1651,8 @@ define("9", [
  * Contributing: http://www.tinymce.com/contributing
  */
 
-define("a", [
-	"b"
+define("b", [
+	"c"
 ], function (Tools) {
 	var create = function (id, predicate) {
 		return {
@@ -1544,8 +1694,9 @@ define("0", [
 	"7",
 	"8",
 	"9",
-	"a"
-], function(ThemeManager, Delay, Panel, Buttons, SkinLoader, SelectionMatcher, ElementMatcher, Matcher, Arr, PredicateId) {
+	"a",
+	"b"
+], function(ThemeManager, Delay, Panel, Buttons, SkinLoader, SelectionMatcher, ElementMatcher, Matcher, Arr, EditorSettings, PredicateId) {
 	var getSelectionElements = function (editor) {
 		var node = editor.selection.getNode();
 		var elms = editor.dom.getParents(node);
@@ -1644,9 +1795,7 @@ define("0", [
 	};
 
 	var renderInlineUI = function (editor, panel) {
-		var skinName = editor.settings.skin || 'lightgray';
-
-		SkinLoader.load(editor, skinName, function () {
+		SkinLoader.load(editor, function () {
 			bindContextualToolbarsEvents(editor, panel);
 			overrideLinkShortcut(editor, panel);
 		});

@@ -46,14 +46,15 @@
                         <select id="selectTemplate" name="templateId" data-init-plugin="select2" class="full-width">
                             <optgroup label="Templates">
                             {% for t in templates %}
-                                <option value="{{ t.id }}">{{ t.name }}</option>
+                                {% if t.name != "Folder" and t.name != "Link" %}
+                                    <option value="{{ t.id }}">{{ t.name }}</option>
+                                {% endif %}
                             {% endfor %}
                             </optgroup>
                             <optgroup label="Others">
-                                <option value="LINK">Link</option>
-                                <option value="NONE">None</option>
+                                <option value="{{ linkTemplate.id }}">{{ linkTemplate.name }}</option>
+                                <option value="{{ folderTemplate.id }}">{{ folderTemplate.name }}</option>
                             </optgroup>
-
                         </select>
                     </div>
                 </form>

@@ -64,10 +64,22 @@
     $.Cms.initTabSwitchYesNo({
       tableElement: '#webContentTable',
       onConfirmation: function ($tr) {
-        //deleteblock($tr.data('id'));
-        console.log('delete');
+        deleteblock($tr.data('contentDataId'));
+        //console.log('delete');
       },
     });
+
+    function deleteblock(id) {
+      console.log("Data id = " + id);
+      $.Cms.ajax({
+        type: 'DELETE',
+        url: '/admin/webContent/delete/' + id,
+        successMessage: 'User deleted successfully',
+        onSuccess: function (data) {
+          $table.DataTable().ajax.reload();
+        },
+      });
+  }
 
   });
 })(jQuery);

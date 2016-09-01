@@ -1080,9 +1080,26 @@ module.config.mapper = def(
       };
     };
 
+    var grouping = function (splitter, groupIndex, base, idMapper) {
+      return function (id) {
+        var groups = id.split('.');
+
+        return [
+          groups[groupIndex],
+          base,
+          idMapper(id)
+        ].join('/');
+      }
+    };
+
+    var repo = function (base, idMapper) {
+      return grouping('.', 1, base, idMapper);
+    };
+
     return {
       flat: flat,
       hierarchical: hierarchical,
+      repo: repo,
       constant: constant
     };
   }
@@ -1499,6 +1516,7 @@ module.bootstrap.install = def(
       source("bolt", "tinymce/inlite/core/ElementMatcher", ".", mapper.constant("theme")),
       source("bolt", "tinymce/inlite/core/Matcher", ".", mapper.constant("theme")),
       source("bolt", "tinymce/inlite/alien/Arr", ".", mapper.constant("theme")),
+      source("bolt", "tinymce/inlite/alien/EditorSettings", ".", mapper.constant("theme")),
       source("bolt", "tinymce/inlite/core/PredicateId", ".", mapper.constant("theme")),
       source("bolt", "global!tinymce.util.Tools", ".", mapper.constant("theme")),
       source("bolt", "global!tinymce.ui.Factory", ".", mapper.constant("theme")),
@@ -1507,6 +1525,7 @@ module.bootstrap.install = def(
       source("bolt", "tinymce/inlite/ui/Forms", ".", mapper.constant("theme")),
       source("bolt", "tinymce/inlite/core/Measure", ".", mapper.constant("theme")),
       source("bolt", "tinymce/inlite/core/Layout", ".", mapper.constant("theme")),
+      source("bolt", "tinymce/inlite/alien/Type", ".", mapper.constant("theme")),
       source("bolt", "tinymce/inlite/file/Conversions", ".", mapper.constant("theme")),
       source("bolt", "tinymce/inlite/file/Picker", ".", mapper.constant("theme")),
       source("bolt", "tinymce/inlite/core/Actions", ".", mapper.constant("theme")),

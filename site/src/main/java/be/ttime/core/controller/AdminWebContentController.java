@@ -317,4 +317,34 @@ public class AdminWebContentController {
         return computedSlug.toString();
     }
 
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public String delete(@PathVariable("id") Long id, HttpServletResponse response) {
+
+        String result = "";
+        if (id == 0) {
+            response.setStatus(500);
+            return "L'id de la page n'existe pas";
+        }
+
+        try {
+            ContentDataEntity contentData = contentService.findContentData(id);
+            ContentEntity content = contentService.findContentAdmin(contentData.getContent().getId());
+            int size = content.getContentDataList().size();
+
+            contentService.deleteContentData(id);
+
+            if(size ==1){
+                // delete the content
+                contentService.deleteContent(content.getId());
+                result = "empty";
+            }
+        } catch (Exception e) {
+            response.setStatus(500);
+            return "An error occurred, please try later";
+        }
+
+        return result;
+    }
+
 }

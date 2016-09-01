@@ -122,26 +122,14 @@ public class AdminContentTemplateController {
                 response.setStatus(500);
                 throw new ForbiddenException("Invalid content id : " + contentForm.getId());
             }
-            if(StringUtils.isEmpty(blockPosted.getName())){
-                response.setStatus(500);
-                throw new ForbiddenException("Block name can't be null");
+            if(!StringUtils.isEmpty(blockPosted.getName())){
+                block = blockService.find(blockPosted.getName());
             }
 
-            block = blockService.find(blockPosted.getName());
+
         } else {
             content = new ContentTemplateEntity();
         }
-        if(block == null){
-            block = new BlockEntity();
-            block.setName(blockPosted.getName());
-            block.setBlockType(new BlockTypeEntity(CmsUtils.BLOCK_TYPE_CONTENT_TEMPLATE));
-        }
-
-        block.setDynamic(true);
-        block.setEnabled(true);
-
-        block.setDisplayName(blockPosted.getDisplayName());
-        block.setContent(blockPosted.getContent());
 
         content.setContentType(new ContentTypeEntity(CmsUtils.CONTENT_TYPE_PAGE));
 
@@ -188,8 +176,22 @@ public class AdminContentTemplateController {
             contentfieldset.add(cf);
         }
 
-        block = blockService.save(block);
-        content.setBlock(block);
+        if(block == null && !StringUtils.isEmpty(blockPosted.getName())){
+            block = new BlockEntity();
+            block.setName(blockPosted.getName());
+            block.setBlockType(new BlockTypeEntity(CmsUtils.BLOCK_TYPE_CONTENT_TEMPLATE));
+        }
+
+        if(block != null) {
+            block.setDynamic(true);
+            block.setEnabled(true);
+
+            block.setDisplayName(blockPosted.getDisplayName());
+            block.setContent(blockPosted.getContent());
+            block = blockService.save(block);
+            content.setBlock(block);
+        }
+
         contentfieldset = fieldsetService.saveContentTemplateFieldset(contentfieldset);
         content.setContentTemplateFieldset(contentfieldset);
         content = contentTemplateService.save(content);

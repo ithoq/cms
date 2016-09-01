@@ -683,6 +683,13 @@ String.prototype.capitalizeFirstLetter = function () {
     return tinymce.init(settings);
   };
   
+  //Bootstrap blocks all focus events on contents within the dialog. Add this script to your page and it will allow users to click inside the editor.
+  $(document).on('focusin', function(e) {
+    if ($(e.target).closest(".mce-window").length) {
+      e.stopImmediatePropagation();
+    }
+  });
+  
   Cms.prototype.initAceEditor = function (params) {
   
     var defaults = {

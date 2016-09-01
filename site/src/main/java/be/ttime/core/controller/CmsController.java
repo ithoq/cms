@@ -66,6 +66,11 @@ public class CmsController {
             throw new ResourceNotFoundException();
         }
 
+        if(content.isMemberOnly()){
+            if(!CmsUtils.hasRole("ROLE_MEMBER")) {
+                response.sendRedirect("/login");
+            }
+        }
         /*
         Example
         if(!CmsUtils.hasRoles(contentService.getRoleForContent(content))){
