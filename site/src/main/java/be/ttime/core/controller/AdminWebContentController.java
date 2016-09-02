@@ -72,28 +72,56 @@ public class AdminWebContentController {
     @RequestMapping(value = "/edit/{contentType}/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("contentType") String contentType, @PathVariable("id") Long id, String langCode, ModelMap model) throws Exception{
 
-        if(!contentService.contentTypeExist(contentType)){
+        if(!contentService.contentTypeExist(contentType) || id == null){
             throw new ResourceNotFoundException();
         }
         ContentEntity content = null;
         ContentDataEntity contentData = null;
         ContentTemplateEntity template = null;
-        if(id != null && id != 0){
+        ApplicationLanguageEntity appLanguage = null;
+
+        if(id != 0){
             content =  contentService.findContentAdmin(id);
             if(content == null){
                 throw new ResourceNotFoundException();
             }
+        } else {
+            content = new ContentEntity();
+            content.setContentType(new ContentTypeEntity(contentType));
+            ContentTemplateEntity c = contentTemplateService.findByName("Webcontent");
         }
-        if(langCode == null){
-            langCode = applicationService.getDefaultSiteLang();
+        if(!StringUtils.isEmpty(langCode)){
+            appLanguage = applicationService.getSiteApplicationLanguageMap().get(langCode);
+            if (appLanguage == null) {
+                log.debug("incorrect language : " + langCode + " for the content with id : " + content.getId());
+                appLanguage = applicationService.getDefaultSiteApplicationLanguage();
+            }
+        } else{
+            appLanguage = applicationService.getDefaultSiteApplicationLanguage();
+
+            contentData = content.getContentDataList().get(appLanguage.getLocale());
+            if (contentData == null && content.getContentDataList().size() > 0) {
+                Map.Entry<String, ContentDataEntity> entry = content.getContentDataList().entrySet().iterator().next();
+                contentData = entry.getValue();
+                appLanguage = applicationService.getSiteApplicationLanguageMap().get(entry.getKey());
+            }
+
         }
         List<String> tags = new ArrayList<>();
         List<String> categories = new ArrayList<>();
         Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 
-        if(content != null){
-            contentData = content.getContentDataList().get(langCode);
-
+        if(content.getId() != 0){
+            contentData = content.getContentDataList().get(appLanguage.getLocale());
+            if(contentData == null){
+                contentData = new ContentDataEntity();
+                contentData.setContent(content);
+                contentData.setLanguage(applicationService.getSiteApplicationLanguageMap().get(langCode));
+                content.addContentData(contentData);
+                contentService.saveContent(content);
+                content = contentService.findContentAdmin(content.getId());
+                contentData = content.getContentDataList().get(appLanguage.getLocale());
+            }
             HashMap<String, Object> data = null;
             if (!StringUtils.isEmpty(contentData.getData())) {
                 data = CmsUtils.parseData(contentData.getData());
@@ -130,7 +158,13 @@ public class AdminWebContentController {
 
         }
         else{
+            // ADD
+            contentData = new ContentDataEntity();
+            contentData.setContent(content);
+            contentData.setLanguage(applicationService.getSiteApplicationLanguageMap().get(langCode));
+            content.addContentData(contentData);
             template = contentTemplateService.findByName("Webcontent");
+            content.setContentTemplate(template);
         }
 
         model.put("template", template);
@@ -138,6 +172,7 @@ public class AdminWebContentController {
         model.put("initialCategories", gson.toJson(categories));
         model.put("content", content);
         model.put("contentData", contentData);
+        model.put("contentLocale", langCode);
         model.put("contentType", contentType);
         model.put("tags", taxonomyService.findByTypeJson("TAG"));
         model.put("categories", taxonomyService.findByTypeJson("CATEGORY"));
@@ -153,7 +188,6 @@ public class AdminWebContentController {
         ContentDataEntity contentData = null;
 
         // if errors
-
         if (result.hasErrors()) {
 
 
@@ -163,9 +197,8 @@ public class AdminWebContentController {
             Date end =  CmsUtils.parseDate(form.getDateEnd(),form.getDateTimeEnd());
             Slugify slugify = new Slugify();
 
-
             // get content
-            if(form.getContentId() == null){
+            if(form.getContentId() == 0){
                 content = new ContentEntity();
                 content.setContentType(new ContentTypeEntity(form.getContentType()));
                 ContentTemplateEntity c = contentTemplateService.findByName("Webcontent");
@@ -180,10 +213,10 @@ public class AdminWebContentController {
 
             if(form.getSelectLanguage().equals(applicationService.getDefaultSiteLang()) ||
                     StringUtils.isEmpty(content.getName()) ){
-                content.setName(form.getTitle());
+                content.setName(form.getName());
             }
             // get content data
-            if(form.getContentId() == null || form.getContentDataId() == null){
+            if(form.getContentDataId() == 0){
                 contentData = new ContentDataEntity();
                 contentData.setContent(content);
                 contentData.setLanguage(applicationService.getApplicationLanguagesMap().get(form.getSelectLanguage()));
@@ -194,8 +227,12 @@ public class AdminWebContentController {
 
             content.setBeginDate(begin);
             content.setEndDate(end);
+            content.setMenuItem(false);
+            content.setEnabled(form.isEnabled());
+            content.setMemberOnly(form.isMemberOnly());
 
-            contentData.setTitle(form.getTitle());
+            contentData.setEnabled(form.isContentDataEnabled());
+            contentData.setTitle(form.getPageDataTitle());
             contentData.setIntro(form.getIntro());
             contentData.setSlug(slugify.slugify(form.getSlug()));
             contentData.setComputedSlug(getComputedSlug(form.getContentType(), form.getSlug(), begin, contentData.getLanguage().getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));
@@ -285,6 +322,11 @@ public class AdminWebContentController {
         StringBuilder computedSlug = new StringBuilder();
         DateTime dateTime = new DateTime(dateCreated);
 
+        if(StringUtils.isEmpty(slug)) throw new IllegalArgumentException("slug is null");
+
+        if(!slug.startsWith("/")){
+            slug = "/" + slug;
+        }
         if(forceLangInUrl){
             computedSlug.append("/").append(locale);
         }
@@ -311,40 +353,8 @@ public class AdminWebContentController {
                     .append(CmsUtils.twoDigit(month))
                     .append("/")
                     .append(CmsUtils.twoDigit(day))
-                    .append("/")
                     .append(slug);
 
         return computedSlug.toString();
     }
-
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    @ResponseBody
-    public String delete(@PathVariable("id") Long id, HttpServletResponse response) {
-
-        String result = "";
-        if (id == 0) {
-            response.setStatus(500);
-            return "L'id de la page n'existe pas";
-        }
-
-        try {
-            ContentDataEntity contentData = contentService.findContentData(id);
-            ContentEntity content = contentService.findContentAdmin(contentData.getContent().getId());
-            int size = content.getContentDataList().size();
-
-            contentService.deleteContentData(id);
-
-            if(size ==1){
-                // delete the content
-                contentService.deleteContent(content.getId());
-                result = "empty";
-            }
-        } catch (Exception e) {
-            response.setStatus(500);
-            return "An error occurred, please try later";
-        }
-
-        return result;
-    }
-
 }

@@ -75,7 +75,7 @@ public class AdminFileController {
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN_FILE')")
-    public String editFile(long id, String name, String description, HttpServletResponse response) throws Exception {
+    public String editFile(long id, String name, String description, String group, HttpServletResponse response) throws Exception {
 
         if (id == 0 || StringUtils.isEmpty(name)) {
             response.setStatus(500);
@@ -85,6 +85,7 @@ public class AdminFileController {
         FileEntity file = fileService.findOne(id);
         file.setName(name);
         file.setDescription(description);
+        file.setFileGroup(group);
         fileService.save(file);
         return "OK";
 

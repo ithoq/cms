@@ -30,9 +30,10 @@ $(function () {
     $.Cms.initFileUpload(options);
   });
 
+
   var renderSelectLanguage = function (data) {
     var $state = $(
-      '<span><img src="/resources/admin/img/flags/' + data.id.toLowerCase() + '.png" class="img-flag" /> ' + data.text + '</span>'
+      '<span><img src="/resources/cms/img/flags/' + data.id.toLowerCase() + '.png" class="img-flag" /> ' + data.text + '</span>'
     );
     return $state;
   };
@@ -82,21 +83,112 @@ $(function () {
   $('#categories').tagEditor({
     placeholder: 'Enter categories ...',
     initialTags: initialCategories,
-    autocomplete: { source: categories, minLength: 2, delay: 0 },
+    forceLowercase: false,
+    autocomplete: { source: categories, minLength: 1, delay: 0 },
+    beforeTagSave: function(field, editor, tags, tag, val){
+      if(!match(initialCategories, val)) return false;
+    },
   });
 
   $('#tags').tagEditor({
     placeholder: 'Enter tags ...',
     initialTags: initialTags,
-    autocomplete: { source: tags, minLength: 2, delay: 0 },
+    forceLowercase: false,
+    autocomplete: { source: tags, minLength: 1, delay: 0 },
+    beforeTagSave: function(field, editor, tags, tag, val){
+      if(!match(initialTags, val)) return false;
+    },
   });
+
+  function match(array, needle){
+    var match = false;
+    for(var i = 0; i < array.length; i++) {
+      if(initialCategories[i].toLowerCase() === needle) {
+        match = true;
+      }
+    }
+    return match;
+  }
 
   $.Cms.initTinyMce({ selector: '#content' });
 
   // Save a page
-  $('#saveBtn').on('click', function () {
-    tinyMCE.triggerSave();
-    console.log('submit');
-    $pageForm.submit();
+  $('#savePageBtn').on('click', function () {
+    if($('#contentForm').parsley()){
+     tinyMCE.triggerSave();
+      $pageForm.submit();
+    }
   });
+
+  $("#titleInput").focusout(function(){
+    if($("#pageSlug").val().trim().length === 0){
+      $("#pageSlug").val($.Cms.slugify($(this).val()));
+    }
+  });
+
+  $("#pageName").focusout(function(){
+    if($("#titleInput").val().trim().length === 0){
+      $("#titleInput").val($(this).val());
+    }
+    if($("#pageSlug").val().trim().length === 0){
+      $("#pageSlug").val($.Cms.slugify($(this).val()));
+    }
+  });
+
+  $("#pageSlug").change(function(){
+    $(this).val($.Cms.slugify($(this).val()));
+  });
+
+  $pageForm.on('click', '.creatlang', function () {
+    var re = /langCode=[a-z]{2}(_[A-Z]{2})?&?/; 
+    var lang = $(this).data('id');
+    var contain = (window.location.href.indexOf('?') > -1)
+    var result = window.location.href.replace(/langCode=[a-z]{2}(_[A-Z]{2})?&?/, "");
+    if(!contain){
+      result = "?" + result;
+    }
+    document.location.href= result + "&langCode=" + lang;
+  });
+
+  /*
+  $pageForm.on('click', '#preview', function () {
+    var $form = $(this).closest('form').clone();
+    console.log($form);
+    var $csrf = $('[name=_csrf]').first().clone();
+    $form.append($csrf);
+    $form.attr('target', '_blank');
+    $form.attr('action', '/admin/webContent/preview');
+
+    $form.submit();
+  });*/
+
+  // change language
+  $pageForm.on('change', '#selectLanguage', function () {
+    var re = /langCode=[a-z]{2}(_[A-Z]{2})?&?/; 
+    var lang = this.value;
+    var contain = (window.location.href.indexOf('?') > -1)
+    var result = window.location.href.replace(/langCode=[a-z]{2}(_[A-Z]{2})?&?/, "");
+    if(!contain){
+      result = "?" + result;
+    }
+    document.location.href= result + "&langCode=" + lang;
+  });
+
+  // Delete a page
+  $('#btnDeletePage').click(function () {
+    var id = $('#contentDataId').val();
+    var contentId = $('#contentId').val();
+    var url = (id) ? '/admin/cms/page/delete/' + id : '/admin/cms/page/deleteContent/' + contentId;
+    var params = {
+      url: url,
+      type: 'DELETE',
+      onSuccess: function (data) {
+        var str = window.location.href;
+        var n = str.lastIndexOf("/");
+        document.location.href=str.substring(0, n).replace("edit/", "");
+      },
+    };
+    $.Cms.ajax(params);
+  });
+
 });

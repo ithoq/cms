@@ -65,6 +65,7 @@ public class FileServiceImpl implements IFileService {
             row.add("DT_RowData", Json.createObjectBuilder().add("id", file.getId()));
             row.add("name", CmsUtils.emptyStringIfnull(file.getName()));
             row.add("description", CmsUtils.emptyStringIfnull(file.getDescription()));
+            row.add("group", CmsUtils.emptyStringIfnull(file.getFileGroup()));
             row.add("active", file.isEnabled());
             row.add("type", CmsUtils.emptyStringIfnull(FileExtensionUtils.getFileImage(file.getExtension())));
             row.add("size", CmsUtils.emptyStringIfnull(FileUtils.byteCountToDisplaySize(file.getSize())));

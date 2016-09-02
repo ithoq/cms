@@ -191,7 +191,7 @@ public class AdminCmsController {
 
         try {
             ContentEntity content = contentService.findContentAdmin(urlId);
-            if(content == null || content.getContentDataList().size() > 0){
+            if(content == null ){
                 response.setStatus(500);
                 return "An error occurred, please try later";
             }

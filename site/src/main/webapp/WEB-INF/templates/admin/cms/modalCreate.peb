@@ -19,7 +19,7 @@
                         <label for="selectPageLang">{{ message('language') }}</label>
                         <select id="selectPageLang" name="pageLangId" data-init-plugin="select2" class="full-width">
                             {% for lang in beans.applicationService.getSiteLanguages() %}
-                                <option title="ceci est un test" value="{{ lang }}" {% if lang.toString() == defaultSiteLang %}selected{% endif %} {% if haveParent and content.contentDataList.containsKey(lang.toString()) == false %}disabled{% endif %}>{{ beans.viewHelper.getLanguageName(lang.toString()) }}</option>
+                                <option  value="{{ lang }}" {% if lang.toString() == defaultSiteLang %}selected{% endif %} {% if haveParent and content.contentDataList.containsKey(lang.toString()) == false %}disabled{% endif %}>{{ beans.viewHelper.getLanguageName(lang.toString()) }}</option>
                             {% endfor %}
                         </select>
                     </div>

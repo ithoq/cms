@@ -5,210 +5,44 @@
 {% block head %}
 {% endblock head %}
 
+{% block modal %}
+    {{ csrf | raw }}
+    <div id="modalSlideLeft" tabindex="-1" role="dialog" aria-hidden="true"
+         class="modal fade slide-right slide-right-center">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content-wrapper">
+                <div class="modal-content">
+                    <button type="button" data-dismiss="modal" aria-hidden="true" class="close"><i
+                                class="pg-close fs-14"></i></button>
+                    <div class="container-xs-height full-height">
+                        <div class="row-xs-height">
+                            <div class="modal-body col-xs-height col-middle text-center">
+                                <h5 class="text-primary"><span
+                                            class="semi-bold">{{ message('warning') }}</span> {{ message('admin.pageDeleteMessage') }}
+                                </h5><br>
+                                <button id="btnDeletePage" type="button" data-dismiss="modal"
+                                        class="btn btn-success btn-block">{{ message('delete') }}
+                                </button>
+                                <button type="button" data-dismiss="modal"
+                                        class="btn btn-danger btn-block">{{ message('cancel') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock modal %}
+
+
 {% block content %}
 
-    <form role="form" id="contentForm" action="/admin/webContent/edit" enctype="multipart/form-data" method="post">
+    <form role="form" id="contentForm" action="/admin/webContent/edit" enctype="multipart/form-data" method="post" parsley-validate>
         {{ csrf | raw }}
-        <input id="contentId" type="hidden" name="contentId" value="{{ content.id }}"/>
-        <input id="contentDataId" type="hidden" name="contentDataId" value="{{ contentData.id }}"/>
-
         <input id="contentType" type="hidden" name="contentType" value="{{ contentType }}"/>
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="operation-box">
-                    <button type="button" data-toggle="modal" data-target="#modalSlideLeft" class="btn btn-default btn-delete"><i class="fa fa-trash-o"></i></button>
-                    <button id="saveBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i></button>
-                </div>
-                <span class="thumbnail-wrapper d100 circular inline m-t-5">{{  message('message') }}</span>
-                <div class="panel-page-title">
-                    <div class="page-title light-input">News Management</div>
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="lang-selector">
-                <div class="select-country">
-                    <select id="selectLanguage" name="selectLanguage">
-                        {% for lang in beans.applicationService.getSiteLanguages() %}
-                            <option id="{{ lang.getLanguage() }}" value="{{ lang.getLanguage() }}"
-                                    {% if lang.toString() == contentLocale %}selected{% endif %}>{{ lang.getDisplayLanguage() }}</option>
-                        {% endfor %}
-                    </select>
-                    <div class="checkbox check-success">
-                        <input id="contentActive" name="contentActive" type="checkbox" checked="checked">
-                        <label for="contentActive">{{ message('active') }}</label>
-                    </div>
-                </div>
-            </div>
-            <ul class="nav nav-tabs nav-tabs-linetriangle bg-white">
-                <li class="active"><a data-toggle="tab" href="#tabGeneral">{{ message('general') }}</a></li>
-                <li><a data-toggle="tab" href="#tabFile" id="tabFileBtn">{{ message('file') }}</a></li>
-                <li><a data-toggle="tab" href="#tabGallery" id="tabGalleryBtn">{{ message('gallery') }}</a></li>
-                <li><a data-toggle="tab" href="#tabDev">Dev</a></li>
-                <li><a data-toggle="tab" href="#tabSeo">SEO</a></li>
-            </ul>
-            <div class="tab-content bg-white">
 
-                <div id="tabGeneral" class="tab-pane active">
-
-                    <div class="form-group date-and-time-group">
-                        <label>Date begin</label>
-                        <div>
-                            <div class="input-group date">
-                                <input type="text" class="form-control" value="{{ data.date_begin_date }}" id="dateBegin" name="dateBegin" data-plugin="datepicker">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="input-group bootstrap-timepicker">
-                                <input type="text" value="{{ data.date_begin_time }}" id="dateTimeBegin" name="dateTimeBegin" class="form-control timepicker">
-                                <span class="input-group-addon"><i class="pg-clock"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group date-and-time-group">
-                        <label>Date end</label>
-                        <div>
-                            <div class="input-group date">
-                                <input type="text" class="form-control" value="{{ data.date_end_date }}" id="dateEnd" name="dateEnd"  data-plugin="datepicker">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="input-group bootstrap-timepicker">
-                                <input type="text" id="dateTimeEnd" value="{{ data.date_end_time }}" name="dateTimeEnd" class="form-control timepicker">
-                                <span class="input-group-addon"><i class="pg-clock"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Theme</label>
-                        <input type="text" id="categories" name="categories" class="form-control" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Tags</label>
-                        <input type="text" id="tags" name="tags" class="form-control" value="">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label">Preview</label>
-                        <input type="hidden" name="previousFile" value="{{ data.image_preview }}">
-                        {% if data.image_preview is not empty %}
-                            <h5>{{ data.image_preview }}</h5>
-                            <img src="/public/{{ data.image_preview }}" alt="image" class="w150">
-                        {% endif %}
-                        <input id="input-preview" name="thumbnail" type="file" class="">
-                    </div>
-
-                    <div class="form-group">
-                        <label>{{ message('title') }}</label>
-                        <input type="text" class="form-control" name="title" value="{{ contentData.title }}">
-                    </div>
-                    <div class="form-group">
-                        <label>Slug </label><i data-placement="right" title="" data-toggle="tooltip" type="button"
-                                               data-original-title="Label unique, pour identifier un élément. Exemple : http://www.exemple.com/blog/le-titre-de-mon-article où la chaîne de caractères le-titre-de-mon-article est le slug"
-                                               class="fa fa-info-circle"></i>
-                        <input required type="text" id="pageSlug" name="slug" value="{{ contentData.slug }}" class="form-control">
-                    </div>
-                    <div class="form-group m-t-10">
-                        <label>intro</label>
-                        <textarea rows="4" class="form-control" id="intro" name="intro">{{ contentData.intro }}</textarea>
-                    </div>
-
-                    {{ beans.viewHelper.renderField(template, pageData) | raw }}
-
-                </div>
-                <div id="tabSeo" class="tab-pane">
-                    <div class="form-group form-group-default required">
-                        <label>H1</label>
-                        <input type="text" class="form-control" name="seoH1" value="{{ data.seo_title }}">
-                    </div>
-                    <div class="form-group form-group-default">
-                        <label>Tag </label>
-                        <input type="text" class="form-control" name="seoTag" value="{{ data.seo_tags }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="comment">{{ message('description') }}</label>
-                        <textarea id="comment" rows="5" name="seoDescription"
-                                  class="form-control">{{ data.seo_description }}</textarea>
-                    </div>
-                </div>
-                <div id="tabDev" class="tab-pane">
-                    <div class="form-group">
-                        <label for="comment">Include top:</label>
-                        <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
-                                  class="form-control">{{ data.dev_top }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="comment">Include bottom:</label>
-                        <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
-                                  class="form-control">{{ data.dev_bot }}</textarea>
-                    </div>
-                </div>
-                <div id="tabFile" class="tab-pane">
-                    <div class="upload-container" data-type="DOWNLOAD" data-id="{{ contentData.id }}" data-table="tableFiles">
-                        <input style="display:none" class="fileupload" type="file" name="files[]"
-                               data-url="/admin/file/upload" multiple>
-                        <div class="dropzone">
-                            <div class="dropzone-container">
-                                <div class="dropzone-center"><i class="fa fa-download"></i>
-                                    <div class="span">{{ message('admin.dropFilesHere') }}</div>
-                                    <span class="btn btn-browse">BROWSE</span>
-                                </div>
-                            </div>
-                        </div>
-                        <ul id="list-file"></ul>
-                    </div>
-                    <input id="search-table-files" type="text" placeholder="Search" class="form-control pull-right">
-                    <table id="tableFiles" class="table table-small-pad">
-                        <thead>
-                        <tr role="row">
-                            <th style="width:230px">{{ message('name') }}</th>
-                            <th style="min-width:230px" class="no-sort">{{ message('description') }}</th>
-                            <th style="width:50px" class="center">{{ message('active') }}</th>
-                            <th style="width:50px" class="no-sort center">{{ message('type') }}</th>
-                            <th style="width:50px" class="center">{{ message('size') }}</th>
-                            <th style="width:100px" class="no-sort center">{{ message('operation') }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div id="tabGallery" class="tab-pane">
-                    <div class="upload-container" data-type="GALLERY" data-id="{{ contentData.id }}" data-table="tableGallery">
-                        <input style="display:none" class="fileupload" type="file" name="files[]"
-                               data-url="/admin/file/upload" multiple>
-                        <div class="dropzone">
-                            <div class="dropzone-container">
-                                <div class="dropzone-center"><i class="fa fa-download"></i>
-                                    <div class="span">{{ message('admin.dropFilesHere') }}</div>
-                                    <span class="btn btn-browse">BROWSE</span>
-                                </div>
-                            </div>
-                        </div>
-                        <ul id="list-file"></ul>
-                    </div>
-                    <input id="search-table-gallery" type="text" placeholder="Search" class="form-control pull-right">
-                    <table id="tableGallery" class="table table-small-pad">
-                        <thead>
-                        <tr role="row">
-                            <th style="width:230px">{{ message('name') }}</th>
-                            <th style="min-width:230px" class="no-sort">{{ message('description') }}</th>
-                            <th style="width:50px" class="center">{{ message('active') }}</th>
-                            <th style="width:50px" class="no-sort center">{{ message('type') }}</th>
-                            <th style="width:50px" class="center">{{ message('size') }}</th>
-                            <th style="width:100px" class="no-sort center">{{ message('operation') }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </form>
+        {% include 'admin/cms/page'  with {"isWebContent": true}  %}
 
 {% endblock content %}
 

@@ -41,6 +41,24 @@ $pageForm.on('click', '#savePageBtn', function () {
   });
 });
 
+$pageForm.on('focusout', '#titleInput', function () {
+  if($("#pageSlug").val().trim().length === 0){
+    $("#pageSlug").val($.Cms.slugify($(this).val()));
+  }
+});
+$pageForm.on('focusout', '#pageName', function () {
+  if($("#titleInput").val().trim().length === 0){
+      $("#titleInput").val($(this).val());
+  }
+  if($("#pageSlug").val().trim().length === 0){
+    $("#pageSlug").val($.Cms.slugify($(this).val()));
+  }
+});
+
+$pageForm.on('change', '#pageSlug', function () {
+    $(this).val($.Cms.slugify($(this).val()));
+});
+
 $pageForm.on('click', '.creatlang', function () {
   reloadPage($('#contentId').val(), $(this).data('id'));
 });

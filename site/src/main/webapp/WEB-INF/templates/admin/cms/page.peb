@@ -9,11 +9,13 @@
             <input type="text" required name="name" id="pageName" value="{{ content.name }}"
                    class="page-title light-input">
             <div class="title-page-sub">
+                {%  if isWebContent is null %}
                 <div class="checkbox check-success checkbox-circle">
                     <input id="checkbox_menuItem" name="menuItem" type="checkbox"
                            {% if content.menuItem %}checked{% endif %} />
                     <label for="checkbox_menuItem">{{ message('menu') }} <i data-placement="bottom" title="" data-toggle="tooltip" type="button" data-original-title="Affiche la page dans le menu" class="fa fa-info-circle"></i></label>
                 </div>
+                {% endif %}
                 <div class="checkbox check-success checkbox-circle">
                     <input id="checkbox_enabled" name="enabled" type="checkbox"
                            {% if content.enabled %}checked{% endif %} />
@@ -36,6 +38,7 @@
 {% endfor %}
 </ul>
 -->
+
 {% if beans.contentService.contentIsPrivate(content) == true %}
     <div class="alert alert-warning"><i class="fa fa-lock" aria-hidden="true"></i>This page is <strong>private</strong></div>
 {% endif %}
@@ -88,6 +91,7 @@
             {% if contentData != null %}
                 {% if content.contentDataList.size == 1 %}
                     <div class="solo-lang"><span><img src="/resources/cms/img/flags/{{ contentLocale }}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(contentLocale) }} ({{ contentLocale }})</span></div>
+                    <input type="hidden" name="selectLanguage" value="{{ contentLocale }}" >
                 {% else %}
                     <select id="selectLanguage" name="selectLanguage">
                         {% for entry in content.contentDataList %}
@@ -96,7 +100,7 @@
                     </select>
                 {% endif %}
             {%  endif %}
-            {% if beans.applicationService.getSiteLanguages.size != content.contentDataList.size %}
+            {% if content.id != 0 and beans.applicationService.getSiteLanguages.size != content.contentDataList.size %}
                 <div class="dropdown add-lang">
                     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
                         <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
@@ -123,10 +127,12 @@
                 {%  if contentData != null %}
                 <button id="savePageBtn" type="button" class="btn btn-default btn-add"><i class="fa fa-save"></i></button>
 
-                    {% if content.enabled and contentData.enabled %}
+                    {% if content.enabled and contentData.enabled and contentData.computedSlug is not empty  %}
                         <a href="{{ contentData.computedSlug }}" target="_blank" class="btn btn-default"><i class="fa fa-link"></i></a>
                     {% endif %}
-                    <button type="button" id="preview" class="btn btn-default"><i class="fa fa-eye"></i></button>
+                    {% if isContentWeb is null %}
+                        <button type="button" id="preview" class="btn btn-default"><i class="fa fa-eye"></i></button>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -140,43 +146,53 @@
         {% if content.contentTemplate.useGallery %}
         <li><a data-toggle="tab" href="#tabGallery" id="tabGalleryBtn">{{ message('gallery') }}</a></li>
         {% endif %}
+        {% if hasRole("ROLE_ADMIN_SEO") %}
         <li><a data-toggle="tab" href="#tabSeo">SEO</a></li>
+        {% endif %}
     </ul>
     <div class="tab-content bg-white">
 
         <div id="tabGeneral" class="tab-pane active">
             <div class="form-group form-group-default required">
-                <label>{{ message('admin.pageTitle') }} ({{ message('menu') }})</label>
-                <input type="text" class="form-control" name="pageDataTitle" value="{{ contentData.title }}">
+                <label>{{ message('admin.pageTitle') }} {%  if isWebContent is null %}({{ message('menu') }}){% endif%}</label>
+                <input type="text" class="form-control" name="pageDataTitle" value="{{ contentData.title }}" id="titleInput" required>
             </div>
-            <div class="form-group form-group-default required">
-                <label>H1</label>
-                <input type="text" class="form-control" name="seoH1" value="{{ data.seo_title }}">
-            </div>
-            {{ beans.viewHelper.renderField(template, data) | raw }}
-        </div>
-        <div id="tabSeo" class="tab-pane">
-
+            {%  if isWebContent is null %}
+                <div class="form-group form-group-default required">
+                    <label>H1</label>
+                    <input type="text" class="form-control" name="seoH1" value="{{ data.seo_title }}">
+                </div>
+            {% endif %}
             <div class="form-group form-group-default required">
                 <label>Slug </label><i data-placement="right" title="" data-toggle="tooltip" type="button"
                                        data-original-title="Label unique, pour identifier un élément. Exemple : http://www.exemple.com/blog/le-titre-de-mon-article où la chaîne de caractères le-titre-de-mon-article est le slug"
                                        class="fa fa-info-circle"></i>
-                <input required type="text" id="pageSlug" name="slug" value="{{ contentData.slug }}" class="form-control">
+                <input {% if hasRole("ROLE_ADMIN_SEO") %}type="text"{%  else %}type="hidden"{%  endif %} id="pageSlug" name="slug" value="{{ contentData.slug }}" class="form-control" required>
             </div>
+            {%  if isWebContent != null %}
+                {% include 'admin/webContent/pageCustom' %}
+            {%  endif %}
 
-            <div class="form-group form-group-default">
-                <label>Tag </label>
-                <input type="text" class="form-control" name="seoTag" value="{{ data.seo_tags }}">
-            </div>
-            <div class="form-group">
-                <label for="comment">{{ message('description') }}</label>
-                <textarea id="comment" rows="5" name="seoDescription"
-                          class="form-control">{{ data.seo_description }}</textarea>
-            </div>
+            {{ beans.viewHelper.renderField(template, data) | raw }}
+
         </div>
+        {% if hasRole("ROLE_ADMIN_SEO") %}
+            <div id="tabSeo" class="tab-pane">
+
+                <div class="form-group form-group-default">
+                    <label>Tag </label>
+                    <input type="text" class="form-control" name="seoTag" value="{{ data.seo_tags }}">
+                </div>
+                <div class="form-group">
+                    <label for="comment">{{ message('description') }}</label>
+                    <textarea id="comment" rows="5" name="seoDescription"
+                              class="form-control">{{ data.seo_description }}</textarea>
+                </div>
+            </div>
+        {% endif %}
         {% if content.contentTemplate.useFiles %}
         <div id="tabFile" class="tab-pane">
-            <div class="upload-container" data-type="DOWNLOAD" data-id="{{ contentData.id }}" data-table="tableFiles">
+            <div class="upload-container" data-type="D" data-id="{{ contentData.id }}" data-table="tableFiles">
                 <input style="display:none" class="fileupload" type="file" name="files[]"
                        data-url="/admin/file/upload" multiple>
                 <div class="dropzone">
@@ -195,6 +211,7 @@
                 <tr role="row">
                     <th style="width:230px">{{ message('name') }}</th>
                     <th style="min-width:230px" class="no-sort">{{ message('description') }}</th>
+                    <th style="min-width:100px" class="no-sort">{{ message('group') }}</th>
                     <th style="width:50px" class="center">{{ message('active') }}</th>
                     <th style="width:50px" class="no-sort center">{{ message('type') }}</th>
                     <th style="width:50px" class="center">{{ message('size') }}</th>
@@ -208,7 +225,7 @@
         {% endif %}
         {% if content.contentTemplate.useFiles %}
         <div id="tabGallery" class="tab-pane">
-            <div class="upload-container" data-type="GALLERY" data-id="{{ contentData.id }}" data-table="tableGallery">
+            <div class="upload-container" data-type="G" data-id="{{ contentData.id }}" data-table="tableGallery">
                 <input style="display:none" class="fileupload" type="file" name="files[]"
                        data-url="/admin/file/upload" multiple>
                 <div class="dropzone">
@@ -225,8 +242,9 @@
             <table id="tableGallery" class="table table-small-pad">
                 <thead>
                 <tr role="row">
-                    <th style="width:230px">{{ message('name') }}</th>
+                    <th style="width:230px" class="fileName">{{ message('name') }}</th>
                     <th style="min-width:230px" class="no-sort">{{ message('description') }}</th>
+                    <th style="min-width:100px" class="fileGroup" class="no-sort">{{ message('group') }}</th>
                     <th style="width:50px" class="center">{{ message('active') }}</th>
                     <th style="width:50px" class="no-sort center">{{ message('type') }}</th>
                     <th style="width:50px" class="center">{{ message('size') }}</th>

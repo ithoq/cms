@@ -45,7 +45,7 @@ function initDataTable(options) {
       { // name
         aTargets: [0],
         mRender: function (data, type, full) {
-          return '<input required type="text" class="light-input" value="' + data + '"/>';
+          return '<input required type="text" class="light-input fileName" value="' + data + '"/>';
         },
       },
       { // description
@@ -54,12 +54,18 @@ function initDataTable(options) {
           return '<textarea class="light-input">' + data + '</textarea>';
         },
       },
-      { // Active
+      { // group
         aTargets: [2],
+        mRender: function (data, type, full) {
+          return '<input required type="text" class="light-input fileGroup" value="' + data + '"/>';
+        },
+      },
+      { // Active
+        aTargets: [3],
         className: 'center',
       },
       { // Type
-        aTargets: [3],
+        aTargets: [4],
         className: 'center',
         mRender: function (data, type, full) {
           return '<img class="imgType" src="/resources/cms/img/files-icons/' +
@@ -67,17 +73,18 @@ function initDataTable(options) {
         },
       },
       { // Size
-        aTargets: [4],
+        aTargets: [5],
         className: 'center',
       },
       { // Operation
-        aTargets: [5],
+        aTargets: [6],
         className: 'center',
       },
     ],
     columns: [
       { data: 'name', },
       { data: 'description', },
+      { data: 'group', },
       { data: 'active', },
       { data: 'type', },
       { data: 'size', },
@@ -103,7 +110,8 @@ function initSwitchYesNo(options) {
 
     onSave: function ($tr) {
       var id = $tr.data('id');
-      var $name = $tr.find('input').first();
+      var $name = $tr.find('.fileName').first();
+      var $group = $tr.find('.fileGroup').first();
       var $desc = $tr.find('textarea').first();
       $.Cms.trimAllInputs($tr);
       $name.prop('required', true);
@@ -119,6 +127,7 @@ function initSwitchYesNo(options) {
         id: id,
         name: $name.val(),
         description: $desc.val(),
+        group: $group.val(),
       };
       $.Cms.ajax({
         url: '/admin/file/edit',

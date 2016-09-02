@@ -21,7 +21,10 @@ public class AdminWebContentForm {
     private String tags;
     private String previousFile;
     private MultipartFile thumbnail;
-    private String title;
+    @NotEmpty
+    private String name;
+    @NotEmpty
+    private String pageDataTitle;
     private String intro;
     @NotEmpty
     private String slug;
@@ -32,5 +35,7 @@ public class AdminWebContentForm {
     private String seoTag;
     private String seoDescription;
 
-    private boolean contentActive;
+    private boolean enabled;
+    private boolean memberOnly;
+    private boolean contentDataEnabled;
 }

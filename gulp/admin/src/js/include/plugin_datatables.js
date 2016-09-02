@@ -27,7 +27,7 @@ Cms.prototype.dataTableRenderBoolean = function (data, type, full) {
 Cms.prototype.initDataTableWithSearch = function (params) {
   var defaults = {
     hasSearchInput: true,
-    iDisplayLength: 10,
+    pageLength: 15,
     tableElement: '#data-table',
     searchElement: '#search-table',
   };
@@ -51,7 +51,7 @@ Cms.prototype.initDataTableWithSearch = function (params) {
     autoWidth: false,
     destroy: true,
     scrollCollapse: true,
-    iDisplayLength: options.iDisplayLength, //rows to display on a single page (pagination)
+    pageLength: options.pageLength, //rows to display on a single page (pagination)
     columnDefs: columnDefs,
   };
 

@@ -323,6 +323,9 @@ public class CmsUtils {
         if(StringUtils.isEmpty(contentData.getSlug())){
             throw new IllegalArgumentException("Slug should not be empty!");
         }
+        if(!contentData.getSlug().startsWith("/")){
+            contentData.setSlug("/" + contentData.getSlug());
+        }
         String slug = StringUtils.trimToEmpty(computeSlugWithSlashes(content, contentData, locale, forceLang)).replaceAll("/+", "/");
         return (slug.length() > 1) ? slug.replaceAll("/+$", "") : slug;
     }

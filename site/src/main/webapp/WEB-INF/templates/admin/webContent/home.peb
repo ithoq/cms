@@ -20,7 +20,20 @@
                                 <input id="web-content-table" type="text" placeholder="{{ message('search') }}" class="form-control pull-right">
                             </div>
                             <div class="col-md-3" style="text-align:right">
-                                <a href="/admin/webContent/edit/{{ contentType }}/0" class="btn btn-default">+</a>
+
+                                <div class="dropdown add-lang">
+                                   <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                                   <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                                   <ul class="dropdown-menu drop-create-lang" style="width:150px">
+                                      <div class="title">add new language</div>
+                                        {% for lang in beans.applicationService.getSiteLanguages() %}
+                                            <li class="creatlang" data-id="{{ lang }}" value="{{ lang }}">
+                                                <div class="solo-lang"><a href="/admin/webContent/edit/{{ contentType }}/0?langCode={{lang}}"><span><img src="/resources/cms/img/flags/{{lang}}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(lang.toString()) }} ({{ lang }})</span></a></div>
+                                            </li>
+                                        {% endfor %}
+                                   </ul>
+                                </div>
+  
                             </div>
                         </div>
                         <table id="webContentTable" class="table table-hover">
@@ -28,7 +41,9 @@
                             <tr>
                                 <th style="width: 80px" class="center">{{ message('active') }}</th>
                                 <th>{{ message('title') }}</th>
-                                <th style="width: 150px" class="center">{{ message('category') }}</th>
+                                <th style="width: 150px" class="center">{{ message('language') }}</th>
+                                <th style="width: 150px" class="center">{{ message('date begin') }}</th>
+                                <th style="width: 150px" class="center">{{ message('date end') }}</th>
                                 <th style="width: 80px" class="center no-sort">{{ message('edit') }}</th>
                                 <th style="width:100px" class="center no-sort">{{ message('delete') }}</th>
                             </tr>

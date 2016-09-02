@@ -404,9 +404,8 @@ INSERT INTO `content_template` (`id`, `active`, `deletable`,`includeTop`, `inclu
 
 INSERT INTO `content_template_fieldset` (`id`, `array`, `name`, `namespace`, `position`, `page_template_id`, `fieldset_id`) VALUES
 (1, 0, 'editor', '', 0, 1, 1),
-(2, 0, 'intro', '', 0, 2, 4),
-(3, 0, 'editor', '', 1, 2, 1),
-(4, 0, 'url', '', 0, 4, 3);
+(2, 0, 'editor', '', 1, 2, 1),
+(3, 0, 'url', '', 0, 4, 3);
 
 INSERT INTO `content` (`id`, `contentGroup`, `data`, `beginDate`, `created`, `enabled`, `endDate`, `menuItem`, `updated`, `name`, `pos`, `contentParent_id`, `contentTemplate_id`, `contentType_name`) VALUES
 (1, NULL, NULL, NULL, '2016-05-26', b'1', NULL, 1, '2016-05-27', 'Accueil', 0, NULL, 1, 'PAGE'),
@@ -424,9 +423,8 @@ INSERT INTO `input_definition` (`id`, `name`, `sort`, `type`, `validation`, `fie
 
 INSERT INTO `input_data` (`id`, `defaultValue`, `hint`, `title`, `validation`, `contentTemplateFieldsetEntity_id`, `fieldset_id`, `inputDefinition_id`) VALUES
 (1, '', '', 'main editor', '', 1, 1, 1),
-(2, '', '', 'intro', '', 2, 4, 4),
-(3, '', '', 'editor', '', 3, 1, 1),
-(4, '', '', 'URL', '', 4, 3, 3);
+(2, '', '', 'editor', '', 3, 1, 1),
+(3, '', '', 'URL', '', 4, 3, 3);
 
 INSERT INTO `taxonomy_type` (`name`) VALUES
 ('TAG'),

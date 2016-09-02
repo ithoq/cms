@@ -129,6 +129,7 @@ public class AdminContentTemplateController {
 
         } else {
             content = new ContentTemplateEntity();
+            content.setDeletable(true);
         }
 
         content.setContentType(new ContentTypeEntity(CmsUtils.CONTENT_TYPE_PAGE));
@@ -140,7 +141,7 @@ public class AdminContentTemplateController {
         content.setDescription(contentForm.getDescription());
         content.setIncludeTop(contentForm.getIncludeTop());
         content.setIncludeBottom(contentForm.getIncludeBottom());
-        content.setDeletable(true);
+
         // save
         if(content.getId() == 0) {
            content = contentTemplateService.save(content);

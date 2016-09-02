@@ -25,6 +25,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 //import javax.persistence.EntityManagerFactory;
@@ -42,6 +43,9 @@ public class ContentServiceImpl implements IContentService {
     private IContentTypeRepository contentTypeRepository;
     @Autowired
     private ApplicationContext applicationContext;
+    private IContentService contentService;
+    @Autowired
+    private IApplicationService applicationService;
 //    @Autowired
 //    private EntityManagerFactory entityManagerFactory;
 
@@ -407,27 +411,58 @@ public class ContentServiceImpl implements IContentService {
     @Override
     public String getContentJsonByTypeAndLocale(String type, String locale) throws Exception {
         List<ContentEntity> contentEntities = null;
-        if(type == null || locale == null){
-            throw new Exception("type and locale must not be null");
+        if(type == null ){
+            throw new Exception("type  must not be null");
         }
         //if(locale.equals("all")){
         //    contentEntities =  contentRepository.findAllByContentTypeName(type);
         //} else{
+        if(StringUtils.isEmpty(locale)){
+            contentEntities = contentRepository.findAllByContentTypeName(type);
+        } else {
             contentEntities = contentRepository.findAllByContentTypeNameAndContentDataListLanguageLocale(type, locale);
+        }
+
         //}
         JsonArrayBuilder data = Json.createArrayBuilder();
         JsonObjectBuilder row;
         // reload tree like this : table.ajax.reload()
+        SimpleDateFormat sdf = new SimpleDateFormat(CmsUtils.DATETIME_FORMAT);
         for (ContentEntity c : contentEntities) {
+            ContentDataEntity contentData = null;
+            if(StringUtils.isEmpty(locale)){
+                contentData = c.getContentDataList().get(applicationService.getDefaultSiteLang());
+                if(contentData == null) {
+                    Map.Entry<String, ContentDataEntity> entry = c.getContentDataList().entrySet().iterator().next();
+                    contentData = entry.getValue();
+                }
+            } else {
+                contentData = c.getContentDataList().get(locale);
+            }
+            String s = "";
+            for ( String key : c.getContentDataList().keySet() ) {
+                s += key + ", ";
+            }
+            if(s.length()>2) s= s.substring(0, s.length()-2);
+            String title = contentData.getTitle();
+            if(StringUtils.isEmpty(title)) title = c.getName();
             row = Json.createObjectBuilder();
-            row.add("DT_RowData", Json.createObjectBuilder().add("id", c.getId()).add("contentDataId", c.getContentDataList().get(locale).getId()));
+            row.add("DT_RowData", Json.createObjectBuilder().add("id", c.getId())
+                                                            .add("contentDataId", contentData.getId())
+                                                            .add("lang", contentData.getLanguage().getLocale()));
             row.add("active", c.isEnabled());
-            row.add("title", CmsUtils.emptyStringIfnull(c.getContentDataList().get(locale).getTitle()));
-            row.add("category", "TO DO");
+            row.add("title", CmsUtils.emptyStringIfnull(title));
+            row.add("lang", s);
+            row.add("dateBegin", formatDateTime(sdf, c.getBeginDate()));
+            row.add("dateEnd", formatDateTime(sdf, c.getEndDate()));
             data.add(row);
         }
 
         return Json.createObjectBuilder().add("data", data).build().toString();
+    }
+
+    private static String formatDateTime(SimpleDateFormat dt, Date date) {
+        return (date == null ? "/" : CmsUtils.emptyStringIfnull(dt.format(date)));
     }
 
     @Override
@@ -455,6 +490,7 @@ public class ContentServiceImpl implements IContentService {
 
     @Override
     public boolean contentCanBeDeleted(ContentEntity content, String contentDataLocale) {
+        if(content == null || content.getId() == 0) return false;
         ContentEntity temp;
         JPAQuery query;
         QContentEntity contentEntity = QContentEntity.contentEntity;
@@ -485,6 +521,8 @@ public class ContentServiceImpl implements IContentService {
         // force to call cache
         ContentEntity parent = null;
 
+        if(content == null || content.getId() == 0) return false;
+
         if(content.isMemberOnly())
             return true;
 
@@ -507,7 +545,7 @@ public class ContentServiceImpl implements IContentService {
         // force to call cache
         ContentEntity parent = null;
 
-        if(!content.isEnabled())
+        if(content == null || content.getId() == 0 || !content.isEnabled())
             return false;
 
         Long parentId = content.getContentParent() == null ? 0L : content.getContentParent().getId();
@@ -531,7 +569,7 @@ public class ContentServiceImpl implements IContentService {
         ContentEntity parent = null;
         ContentDataEntity data = null;
 
-        if(!content.isEnabled() || contentData == null || !contentData.isEnabled())
+        if(content == null || content.getId() == 0 || !content.isEnabled() || contentData == null || !contentData.isEnabled())
             return false;
 
         Long parentId = content.getContentParent() == null ? 0L : content.getContentParent().getId();
@@ -559,6 +597,8 @@ public class ContentServiceImpl implements IContentService {
     public Collection<String> getRoleForContent(ContentEntity content) {
         JPAQuery query = new JPAQuery(entityManager);
         Collection<String> result = new HashSet<>();
+
+        if(content == null || content.getId() == 0) return null;
 
         Set<RoleEntity> roles = content.getRoles();
         for (RoleEntity role : roles) {
