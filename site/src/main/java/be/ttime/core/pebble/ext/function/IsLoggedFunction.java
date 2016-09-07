@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by fabricecipolla on 20/07/16.
  */
-public class isLoggedFunction implements Function {
+public class IsLoggedFunction implements Function {
 
 
     @Override

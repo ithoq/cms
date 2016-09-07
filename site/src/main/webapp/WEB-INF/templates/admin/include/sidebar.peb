@@ -14,21 +14,16 @@
             {% endif %}
             {% if hasRole("ROLE_ADMIN_WEBCONTENT") %}
                 <li>
-                    <a href="javascript:;"><span class="title">Web content</span><span class=" arrow"></span></a>
+                    <a href="javascript:;"><span class="title">{{ message('admin.resource.management') | capitalize }}</span><span class=" arrow"></span></a>
                     <span class="icon-thumbnail"><i class="pg-form"></i></span>
                     <ul class="sub-menu">
-                        <li class="">
-                            <a href="/admin/webContent/ARTICLE">Articles</a>
-                            <span class="icon-thumbnail">A</span>
-                        </li>
-                        <li class="">
-                            <a href="/admin/webContent/NEWS">News</a>
-                            <span class="icon-thumbnail">N</span>
-                        </li>
-                        <li class="">
-                            <a href="/admin/webContent/EVENT">Events</a>
-                            <span class="icon-thumbnail">E</span>
-                        </li>
+                        {% for c in beans.taxonomyService.findByType("TYPE") %}
+                            <li class="">
+                                <a href="/admin/webContent?type={{ c.name }}">{{ c.name }}</a>
+                                <span class="icon-thumbnail">{{ c.name | slice(0,1) | upper }}</span>
+                            </li>
+                        {% endfor %}
+
                     </ul>
                 </li>
             {% endif %}

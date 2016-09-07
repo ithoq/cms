@@ -2,13 +2,13 @@
     <label>Date begin</label>
     <div>
         <div class="input-group date">
-            <input type="text" class="form-control" value="{{ data.date_begin_date }}" id="dateBegin" name="dateBegin" data-plugin="datepicker">
+            <input type="text" class="form-control" value="{{ dataDate.date_begin_date }}" id="dateBegin" name="dateBegin" data-plugin="datepicker">
             <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
         </div>
     </div>
     <div>
         <div class="input-group bootstrap-timepicker">
-            <input type="text" value="{{ data.date_begin_time }}" id="dateTimeBegin" name="dateTimeBegin" class="form-control timepicker">
+            <input type="text" value="{{ dataDate.date_begin_time }}" id="dateTimeBegin" name="dateTimeBegin" class="form-control timepicker">
             <span class="input-group-addon"><i class="pg-clock"></i></span>
         </div>
     </div>
@@ -17,20 +17,29 @@
     <label>Date end</label>
     <div>
         <div class="input-group date">
-            <input type="text" class="form-control" value="{{ data.date_end_date }}" id="dateEnd" name="dateEnd"  data-plugin="datepicker">
+            <input type="text" class="form-control" value="{{ dataDate.date_end_date }}" id="dateEnd" name="dateEnd"  data-plugin="datepicker">
             <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
         </div>
     </div>
     <div>
         <div class="input-group bootstrap-timepicker">
-            <input type="text" id="dateTimeEnd" value="{{ data.date_end_time }}" name="dateTimeEnd" class="form-control timepicker">
+            <input type="text" id="dateTimeEnd" value="{{ dataDate.date_end_time }}" name="dateTimeEnd" class="form-control timepicker">
             <span class="input-group-addon"><i class="pg-clock"></i></span>
         </div>
     </div>
 </div>
+<div class="form-group form-group-default form-group-default-select2">
+    <label for="types">{{ message('type') }}</label>
+    <select id="types" name="type" data-init-plugin="select2"
+            data-disable-search="true" class="full-width">
+        {% for c in types %}
+            <option value="{{ c.name }}" {%  if type == c.name %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+    </select>
+</div>
 <div class="form-group">
     <label>Theme</label>
-    <input type="text" id="categories" name="categories" class="form-control" value="">
+    <input type="text" id="themes" name="themes" class="form-control" value="">
 </div>
 <div class="form-group">
     <label>Tags</label>
@@ -39,10 +48,10 @@
 
 <div class="form-group">
     <label class="control-label">Preview</label>
-    <input type="hidden" name="previousFile" value="{{ data.image_preview }}">
-    {% if data.image_preview is not empty %}
-        <h5>{{ data.image_preview }}</h5>
-        <img src="/public/{{ data.image_preview }}" alt="image" class="w150">
+    <input type="hidden" name="previousFile" value="{{ content.image }}">
+    {% if content.image is not empty %}
+        <h5>{{ content.image }}</h5>
+        <img src="/public/{{ content.image }}" alt="image" class="w150">
     {% endif %}
     <input id="input-preview" name="thumbnail" type="file" class="">
 </div>

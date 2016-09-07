@@ -3,6 +3,11 @@ $(function () {
   var $pageForm = $('#contentForm');
   var $tableGallery;
   var $tableFiles;
+  var initialThemes = window.initialThemes;
+  var initialTags = window.initialTags;
+  var tags = window.tags;
+  var themes = window.themes;
+
   $.Cms.addCsrfAjaxHeaderToken();
   //=include include/cms/datatables_event.js
 
@@ -80,13 +85,13 @@ $(function () {
     $(this).parent().find('span.input-group-addon').trigger('click');
   });
 
-  $('#categories').tagEditor({
-    placeholder: 'Enter categories ...',
-    initialTags: initialCategories,
+  $('#themes').tagEditor({
+    placeholder: 'Enter themes ...',
+    initialTags: initialThemes,
     forceLowercase: false,
-    autocomplete: { source: categories, minLength: 1, delay: 0 },
+    autocomplete: { source: themes, minLength: 1, delay: 0 },
     beforeTagSave: function(field, editor, tags, tag, val){
-      if(!match(initialCategories, val)) return false;
+      if(!match(themes, val)) return false;
     },
   });
 
@@ -96,14 +101,14 @@ $(function () {
     forceLowercase: false,
     autocomplete: { source: tags, minLength: 1, delay: 0 },
     beforeTagSave: function(field, editor, tags, tag, val){
-      if(!match(initialTags, val)) return false;
+      if(!match(window.tags, val)) return false;
     },
   });
 
   function match(array, needle){
     var match = false;
     for(var i = 0; i < array.length; i++) {
-      if(initialCategories[i].toLowerCase() === needle) {
+      if(array[i] === needle) {
         match = true;
       }
     }
@@ -124,6 +129,9 @@ $(function () {
     if($("#pageSlug").val().trim().length === 0){
       $("#pageSlug").val($.Cms.slugify($(this).val()));
     }
+    if($("#pageName").val().trim().length === 0){
+      $("#pageName").val($(this).val());
+    }
   });
 
   $("#pageName").focusout(function(){
@@ -139,17 +147,6 @@ $(function () {
     $(this).val($.Cms.slugify($(this).val()));
   });
 
-  $pageForm.on('click', '.creatlang', function () {
-    var re = /langCode=[a-z]{2}(_[A-Z]{2})?&?/; 
-    var lang = $(this).data('id');
-    var contain = (window.location.href.indexOf('?') > -1)
-    var result = window.location.href.replace(/langCode=[a-z]{2}(_[A-Z]{2})?&?/, "");
-    if(!contain){
-      result = "?" + result;
-    }
-    document.location.href= result + "&langCode=" + lang;
-  });
-
   /*
   $pageForm.on('click', '#preview', function () {
     var $form = $(this).closest('form').clone();
@@ -162,16 +159,35 @@ $(function () {
     $form.submit();
   });*/
 
+  $pageForm.on('click', '.creatlang', function () {
+    var re = /lang=[a-z]{2}(_[A-Z]{2})?&?/; 
+    var lang = $(this).data('id');
+    var contain = (window.location.href.indexOf('?') > -1)
+    var result = window.location.href.replace(/lang=[a-z]{2}(_[A-Z]{2})?&?/, "");
+    if(!contain){
+      result = result + '?';
+    } else{
+      if(result.slice(-1) !== '&'){
+        result + '&';
+      }
+    }
+    document.location.href= result + "lang=" + lang;
+  });
+
   // change language
   $pageForm.on('change', '#selectLanguage', function () {
-    var re = /langCode=[a-z]{2}(_[A-Z]{2})?&?/; 
+    var re = /lang=[a-z]{2}(_[A-Z]{2})?&?/; 
     var lang = this.value;
     var contain = (window.location.href.indexOf('?') > -1)
-    var result = window.location.href.replace(/langCode=[a-z]{2}(_[A-Z]{2})?&?/, "");
+    var result = window.location.href.replace(/lang=[a-z]{2}(_[A-Z]{2})?&?/, "");
     if(!contain){
-      result = "?" + result;
+      result = result + '?';
+    } else{
+      if(result.slice(-1) !== '&'){
+        result + '&';
+      }
     }
-    document.location.href= result + "&langCode=" + lang;
+    document.location.href= result + "lang=" + lang;
   });
 
   // Delete a page
@@ -185,7 +201,10 @@ $(function () {
       onSuccess: function (data) {
         var str = window.location.href;
         var n = str.lastIndexOf("/");
-        document.location.href=str.substring(0, n).replace("edit/", "");
+        var contentType= encodeURIComponent($('#types').val());
+        var result = str.substring(0, n).replace("/edit", "");
+        result += "?type=" + contentType;
+        document.location.href=result;
       },
     };
     $.Cms.ajax(params);

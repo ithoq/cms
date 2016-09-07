@@ -1,13 +1,18 @@
 {% set haveParent = contentParentId != null %}
+{%  set isLink = content.contentTemplate.name == "Link" %}
+
 <div class="modal-dialog">
     <div class="modal-content-wrapper">
         <div class="modal-content">
             <div class="modal-header clearfix text-left p-b-25">
                 <button type="button" data-dismiss="modal" aria-hidden="true" class="close"><i class="pg-close fs-14"></i></button>
-                <h4>{{ message('admin.newPage') }}</h4>
+                <h4>{{ message('admin.newPage') | capitalize }}</h4>
                 <hr class="section">
             </div>
             <div class="modal-body">
+                {% if isLink %}
+                    <div class="alert alert-warning"><i class="fa fa fa-exclamation-triangle" aria-hidden="true"></i>Link pages can't have children</div>
+                {% endif %}
                 <form id="createPageForm" role="form" method="post" action="/admin/cms/page/create">
                     <div class="form-group form-group-default m-b-20 required">
                         <label>{{ message('name') }}</label>
@@ -23,6 +28,12 @@
                             {% endfor %}
                         </select>
                     </div>
+                        <script>
+                            var modalCreateChildLangArray = [];
+                            {% for entry in content.contentDataList %}
+                              modalCreateChildLangArray.push('{{ entry.key }}');
+                            {% endfor %}
+                        </script>
                     {% else %}
                         <input type="hidden" name="pageLangId" value="{{ defaultSiteLang }}">
                     {% endif %}
@@ -30,9 +41,9 @@
                     <h5>{{ message('level') }}</h5>
                     <div class="radio radio-success">
                          <span id="radio-parent-container">
-                             <input id="radio-root" type="radio" value="-1" name="parentId" {% if haveParent == false %}checked{% endif %}>
+                             <input id="radio-root" type="radio" value="-1" name="parentId" {% if haveParent == false or isLink %}checked{% endif %}>
                              <label for="radio-root">{{ message('admin.rootPage') }}</label>
-                             {% if haveParent %}
+                             {% if haveParent and not isLink %}
                                 <input id="radio-parent" type="radio" value="{{ contentParentId }}" checked name="parentId">
                                 <label for="radio-parent">Child of : {{ content.name }}</label></span><span id="radio-root-container">
                              {%  endif %}

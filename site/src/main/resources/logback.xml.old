@@ -2,9 +2,11 @@
 <configuration>
 
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <logger name="org.hibernate.type" level="ERROR" />
-    <logger name="org.hibernate" level="ERROR" />
-    <property name="LOG_HOME" value="webdata/logs/cognosco"/>
+
+    <logger name="org.hibernate.type" level="TRACE" />
+    <logger name="org.hibernate" level="DEBUG" />
+
+    <property name="LOG_HOME" value="webdata/logs/app.log"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">

@@ -17,6 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,18 +60,27 @@ public class CmsController {
     @RequestMapping(method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String page(ModelMap model, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
 
+        if(CmsUtils.uriIsAdmin(request))  throw new ResourceNotFoundException();
+
         final String path = request.getRequestURI();
         //GET DATA WITH FILES,DIC,COMMENTS,...
         ContentEntity content = contentService.findBySlug(path, locale);
-        ContentDataEntity contentData = content.getContentDataList().get(locale.toString());
-        String templateName =  content.getContentTemplate().getName().toLowerCase();
+        ContentDataEntity contentData= null;
+        String templateName = "";
+        if(content != null) {
+            contentData = content.getContentDataList().get(locale.toString());
+            templateName = content.getContentTemplate().getName().toLowerCase();
+        }
         if (content == null || !content.isEnabled() || !contentData.isEnabled() || templateName.equals("folder")) {
             throw new ResourceNotFoundException();
         }
 
-        if(content.isMemberOnly()){
+        if(contentService.contentIsPrivate(content)){
             if(!CmsUtils.hasRole("ROLE_MEMBER")) {
-                response.sendRedirect("/login");
+                //response.sendRedirect("/login");
+                new HttpSessionRequestCache().saveRequest(request, response);
+                new LoginUrlAuthenticationEntryPoint("/" + locale.toString() + "/login").commence(request, response, new InsufficientAuthenticationException("Need member role"));
+                return null;
             }
         }
         /*

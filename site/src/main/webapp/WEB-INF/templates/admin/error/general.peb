@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8/>
+    <title>Error</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <style>
+        .error-container
+        {
+            padding: 100px 0;
+
+            text-align: center;
+        }
+
+        h4.error
+        {
+            font-size: 60px;
+        }
+        p.error-message
+        {
+            font-size: 28px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <h4 class="error">{{ message("oops") | capitalize }}...</h4>
+    <p class="error-message">{% if code == 404 %}{{ message("error.notFound") }}{% else %}{%  if msg is not empty %}{{ msg }}{% else %}{{ message("error.general") }}{% endif %}{% endif %} </p>
+</div>
+</body>
+</html>

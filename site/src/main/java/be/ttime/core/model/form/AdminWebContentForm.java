@@ -17,7 +17,9 @@ public class AdminWebContentForm {
     private String dateTimeBegin;
     private String dateEnd;
     private String dateTimeEnd;
-    private String categories;
+    @NotEmpty
+    private String type;
+    private String themes;
     private String tags;
     private String previousFile;
     private MultipartFile thumbnail;

@@ -24,6 +24,7 @@ public class ContentEntity extends AbstractTimestampEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
     private boolean enabled = true;
+    @Column(columnDefinition = "TINYINT(1) default '0'")
     private boolean memberOnly = false;
     @Column(name = "pos", nullable = false)
     private int position = -1;

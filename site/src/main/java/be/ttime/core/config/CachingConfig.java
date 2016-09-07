@@ -19,12 +19,12 @@ public class CachingConfig extends CachingConfigurerSupport {
     public net.sf.ehcache.CacheManager ehCacheManager() {
 
         final SizeOfPolicyConfiguration sizeOfPolicyConfiguration = new SizeOfPolicyConfiguration();
-        sizeOfPolicyConfiguration.maxDepth(100);
+        sizeOfPolicyConfiguration.maxDepth(25);
         sizeOfPolicyConfiguration.maxDepthExceededBehavior(SizeOfPolicyConfiguration.MaxDepthExceededBehavior.ABORT);
 
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
 
-        config.setMaxBytesLocalHeap("50M");
+        config.setMaxBytesLocalHeap("100M");
         config.sizeOfPolicy(sizeOfPolicyConfiguration);
 
         // I don't want to set a Name or a default cache is possible || config.setName("mainCache"); || config.addDefaultCache(cacheConfig("default", "5M", false, 1 * 60, null));
@@ -35,13 +35,14 @@ public class CachingConfig extends CachingConfigurerSupport {
         config.addCache(cacheConfig("block", null, true, null, null));
         config.addCache(cacheConfig("blockJson", null, true, null, null));
         config.addCache(cacheConfig("blockCompiledTemplate", null, true, null, null));
+        config.addCache(cacheConfig("taxonomy", null, true, null, null));
         config.addCache(cacheConfig("locale", null , true, null, null));
         config.addCache(cacheConfig("mainNav", null, true, null, null));
         config.addCache(cacheConfig("adminTree", null, true, null, null));
         config.addCache(cacheConfig("templateList", null, true, null, null));
         config.addCache(cacheConfig("template", null, true, null, null));
         config.addCache(cacheConfig("content", "10M", true, null, null));
-        config.addCache(cacheConfig("adminContent", "2M", true, null, null));
+        config.addCache(cacheConfig("adminContent", "60M", true, null, null));
         config.addCache(cacheConfig("user", "5M", true, null, null));
         config.addCache(cacheConfig("persistentLogin", "5M", true, null, null));
 

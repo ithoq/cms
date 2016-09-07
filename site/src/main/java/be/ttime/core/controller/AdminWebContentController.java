@@ -12,14 +12,15 @@ import be.ttime.core.util.CmsUtils;
 import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +28,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -50,31 +54,76 @@ public class AdminWebContentController {
     @Autowired
     private IContentTemplateService contentTemplateService;
 
-    @RequestMapping(value = "{contentType}", method = RequestMethod.GET)
-    public String home(@PathVariable("contentType") String contentType, ModelMap model) throws Exception{
-        return home(contentType, null, model);
-    }
 
-    @RequestMapping(value = "{contentType}/{locale}", method = RequestMethod.GET)
-    public String home(@PathVariable("contentType") String contentType, @PathVariable("locale") String locale, ModelMap model) throws Exception{
-        if(!contentService.contentTypeExist(contentType)){
-            throw new ResourceNotFoundException();
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public String home(ModelMap model, HttpServletRequest request) throws Exception{
+
+
+        final List<TaxonomyTermEntity> taxonomyTypeList = taxonomyService.findByType("TYPE");
+        // Get parameter
+        Map<String, Object> map = new HashMap<>();
+        boolean isPrivate = false;
+        Integer year=  null;
+        String lang = StringUtils.trimToNull(request.getParameter("lang"));
+        if(lang!= null && !applicationService.getLanguagesMap().containsKey(lang)) lang = null;
+        String theme =  StringUtils.trimToNull(request.getParameter("theme"));
+        if(theme != null && theme.equals("all")) theme = null;
+        String tag =  StringUtils.trimToNull(request.getParameter("tag"));
+        if(tag != null && tag.equals("all")) tag = null;
+        String type = StringUtils.trimToNull(request.getParameter("type"));
+
+        if(type == null){
+            TaxonomyTermEntity taxonomyTermEntity = taxonomyTypeList.get(0);
+            if(taxonomyTermEntity != null){
+                type = taxonomyTermEntity.getName();
+            }
+        }
+        else if(type.equals("all")){
+            type = null;
+        }
+        String contentPrivate = StringUtils.trimToNull(request.getParameter("private"));
+        if(contentPrivate != null && contentPrivate.equals("yes")) isPrivate = true;
+
+        String yearString = StringUtils.trimToNull(request.getParameter("year"));
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        if(yearString != null && !yearString.equals("all")){
+            try {
+                year = Integer.parseInt(yearString);
+            } catch(NumberFormatException e){
+                year = currentYear;
+            }
+        } else if(yearString != null && yearString.equals("all")){
+            year = null;
+        } else if (StringUtils.isEmpty(yearString)){
+            year = currentYear;
         }
 
-        if(locale == null || applicationService.getSiteLanguagesMap().get(locale) == null){
-            locale = applicationService.getDefaultSiteLang();
+        List<String> years = new ArrayList<>();
+        for(; currentYear >= 2011; currentYear--){
+            years.add(Integer.toString(currentYear));
         }
 
-        model.put("contentType", contentType);
+        map.put("lang", lang);
+        map.put("theme", theme);
+        map.put("tag", tag);
+        map.put("year", year);
+        map.put("type", type);
+        map.put("isPrivate", isPrivate);
+
+        Gson gson = new Gson();
+        model.put("tags", taxonomyService.findByType("TAG"));
+        model.put("types", taxonomyTypeList);
+        model.put("themes", taxonomyService.findByType("THEME"));
+        model.put("jsonQuery", gson.toJson(map));
+        model.put("years", years);
+
         return VIEWPATH + "home";
     }
 
-    @RequestMapping(value = "/edit/{contentType}/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("contentType") String contentType, @PathVariable("id") Long id, String langCode, ModelMap model) throws Exception{
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") Long id, String lang, ModelMap model) throws Exception{
 
-        if(!contentService.contentTypeExist(contentType) || id == null){
-            throw new ResourceNotFoundException();
-        }
+
         ContentEntity content = null;
         ContentDataEntity contentData = null;
         ContentTemplateEntity template = null;
@@ -87,13 +136,14 @@ public class AdminWebContentController {
             }
         } else {
             content = new ContentEntity();
-            content.setContentType(new ContentTypeEntity(contentType));
+            content.setContentType(new ContentTypeEntity("WEBCONTENT"));
             ContentTemplateEntity c = contentTemplateService.findByName("Webcontent");
+            content.setContentTemplate(c);
         }
-        if(!StringUtils.isEmpty(langCode)){
-            appLanguage = applicationService.getSiteApplicationLanguageMap().get(langCode);
+        if(!StringUtils.isEmpty(lang)){
+            appLanguage = applicationService.getSiteApplicationLanguageMap().get(lang);
             if (appLanguage == null) {
-                log.debug("incorrect language : " + langCode + " for the content with id : " + content.getId());
+                log.debug("incorrect language : " + lang + " for the content with id : " + content.getId());
                 appLanguage = applicationService.getDefaultSiteApplicationLanguage();
             }
         } else{
@@ -108,7 +158,8 @@ public class AdminWebContentController {
 
         }
         List<String> tags = new ArrayList<>();
-        List<String> categories = new ArrayList<>();
+        List<String> themes= new ArrayList<>();
+        String taxonomyType = "";
         Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 
         if(content.getId() != 0){
@@ -116,7 +167,7 @@ public class AdminWebContentController {
             if(contentData == null){
                 contentData = new ContentDataEntity();
                 contentData.setContent(content);
-                contentData.setLanguage(applicationService.getSiteApplicationLanguageMap().get(langCode));
+                contentData.setLanguage(applicationService.getSiteApplicationLanguageMap().get(lang));
                 content.addContentData(contentData);
                 contentService.saveContent(content);
                 content = contentService.findContentAdmin(content.getId());
@@ -134,8 +185,10 @@ public class AdminWebContentController {
                 if (type.equals("TAG")){
                     tags.add(t.getName());
 
-                } else if(type.equals("CATEGORY")){
-                    categories.add(t.getName());
+                } else if(type.equals("THEME")){
+                    themes.add(t.getName());
+                } else if(type.equals("TYPE")){
+                    taxonomyType = t.getName();
                 }
             }
             SimpleDateFormat sd = new SimpleDateFormat(CmsUtils.DATETIME_FORMAT);
@@ -152,16 +205,16 @@ public class AdminWebContentController {
                 data.put("date_end_date", date[0]);
                 data.put("date_end_time", date[1].substring(0, date[1].length()-3));
             }
-            model.put("data", data);
+            model.put("dataDate", data);
             template = contentTemplateService.find(content.getContentTemplate().getId());
-            model.put("pageData", CmsUtils.parseStringToPageDate(contentData.getData()));
+            model.put("data", CmsUtils.parseStringToPageDate(contentData.getData()));
 
         }
         else{
             // ADD
             contentData = new ContentDataEntity();
             contentData.setContent(content);
-            contentData.setLanguage(applicationService.getSiteApplicationLanguageMap().get(langCode));
+            contentData.setLanguage(applicationService.getSiteApplicationLanguageMap().get(lang));
             content.addContentData(contentData);
             template = contentTemplateService.findByName("Webcontent");
             content.setContentTemplate(template);
@@ -169,13 +222,15 @@ public class AdminWebContentController {
 
         model.put("template", template);
         model.put("initialTags", gson.toJson(tags));
-        model.put("initialCategories", gson.toJson(categories));
+        model.put("initialThemes", gson.toJson(themes));
         model.put("content", content);
         model.put("contentData", contentData);
-        model.put("contentLocale", langCode);
-        model.put("contentType", contentType);
+        model.put("contentLocale", lang);
+        model.put("contentType", "WEBCONTENT");
+        model.put("type", taxonomyType);
         model.put("tags", taxonomyService.findByTypeJson("TAG"));
-        model.put("categories", taxonomyService.findByTypeJson("CATEGORY"));
+        model.put("themes", taxonomyService.findByTypeJson("THEME"));
+        model.put("types", taxonomyService.findByType("TYPE"));
         return VIEWPATH + "edit";
     }
 
@@ -188,10 +243,7 @@ public class AdminWebContentController {
         ContentDataEntity contentData = null;
 
         // if errors
-        if (result.hasErrors()) {
-
-
-        } else{
+        if (result.hasErrors()) {} else{
 
             Date begin = CmsUtils.parseDate(form.getDateBegin(), form.getDateTimeBegin());
             Date end =  CmsUtils.parseDate(form.getDateEnd(),form.getDateTimeEnd());
@@ -235,7 +287,7 @@ public class AdminWebContentController {
             contentData.setTitle(form.getPageDataTitle());
             contentData.setIntro(form.getIntro());
             contentData.setSlug(slugify.slugify(form.getSlug()));
-            contentData.setComputedSlug(getComputedSlug(form.getContentType(), form.getSlug(), begin, contentData.getLanguage().getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));
+            contentData.setComputedSlug(getComputedSlug(form.getType(), form.getSlug(), begin, contentData.getLanguage().getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));
 
             // Form data
             Map<String, String> data = new HashMap<>();
@@ -249,9 +301,9 @@ public class AdminWebContentController {
                     content.setImage(resultPath.substring(1));
                 }
                 // existing
-                else{
-                    data.put("image_preview", form.getPreviousFile());
-                }
+                //else{
+                //    data.put("image_preview", form.getPreviousFile());
+                //}
             }
             ContentTemplateEntity ct = contentTemplateService.find(content.getContentTemplate().getId());
             PageData pageData = CmsUtils.fillData(ct.getContentTemplateFieldset(), request);
@@ -272,16 +324,22 @@ public class AdminWebContentController {
 
             // Taxonomy
             List<TaxonomyTermEntity> taxonomyTermEntityList = new ArrayList<>();
+            TaxonomyTermEntity taxonomyType = taxonomyService.findByType(form.getType(), "TYPE");
+            if(taxonomyType == null){
+                throw new IllegalArgumentException("type not found : " + form.getType());
+            }
+            taxonomyTermEntityList.add(taxonomyType);
+
             if(!StringUtils.isEmpty(form.getTags())){
                 String[] tags = form.getTags().split(",");
                 if(tags.length > 0){
                     taxonomyTermEntityList.addAll(taxonomyService.createIfNotExist(Arrays.asList(tags), "TAG"));
                 }
             }
-            if(!StringUtils.isEmpty(form.getCategories())){
-                String[] categories = form.getCategories().split(",");
-                if(categories.length > 0){
-                    taxonomyTermEntityList.addAll(taxonomyService.createIfNotExist(Arrays.asList(categories), "CATEGORY"));
+            if(!StringUtils.isEmpty(form.getThemes())){
+                String[] themes = form.getThemes().split(",");
+                if(themes.length > 0){
+                    taxonomyTermEntityList.addAll(taxonomyService.createIfNotExist(Arrays.asList(themes), "THEME"));
                 }
             }
             Set<TaxonomyTermEntity> terms = new HashSet<>();
@@ -300,21 +358,27 @@ public class AdminWebContentController {
         }
 
         return "redirect:/admin/webContent/edit/" +
-                form.getContentType()+ "/" +
                 content.getId() +
-                "?langCode=" +
+                "?lang=" +
                 form.getSelectLanguage();
     }
 
 
     @RequestMapping(value = "/getJson", method = RequestMethod.GET)
     @ResponseBody
-    public String getjson(String contentType, String locale) throws Exception {
-        if(!contentService.contentTypeExist(contentType)){
-            throw new ResourceNotFoundException();
+    public String getjson(String params) throws Exception {
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, String>>(){}.getType();
+        Map<String, String> map = gson.fromJson(params, type);
+
+        for (Map.Entry<String, String> entry : map.entrySet())
+        {
+            if(entry.getValue() != null && entry.getValue().equals("all")){
+                map.put(entry.getKey(), null);
+            }
         }
 
-        return contentService.getContentJsonByTypeAndLocale(contentType, locale);
+        return contentService.getContentJsonByTypeAndParams("WEBCONTENT", map);
         //return contentService.("all");
     }
 
@@ -330,19 +394,14 @@ public class AdminWebContentController {
         if(forceLangInUrl){
             computedSlug.append("/").append(locale);
         }
-        switch (type){
-            case "NEWS" :
-                computedSlug.append("/news/");
-                break;
-            case "EVENT" :
-                computedSlug.append("/event/");
-                break;
-            case "ARTICLE" :
-                computedSlug.append("/article/");
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid content type : " + type);
-        }
+        Slugify slf = null;
+        try {
+             slf = new Slugify();
+        } catch(IOException e){}
+
+        computedSlug.append("/")
+                    .append(slf.slugify(type.toLowerCase()))
+                    .append("/");
 
         int day = dateTime.getDayOfMonth();
         int month = dateTime.getMonthOfYear();

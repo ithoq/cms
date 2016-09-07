@@ -101,6 +101,16 @@ Cms.prototype.slugify = function slugify(str)
   return str;
 };
 
+Cms.prototype.getParameterByName = function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+};
+
 Cms.prototype.copyToClipboard = function copyToClipboard(elem) {
   // create hidden text element, if it doesn't already exist
   var targetId = '_hiddenCopyText_';

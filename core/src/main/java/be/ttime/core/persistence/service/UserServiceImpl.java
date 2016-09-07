@@ -36,8 +36,8 @@ import java.util.UUID;
 @Transactional
 public class UserServiceImpl implements IUserService {
 
-    private static final int MAX_LOGIN_ATTEMPTS = 2;
-    private static final int MAX_IP_ATTEMPTS = 4;
+    private static final int MAX_LOGIN_ATTEMPTS = 5;
+    private static final int MAX_IP_ATTEMPTS = 10;
     @Autowired
     private IUserRepository userRepository;
     @Autowired
@@ -156,7 +156,7 @@ public class UserServiceImpl implements IUserService {
         dateTime = dateTime.minusDays(1L);
         Date test = CmsUtils.LocalDateTimeToDate(dateTime);
         Long tentative = ipAttemptsRespository.countByIpAndDateAfter(ip, test);
-        if(tentative >= (MAX_IP_ATTEMPTS - 1)){
+        if(tentative >= (MAX_IP_ATTEMPTS )){
             throw new IpLockedException(test.toString());
         }
         /*

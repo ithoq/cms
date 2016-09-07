@@ -30,10 +30,11 @@ public class TaxonomyTermEntity {
     @ManyToOne(optional = false)
     private TaxonomyTypeEntity taxonomyType;
 
+    /*
     @OneToMany(mappedBy = "taxonomyTerm",
             cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TaxonomyTermDataEntity> termDataList;
-
+*/
     @ManyToOne
     private TaxonomyTermEntity taxonomyParent;
 

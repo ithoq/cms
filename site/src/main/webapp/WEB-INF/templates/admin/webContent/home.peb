@@ -1,6 +1,6 @@
 {% extends 'admin/master' %}
 {% set activeNav = 'cms' %}
-{% set title = message('admin.newsManagement') %}
+{% set title = message('admin.resource.management') %}
 
 {% block content %}
 
@@ -8,52 +8,141 @@
         <div class="panel-heading">
             <div class="panel-block-title m-b-30">
                 {% set contentTypeToLower = contentType | lower %}
-                <h2>{{ message('admin.' + contentTypeToLower + '.management') | capitalize }}</h2>
+                <h2>{{ get.type | capitalize }}</h2>
             </div>
         </div>
         <div class="panel-body">
-            <form role="form">
-                <div class="panel panel-transparent">
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-9">
-                                <input id="web-content-table" type="text" placeholder="{{ message('search') }}" class="form-control pull-right">
-                            </div>
-                            <div class="col-md-3" style="text-align:right">
 
-                                <div class="dropdown add-lang">
-                                   <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                                   <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                                   <ul class="dropdown-menu drop-create-lang" style="width:150px">
-                                      <div class="title">add new language</div>
-                                        {% for lang in beans.applicationService.getSiteLanguages() %}
-                                            <li class="creatlang" data-id="{{ lang }}" value="{{ lang }}">
-                                                <div class="solo-lang"><a href="/admin/webContent/edit/{{ contentType }}/0?langCode={{lang}}"><span><img src="/resources/cms/img/flags/{{lang}}.png" class="img-flag">{{ beans.viewHelper.getLanguageName(lang.toString()) }} ({{ lang }})</span></a></div>
-                                            </li>
+            <div class="panel panel-transparent">
+                <div class="panel-heading">
+                    <form role="form" method="get" action="">
+                        <h3 class="panel-title">Filter</h3>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group form-group-default form-group-default-select2">
+                                    <label for="types">{{ message('type') }}</label>
+                                    <select id="types" name="type" data-init-plugin="select2"
+                                            data-disable-search="true" class="full-width">
+                                        {% for c in types %}
+                                            <option value="{{ c.name }}" {%  if get.type == c.name %}selected{% endif %}>{{ c.name }}</option>
                                         {% endfor %}
-                                   </ul>
+                                    </select>
                                 </div>
-  
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group form-group-default form-group-default-select2">
+                                    <label for="themes">{{ message('themes') }}</label>
+                                    <select id="themes" name="theme" data-init-plugin="select2"
+                                            data-disable-search="true" class="full-width">
+                                        <option value="all">{{ message('all') | upper }}</option>
+                                        {% for c in themes %}
+                                            <option value="{{ c.name }}" {%  if get.theme == c.name %}selected{% endif %}>{{ c.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group form-group-default form-group-default-select2">
+                                    <label for="tags">{{ message('tags') }}</label>
+                                    <select id="tags" name="tag" data-init-plugin="select2" data-disable-search="true"
+                                            class="full-width">
+                                        <option value="all">{{ message('all') | upper }}</option>
+                                        {% for c in tags %}
+                                            <option value="{{ c.name }}" {% if get.tag == c.name %}selected{% endif %}>{{ c.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                {% if get.year is empty %}
+                                    {% set queryYear = "2016" %}
+                                {% else %}
+                                    {% set queryYear = get.year %}
+                                {% endif %}
+                                <div class="form-group form-group-default form-group-default-select2">
+                                    <label for="years">{{ message('years') }}</label>
+                                    <select id="years" name="year" data-init-plugin="select2"
+                                            data-disable-search="true" class="full-width">
+                                        <option value="all" {% if queryYear== "all" %}selected{% endif %} >{{ message('all') | upper }}</option>
+                                        {% for y in years %}
+                                            <option value="{{ y }}" {% if queryYear == y %}selected{% endif %}>{{ y }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group form-group-default form-group-default-select2">
+                                    <label for="private">{{ message('private') }}</label>
+                                    <select id="private" name="private" data-init-plugin="select2"
+                                            data-disable-search="true" class="full-width">
+                                        <option value="no" {% if get.private == "no" %}selected{% endif %}>{{ message('no') | upper }}</option>
+                                        <option value="yes" {% if get.private == "yes" %}selected{%  endif %}>{{ message('yes') | upper }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group form-group-default form-group-default-select2">
+                                    <label for="languages">{{ message('languages') }}</label>
+                                    <select id="languages" class="full-width" name="lang">
+                                        <option value="all">{{ message('all') | upper }}</option>
+                                        {% for lang in beans.applicationService.getSiteLanguages() %}
+                                            <option id="{{ lang }}" value="{{ lang }}"
+                                                    {% if lang.toString() == get.lang %}selected{% endif %}>{{ beans.viewHelper.getLanguageName(lang.toString()) }}
+                                                ({{ lang.toString() }})
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1 center">
+                                <button type=submit" class="btn btn-success m-t-10">Filter <i class="fa fa-filter" aria-hidden="true"></i></button>
                             </div>
                         </div>
-                        <table id="webContentTable" class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th style="width: 80px" class="center">{{ message('active') }}</th>
-                                <th>{{ message('title') }}</th>
-                                <th style="width: 150px" class="center">{{ message('language') }}</th>
-                                <th style="width: 150px" class="center">{{ message('date begin') }}</th>
-                                <th style="width: 150px" class="center">{{ message('date end') }}</th>
-                                <th style="width: 80px" class="center no-sort">{{ message('edit') }}</th>
-                                <th style="width:100px" class="center no-sort">{{ message('delete') }}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
+                    </form>
+                    <hr class="section">
                 </div>
-            </form>
+                <div class="panel-body">
+                    <div class="row m-b-5 center">
+                        <div class="webcontent-search">
+                            <input id="web-content-table" type="text" placeholder="{{ message('search') }}"
+                                   class="form-control pull-right">
+                        </div>
+                        <div class="webcontent-add">
+                            <div class="dropdown add-lang">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                    {{ message('add a resource') }} <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                                <ul class="dropdown-menu drop-create-lang" style="width:150px">
+                                    <div class="title">{{ message('languages') }}</div>
+                                    {% for lang in beans.applicationService.getSiteLanguages() %}
+                                        <li class="creatlang" data-id="{{ lang }}" value="{{ lang }}">
+                                            <div class="solo-lang"><a href="/admin/webContent/edit/0?lang={{ lang }}"><span><img
+                                                                src="/resources/cms/img/flags/{{ lang }}.png"
+                                                                class="img-flag">{{ beans.viewHelper.getLanguageName(lang.toString()) }}({{ lang }})</span></a></div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <table id="webContentTable" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width: 80px" class="center">{{ message('active') }}</th>
+                            <th>{{ message('title') }}</th>
+                            <th style="width: 150px" class="center">{{ message('language') }}</th>
+                            <th style="width: 150px" class="center">{{ message('date begin') }}</th>
+                            <th style="width: 150px" class="center">{{ message('date end') }}</th>
+                            <th style="width: 80px" class="center no-sort">{{ message('edit') }}</th>
+                            <th style="width:100px" class="center no-sort">{{ message('delete') }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -62,7 +151,7 @@
 
 {% block bottom %}
     <script>
-        var contentType = '{{contentType}}';
+        var params = {{ jsonQuery | raw }};
         var locale = '{{ locale }}';
     </script>
     <script src="/resources/cms/js/page/web-content-home.js"></script>

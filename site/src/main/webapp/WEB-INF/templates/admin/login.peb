@@ -53,43 +53,48 @@
                     <!-- use param.error assuming FormLoginConfigurer#failureUrl contains the query parameter error -->
                     {% if get.error is not null %}
                         <div class="alert alert-danger">
-                            <h4>Failed to login</h4>
+                            <h4>{{ message("failed to login") | capitalize }}./h4>
                             {{ session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION") }}
                         </div>
                     {% endif %}
                     <!-- the configured LogoutConfigurer#logoutSuccessUrl is /login?logout and contains the query param logout -->
                     {% if get.logout is not null %}
                         <div>
-                            You have been logged out.
+                            {{ message("You have been logged out") | capitalize }}.
                         </div>
                     {% endif %}
                 </div>
-                <div class="form-group form-group-default">
-                    <label>Login</label>
-                    <div class="controls">
-                        <input type="text" name="username" placeholder="User Name" required="" class="form-control">
-                    </div>
-                </div>
-                <!-- END Form Control-->
-                <!-- START Form Control-->
-                <div class="form-group form-group-default">
-                    <label>Password</label>
-                    <div class="controls">
-                        <input type="password" name="password" placeholder="Credentials" required="" class="form-control">
-                    </div>
-                </div>
-                <!-- START Form Control-->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="checkbox">
-                            <input id="checkbox1" type="checkbox" value="1" name="remember-me">
-                            <label for="checkbox1">Keep Me Signed in</label>
+                {% if request.userPrincipal.authenticated %}
+                    {{ message("logged as") | capitalize }} : {{ user.email }}
+                {% else %}
+                    <div class="form-group form-group-default">
+                        <label>Login</label>
+                        <div class="controls">
+                            <input type="text" name="username" placeholder="User Name" required="" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-6 text-right"><a href="#" class="text-info small">Help? Contact Support</a></div>
-                </div>
-                <!-- END Form Control-->
-                <button type="submit" class="btn btn-primary btn-cons m-t-10">Sign in</button>
+                    <!-- END Form Control-->
+                    <!-- START Form Control-->
+                    <div class="form-group form-group-default">
+                        <label>Password</label>
+                        <div class="controls">
+                            <input type="password" name="password" placeholder="Credentials" required="" class="form-control">
+                        </div>
+                    </div>
+                    <!-- START Form Control-->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="checkbox">
+                                <input id="checkbox1" type="checkbox" value="1" name="remember-me">
+                                <label for="checkbox1">Keep Me Signed in</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- END Form Control-->
+                    <button type="submit" class="btn btn-primary btn-cons m-t-10">Sign in</button>
+                {% endif %}
+
             </form>
         </div>
     </div>

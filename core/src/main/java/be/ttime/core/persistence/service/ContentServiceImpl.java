@@ -10,6 +10,7 @@ import be.ttime.core.util.CmsUtils;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.expr.BooleanExpression;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,7 +19,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -64,43 +64,6 @@ public class ContentServiceImpl implements IContentService {
             return null;
 
         return applicationContext.getBean(IContentService.class).findContentAdmin(contentId);
-
-        /*
-
-        return
-
-        QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
-        QContentEntity contentEntity = QContentEntity.contentEntity;
-//        QTaxonomyTermEntity taxonomyTermDataEntity = QTaxonomyTermEntity.taxonomyTermEntity;
-        JPAQuery query = new JPAQuery(entityManager);
-        ContentDataEntity result = query.from(contentDataEntity)
-                .leftJoin(contentDataEntity.commentList).fetch()
-                .leftJoin(contentDataEntity.contentFiles).fetch()
-                .where(contentDataEntity.computedSlug.eq(slug)
-                        .and(contentDataEntity.content.enabled.eq(true))
-                        .and(contentDataEntity.enabled.eq(true))
-                        .and(contentDataEntity.language.locale.eq(locale.toString())))
-                .singleResult(contentDataEntity);
-//        entityManager.clear();
-
-        if (result != null) {
-            query = new JPAQuery(entityManager);
-            ContentEntity parent = query.from(contentEntity)
-                    .leftJoin(contentEntity.contentDataList, contentDataEntity).fetch()
-                    .where(contentEntity.id.eq(result.getContent().getId()).and(contentDataEntity.language.locale.eq(locale.toString())))
-                    .leftJoin(contentEntity.contentParent).fetch()
-                            //.leftJoin(contentEntity.contentTemplate).fetch()
-                            //.leftJoin(contentEntity.dictionaryList).fetch()
-                    .leftJoin(contentEntity.roles).fetch()
-                            //.leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermDataEntity).fetch()
-                    .leftJoin(contentEntity.taxonomyTermEntities).fetch()
-                    .singleResult(contentEntity);
-            // we add parent to the first result
-            result.setContent(parent);
-//            entityManager.close();
-        }
-        return result;
-        */
     }
 
 
@@ -147,7 +110,7 @@ public class ContentServiceImpl implements IContentService {
                         //.leftJoin(contentEntity.dictionaryList).fetch()
                 .leftJoin(contentEntity.roles).fetch()
                 .leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermDataEntity).fetch()
-                .leftJoin(taxonomyTermDataEntity.termDataList).fetch()
+                //.leftJoin(taxonomyTermDataEntity.termDataList).fetch()
                 .orderBy(contentEntity.position.asc(), contentEntity.contentChildren.any().position.asc())
                 .singleResult(contentEntity);
 //        entityManager.close(); inte
@@ -170,14 +133,33 @@ public class ContentServiceImpl implements IContentService {
     public List<ContentEntity> findByContentParentOrderByOrderAsc(ContentEntity parent) {
         return contentRepository.findByContentParentOrderByPositionAsc(parent);
     }
+    @Override
+    public PageableResult<ContentEntity> findWebContent(String locale, Long year, String name, String type, String theme, String tags, String contentType, Long pageNumber, Long limit, Boolean isPrivate) {
+        Date begin = null;
+        Date end = null;
+        if(year != null && year !=  0){
+            begin = CmsUtils.getBeginDateYear(year.intValue());
+            end = CmsUtils.getEndDateYear(year.intValue());
+        }
+
+        return findWebContent(locale, begin, end , name, type, theme, tags, contentType, pageNumber, limit, isPrivate);
+    }
 
     @Override
-    public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String type, String category, String tags, String contentType, Long pageNumber, Long limit) {
+    public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String type, String theme, String tags, String contentType, Long pageNumber, Long limit, Boolean isPrivate) {
+
         QContentEntity contentEntity = QContentEntity.contentEntity;
         QContentDataEntity contentDataEntity = QContentDataEntity.contentDataEntity;
         QTaxonomyTermEntity taxonomyTermEntity = QTaxonomyTermEntity.taxonomyTermEntity;
+
+        BooleanExpression themeBool = null;
+        BooleanExpression typeBool = null;
+        BooleanExpression tagBool = null;
+        //BooleanExpression taxonomieBool = null;
+
         JPAQuery query = new JPAQuery(entityManager);
 
+        PageableResult<ContentEntity> pageableResult = new PageableResult<>();
 
         BooleanBuilder builder = new BooleanBuilder();
         if(!StringUtils.isEmpty(name)){
@@ -186,23 +168,17 @@ public class ContentServiceImpl implements IContentService {
         if(begin != null){
             if(end == null) end = new Date();
             builder.and(contentEntity.beginDate.between(begin,end));
+        } else if(end != null){
+            builder.and(contentEntity.endDate.before(end));
         }
         if(!StringUtils.isEmpty(contentType)) {
             builder.and(contentEntity.contentType.name.in(contentType.split(",")));
         }
-
-        /*
-        if(!StringUtils.isEmpty(category)){
-            builder.and(taxonomyTermEntity.taxonomyType.name.eq("CATEGORY").and(taxonomyTermEntity.name.eq(category)));
-        }*/
-
-        BooleanExpression categoryBool = null;
-        BooleanExpression typeBool = null;
-        BooleanExpression tagBool = null;
-        BooleanExpression taxonomieBool = null;
-
-        if(!StringUtils.isEmpty(category)){
-            categoryBool = taxonomyTermEntity.taxonomyType.name.eq("CATEGORY").and(taxonomyTermEntity.name.in(category.split(",")));
+        if(isPrivate != null){
+            builder.and(contentEntity.memberOnly.eq(isPrivate));
+        }
+        if(!StringUtils.isEmpty(theme)){
+            themeBool = taxonomyTermEntity.taxonomyType.name.eq("THEME").and(taxonomyTermEntity.name.in(theme.split(",")));
         }
         if(!StringUtils.isEmpty(type)){
             typeBool = taxonomyTermEntity.taxonomyType.name.eq("TYPE").and(taxonomyTermEntity.name.in(type.split(",")));
@@ -210,27 +186,31 @@ public class ContentServiceImpl implements IContentService {
         if(!StringUtils.isEmpty(tags)){
             tagBool = taxonomyTermEntity.taxonomyType.name.eq("TAG").and(taxonomyTermEntity.name.in(tags.split(",")));
         }
-
-        if(categoryBool != null) {
-            taxonomieBool = categoryBool.or(tagBool).or(typeBool);
+        if(themeBool != null) {
+            builder.and(themeBool);
         } else if(tagBool != null){
-            taxonomieBool = tagBool.or(typeBool);
+            builder.and(tagBool);
         } else if(typeBool != null){
-            taxonomieBool = typeBool;
+            builder.and(typeBool);
+        }
+        //builder.and(taxonomieBool);
+        if(!StringUtils.isEmpty(locale)){
+            builder.and(contentDataEntity.language.locale.eq(locale));
         }
 
-        builder.and(taxonomieBool);
+        JPAQuery jpaQuery = query.from(contentEntity)
+                .leftJoin(contentEntity.contentDataList, contentDataEntity).fetch()
+                .leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermEntity).fetch()
+                .where(builder).where(contentEntity.enabled.eq(true).and(contentDataEntity.enabled.eq(true)))
+                .orderBy(contentEntity.beginDate.desc());
 
-        PageableResult<ContentEntity> pageableResult = new PageableResult<>();
+        if(limit != null && limit != 0){
+           jpaQuery.limit(limit).offset((pageNumber-1) * limit);
+        }
 
-        List<ContentEntity> result = query.from(contentEntity)
-                                    .leftJoin(contentEntity.contentDataList, contentDataEntity).fetch()
-                                    .where(contentDataEntity.language.locale.eq(locale))
-                                    .leftJoin(contentEntity.taxonomyTermEntities, taxonomyTermEntity).fetch()
-                                    .where(contentEntity.endDate.isNull().or(contentEntity.endDate.before(new Date())))
-                                    .where(contentEntity.enabled.eq(true).and(contentDataEntity.enabled.eq(true)).and(builder))
-                                    .orderBy(contentEntity.beginDate.desc())
-                                    .limit(limit).offset((pageNumber-1) * limit).distinct().list(contentEntity);
+        query.distinct();
+
+        List<ContentEntity> result = query.list(contentEntity);
 
         pageableResult.setResult(result);
         pageableResult.setTotalResult(query.count());
@@ -261,7 +241,6 @@ public class ContentServiceImpl implements IContentService {
             @CacheEvict(value = "content", allEntries = true),
             @CacheEvict(value = "adminTree", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
-            //@CacheEvict(value = "adminContent", key = "#p.id"),
             @CacheEvict(value = "adminContent", allEntries = true),
 
     })
@@ -409,35 +388,49 @@ public class ContentServiceImpl implements IContentService {
     }
 
     @Override
-    public String getContentJsonByTypeAndLocale(String type, String locale) throws Exception {
-        List<ContentEntity> contentEntities = null;
-        if(type == null ){
-            throw new Exception("type  must not be null");
+    public String getContentJsonByTypeAndParams(String contentType, Map<String, String> params) throws Exception {
+
+        String lang = StringUtils.trimToNull(params.get("lang"));
+        String theme = StringUtils.trimToNull(params.get("theme"));
+        String tag = StringUtils.trimToNull(params.get("tag"));
+        String types = StringUtils.trimToNull(params.get("type"));
+        String contentPrivate = StringUtils.trimToNull(params.get("isPrivate"));
+        String yearString = StringUtils.trimToNull(params.get("year"));
+
+        boolean isPrivate = false;
+        if(!StringUtils.isEmpty(contentPrivate) && contentPrivate.toLowerCase().equals("true")){
+            isPrivate = true;
         }
-        //if(locale.equals("all")){
-        //    contentEntities =  contentRepository.findAllByContentTypeName(type);
-        //} else{
-        if(StringUtils.isEmpty(locale)){
-            contentEntities = contentRepository.findAllByContentTypeName(type);
-        } else {
-            contentEntities = contentRepository.findAllByContentTypeNameAndContentDataListLanguageLocale(type, locale);
+        if(!StringUtils.isEmpty(lang)){
+            if(applicationService.getLanguagesMap().get(lang) == null){
+                lang = applicationService.getDefaultSiteLang();
+            }
+        }
+        Long year = null;
+        if(!StringUtils.isEmpty(yearString)){
+            try{
+                year = Long.parseLong(yearString);
+            } catch(NumberFormatException e){
+                year = null;
+            }
         }
 
-        //}
+        PageableResult<ContentEntity> result = applicationContext.getBean(IContentService.class).findWebContent(lang , year , null, types, theme,  tag, contentType, 0L, 0L, isPrivate);
+
         JsonArrayBuilder data = Json.createArrayBuilder();
         JsonObjectBuilder row;
         // reload tree like this : table.ajax.reload()
         SimpleDateFormat sdf = new SimpleDateFormat(CmsUtils.DATETIME_FORMAT);
-        for (ContentEntity c : contentEntities) {
+        for (ContentEntity c : result.getResult()) {
             ContentDataEntity contentData = null;
-            if(StringUtils.isEmpty(locale)){
+            if(StringUtils.isEmpty(lang)){
                 contentData = c.getContentDataList().get(applicationService.getDefaultSiteLang());
                 if(contentData == null) {
                     Map.Entry<String, ContentDataEntity> entry = c.getContentDataList().entrySet().iterator().next();
                     contentData = entry.getValue();
                 }
             } else {
-                contentData = c.getContentDataList().get(locale);
+                contentData = c.getContentDataList().get(lang);
             }
             String s = "";
             for ( String key : c.getContentDataList().keySet() ) {
@@ -450,8 +443,14 @@ public class ContentServiceImpl implements IContentService {
             row.add("DT_RowData", Json.createObjectBuilder().add("id", c.getId())
                                                             .add("contentDataId", contentData.getId())
                                                             .add("lang", contentData.getLanguage().getLocale()));
-            row.add("active", c.isEnabled());
+            // only content if all lang
+            if(lang == null) {
+                row.add("active", c.isEnabled());
+            } else {
+                row.add("active", c.isEnabled() && contentData.isEnabled());
+            }
             row.add("title", CmsUtils.emptyStringIfnull(title));
+
             row.add("lang", s);
             row.add("dateBegin", formatDateTime(sdf, c.getBeginDate()));
             row.add("dateEnd", formatDateTime(sdf, c.getEndDate()));

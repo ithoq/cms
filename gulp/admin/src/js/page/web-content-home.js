@@ -9,15 +9,27 @@
 
     // init variables
     $table = $('#webContentTable');
+/*
+    var isPrivate = $.Cms.getParameterByName('contentPrivate');
 
+    var param = {
+        lang: $.Cms.getParameterByName('lang'),
+        theme: $.Cms.getParameterByName('theme'),
+        tag: $.Cms.getParameterByName('tag'),
+        type: $.Cms.getParameterByName('type'),
+        contentPrivate: isPrivate,
+        year: $.Cms.getParameterByName('year')
+    };*/
+    
     $.Cms.initDataTableWithSearch({
       tableJqueryElement: $table,
       searchElement: '#web-content-table',
       ajax: {
         url: '/admin/webContent/getJson',
+        contentType: 'application/json',
         data: {
-          contentType: window.contentType,
-          locale: null,
+          params : JSON.stringify(window.params),
+
         },
       },
       columnDefs: [
@@ -69,7 +81,13 @@
     $table.on('click', '.btn-modal-edit', function () {
       var id = $(this).closest('tr').data('id');
       var lang = $(this).closest('tr').data('lang');
-      document.location.href = '/admin/webContent/edit/' + contentType + '/' + id + '?langCode=' + lang;
+
+      var type = $("#types").val();
+      var typeStr = '';
+      if(type){
+        typeStr = 'type=' + type + '&';
+      }
+      document.location.href = '/admin/webContent/edit/' +  id + '?' + typeStr +'lang=' + lang;
     });
 
     $.Cms.initTabSwitchYesNo({
@@ -89,7 +107,20 @@
           $table.DataTable().ajax.reload();
         },
       });
-  }
+    }
+
+      var renderSelectLanguage = function (data) {
+        var $state = $(
+          '<span><img src="/resources/cms/img/flags/' + data.id.toLowerCase() + '.png" class="img-flag" /> ' + data.text + '</span>'
+        );
+        return $state;
+      };
+
+      $('#languages').select2({
+        minimumResultsForSearch: -1,
+        formatSelection: renderSelectLanguage,
+        formatResult: renderSelectLanguage,
+      });
 
   });
 })(jQuery);

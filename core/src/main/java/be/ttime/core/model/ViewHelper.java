@@ -128,12 +128,12 @@ public class ViewHelper {
         return menu;
     }
 
-    public Map<String, List<FileEntity>> getDownloadFileByGroupMap(ContentDataEntity data){
+    public Map<String, List<FileEntity>> getFilesByGroupMap(ContentDataEntity data, String type){
         Map<String, List<FileEntity>> result = new HashMap<>();
         for (FileEntity f : data.getContentFiles()) {
-            if(f.getFileType().equals("D")){
+            if(f.getFileType().equals(type)){
                 String group = f.getFileGroup();
-                //if(group == null) group = "default";
+                if(group == null) group = "default";
                 List<FileEntity> list = result.get(group);
                 if(list == null){
                     list = new ArrayList<>();
@@ -145,10 +145,10 @@ public class ViewHelper {
         return result;
     }
 
-    public List<FileEntity> getDownloadFile(ContentDataEntity data){
+    public List<FileEntity> getFilesList(ContentDataEntity data, String type){
         List<FileEntity> result;
         result = new ArrayList<>();
-        result.addAll(data.getContentFiles().stream().filter(f -> f.getFileType().equals("D")).collect(Collectors.toList()));
+        result.addAll(data.getContentFiles().stream().filter(f -> f.getFileType().equals(type)).collect(Collectors.toList()));
         return result;
     }
 
@@ -157,18 +157,63 @@ public class ViewHelper {
         return blockEntity == null ? null : blockEntity.getContent();
     }
 
-    public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String type, String category, String tags, String contentType, Long pageNumber, Long limit){
+    public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String type, String category, String tags, String contentType, Long pageNumber, Long limit, Boolean isPrivate){
 
-        PageableResult<ContentEntity> result = contentService.findWebContent(locale, begin, end, name, type, category, tags, contentType, pageNumber, limit);
+        PageableResult<ContentEntity> result = contentService.findWebContent(locale, begin, end, name, type, category, tags, contentType, pageNumber, limit, isPrivate);
         return result;
     }
 
-    public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String type, String category, String tags, String contentType, String pageNumber, Long limit){
+    public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String type, String category, String tags, String contentType, String pageNumber, Long limit, Boolean isPrivate){
 
-        return findWebContent(locale, begin, end, name, type, category, tags, contentType, Long.parseLong(pageNumber),  limit);
+        return findWebContent(locale, begin, end, name, type, category, tags, contentType, Long.parseLong(pageNumber), limit, isPrivate);
+    }
+
+    public PageableResult<ContentEntity> findWebContent(String locale, String yearString, String name, String type, String category, String tags, String contentType, Long pageNumber, Long limit, Boolean isPrivate){
+
+        Long year = null;
+        if(yearString != null){
+            try {
+                year = Long.parseLong(yearString);
+            } catch(NumberFormatException e){
+                year = null;
+            }
+        }
+
+        if(pageNumber == null) pageNumber = 1L;
+
+        PageableResult<ContentEntity> result = contentService.findWebContent(locale, year, name, type, category, tags, contentType, pageNumber, limit, isPrivate);
+        return result;
+    }
+
+    public PageableResult<ContentEntity> findWebContent(String locale, String yearString, String name, String type, String category, String tags, String contentType, String pageNumber, Long limit, Boolean isPrivate){
+
+        Long year = null;
+        if(yearString != null){
+            try {
+                year = Long.parseLong(yearString);
+            } catch(NumberFormatException e){
+                year = null;
+            }
+        }
+
+        Long pageNumberLong = 1L;
+        if(!StringUtils.isEmpty(pageNumber)){
+            try {
+                pageNumberLong = Long.parseLong(pageNumber);
+            } catch (NumberFormatException e){
+                pageNumberLong = 1L;
+            }
+        }
+
+        PageableResult<ContentEntity> result = contentService.findWebContent(locale, year, name, type, category, tags, contentType, pageNumberLong, limit, isPrivate);
+        return result;
     }
 
     public String getLanguageName(String code){
+        if(StringUtils.isEmpty(code)){
+            log.warn("Lang code is empty");
+            return null;
+        }
         Locale locale = applicationService.getLanguagesMap().get(code);
         return locale.getDisplayName(LocaleContextHolder.getLocale());
     }
@@ -179,6 +224,10 @@ public class ViewHelper {
 
     public boolean userHasRole(ContentEntity content){
         return CmsUtils.hasRoles(contentService.getRoleForContent(content));
+    }
+
+    public boolean isLogged(){
+        return CmsUtils.isLogged();
     }
 
     public void checkRole(ContentEntity content){

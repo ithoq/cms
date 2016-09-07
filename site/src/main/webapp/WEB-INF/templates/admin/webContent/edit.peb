@@ -49,11 +49,10 @@
 {% block bottom %}
     <script>
         var tags = {{ tags | raw }};
-        var categories = {{ categories | raw }};
-        var contentType = '{{ contentType }}';
+        var themes = {{ themes | raw }};
 
         var initialTags= {{ initialTags | raw }};
-        var initialCategories= {{ initialCategories | raw }};
+        var initialThemes= {{ initialThemes | raw }};
     </script>
     <script src="/resources/cms/js/page/web-content-edit.js"></script>
 {% endblock bottom %}

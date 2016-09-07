@@ -6,6 +6,8 @@ import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.FileExtensionUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,11 +24,21 @@ public class FileServiceImpl implements IFileService {
     private IFileRepository pageFileRepository;
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "content", allEntries = true),
+            @CacheEvict(value = "adminContent", allEntries = true),
+
+    })
     public FileEntity save(FileEntity file) {
         return pageFileRepository.save(file);
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "content", allEntries = true),
+            @CacheEvict(value = "adminContent", allEntries = true),
+
+    })
     public List<FileEntity> save(List<FileEntity> files) {
         return pageFileRepository.save(files);
     }
@@ -42,6 +54,11 @@ public class FileServiceImpl implements IFileService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "content", allEntries = true),
+            @CacheEvict(value = "adminContent", allEntries = true),
+
+    })
     public void delete(Long id) {
         pageFileRepository.delete(id);
     }

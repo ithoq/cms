@@ -6,7 +6,7 @@ Cms.prototype.ajax = function (params) {
     showSuccessMessage: true,
     showErrorMessage: true,
     formReset: true,
-    dataType: 'html',
+    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
     trimAllInputs: true,
     validate: true,
   };
@@ -59,6 +59,7 @@ Cms.prototype.ajax = function (params) {
     url: url,
     type: method,
     data: data,
+    contentType: settings.contentType,
     success: function (data, status, response) {
       if ($form && settings.formReset) {
         $form[0].reset();

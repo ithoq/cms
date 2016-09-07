@@ -115,7 +115,7 @@ public class ForceLocalUrlFilter implements Filter {
         }
 
         // Check if it's an administration URL
-        boolean isAdmin = requestURI.startsWith("/admin/");
+        boolean isAdmin = requestURI.startsWith("/admin/") || requestURI.equals("/admin");
         langMap = (isAdmin ? appService.getAdminlanguagesMap() : appService.getSiteLanguagesMap());
 
         // Check the lang parameter

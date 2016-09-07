@@ -20,9 +20,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -108,6 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
                 .and()
+                .logout().logoutSuccessHandler(logoutSuccessHandler).and()
                 //.exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 .rememberMe()
                 .tokenRepository(tokenRepository)

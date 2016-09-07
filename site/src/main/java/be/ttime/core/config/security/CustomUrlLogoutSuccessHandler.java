@@ -17,6 +17,11 @@ public class CustomUrlLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler
     }
 
     @Override
+    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response) {
+        return "/";
+    }
+
+    @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         super.onLogoutSuccess(request, response, authentication);
     }

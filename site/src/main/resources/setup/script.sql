@@ -115,7 +115,18 @@ INSERT INTO `message` (`id`, `domain`, `messageKey`) VALUES
 (106, 'general', 'forgotPassword'),
 (107, 'admin', 'admin.article.management'),
 (108, 'admin', 'admin.news.management'),
-(109, 'admin', 'admin.event.management');
+(109, 'admin', 'admin.event.management'),
+(110, 'general', 'gallery'),
+(111, 'general', 'group'),
+(112, 'general', 'type'),
+(113, 'general', 'logout'),
+(114, 'general', 'title'),
+(115, 'general', 'language'),
+(116, 'general', 'date begin'),
+(117, 'general', 'date end'),
+(118, 'admin', 'admin.fieldsetManagement'),
+(119, 'admin', 'admin.memberOnly'),
+(120, 'admin', 'admin.resource.management');
 
 INSERT INTO `translation` (`id`, `value`, `language_locale`, `message_id`) VALUES
 (1, 'déposez vos fichiers ici', 'fr', 1),
@@ -155,9 +166,9 @@ INSERT INTO `translation` (`id`, `value`, `language_locale`, `message_id`) VALUE
 (35, 'arborescence', 'fr', 18),
 (36, 'tree', 'en', 18),
 (37, 'Une erreur s''est produite, veuillez réessayer plus tard.', 'fr', 19),
-(38, 'Oops! Something went wrong. Please try again later.', 'en', 19),
-(39, 'L''URL demandée n''a pas été trouvée sur le serveur.', 'fr', 20),
-(40, 'The requested URL was not found on this server.', 'en', 20),
+(38, 'Something went wrong. Please try again later.', 'en', 19),
+(39, 'Nous sommes désolé, la page que vous cherché n''existe pas', 'fr', 20),
+(40, 'Looks like the page you were looking for doesn''t exist. Sorry about that.', 'en', 20),
 (41, 'Utilisateur non trouvé.', 'fr', 21),
 (42, 'User not Found.', 'en', 21),
 (43, 'Un compte pour ce nom d''utilisateur / email existe déjà. Indiquez un nom d''utilisateur différent.', 'fr', 22),
@@ -335,7 +346,29 @@ INSERT INTO `translation` (`id`, `value`, `language_locale`, `message_id`) VALUE
 (215, 'news management', 'fr', 108),
 (216, 'gestion des actualités', 'en', 108),
 (217, 'event management', 'fr', 109),
-(218, 'gestion des événements', 'en', 109);
+(218, 'gestion des événements', 'en', 109),
+(219, 'gallerie', 'fr', 110),
+(220, 'gallery', 'en', 110),
+(221, 'groupe', 'fr', 111),
+(222, 'group', 'en', 111),
+(223, 'type', 'fr', 112),
+(224, 'type', 'en', 112),
+(225, 'déconnexion', 'fr', 113),
+(226, 'logout', 'en', 113),
+(227, 'titre', 'fr', 114),
+(228, 'title', 'en', 114),
+(229, 'langue', 'fr', 115),
+(230, 'language', 'en', 115),
+(231, 'date de début', 'fr', 116),
+(232, 'date begin', 'en', 116),
+(233, 'date de fin', 'fr', 117),
+(234, 'date end', 'en', 117),
+(235, 'gestion des fieldset', 'fr', 118),
+(236, 'fieldset management', 'en', 118),
+(237, 'uniquement pour les membres', 'fr', 119),
+(238, 'member only', 'en', 119),
+(239, 'gestion des ressources', 'fr', 120),
+(240, 'resource management', 'en', 120);
 
 INSERT INTO `role` (`id`, `description`, `name`, `section`, `superAdmin`) VALUES
 (1, NULL, 'ROLE_MEMBER', 'general', 0),
@@ -372,6 +405,7 @@ INSERT INTO `group_role` (`userGroup_id`, `role_id`) VALUES
 
 INSERT INTO `content_type` (`name`) VALUES
 ('PAGE'),
+('WEBCONTENT'),
 ('NEWS'),
 ('EVENT'),
 ('ARTICLE');
@@ -428,4 +462,5 @@ INSERT INTO `input_data` (`id`, `defaultValue`, `hint`, `title`, `validation`, `
 
 INSERT INTO `taxonomy_type` (`name`) VALUES
 ('TAG'),
-('CATEGORY');
+('CATEGORY'),
+('TYPE');

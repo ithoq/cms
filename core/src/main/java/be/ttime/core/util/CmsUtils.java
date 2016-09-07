@@ -134,6 +134,11 @@ public class CmsUtils {
         fillModelMap(model.getModelMap(), request, applicationService);
     }
 
+    public static boolean uriIsAdmin(HttpServletRequest request){
+        String requestURI = request.getRequestURI();
+        return requestURI.startsWith("/admin/") || requestURI.equals("/admin");
+    }
+
     public static String getCsrfInput(HttpServletRequest request) {
         Object param = request.getAttribute("_csrf");
         CsrfToken csrf = (param instanceof CsrfToken ? (CsrfToken) param : null);
@@ -606,5 +611,20 @@ public class CmsUtils {
             log.error("URLDecoder", e);
         }
         return sb.toString();
+    }
+
+    public static Date getBeginDateYear(int year){
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_YEAR, 1);
+        return cal.getTime();
+    }
+
+    public static Date getEndDateYear(int year){
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, 11); // 11 = december
+        cal.set(Calendar.DAY_OF_MONTH, 31); // new years eve
+        return cal.getTime();
     }
 }

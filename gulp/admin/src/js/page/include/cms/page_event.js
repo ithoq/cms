@@ -36,7 +36,7 @@ $pageForm.on('click', '#savePageBtn', function () {
     formReset: false,
     onSuccess: function () {
       treeCache.reload();
-      reloadPage(id, dataId);
+      reloadPage(id, $('#selectLanguage').val());
     },
   });
 });
@@ -65,14 +65,11 @@ $pageForm.on('click', '.creatlang', function () {
 
 $pageForm.on('click', '#preview', function () {
   var $form = $(this).closest('form').clone();
-  console.log($form);
   var $csrf = $('[name=_csrf]').first().clone();
-  console.log($csrf);
-  $csrf.attr('id', 'csrf');
+  //$csrf.attr('id', 'csrf');
   $form.append($csrf);
   $form.attr('target', '_blank');
   $form.attr('action', '/admin/cms/preview');
-  console.log($form);
   $form.submit();
 
   /*   var dataId = $('#contentDataId').val();
@@ -92,7 +89,6 @@ $modalCreateNewPage.on('click', '#btnFormCeatePage', function () {
     successMessage: 'The page was created successfully!',
     onSuccess: function (data, status, response) {
       if (response.getResponseHeader('Validation-Failed')) {
-        window.console.log(data);
         $.Cms.notif({
           message: 'Validation error',
           type: 'error',
@@ -119,6 +115,25 @@ $('#btnCreatePage').click(function () {
 
       var $elem = $modalCreateNewPage.find("[data-init-plugin='select2']");
       $elem.select2();
+
+      $('#radio-root').on('click', function(){
+        $elem.find("option").each(function() {
+          $(this).prop('disabled', false);
+        });
+        $('#selectPageLang').select2();
+      });
+
+      $('#radio-parent').on('click', function(){
+        $('#selectPageLang > option').each(function() {
+          if($.inArray(this.value, modalCreateChildLangArray) === -1){
+            $(this).prop('disabled', true);
+          } else{
+            $(this).prop('disabled', false);
+          }
+        });
+        $('#selectPageLang').find('option:enabled:first').prop('selected',true);
+        $('#selectPageLang').select2();
+      });
     },
   });
 });

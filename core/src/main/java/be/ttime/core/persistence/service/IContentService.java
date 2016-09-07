@@ -6,10 +6,7 @@ import be.ttime.core.persistence.model.ContentEntity;
 import be.ttime.core.persistence.model.ContentTypeEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public interface IContentService {
 
@@ -46,7 +43,7 @@ public interface IContentService {
 
     ContentEntity findContentAndContentData(Long id, String locale);
 
-    String getContentJsonByTypeAndLocale(String type, String locale) throws Exception;
+    String getContentJsonByTypeAndParams(String contentType, Map<String,String> params) throws Exception;
 
     ContentEntity findContent(Long id);
 
@@ -60,7 +57,9 @@ public interface IContentService {
 
     Collection<String> getRoleForContent(ContentEntity content);
 
-    PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String type, String category, String tags, String contentType, Long pageNumber, Long limit);
+    PageableResult<ContentEntity> findWebContent(String locale, Long year, String name, String type, String theme, String tags, String contentType, Long pageNumber, Long limit, Boolean isPrivate);
+
+    PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String type, String theme, String tags, String contentType, Long pageNumber, Long limit, Boolean isPrivate);
 
     Long getContentDataIdBySlug(String slug, Locale locale);
 

@@ -7,16 +7,11 @@ import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,11 +23,11 @@ public class LoginController {
     private IBlockService blockService;
     @Autowired
     private IApplicationService applicationService;
-
     @Autowired
     private PebbleUtils pebbleUtils;
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+
+    @RequestMapping(value = "/{lang:[a-z]{2}(?:_[A-Z]{2})?}/login", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     @ResponseBody
     public String home(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 
@@ -46,7 +41,12 @@ public class LoginController {
         response.setContentType("text/html");
         String result = pebbleUtils.parseBlock(master, model);
         return result;
+    }
 
+    @RequestMapping(value = {"/admin", "/admin/"}, method = RequestMethod.GET)
+    public String adminHome()
+    {
+        return "redirect:/admin/home";
     }
 
     @RequestMapping(value = "/admin/login", method = RequestMethod.GET)
@@ -56,6 +56,7 @@ public class LoginController {
         return "admin/login";
     }
 
+    /*
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public RedirectView logoutPage(HttpServletRequest request, HttpServletResponse response, RedirectAttributes ra) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -69,6 +70,6 @@ public class LoginController {
         RedirectView redirect = new RedirectView(targetUrl);
         redirect.setExposeModelAttributes(false);
         return redirect;
-    }
+    }*/
 
 }

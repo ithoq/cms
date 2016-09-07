@@ -1,11 +1,6 @@
 package be.ttime.core.persistence.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.persistence.*;
-
+/*
 @Entity
 @Table(name = "taxonomy_term_data")
 @Getter
@@ -25,4 +20,7 @@ public class TaxonomyTermDataEntity {
     @ManyToOne
     private TaxonomyTermEntity taxonomyTerm;
 
+    @ManyToOne
+    private ApplicationLanguageEntity language;
 }
+*/

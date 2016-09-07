@@ -160,15 +160,19 @@
             {%  if isWebContent is null %}
                 <div class="form-group form-group-default required">
                     <label>H1</label>
-                    <input type="text" class="form-control" name="seoH1" value="{{ data.seo_title }}">
+                    <input type="text" class="form-control" name="seoH1" value="{{ data.dataString.seo_h1 }}">
                 </div>
             {% endif %}
+            {% if hasRole("ROLE_ADMIN_SEO") %}
             <div class="form-group form-group-default required">
                 <label>Slug </label><i data-placement="right" title="" data-toggle="tooltip" type="button"
                                        data-original-title="Label unique, pour identifier un élément. Exemple : http://www.exemple.com/blog/le-titre-de-mon-article où la chaîne de caractères le-titre-de-mon-article est le slug"
                                        class="fa fa-info-circle"></i>
-                <input {% if hasRole("ROLE_ADMIN_SEO") %}type="text"{%  else %}type="hidden"{%  endif %} id="pageSlug" name="slug" value="{{ contentData.slug }}" class="form-control" required>
+                 id<input type="text" id="pageSlug" name="slug" value="{{ contentData.slug }}" class="form-control" required>
             </div>
+            {% else %}
+                <input type="hidden" id="pageSlug" name="slug" value="{{ contentData.slug }}" class="form-control" required>
+            {%  endif %}
             {%  if isWebContent != null %}
                 {% include 'admin/webContent/pageCustom' %}
             {%  endif %}
@@ -181,12 +185,12 @@
 
                 <div class="form-group form-group-default">
                     <label>Tag </label>
-                    <input type="text" class="form-control" name="seoTag" value="{{ data.seo_tags }}">
+                    <input type="text" class="form-control" name="seoTag" value="{{ data.dataString.seo_tags }}">
                 </div>
                 <div class="form-group">
                     <label for="comment">{{ message('description') }}</label>
                     <textarea id="comment" rows="5" name="seoDescription"
-                              class="form-control">{{ data.seo_description }}</textarea>
+                              class="form-control">{{ data.dataString.seo_description }}</textarea>
                 </div>
             </div>
         {% endif %}

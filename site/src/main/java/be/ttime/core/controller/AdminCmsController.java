@@ -420,6 +420,5 @@ public class AdminCmsController {
         contentData.setSlug(form.getSlug());
         contentData.setEnabled(form.isContentDataEnabled());
         contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, appLanguage.getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));
-
     }
 }

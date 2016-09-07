@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface ITaxonomyTermRepository extends JpaRepository<TaxonomyTermEntity, Long>, QueryDslPredicateExecutor<TaxonomyTermEntity> {
     TaxonomyTermEntity findByNameAndTaxonomyTypeName(String name, String type);
-    List<TaxonomyTermEntity> findAllByTaxonomyTypeName(String type);
+    List<TaxonomyTermEntity> findAllByTaxonomyTypeNameOrderByPositionAscNameAsc(String type);
 }
