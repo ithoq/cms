@@ -130,7 +130,7 @@
                     {% if content.enabled and contentData.enabled and contentData.computedSlug is not empty  %}
                         <a href="{{ contentData.computedSlug }}" target="_blank" class="btn btn-default"><i class="fa fa-link"></i></a>
                     {% endif %}
-                    {% if isContentWeb is null %}
+                    {% if isWebContent is null %}
                         <button type="button" id="preview" class="btn btn-default"><i class="fa fa-eye"></i></button>
                     {% endif %}
                 {% endif %}
@@ -168,7 +168,7 @@
                 <label>Slug </label><i data-placement="right" title="" data-toggle="tooltip" type="button"
                                        data-original-title="Label unique, pour identifier un élément. Exemple : http://www.exemple.com/blog/le-titre-de-mon-article où la chaîne de caractères le-titre-de-mon-article est le slug"
                                        class="fa fa-info-circle"></i>
-                 id<input type="text" id="pageSlug" name="slug" value="{{ contentData.slug }}" class="form-control" required>
+                 <input type="text" id="pageSlug" name="slug" value="{{ contentData.slug }}" class="form-control" required>
             </div>
             {% else %}
                 <input type="hidden" id="pageSlug" name="slug" value="{{ contentData.slug }}" class="form-control" required>

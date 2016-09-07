@@ -231,7 +231,7 @@ public class AdminCmsController {
             String slug = slugify(pageTitle);
             ContentDataEntity contentData = new ContentDataEntity();
             contentData.setLanguage(language);
-            contentData.setTitle(pageTitle + '_' + language.getLocale());
+            contentData.setTitle(pageTitle);
             contentData.setSlug("/" + slug);
             contentData.setEnabled(true);
 
@@ -414,7 +414,7 @@ public class AdminCmsController {
         content.setMemberOnly(form.isMemberOnly());
 
         Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
-        contentData.setData(gson.toJson(pageData));
+        contentData.setData(gson.toJson(pageData));//.getBytes("UTF8").toString());
 
         contentData.setTitle(form.getPageDataTitle());
         contentData.setSlug(form.getSlug());

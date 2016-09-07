@@ -47,7 +47,7 @@
 </div>
 
 <div class="form-group">
-    <label class="control-label">Preview</label>
+    <label class="control-label">Thumbnail (450x300)</label>
     <input type="hidden" name="previousFile" value="{{ content.image }}">
     {% if content.image is not empty %}
         <h5>{{ content.image }}</h5>

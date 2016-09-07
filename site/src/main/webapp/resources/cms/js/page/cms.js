@@ -251,7 +251,7 @@
     
     $pageForm.on('focusout', '#titleInput', function () {
       if($("#pageSlug").val().trim().length === 0){
-        $("#pageSlug").val($.Cms.slugify($(this).val()));
+        $("#pageSlug").val('/' + $.Cms.slugify($(this).val()));
       }
     });
     $pageForm.on('focusout', '#pageName', function () {
@@ -259,12 +259,20 @@
           $("#titleInput").val($(this).val());
       }
       if($("#pageSlug").val().trim().length === 0){
-        $("#pageSlug").val($.Cms.slugify($(this).val()));
+        $("#pageSlug").val('/' + $.Cms.slugify($(this).val()));
       }
     });
     
     $pageForm.on('change', '#pageSlug', function () {
-        $(this).val($.Cms.slugify($(this).val()));
+        var val = $(this).val();
+        if(val.length> 0 ){
+    
+          if(val.charAt(0) === '/'){
+            val = val.substring(1, val.length);
+          }
+          
+          $(this).val('/' + $.Cms.slugify(val));
+        }
     });
     
     $pageForm.on('click', '.creatlang', function () {

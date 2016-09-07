@@ -65,6 +65,8 @@ public class CmsUtils {
 
     public final static String BLOCK_PAGE_MASTER = "PAGE_MASTER";
     public final static String BLOCK_PAGE_LOGIN = "PAGE_LOGIN";
+    public final static String BLOCK_PAGE_ERROR = "error";
+    public final static String BLOCK_PAGE_ERROR404 = "error.404";
 
     public final static String BLOCK_FIELD_TEXT = "FIELD_TEXT";
     public final static String BLOCK_FIELD_TEXTAREA = "FIELD_TEXTAREA";

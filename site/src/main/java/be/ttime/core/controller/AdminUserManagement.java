@@ -113,6 +113,7 @@ public class AdminUserManagement {
             userEntity.setStreet1(form.getStreet());
             userEntity.setZip(form.getZip());
             userEntity.setEnabled(form.isEnabled());
+            userEntity.setOrganisation(form.getOrganisation());
 
             if(!StringUtils.isEmpty(form.getGroup())) {
                 Set<GroupEntity> roles = new HashSet<>();

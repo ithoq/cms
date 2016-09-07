@@ -122,8 +122,8 @@ String.prototype.capitalizeFirstLetter = function () {
   
     str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
       .replace(/\s+/g, '-') // collapse whitespace and replace by -
-      .replace(/-+/g, '-'); // collapse dashes
-  
+      .replace(/-+/g, '-') // collapse dashes
+      .replace(/^-+/g, '').replace(/-+$/g, '');
     return str;
   };
   

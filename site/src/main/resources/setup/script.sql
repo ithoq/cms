@@ -167,7 +167,7 @@ INSERT INTO `translation` (`id`, `value`, `language_locale`, `message_id`) VALUE
 (36, 'tree', 'en', 18),
 (37, 'Une erreur s''est produite, veuillez réessayer plus tard.', 'fr', 19),
 (38, 'Something went wrong. Please try again later.', 'en', 19),
-(39, 'Nous sommes désolé, la page que vous cherché n''existe pas', 'fr', 20),
+(39, 'Nous sommes désolés, la page que vous cherchez n''existe pas!', 'fr', 20),
 (40, 'Looks like the page you were looking for doesn''t exist. Sorry about that.', 'en', 20),
 (41, 'Utilisateur non trouvé.', 'fr', 21),
 (42, 'User not Found.', 'en', 21),

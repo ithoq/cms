@@ -37,6 +37,10 @@
                                 <label for="email">{{ message('email') }}</label>
                                 <input id="email" name="email" type="email" value="{{ editUser.email }}" required class="form-control">
                             </div>
+                            <div class="form-group m-b-20 required">
+                                <label for="email">{{ message('organisation') }}</label>
+                                <input id="organisation" name="organisation" type="text" value="{{ editUser.organisation }}" class="form-control">
+                            </div>
                             <div class="form-group m-b-20">
                                 <label>Birthday</label>
                                 <div class="input-group date">
@@ -85,7 +89,7 @@
                             </div>
                             <div class="form-group m-b-20 required">
                                 <label for="password">{{ message('password') }}</label>
-                                <input id="password" name="password" type="password" {% if editUser is null %}required{% endif %} class="form-control">
+                                <input id="password" name="password" type="password" data-parsley-equalto="#passwordVerification" {% if editUser is null %}required{% endif %} class="form-control">
                             </div>
                             <div class="form-group m-b-20 required">
                                 <label for="passwordVerification">{{ message('password verification') }}</label>

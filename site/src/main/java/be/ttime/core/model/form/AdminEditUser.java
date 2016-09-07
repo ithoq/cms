@@ -27,6 +27,7 @@ public class AdminEditUser {
     private String email;
     private Date birthday;
     private UserEntity.Gender gender;
+    private String organisation;
     private String street;
     private String city;
     private String zip;

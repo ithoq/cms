@@ -43,6 +43,7 @@ public class UserEntity extends AbstractTimestampEntity implements UserDetails {
     private String countyCode;
     private String countryName;
     private String comment;
+    private String organisation;
     @Temporal(TemporalType.DATE)
     private Date birthday;
     @Temporal(TemporalType.DATE)
