@@ -1,6 +1,7 @@
 package be.ttime.core.controller;
 
 import be.ttime.core.error.ResourceNotFoundException;
+import be.ttime.core.model.RedirectMessage;
 import be.ttime.core.model.field.PageData;
 import be.ttime.core.model.form.AdminWebContentForm;
 import be.ttime.core.persistence.model.*;
@@ -14,28 +15,35 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.imgscalr.Scalr;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.env.Environment;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+//import javax.imageio.ImageIO;
 
 @Controller
 @RequestMapping(value = "/admin/webContent")
@@ -53,11 +61,14 @@ public class AdminWebContentController {
     private ITaxonomyService taxonomyService;
     @Autowired
     private IContentTemplateService contentTemplateService;
+    @Autowired
+    private Environment env;
+    @Autowired
+    private MessageSource messageSource;
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String home(ModelMap model, HttpServletRequest request) throws Exception{
-
 
         final List<TaxonomyTermEntity> taxonomyTypeList = taxonomyService.findByType("TYPE");
         // Get parameter
@@ -121,8 +132,10 @@ public class AdminWebContentController {
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, String lang, ModelMap model) throws Exception{
+    public String edit(@PathVariable("id") Long id, String lang, ModelMap model, @ModelAttribute("redirectMessage") RedirectMessage redirectMessage) throws Exception{
 
+        model.put("thumbnailWidth", env.getProperty("thumbnail.size.width"));
+        model.put("thumbnailHeight", env.getProperty("thumbnail.size.height"));
 
         ContentEntity content = null;
         ContentDataEntity contentData = null;
@@ -220,6 +233,8 @@ public class AdminWebContentController {
             content.setContentTemplate(template);
         }
 
+        model.put("redirectMessage", redirectMessage);
+        model.put("allTemplates", contentTemplateService.findAllByTypeLike("PAGE%"));
         model.put("template", template);
         model.put("initialTags", gson.toJson(tags));
         model.put("initialThemes", gson.toJson(themes));
@@ -238,12 +253,19 @@ public class AdminWebContentController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @Transactional
-    public String save(@Valid AdminWebContentForm form, BindingResult result, MultipartHttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception{
+    public String save(@Valid AdminWebContentForm form, BindingResult result, MultipartHttpServletRequest request, HttpServletResponse response, ModelMap model, RedirectAttributes redirectAttributes) throws Exception{
         ContentEntity content = null;
         ContentDataEntity contentData = null;
 
+        boolean warning = false;
+
         // if errors
-        if (result.hasErrors()) {} else{
+        if (result.hasErrors()) {
+            RedirectMessage redirectMessage = new RedirectMessage();
+            redirectMessage.setType(RedirectMessage.ERROR);
+            redirectMessage.setMessage(messageSource.getMessage("error.validation.message", null, LocaleContextHolder.getLocale()));
+            redirectAttributes.addFlashAttribute("redirectMessage", redirectMessage);
+        } else{
 
             Date begin = CmsUtils.parseDate(form.getDateBegin(), form.getDateTimeBegin());
             Date end =  CmsUtils.parseDate(form.getDateEnd(),form.getDateTimeEnd());
@@ -261,6 +283,8 @@ public class AdminWebContentController {
             }
             else{
                 content = contentService.findContent(form.getContentId());
+                ContentTemplateEntity template = contentTemplateService.find(form.getTemplateId());
+                content.setContentTemplate(template);
             }
 
             if(form.getSelectLanguage().equals(applicationService.getDefaultSiteLang()) ||
@@ -282,6 +306,8 @@ public class AdminWebContentController {
             content.setMenuItem(false);
             content.setEnabled(form.isEnabled());
             content.setMemberOnly(form.isMemberOnly());
+            content.setIncludeBottom(form.getDevIncludeBot());
+            content.setIncludeTop(form.getDevIncludeTop());
 
             contentData.setEnabled(form.isContentDataEnabled());
             contentData.setTitle(form.getPageDataTitle());
@@ -299,11 +325,28 @@ public class AdminWebContentController {
                     String resultPath = CmsUtils.getFilePath(uploadedFile, "public") + "/" + uploadedFile.getName();
                     //data.put("image_preview", resultPath.substring(1));
                     content.setImage(resultPath.substring(1));
+
+                    String name = FilenameUtils.getBaseName(uploadedFile.getName());
+                    String parentPath = uploadedFile.getParentFile().getAbsolutePath();
+                    String ext = FilenameUtils.getExtension(uploadedFile.getName());
+                    String thumbPath = parentPath + "/" + name + "_thumb" + "." + ext;
+
+                    BufferedImage image = null;
+                    try {
+                        Integer twidth = Integer.parseInt(env.getProperty("thumbnail.size.width"));
+                        Integer theight = Integer.parseInt(env.getProperty("thumbnail.size.height"));
+                        image = ImageIO.read(uploadedFile);
+                        BufferedImage resizedImage = Scalr.resize(image, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT, twidth, theight, Scalr.OP_ANTIALIAS);
+                        ImageIO.write(resizedImage, ext, new File(thumbPath));
+                    } catch(Exception e){
+                        RedirectMessage redirectMessage = new RedirectMessage();
+                        redirectMessage.setType(RedirectMessage.ERROR);
+                        redirectMessage.setMessage(messageSource.getMessage("error.thumbnail.generation.message", null, LocaleContextHolder.getLocale()));
+                        redirectAttributes.addFlashAttribute("redirectMessage", redirectMessage);
+                        warning = true;
+                    }
+                    //
                 }
-                // existing
-                //else{
-                //    data.put("image_preview", form.getPreviousFile());
-                //}
             }
             ContentTemplateEntity ct = contentTemplateService.find(content.getContentTemplate().getId());
             PageData pageData = CmsUtils.fillData(ct.getContentTemplateFieldset(), request);
@@ -355,7 +398,14 @@ public class AdminWebContentController {
             content = contentService.saveContent(content);
             contentData = contentService.saveContentData(contentData);
 
+            if(warning == false) {
+                RedirectMessage redirectMessage = new RedirectMessage();
+                redirectMessage.setType(RedirectMessage.SUCCESS);
+                redirectMessage.setMessage("WebContent saved successfully!");
+                redirectAttributes.addFlashAttribute("redirectMessage", redirectMessage);
+            }
         }
+
 
         return "redirect:/admin/webContent/edit/" +
                 content.getId() +

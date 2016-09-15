@@ -24,20 +24,12 @@
                 <div class="checkbox check-success checkbox-circle">
                     <input id="checkbox_memberOnly" name="memberOnly" type="checkbox"
                            {% if content.memberOnly %}checked{% endif %} />
-                    <label for="checkbox_memberOnly">{{ message('memberOnly') }} <i data-placement="bottom" title="" data-toggle="tooltip" type="button" data-original-title="Uniquement visible pour les membres" class="fa fa-info-circle"> </i></label>
+                    <label for="checkbox_memberOnly">{{ message('admin.memberOnly') }} <i data-placement="bottom" title="" data-toggle="tooltip" type="button" data-original-title="Uniquement visible pour les membres" class="fa fa-info-circle"> </i></label>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!--
-<ul>
-{% for role in beans.contentService.getRoleForContent(content) %}
-    <li>{{ role }}</li>
-{% endfor %}
-</ul>
--->
 
 {% if beans.contentService.contentIsPrivate(content) == true %}
     <div class="alert alert-warning"><i class="fa fa-lock" aria-hidden="true"></i>This page is <strong>private</strong></div>
@@ -45,39 +37,43 @@
 {% if beans.contentService.contentIsVisible(content, contentData) == false   %}
     <div class="alert alert-danger"><i class="fa fa-eye-slash" aria-hidden="true"></i>This page is <strong>not visible</strong></div>
 {% endif %}
-<div id="devPortlet" class="panel panel-default">
-    <div class="panel-heading ">
-        <div class="panel-title">Dev options
-        </div>
-        <div class="panel-controls">
-            <ul>
-                <li><a href="#" class="portlet-collapse" data-toggle="collapse"><i class="portlet-icon portlet-icon-collapse"></i></a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="panel-body" style="display:none">
-        <h5>Template</h5>
-        <select id="selectTemplate" name="templateId" data-placeholder="Select Country" data-init-plugin="select2" class="full-width">
-            {% for t in allTemplates %}
-                <option value="{{ t.id }}" {%  if t.id == template.id %}selected{% endif %}>{{ t.name }}</option>
-            {% endfor %}
-        </select>
-        <h5>Include</h5>
-        <div id="tabDev" class="tab-pane">
-            <div class="form-group">
-                <label for="comment">Include top:</label>
-                <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
-                          class="form-control">{{ content.includeTop }}</textarea>
+{% if redirectMessage is not empty and redirectMessage.message is not empty %}
+    <div class="alert alert-{{ redirectMessage.type }}"><i class="fa fa-{{ redirectMessage.icon }}" aria-hidden="true"></i>{{ redirectMessage.message }}</div>
+{% endif %}
+{% if beans.viewHelper.hasRole("ROLE_SUPER_ADMIN") %}
+    <div id="devPortlet" class="panel panel-default">
+        <div class="panel-heading ">
+            <div class="panel-title">Dev options
             </div>
-            <div class="form-group">
-                <label for="comment">Include bottom:</label>
-                <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
-                          class="form-control">{{ content.includeBottom }}</textarea>
+            <div class="panel-controls">
+                <ul>
+                    <li><a href="#" class="portlet-collapse" data-toggle="collapse"><i class="portlet-icon portlet-icon-collapse"></i></a></li>
+                </ul>
             </div>
         </div>
+        <div class="panel-body" style="display:none">
+            <h5>Template</h5>
+            <select id="selectTemplate" name="templateId" data-placeholder="Select Country" data-init-plugin="select2" class="full-width">
+                {% for t in allTemplates %}
+                    <option value="{{ t.id }}" {%  if t.id == template.id %}selected{% endif %}>{{ t.name }}</option>
+                {% endfor %}
+            </select>
+            <h5>Include</h5>
+            <div id="tabDev" class="tab-pane">
+                <div class="form-group">
+                    <label for="comment">Include top:</label>
+                    <textarea id="comment" rows="5" name="devIncludeTop" id="devIncludeTop"
+                              class="form-control">{{ content.includeTop }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="comment">Include bottom:</label>
+                    <textarea id="comment" rows="5" name="devIncludeBot" id="devIncludeBot"
+                              class="form-control">{{ content.includeBottom }}</textarea>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-
+{% endif %}
 <div class="panel panel-default">
     <div class="lang-selector">
         {%  if contentData != null %}

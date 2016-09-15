@@ -1,5 +1,5 @@
 <div class="form-group date-and-time-group">
-    <label>Date begin</label>
+    <label>{{ message("date begin") | capitalize }}</label>
     <div>
         <div class="input-group date">
             <input type="text" class="form-control" value="{{ dataDate.date_begin_date }}" id="dateBegin" name="dateBegin" data-plugin="datepicker">
@@ -14,7 +14,7 @@
     </div>
 </div>
 <div class="form-group date-and-time-group">
-    <label>Date end</label>
+    <label>{{ message("date end") | capitalize }}</label>
     <div>
         <div class="input-group date">
             <input type="text" class="form-control" value="{{ dataDate.date_end_date }}" id="dateEnd" name="dateEnd"  data-plugin="datepicker">
@@ -38,20 +38,20 @@
     </select>
 </div>
 <div class="form-group">
-    <label>Theme</label>
+    <label>{{ message("themes") | capitalize }}</label>
     <input type="text" id="themes" name="themes" class="form-control" value="">
 </div>
 <div class="form-group">
-    <label>Tags</label>
+    <label>{{ message("tags") | capitalize }}</label>
     <input type="text" id="tags" name="tags" class="form-control" value="">
 </div>
 
 <div class="form-group">
-    <label class="control-label">Thumbnail (450x300)</label>
+    <label class="control-label">{{ message("thumbnail") | capitalize }} ({{ thumbnailWidth }} x {{ thumbnailHeight }})</label>
     <input type="hidden" name="previousFile" value="{{ content.image }}">
     {% if content.image is not empty %}
-        <h5>{{ content.image }}</h5>
-        <img src="/public/{{ content.image }}" alt="image" class="w150">
+        <p><img src="/public/{{ content.image }}" alt="image" class="w150">
+        </p>
     {% endif %}
     <input id="input-preview" name="thumbnail" type="file" class="">
 </div>

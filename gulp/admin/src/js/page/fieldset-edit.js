@@ -94,6 +94,13 @@ $(function () {
 
   $('#submitBtn').on('click', function (e) {
     e.preventDefault();
+    var $form = $('#fieldsetForm');
+
+    $('#editor').val(aceEditor.getSession().getValue().trim());
+  
+    if(!$form.parsley().validate()){
+      return false;
+    }
 
     $inputUl.children().each(function (i) {
       var $inputDiv = $('#input-' + $(this).data('div'));
@@ -113,7 +120,7 @@ $(function () {
       }
     });
 
-    $('#editor').val(aceEditor.getSession().getValue().trim());
+
 
     document.getElementById('fieldsetForm').submit();
   });

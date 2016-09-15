@@ -62,6 +62,9 @@ public class CmsController {
 
         if(CmsUtils.uriIsAdmin(request))  throw new ResourceNotFoundException();
 
+        if(applicationService.getApplicationConfig().isMaintenance()){
+            model.put("maintenance", true);
+        }
         final String path = request.getRequestURI();
         //GET DATA WITH FILES,DIC,COMMENTS,...
         ContentEntity content = contentService.findBySlug(path, locale);

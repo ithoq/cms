@@ -34,8 +34,8 @@
         <!-- END Background Pic-->
         <!-- START Background Caption-->
         <div class="bg-caption pull-bottom sm-pull-bottom text-white p-l-20 m-b-20">
-            <h2 class="semi-bold text-white">Administration login page</h2>
-            <p class="small">Be careful, your IP will be blocked after too much unsuccessful attempts</p>
+            <h2 class="semi-bold text-white">{{ message("please login to your account") | capitalize }}</h2>
+            <p class="small">{{ message("admin.ipBlocked.warning") | capitalize }}</p>
         </div>
         <!-- END Background Caption-->
     </div>
@@ -43,7 +43,7 @@
     <!-- START Login Right Container-->
     <div class="login-container bg-white">
         <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40"><img src="/resources/cms/img/logo-dark.png" alt="logo" data-src="/resources/cms/img/logo-dark.png" data-src-retina="/resources/cms/img/logo-dark-2x.png" width="78" height="22">
-            <p class="p-t-35">Sign into your account</p>
+            <p class="p-t-35">{{ message("sign in to your account") | capitalize }}</p>
             <!-- START Login Form-->
             <form id="form-login" role="form" action="/login" class="p-t-15" method="post">
                 <input type="hidden" value="true" name="isAdmin">
@@ -53,14 +53,17 @@
                     <!-- use param.error assuming FormLoginConfigurer#failureUrl contains the query parameter error -->
                     {% if get.error is not null %}
                         <div class="alert alert-danger">
-                            <h4>{{ message("failed to login") | capitalize }}./h4>
-                            {{ session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION") }}
+                            <h4>{{ message("login failed") | capitalize }}.</h4>
+                            <p>{{session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION")}}</p>
                         </div>
                     {% endif %}
-                    <!-- the configured LogoutConfigurer#logoutSuccessUrl is /login?logout and contains the query param logout -->
                     {% if get.logout is not null %}
-                        <div>
-                            {{ message("You have been logged out") | capitalize }}.
+                        <div class="alert alert-info">
+                            <p>{{ message('you have been logged out') | capitalize }}.</p>
+                        </div>
+                    {% elseif get.sessionExpiration is not null %}
+                        <div class="alert alert-warning">
+                            <p>{{ message('your session has expired, please login again') | capitalize }}.</p>
                         </div>
                     {% endif %}
                 </div>
@@ -86,13 +89,13 @@
                         <div class="col-md-6">
                             <div class="checkbox">
                                 <input id="checkbox1" type="checkbox" value="1" name="remember-me">
-                                <label for="checkbox1">Keep Me Signed in</label>
+                                <label for="checkbox1">{{ message("remember me") | capitalize }}</label>
                             </div>
                         </div>
 
                     </div>
                     <!-- END Form Control-->
-                    <button type="submit" class="btn btn-primary btn-cons m-t-10">Sign in</button>
+                    <button type="submit" class="btn btn-primary btn-cons m-t-10">{{ message("sign in") | capitalize }}</button>
                 {% endif %}
 
             </form>

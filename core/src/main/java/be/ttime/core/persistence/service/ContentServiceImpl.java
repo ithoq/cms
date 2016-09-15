@@ -142,10 +142,11 @@ public class ContentServiceImpl implements IContentService {
             end = CmsUtils.getEndDateYear(year.intValue());
         }
 
-        return findWebContent(locale, begin, end , name, type, theme, tags, contentType, pageNumber, limit, isPrivate);
+        return applicationContext.getBean(IContentService.class).findWebContent(locale, begin, end , name, type, theme, tags, contentType, pageNumber, limit, isPrivate);
     }
 
     @Override
+    @Cacheable(value = "searchContent")
     public PageableResult<ContentEntity> findWebContent(String locale, Date begin, Date end, String name, String type, String theme, String tags, String contentType, Long pageNumber, Long limit, Boolean isPrivate) {
 
         QContentEntity contentEntity = QContentEntity.contentEntity;
@@ -242,7 +243,7 @@ public class ContentServiceImpl implements IContentService {
             @CacheEvict(value = "adminTree", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
             @CacheEvict(value = "adminContent", allEntries = true),
-
+            @CacheEvict(value = "searchContent", allEntries = true),
     })
     public ContentEntity saveContent(ContentEntity p) {
 
@@ -267,7 +268,7 @@ public class ContentServiceImpl implements IContentService {
             @CacheEvict(value = "adminTree", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
             @CacheEvict(value = "adminContent", allEntries = true),
-
+            @CacheEvict(value = "searchContent", allEntries = true),
     })
     public List<ContentEntity> saveContent(List<ContentEntity> pages) {
 
@@ -284,6 +285,7 @@ public class ContentServiceImpl implements IContentService {
             @CacheEvict(value = "adminTree", allEntries = true),
             @CacheEvict(value = "adminContent", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
+            @CacheEvict(value = "searchContent", allEntries = true),
     })
     public void deleteContent(Long id) throws Exception {
         ContentEntity current = contentRepository.findOne(id);
@@ -316,6 +318,7 @@ public class ContentServiceImpl implements IContentService {
             @CacheEvict(value = "adminTree", allEntries = true),
             @CacheEvict(value = "adminContent", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
+            @CacheEvict(value = "searchContent", allEntries = true),
     })
     public void deleteContentData(Long id) throws Exception {
         contentDataRepository.delete(id);
@@ -327,6 +330,7 @@ public class ContentServiceImpl implements IContentService {
             @CacheEvict(value = "adminTree", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
             @CacheEvict(value = "adminContent", allEntries = true),
+            @CacheEvict(value = "searchContent", allEntries = true),
     })
     public List<ContentDataEntity> saveContentData(List<ContentDataEntity> contents) {
         return contentDataRepository.save(contents);
@@ -338,6 +342,7 @@ public class ContentServiceImpl implements IContentService {
             @CacheEvict(value = "adminTree", allEntries = true),
             @CacheEvict(value = "mainNav", allEntries = true),
             @CacheEvict(value = "adminContent", allEntries = true),
+            @CacheEvict(value = "searchContent", allEntries = true),
     })
     public ContentDataEntity saveContentData(ContentDataEntity content) {
         return contentDataRepository.save(content);

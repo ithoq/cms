@@ -3,6 +3,7 @@ package be.ttime.core.controller;
 import be.fabriceci.fmc.IFileManager;
 import be.fabriceci.fmc.error.FileManagerException;
 import be.fabriceci.fmc.impl.FileManager;
+import be.ttime.core.util.CmsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -30,15 +31,20 @@ public class AdminFileManagerController {
         return true;
     }
 
-    @RequestMapping(value = "index.html", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public String home(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        return VIEWPATH + "embded";
+    }
+
+    @RequestMapping(value = "index.html", method = RequestMethod.GET)
+    public String index(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException {
         return VIEWPATH + "home";
     }
 
     @RequestMapping(value = "/api")
     public void fm(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException, FileManagerException {
 
-        IFileManager fm = new FileManager(servletContext, LocaleContextHolder.getLocale());
+        IFileManager fm = new FileManager(servletContext, LocaleContextHolder.getLocale(), request, CmsUtils.isSuperAdmin());
 
         fm.handleRequest(request, response);
     }

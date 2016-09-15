@@ -28,15 +28,17 @@
                 </li>
             {% endif %}
             {% if hasRole("ROLE_ADMIN_USER") %}
-                <li><a href="/admin/user" class="detailed"><span class="title">User</span><span class="details">User management</span></a><span class="icon-thumbnail"><i class="fa fa-user"></i></span></li>
+                <li><a href="/admin/user" class="detailed"><span class="title">User</span><span class="details">{{ message('admin.userManagement') | capitalize }}</span></a><span class="icon-thumbnail"><i class="fa fa-user"></i></span></li>
             {% endif %}
             {% if hasRole("ROLE_ADMIN_GROUP") %}
-                <li><a href="/admin/group" class="detailed"><span class="title">Group</span><span class="details">Group management</span></a><span class="icon-thumbnail"><i class="fa fa-key"></i></span></li>
+                <li><a href="/admin/group" class="detailed"><span class="title">Group</span><span class="details">{{ message('admin.groupManagement') | capitalize }}<</span></a><span class="icon-thumbnail"><i class="fa fa-key"></i></span></li>
             {% endif %}
             {% if hasRole("ROLE_SUPER_ADMIN") %}
-                <li><a href="/admin/contentTemplate" class="detailed"><span class="title">Template</span><span class="details">add/edit template</span></a><span class="icon-thumbnail">T</span></li>
-                <li><a href="/admin/fieldset" class="detailed"><span class="title">Fieldset</span><span class="details">add/edit fieldset</span></a><span class="icon-thumbnail">F</span></li>
+                <li><a href="/admin/contentTemplate" class="detailed"><span class="title">{{ message('admin.templatesManagement') | capitalize }}</span></a><span class="icon-thumbnail">T</span></li>
+                <li><a href="/admin/fieldset" class="detailed"><span class="title">{{ message('admin.fieldManagement') | capitalize }}</span></a><span class="icon-thumbnail">F</span></li>
+                <li><a href="/admin/backinfo" class="detailed"><span class="title">{{ message('admin.metrics') | capitalize }}</span></a><span class="icon-thumbnail"><i class="fa fa-server"></i></span></li>
             {% endif %}
+            <li><a href="/admin/fileManager" class="detailed"><span class="title">{{ message('file manager') | capitalize }}</span></a><span class="icon-thumbnail"><i class="fa fa-files-o"></i></span></span></li>
         </ul>
         <div class="clearfix"></div>
     </div>

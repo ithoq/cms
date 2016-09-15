@@ -31,17 +31,19 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 public class CmsUtils {
@@ -67,6 +69,7 @@ public class CmsUtils {
     public final static String BLOCK_PAGE_LOGIN = "PAGE_LOGIN";
     public final static String BLOCK_PAGE_ERROR = "error";
     public final static String BLOCK_PAGE_ERROR404 = "error.404";
+    public final static String BLOCK_PAGE_MAINTENANCE = "error.maintenance";
 
     public final static String BLOCK_FIELD_TEXT = "FIELD_TEXT";
     public final static String BLOCK_FIELD_TEXTAREA = "FIELD_TEXTAREA";
@@ -120,6 +123,17 @@ public class CmsUtils {
         model.put("siteLang", applicationService.getSiteLanguages());
     }
 
+    public static String getFullURL(HttpServletRequest request) {
+        StringBuffer requestURL = request.getRequestURL();
+        String queryString = request.getQueryString();
+
+        if (queryString == null) {
+            return requestURL.toString();
+        } else {
+            return requestURL.append('?').append(queryString).toString();
+        }
+    }
+
     public static String capitalizeFirstLetter(String original) {
         String trimedString = original.trim();
         if (trimedString == null || trimedString.length() == 0) {
@@ -132,12 +146,26 @@ public class CmsUtils {
         return StringUtils.isEmpty(value) ? "" : value;
     }
 
+
     public static void fillModelAndView(ModelAndView model, HttpServletRequest request, IApplicationService applicationService) {
         fillModelMap(model.getModelMap(), request, applicationService);
     }
 
+    public static String getBaseUrl(HttpServletRequest request) {
+        return request.getRequestURL().substring(0, request.getRequestURL().length() - request.getRequestURI().length()) + request.getContextPath();
+    }
+
     public static boolean uriIsAdmin(HttpServletRequest request){
         String requestURI = request.getRequestURI();
+        return requestURI.startsWith("/admin/") || requestURI.equals("/admin");
+    }
+
+    public static boolean refererIsAdmin(HttpServletRequest request){
+        String referer = request.getHeader("referer");
+        String baseUrl = getBaseUrl(request);
+        if(StringUtils.isEmpty(referer) || !referer.startsWith(baseUrl)) return false;
+
+        String requestURI = referer.replace(baseUrl, "");
         return requestURI.startsWith("/admin/") || requestURI.equals("/admin");
     }
 
@@ -615,6 +643,14 @@ public class CmsUtils {
         return sb.toString();
     }
 
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
     public static Date getBeginDateYear(int year){
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
@@ -628,5 +664,53 @@ public class CmsUtils {
         cal.set(Calendar.MONTH, 11); // 11 = december
         cal.set(Calendar.DAY_OF_MONTH, 31); // new years eve
         return cal.getTime();
+    }
+
+    /**
+     * Attempts to calculate the size of a file or directory.
+     *
+     * <p> Since the operation is non-atomic, the returned value may be inaccurate.
+     * However, this method is quick and does its best.
+     */
+    public static long
+    size (Path path) {
+
+        final AtomicLong size = new AtomicLong(0);
+
+        try
+        {
+            Files.walkFileTree (path, new SimpleFileVisitor<Path>()
+            {
+                @Override public FileVisitResult
+                visitFile(Path file, BasicFileAttributes attrs) {
+
+                    size.addAndGet (attrs.size());
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override public FileVisitResult
+                visitFileFailed(Path file, IOException exc) {
+
+                    System.out.println("skipped: " + file + " (" + exc + ")");
+                    // Skip folders that can't be traversed
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override public FileVisitResult
+                postVisitDirectory (Path dir, IOException exc) {
+
+                    if (exc != null)
+                        System.out.println("had trouble traversing: " + dir + " (" + exc + ")");
+                    // Ignore errors traversing a folder
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+        catch (IOException e)
+        {
+            throw new AssertionError ("walkFileTree will not throw IOException if the FileVisitor does not");
+        }
+
+        return size.get();
     }
 }

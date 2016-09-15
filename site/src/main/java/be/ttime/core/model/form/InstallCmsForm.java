@@ -38,4 +38,6 @@ public class InstallCmsForm {
     private String adminLocale;
 
     private boolean langInUrl = false;
+
+    private boolean maintenance = false;
 }

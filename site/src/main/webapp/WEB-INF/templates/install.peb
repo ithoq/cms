@@ -42,7 +42,7 @@
                         <label>Main languages</label><span class="help">default language</span>
                         <div class="selectContainer">
                             <select id="siteLocale" name="siteLocale" >
-                                {% for locale in  adminLocales %}
+                                {% for locale in locales %}
                                     <option value="{{ locale }}">{{ locale.getDisplayName() }} [{{ locale }}]</option>
                                 {% endfor %}
                             </select>
@@ -52,7 +52,7 @@
                         <label>Extra site languages</label><span class="help">choose one or more language used by the website</span>
                         <div class="selectContainer">
                             <select id="extraLocale" multiple="" name="extraLocale">
-                                {% for locale in  locales %}
+                                {% for locale in locales %}
                                     <option value="{{ locale }}">{{ locale.getDisplayName() }} [{{ locale }}]</option>
                                 {% endfor %}
                             </select>
@@ -102,7 +102,7 @@
 {% endblock content %}
 
 {% block bottom %}
-    <script>
+<script>
     $("#siteLocale").select2({
         placeholder: "Select a Language",
         allowClear: true

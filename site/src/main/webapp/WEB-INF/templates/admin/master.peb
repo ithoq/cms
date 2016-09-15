@@ -63,6 +63,7 @@
     <script src="/resources/cms/libs/js-beautify/beautify.js"></script>
     <script src="/resources/cms/libs/js-beautify/beautify-css.js"></script>
     <script src="/resources/cms/libs/js-beautify/beautify-html.js"></script>
+    <script src="/resources/cms/libs/jquery-idletimer-master/dist/idle-timer.min.js"></script>
     {% block head %}{% endblock head %}
 
     <link href="/resources/cms/libs/pages/css/pages-icons.css" rel="stylesheet" type="text/css">
@@ -72,7 +73,20 @@
 
 </head>
 <body class="fixed-header">
-
+<div class="modal fade slide-up disable-scroll in" id="modalSession" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content-wrapper">
+            <div class="modal-content">
+                <div class="modal-body text-center m-t-20">
+                    <h3>{{ message('session expiration') | capitalize }}</h3>
+                    <p>{{ message('session.will.expire') | capitalize }}</p>
+                    <span id="sessionCounter" class="sessionCounter"></span>
+                    <button type="button" id="sessionKeepAlive" class="btn btn-primary btn-cons" data-dismiss="modal">{{ message('stay connected') | capitalize }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% if noSidebar == null or not noSidebar %}
     {% include 'admin/include/sidebar' %}
 {% endif %}

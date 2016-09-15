@@ -30,6 +30,8 @@ public class ApplicationConfigEntity {
 
     private boolean alreadyInstall = false;
 
+    private boolean maintenance = false;
+
     private String siteName;
 
     private String url;

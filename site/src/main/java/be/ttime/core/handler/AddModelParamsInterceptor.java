@@ -1,5 +1,6 @@
 package be.ttime.core.handler;
 
+import be.ttime.core.error.CmsInMaintenanceException;
 import be.ttime.core.error.CmsNotInstalledException;
 import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.util.CmsUtils;
@@ -24,11 +25,23 @@ public class AddModelParamsInterceptor extends HandlerInterceptorAdapter {
 
         boolean installationURL = false;
 
-        if(request.getRequestURI().equals("/admin/install")){
-            installationURL = true;
-        }
-        if(!applicationService.getApplicationConfig().isAlreadyInstall() && !installationURL) {
-            throw new CmsNotInstalledException();
+        if(!request.getRequestURI().startsWith("/public/")) {
+
+            if(request.getRequestURI().equals("/admin/install")){
+                installationURL = true;
+            }
+
+            if (!applicationService.getApplicationConfig().isAlreadyInstall() && !installationURL) {
+                throw new CmsNotInstalledException();
+            }
+
+            if (applicationService.getApplicationConfig().isMaintenance()
+                    && !request.getRequestURI().equals("/admin/login")
+                    && !request.getRequestURI().endsWith("/r/maintenance")) {
+                if (!CmsUtils.hasRole("ROLE_SUPER_ADMIN")) {
+                    throw new CmsInMaintenanceException();
+                }
+            }
         }
 
         return super.preHandle(request, response, handler);

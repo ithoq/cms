@@ -42,7 +42,8 @@ public class CachingConfig extends CachingConfigurerSupport {
         config.addCache(cacheConfig("templateList", null, true, null, null));
         config.addCache(cacheConfig("template", null, true, null, null));
         config.addCache(cacheConfig("content", "10M", true, null, null));
-        config.addCache(cacheConfig("adminContent", "60M", true, null, null));
+        config.addCache(cacheConfig("searchContent", "10M", true, null, null));
+        config.addCache(cacheConfig("adminContent", "50M", true, null, null));
         config.addCache(cacheConfig("user", "5M", true, null, null));
         config.addCache(cacheConfig("persistentLogin", "5M", true, null, null));
 
@@ -88,6 +89,9 @@ public class CachingConfig extends CachingConfigurerSupport {
         return new EhCacheCacheManager(ehCacheManager());
     }
 
+    public static final int NO_PARAM_KEY = 0;
+    public static final int NULL_PARAM_KEY = 53;
+
     /**
      * For basic purposes, the default key generation system for cached data works. The parameters to your method become the key in your cache store.
      * But this becomes problematic when you want cache the result of another method that also takes in the same value
@@ -96,13 +100,33 @@ public class CachingConfig extends CachingConfigurerSupport {
     @Override
     public KeyGenerator keyGenerator() {
         return (target, method, params) -> {
-            // This will generate a unique key of the class names, the method names,
+          /*  // This will generate a unique key of the class names, the method names,
             // and all method parameters appended.
             StringBuilder sb = new StringBuilder();
             sb.append(target.getClass().getName());
             sb.append(method.getName());
             for (Object obj : params) {
-                sb.append(obj.toString());
+                if(obj != null) {
+                    sb.append(obj.toString());
+                }
+            }
+            return sb.toString(); */
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(target.getClass().getName());
+            sb.append(method.getName());
+
+
+            if (params.length == 1) {
+                sb.append(params[0] == null ? NULL_PARAM_KEY : params[0]);
+            } else if (params.length == 0) {
+                sb.append(NO_PARAM_KEY);
+            } else {
+                int hashCode = 17;
+                for (Object object : params) {
+                    hashCode = 31 * hashCode + (object == null ? NULL_PARAM_KEY : object.hashCode());
+                }
+                sb.append(Integer.valueOf(hashCode));
             }
             return sb.toString();
         };

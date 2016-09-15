@@ -99,6 +99,11 @@ public class ApplicationServiceImpl implements IApplicationService {
         return LocaleUtils.toLocale(getDefaultSiteApplicationLanguage().getLocale());
     }
 
+    @Override
+    public String getDefaultAdminLang() {
+        return getApplicationConfig().getDefaultAdminLang().getLocale();
+    }
+
     /**
      * @return the locale , eg: FR is (isIsoTwoLetter setted) and fr_FR (otherwise)
      */

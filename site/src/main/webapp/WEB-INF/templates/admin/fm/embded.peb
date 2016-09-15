@@ -1,0 +1,14 @@
+{% extends 'admin/master' %}
+{% set activeNav = 'file manager' %}
+{% set title = message('file manager') %}
+
+{% block head %}
+
+{% endblock head %}
+
+
+{% block content %}
+    <iframe src="/admin/fileManager/index.html" style="border: 0;padding: 0;overflow: hidden;width: 100%;height: 600px;"></iframe>
+{% endblock content %}
+{% block bottom %}
+{% endblock bottom %}

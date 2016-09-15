@@ -11,6 +11,7 @@ import be.ttime.core.util.PebbleUtils;
 import com.github.slugify.Slugify;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -48,6 +49,9 @@ public class ViewHelper {
         }
     }
 
+    public static String getFullUrl(HttpServletRequest request){
+        return CmsUtils.getFullURL(request);
+    }
     public String renderField(ContentTemplateEntity template, PageData pageData) throws Exception {
 
         if(template == null){
@@ -128,7 +132,7 @@ public class ViewHelper {
         return menu;
     }
 
-    public Map<String, List<FileEntity>> getFilesByGroupMap(ContentDataEntity data, String type){
+    public static Map<String, List<FileEntity>> getFilesByGroupMap(ContentDataEntity data, String type){
         Map<String, List<FileEntity>> result = new HashMap<>();
         for (FileEntity f : data.getContentFiles()) {
             if(f.getFileType().equals(type)){
@@ -145,7 +149,7 @@ public class ViewHelper {
         return result;
     }
 
-    public List<FileEntity> getFilesList(ContentDataEntity data, String type){
+    public static List<FileEntity> getFilesList(ContentDataEntity data, String type){
         List<FileEntity> result;
         result = new ArrayList<>();
         result.addAll(data.getContentFiles().stream().filter(f -> f.getFileType().equals(type)).collect(Collectors.toList()));
@@ -226,7 +230,19 @@ public class ViewHelper {
         return CmsUtils.hasRoles(contentService.getRoleForContent(content));
     }
 
-    public boolean isLogged(){
+    public boolean hasRole(String role){
+        return CmsUtils.hasRole(role);
+    }
+
+    public boolean hasRoles(Collection<String> roles){
+        return CmsUtils.hasRoles(roles);
+    }
+
+    public boolean hasAnyRole(Collection<String> roles){
+        return CmsUtils.hasAnyRole(roles);
+    }
+
+    public static boolean isLogged(){
         return CmsUtils.isLogged();
     }
 
@@ -337,14 +353,15 @@ public class ViewHelper {
         return contentAdmin.getContentDataList().get(code);
     }
 
-    public String getPageableNavigation(PageableResult result, HttpServletRequest request, Long delta){
+    public static String getPageableNavigation(PageableResult result, HttpServletRequest request, Long delta){
         return getPageableNavigation(result, request, delta, "pagination", true, true);
     }
 
-    public String getPageableNavigation(PageableResult result, HttpServletRequest request, Long delta, boolean preNext, boolean firstEnd){
+    public static String getPageableNavigation(PageableResult result, HttpServletRequest request, Long delta, boolean preNext, boolean firstEnd){
         return getPageableNavigation(result, request, delta, "pagination", preNext, firstEnd);
     }
-    public String getPageableNavigation(PageableResult pageableResult, HttpServletRequest request, Long delta, String ulClass, boolean preNext, boolean firstEnd){
+
+    public static String getPageableNavigation(PageableResult pageableResult, HttpServletRequest request, Long delta, String ulClass, boolean preNext, boolean firstEnd){
 
         StringBuilder sb = new StringBuilder();
         String queryString = request.getQueryString();
@@ -415,7 +432,16 @@ public class ViewHelper {
         return sb.toString();
     }
 
-    private void addPaginationLi(StringBuilder sb, int currentPage, int page, Map<String, String> queryMap, String extraClass, String value ){
+    public static String getThumbnailPath(String path){
+        if(StringUtils.isEmpty(path)) return "";
+
+        String fullPath = FilenameUtils.getFullPath(path);
+        String name = FilenameUtils.getBaseName(path);
+        String ext = FilenameUtils.getExtension(path);
+        return fullPath + name + "_thumb" + "." + ext;
+
+    }
+    private static void addPaginationLi(StringBuilder sb, int currentPage, int page, Map<String, String> queryMap, String extraClass, String value ){
         boolean activePage = false;
         if(page == currentPage){
             activePage = true;

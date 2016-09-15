@@ -53,7 +53,7 @@ public class FileDownloadController {
     public void publicFile(HttpServletResponse response, HttpServletRequest request) throws Exception {
 
 
-        String requestURI = request.getRequestURI();
+        String requestURI =  java.net.URLDecoder.decode(request.getRequestURI(), "UTF-8");
         if(requestURI.length() < 8){
             throw new ResourceNotFoundException();
         }

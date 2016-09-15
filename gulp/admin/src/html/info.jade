@@ -1,0 +1,31 @@
+doctype html
+html
+  head
+    include shared/head.jade
+
+  body.fixed-header
+    include shared/nav.jade
+    .page-container
+      include shared/header.jade
+      .page-content-wrapper
+        - var pageName = 'Dashboard'
+
+        include shared/breadcrumb.jade
+        .container-fluid.container-fixed-lg.expanded
+					.row
+						.col-md-12
+							h2 User form
+							.row
+								.widget-8.panel.no-border.bg-success.no-margin.widget-loader-bar
+									.container-xs-height.full-height
+										.row-xs-height
+											.col-xs-height.col-top
+												.panel-heading.top-left.top-right
+													.panel-title.text-black.hint-text
+														span.font-montserrat.fs-11.all-caps Weekly Sales 
+															i.fa.fa-chevron-right
+
+        include shared/footer.jade
+    include shared/bottom.jade
+
+      

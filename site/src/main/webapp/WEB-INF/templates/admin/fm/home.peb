@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>File Manager</title>
+    <title>{{ message('filemanager') | capitalize }}</title>
     <link rel="stylesheet" type="text/css" href="/resources/cms/libs/RichFilemanager-master/styles/reset.css" />
     <link rel="stylesheet" type="text/css" href="/resources/cms/libs/RichFilemanager-master/scripts/jquery.filetree/src/jQueryFileTree.css" />
     <link rel="stylesheet" type="text/css" href="/resources/cms/libs/RichFilemanager-master/scripts/jquery.contextmenu/dist/jquery.contextMenu.min.css" />

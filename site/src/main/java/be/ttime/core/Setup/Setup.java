@@ -60,6 +60,7 @@ public class Setup implements ApplicationListener<ContextRefreshedEvent> {
                 blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_LOGIN, "login", CmsUtils.getResourceFileContent("setup/login.twig"), true, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_SYSTEM), null));
                 blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_ERROR, "Error", CmsUtils.getResourceFileContent("setup/error.twig"), true, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_SYSTEM), null));
                 blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_ERROR404, "Error 404", CmsUtils.getResourceFileContent("setup/error404.twig"), true, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_SYSTEM), null));
+                blocks.add(new BlockEntity(CmsUtils.BLOCK_PAGE_MAINTENANCE, "Maintenance", CmsUtils.getResourceFileContent("setup/maintenance.twig"), true, false, true, new BlockTypeEntity(CmsUtils.BLOCK_TYPE_SYSTEM), null));
 
                 BlockEntity fieldText =  repository.findOne(CmsUtils.BLOCK_FIELD_TEXT);
                 fieldText.setContent(CmsUtils.getResourceFileContent("setup/field_text.twig"));

@@ -1,5 +1,6 @@
 package be.ttime.core.config.security;
 
+import be.ttime.core.util.CmsUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,12 @@ public class CustomUrlLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler
 
     @Override
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response) {
-        return "/";
+        boolean isAdmin = CmsUtils.refererIsAdmin(request);
+        boolean sessionExpiration = request.getParameterMap().containsKey("sessionExpiration");
+
+        String path = isAdmin ? "/admin/login" : "/login";
+        path += sessionExpiration ? "?sessionExpiration" : "?logout";
+        return path;
     }
 
     @Override

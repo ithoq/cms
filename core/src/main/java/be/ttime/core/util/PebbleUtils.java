@@ -30,6 +30,13 @@ public class PebbleUtils {
     @Autowired
     ApplicationContext applicationContext;
 
+    public String parseString(String data, Map<String, Object> model)  throws IOException, PebbleException{
+        PebbleTemplate template = pebbleStringEngine.getTemplate(data);
+        Writer writer = new StringWriter();
+        template.evaluate(writer, model, LocaleContextHolder.getLocale());
+        return writer.toString();
+    }
+
     public String parseBlock(BlockEntity block, Map<String, Object> model) throws IOException, PebbleException {
         if (model == null) {
             model = new HashMap<>(10);
@@ -37,7 +44,7 @@ public class PebbleUtils {
 
         // force to pass in the cache
         PebbleUtils utils = applicationContext.getBean(this.getClass());
-        PebbleTemplate compiledTemplate = getCompiledTemplate(block.getName());
+        PebbleTemplate compiledTemplate = utils.getCompiledTemplate(block.getName());
         Writer writer = new StringWriter();
         compiledTemplate.evaluate(writer, model, LocaleContextHolder.getLocale());
         return writer.toString();

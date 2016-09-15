@@ -143,7 +143,9 @@
             <div class="form-group">
                 <label for="content-block">{{ message('content') }}</label>
                 {% verbatim %}
+
         <textarea id="content" rows="5" name="content" class="form-control" {{#dynamic}}style="display:none"{{/dynamic}}>{{^ dynamic}}{{{content}}}{{/dynamic}}</textarea>
+        <div class="console-container"><code id="peebleConsole"></code></div>
         </div>
         {{#dynamic}}
         <div class="ace-editor-container">

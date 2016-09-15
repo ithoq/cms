@@ -11,6 +11,8 @@ public class AdminWebContentForm {
 
     private Long contentId;
     private Long contentDataId;
+    private Long templateId;
+
     private String contentType;
     private String selectLanguage;
     private String dateBegin;

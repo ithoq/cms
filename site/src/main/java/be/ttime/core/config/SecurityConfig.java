@@ -20,7 +20,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -47,6 +49,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private String dataSourceUrl;
 
     @Autowired
+    @Qualifier("myAuthenticationSuccessHandler")
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
+
+    @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
 
     @Autowired
@@ -60,12 +66,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
- /*¨
+
+    /**
+     *
+     * Enabling the concurrent session-control, this is essential to make sure that the Spring Security session
+     * registry is notified when the session is destroyed. (http://www.baeldung.com/spring-security-session)
+     *
+     * @return
+     */
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
         return new HttpSessionEventPublisher();
     }
-  */
+
 
     @Bean
     public SessionRegistry getSessionRegistry() {
@@ -103,7 +116,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.loginPage("/login")
                 .defaultSuccessUrl("/")
                 .failureUrl("/login?error=true")
-                //.successHandler(authenticationSuccessHandler)
+                .successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
                 .and()
                 .logout().logoutSuccessHandler(logoutSuccessHandler).and()
@@ -114,8 +127,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling().authenticationEntryPoint(loginEntryPoint)
                 .and()
-                .sessionManagement()
+                .sessionManagement().sessionFixation().migrateSession()
                 .maximumSessions(1)
+
                 .expiredUrl("/login?expired")
         ;//.sessionRegistry(getSessionRegistry());
 

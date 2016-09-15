@@ -63,3 +63,17 @@
 {
     height: 800px!important;
 }
+
+.console-container
+{
+    display: none;
+    overflow: auto;
+
+    max-height: 280px;
+    padding: 5px 10px;
+
+    > code
+    {
+        font-size: 11px;
+    }
+}

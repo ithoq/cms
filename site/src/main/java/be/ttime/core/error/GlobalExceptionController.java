@@ -84,9 +84,13 @@ class GlobalExceptionController {
     }
 
     @ExceptionHandler({CmsNotInstalledException.class})
-    @ResponseBody
     public String notInstalled() {
         return "redirect:/admin/install";
+    }
+
+    @ExceptionHandler({CmsInMaintenanceException.class})
+    public String maintenance() {
+        return "redirect:/r/maintenance";
     }
 
     @ExceptionHandler({ResourceNotFoundException.class})

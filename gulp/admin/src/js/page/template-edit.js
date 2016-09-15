@@ -166,7 +166,20 @@ $(function () {
     $inputContent.find('#input-' + divId).remove();
   });
 
-  $('#submitBtn').click(function () {
+  $('#submitBtn').click(function (e) {
+    e.preventDefault();
+    var $form = $('#templateForm');
+
+    var editorTopContent = editorIncludeTop.getSession().getValue().trim();
+    var editorBottomContent = editorIncludeBottom.getSession().getValue().trim();
+    var editorContent = aceEditor.getSession().getValue().trim();
+    $('#editorIncludeTop').val(editorTopContent);
+    $('#editorIncludeBottom').val(editorBottomContent);
+    $('#editor').val(editorContent);
+
+    if(!$form.parsley().validate()){
+      return false;
+    }
 
     var fieldsetList = [];
     var inputasDataList = [];
@@ -219,8 +232,8 @@ $(function () {
     pageTemplate.id = ($('#template-id').val()) ?  $('#template-id').val() : 0;
     pageTemplate.name = $('#templateName').val();
     pageTemplate.description = $('#fieldsetDescription').val();
-    pageTemplate.includeTop = editorIncludeTop.getSession().getValue().trim();
-    pageTemplate.includeBottom = editorIncludeBottom.getSession().getValue().trim();
+    pageTemplate.includeTop = editorTopContent;
+    pageTemplate.includeBottom = editorBottomContent;
     pageTemplate.active = $('#active').is(':checked');
     pageTemplate.useGallery = $('#useGallery').is(':checked');
     pageTemplate.useFiles = $('#useFiles').is(':checked');
@@ -228,7 +241,7 @@ $(function () {
     var blockData = {};
     blockData.name =  $('#blockName').val();
     blockData.displayName = $('#blockDisplayName').val();
-    blockData.content = aceEditor.getSession().getValue().trim();
+    blockData.content = editorContent;
 
     $.Cms.ajax({
       type: 'POST',

@@ -5,6 +5,7 @@ Cms.prototype.ajax = function (params) {
     errorMessage: this.genericErrorMessage,
     showSuccessMessage: true,
     showErrorMessage: true,
+    async: true,
     formReset: true,
     contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
     trimAllInputs: true,
@@ -58,6 +59,7 @@ Cms.prototype.ajax = function (params) {
   var ajaxParams = {
     url: url,
     type: method,
+    async: settings.async,
     data: data,
     contentType: settings.contentType,
     success: function (data, status, response) {

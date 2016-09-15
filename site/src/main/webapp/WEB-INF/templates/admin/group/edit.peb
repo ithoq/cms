@@ -1,12 +1,8 @@
 {% extends 'admin/master' %}
 {% set activeNav = 'group' %}
-{% set title = message('admin.editGroup') %}
+{% set title = message('edit group') %}
 
 {% block content %}
-
-    {% if isAnonymous() %}
-        <h1> SUPER ADMIN MOTHER FUCKER </h1>
-    {%  endif %}
 
     <form id="groupForm" action="/admin/group/edit" method="POST" data-parsley-validate="">
         {{ csrf | raw }}
@@ -14,14 +10,14 @@
         <div class="panel panel-default group-form">
 
             <div class="panel-body">
-                <h2>{% if group is null  %}Create group{% else %}Edit group :{% endif %}</h2>
+                <h2>{% if group is null  %}{{ message('create group') }}{% else %}{{ message('edit group') }} :{% endif %}</h2>
                 <hr class="section">
                 <div class="form-group form-group-default m-b-20 required">
-                    <label for="name">Name</label>
+                    <label for="name">{{ message('name') | capitalize }}</label>
                     <input id="name" name="name" type="text" class="form-control" value="{{ group.name }}">
                 </div>
                 <div class="form-group m-t-10">
-                    <label>Description</label>
+                    <label>{{ message('description') | capitalize }}</label>
                     <textarea rows="4" class="form-control" id="description" name="description">{{ group.description }}</textarea>
                 </div>
                 <fieldset>
@@ -40,7 +36,7 @@
                     </div>
                 </fieldset>
                 <fieldset>
-                    <legend>General:</legend>
+                    <legend>{{ message('general') | capitalize }}:</legend>
                     <div class="row">
                         {% for role in rolesByGroup.get("general") %}
                             <div class="col-md-3 col-xs-6">
@@ -78,7 +74,7 @@
 
             </div>
             <div class="panel-footer">
-                <button type="submit" class="btn btn-success">send</button>
+                <button type="submit" class="btn btn-success">{{ message('submit') | capitalize }}</button>
             </div>
         </div>
     </form>

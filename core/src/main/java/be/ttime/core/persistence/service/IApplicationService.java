@@ -44,5 +44,7 @@ public interface IApplicationService {
 
     String getDefaultSiteLang();
 
+    String getDefaultAdminLang();
+
     ApplicationLanguageEntity getDefaultSiteApplicationLanguage();
 }

@@ -1,6 +1,11 @@
 function editBlockForm($form) {
-  if ($form.find('#changeType').data('dynamic') === true) {
-    $form.find('#content').val(aceEditor.getSession().getValue().trim());
+
+  var isDynamic = $form.find('#changeType').data('dynamic') === true;
+  var $content = $form.find('#content');
+  $content.removeAttr("data-parsley-peeble");
+  if (isDynamic) {
+    $content.val(aceEditor.getSession().getValue().trim());
+    $content.attr("data-parsley-peeble", "");
   }
 
   $.Cms.ajax({

@@ -31,5 +31,8 @@
 
   //=include include/editor.js
 
+  //=include include/parsley_validators.js
+  //=include include/keepSessionAlive.js
+
   $.Cms = new Cms();
 })(jQuery);

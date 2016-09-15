@@ -97,3 +97,21 @@ textarea.light-input
 {
     min-width: auto!important;
 }
+
+#modalSession
+{
+    z-index: 99999;
+
+    background: rgba(0, 0, 0, .91);
+}
+
+.sessionCounter
+{
+    font-size: 30px;
+
+    display: block;
+
+    margin: 19px auto;
+
+    text-align: center;
+}

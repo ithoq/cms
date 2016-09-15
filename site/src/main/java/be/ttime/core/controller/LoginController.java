@@ -7,6 +7,7 @@ import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.util.CmsUtils;
 import be.ttime.core.util.PebbleUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +55,13 @@ public class LoginController {
     {
         CmsUtils.fillModelMap(model,request, applicationService);
         return "admin/login";
+    }
+
+    @RequestMapping(value = "/admin/login/keepAlive", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String keepAlive(ModelMap model, HttpServletRequest request)
+    {
+        return "{\"data\":\"success\"}";
     }
 
     /*
