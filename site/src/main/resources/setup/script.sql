@@ -10,7 +10,7 @@ INSERT INTO `message` (`id`, `domain`, `messageKey`) VALUES
 (1, 'admin', 'admin.dropFilesHere'),
 (2, 'admin', 'admin.handCrafted'),
 (3, 'admin', 'admin.madeWithLove'),
-(4, 'admin', 'admin.blocks'),
+(4, 'admin', 'block'),
 (5, 'admin', 'admin.blockEdit'),
 (6, 'admin', 'admin.blocksManagement'),
 (7, 'admin', 'admin.newBlock'),
@@ -175,7 +175,13 @@ INSERT INTO `message` (`id`, `domain`, `messageKey`) VALUES
 (166, 'general', 'your session has expired, please login again'),
 (167, 'general', 'session expiration'),
 (168, 'general', 'session.will.expire'),
-(169, 'general', 'stay connected');
+(169, 'general', 'stay connected'),
+(170, 'general', 'system'),
+(171, 'general', 'AbstractAccessDecisionManager.accessDenied'),
+(172, 'general', 'access denied'),
+(173, 'general', 'accessDenied.message'),
+(174, 'general', 'admin.editSuperAdmin.message'),
+(175, 'general', 'back');
 
 INSERT INTO `translation` (`id`, `value`, `language_locale`, `message_id`) VALUES
 (1, 'déposez vos fichiers ici', 'fr', 1),
@@ -513,9 +519,21 @@ INSERT INTO `translation` (`id`, `value`, `language_locale`, `message_id`) VALUE
 (334, 'expiration de la session', 'fr', 167),
 (335, 'session expiration', 'en', 167),
 (336, 'votre session expirera dans 2 minutes. Cliquez sur le bouton pour rester connecté. Si vous êtes déconnecté vos modifications seront perdues', 'fr', 168),
-(337, 'your session will expire in 5 minutes. Click on the button to remain logged in. If you are logged off any changes will be lost', 'en', 168),
+(337, 'your session will expire in 2 minutes. Click on the button to remain logged in. If you are logged off any changes will be lost', 'en', 168),
 (338, 'rester connecté', 'fr', 169),
-(339, 'stay connected', 'en', 169);
+(339, 'stay connected', 'en', 169),
+(340, 'général', 'fr', 170),
+(341, 'general', 'en', 170),
+(342, 'accès refusé', 'fr', 171),
+(343, 'access denied', 'en', 171),
+(344, 'accès refusé', 'fr', 172),
+(345, 'access denied', 'en', 172),
+(346, 'vous n''êtes pas autorisé à accéder à cette ressource', 'fr', 173),
+(347, 'you are not allowed to access this resource', 'en', 173);
+(348, 'vous ne pouvez pas éditer un utilisateur superadmin', 'fr', 174),
+(349, 'you are not allowed to edit a superadmin', 'en', 174),
+(350, 'retour', 'fr', 175),
+(351, 'back', 'en', 175);
 
 INSERT INTO `role` (`id`, `description`, `name`, `section`, `superAdmin`) VALUES
 (1, NULL, 'ROLE_MEMBER', 'general', 0),

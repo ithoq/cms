@@ -64,7 +64,7 @@
                               method="post">
                             {{ csrf | raw }}
                             <div class="form-group form-group-default m-b-20 required">
-                                <label for="createFormName">{{ message('id') }}</label>
+                                <label for="createFormName">ID</label>
                                 <input id="createFormName" type="text" name="name" class="form-control" required>
                             </div>
                             <div class="form-group form-group-default m-b-20 required">
@@ -126,11 +126,11 @@
             <div class="form-group form-group-default form-group-default-select2">
                 <label for="selectType">{{ message('type') }}</label>
                 <select id="selectType" name="blockType" data-disable-search="true" class="full-width" {% if hasNotRole("ROLE_SUPER_ADMIN") %}disabled{% endif %}>
-                    <option value="CONTENT">{{ message('CONTENT') }}</option>
+                    <option value="CONTENT">{{ message('content') }}</option>
                     {% if hasRole("ROLE_SUPER_ADMIN") %}
-                        <option value="FIELDSET">{{ message('FIELDSET') }}</option>
-                        <option value="PAGE_TEMPLATE">{{ message('PAGE_TEMPLATE') }}</option>
-                        <option value="SYSTEM">{{ message('SYSTEM') }}</option>
+                        <option value="FIELDSET">{{ message('fieldset') }}</option>
+                        <option value="PAGE_TEMPLATE">{{ message('template') }}</option>
+                        <option value="SYSTEM">{{ message('system') }}</option>
                     {% endif %}
                 </select>
             </div>

@@ -95,6 +95,10 @@ public class InstallController {
         appConfig.setDefaultAdminLang(adminLang);
         appConfig.setDefaultPublicLang(publicLang);
         appConfig.setAlreadyInstall(true);
+        appConfig.setErrorBlockGeneral("error");
+        appConfig.setErrorBlock403("error");
+        appConfig.setErrorBlock404("error");
+        appConfig.setErrorBlock503("error");
 
         appConfig.setForcedLangInUrl(form.isLangInUrl());
         applicationService.saveApplicationConfig(appConfig);

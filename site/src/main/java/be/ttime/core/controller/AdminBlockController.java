@@ -39,10 +39,10 @@ public class AdminBlockController {
         return VIEWPATH + "home";
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
-    public void deleteBlock(@PathVariable("id") String id, HttpServletResponse response) {
+    public String deleteBlock(@PathVariable("id") String id, HttpServletResponse response) {
 
         if (id == null) {
             response.setStatus(500);
@@ -52,6 +52,7 @@ public class AdminBlockController {
         } catch (Exception e) {
             response.setStatus(500);
         }
+        return "{\"data\":\"success\"}";
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)

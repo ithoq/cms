@@ -22,6 +22,9 @@
                     <form role="form">
                         <div class="panel panel-transparent">
                             <div class="panel-body">
+                                {% if redirectMessage is not empty and redirectMessage.message is not empty %}
+                                    <div class="alert alert-{{ redirectMessage.type }}"><i class="fa fa-{{ redirectMessage.icon }}" aria-hidden="true"></i>{{ message(redirectMessage.message) | capitalize }}</div>
+                                {% endif %}
                                 <input id="search-table" type="text" placeholder="Search" class="form-control pull-right">
                                 <table id="data-table" class="table table-hover">
                                     <thead>

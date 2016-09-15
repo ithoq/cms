@@ -5,6 +5,7 @@ import be.ttime.core.persistence.service.IApplicationService;
 import be.ttime.core.util.CmsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -138,9 +139,12 @@ public class ForceLocalUrlFilter implements Filter {
             } else {
                 // redirection
                 if (appService.getApplicationConfig().isForcedLangInUrl() && !CmsUtils.isAjax(request) && isredirectablePath(requestURI)) {
-
+                    String queryString = request.getQueryString();
                     String localeUrl = (locale != null) ? locale.toString() : getDefaultLocaleUrlString(isAdmin);
                     String redirectUrl = "/" + localeUrl + (requestURI.equals("/") ? "" : requestURI);
+                    if(!StringUtils.isEmpty(queryString)){
+                        redirectUrl+= "?" + queryString;
+                    }
                     redirectStrategy.sendRedirect(request, response, redirectUrl);
                     return;
                 }

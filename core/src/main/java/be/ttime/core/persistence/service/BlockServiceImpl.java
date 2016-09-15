@@ -36,6 +36,11 @@ public class BlockServiceImpl implements IBlockService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "block", key = "#name"),
+            @CacheEvict(value = "blockCompiledTemplate", key = "#name"),
+            @CacheEvict(value = "blockJson", allEntries = true),
+    })
     public void delete(String name) throws Exception {
         BlockEntity block = blockRepository.findOne(name);
         if (block == null) {

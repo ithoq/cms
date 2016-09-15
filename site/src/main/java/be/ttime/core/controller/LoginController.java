@@ -61,6 +61,7 @@ public class LoginController {
     @ResponseBody
     public String keepAlive(ModelMap model, HttpServletRequest request)
     {
+
         return "{\"data\":\"success\"}";
     }
 

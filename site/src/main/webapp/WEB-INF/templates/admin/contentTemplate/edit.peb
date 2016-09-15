@@ -56,7 +56,7 @@
             </div>
         </div>
         <hr class="section">
-        <h5 class="blockTitle">{{ message('admin.blocks') | capitalize }} :</h5>
+        <h5 class="blockTitle">{{ message('block') | capitalize }} :</h5>
         <div class="form-group form-group-default m-b-20 required">
             <label>ID</label>
             <input id="blockName" name="blockName" type="text" class="form-control" value="{{ contentTemplate.block.name }}">
@@ -91,10 +91,10 @@
         </div>
         <div class="row">
             <div class="col-sm-6">
-                <button type="button" data-dismiss="modal" class="btn btn-danger btn-block m-t-5">Annuler</button>
+                <a href="/admin/contentTemplate" class="btn btn-danger btn-block m-t-5">{{ message('back') | capitalize }}</a>
             </div>
             <div class="col-sm-6">
-                <input id="submitBtn" type="submit" value="Enregister" class="btn btn-success btn-block m-t-5" />
+                <input id="submitBtn" type="submit" value="{{ message('save') | capitalize }}" class="btn btn-success btn-block m-t-5" />
             </div>
         </div>
     </form>

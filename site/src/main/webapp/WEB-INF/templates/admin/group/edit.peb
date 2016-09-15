@@ -12,6 +12,9 @@
             <div class="panel-body">
                 <h2>{% if group is null  %}{{ message('create group') }}{% else %}{{ message('edit group') }} :{% endif %}</h2>
                 <hr class="section">
+                {% if redirectMessage is not empty and redirectMessage.message is not empty %}
+                    <div class="alert alert-{{ redirectMessage.type }}"><i class="fa fa-{{ redirectMessage.icon }}" aria-hidden="true"></i>{{ message(redirectMessage.message) | capitalize }}</div>
+                {% endif %}
                 <div class="form-group form-group-default m-b-20 required">
                     <label for="name">{{ message('name') | capitalize }}</label>
                     <input id="name" name="name" type="text" class="form-control" value="{{ group.name }}">
@@ -74,7 +77,15 @@
 
             </div>
             <div class="panel-footer">
-                <button type="submit" class="btn btn-success">{{ message('submit') | capitalize }}</button>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <a href="/admin/group" class="btn btn-danger btn-block m-t-5">{{ message('back') | capitalize }}</a>
+                    </div>
+                    <div class="col-sm-6">
+                        <input id="submitBtn" type="submit" value="{{ message('save') | capitalize }}" class="btn btn-success btn-block m-t-5" />
+                    </div>
+                </div>
+            </div>
             </div>
         </div>
     </form>

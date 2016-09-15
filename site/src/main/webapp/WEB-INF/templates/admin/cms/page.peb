@@ -21,11 +21,13 @@
                            {% if content.enabled %}checked{% endif %} />
                     <label for="checkbox_enabled">{{ message('active') }} <i data-placement="bottom" title="" data-toggle="tooltip" type="button" data-original-title="Page activée" class="fa fa-info-circle"> </i></label>
                 </div>
+                {% if siteConfig.useMember %}
                 <div class="checkbox check-success checkbox-circle">
                     <input id="checkbox_memberOnly" name="memberOnly" type="checkbox"
                            {% if content.memberOnly %}checked{% endif %} />
                     <label for="checkbox_memberOnly">{{ message('admin.memberOnly') }} <i data-placement="bottom" title="" data-toggle="tooltip" type="button" data-original-title="Uniquement visible pour les membres" class="fa fa-info-circle"> </i></label>
                 </div>
+                {%  endif %}
             </div>
         </div>
     </div>

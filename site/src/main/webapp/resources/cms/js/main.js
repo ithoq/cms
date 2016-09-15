@@ -778,6 +778,9 @@ String.prototype.capitalizeFirstLetter = function () {
           dataType: 'json',
           async: false,
           success: function(response) {},
+          error: function(response) {
+              document.location.href = "/logout?sessionExpiration";
+          },
       });
   }
   

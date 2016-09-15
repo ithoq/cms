@@ -1,6 +1,5 @@
 package be.ttime.core.controller;
 
-import be.ttime.core.error.ForbiddenException;
 import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.service.IBlockService;
 import be.ttime.core.persistence.service.IContentTemplateService;
@@ -12,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -120,7 +120,7 @@ public class AdminContentTemplateController {
             content = contentTemplateService.find(contentForm.getId());
             if(content == null){
                 response.setStatus(500);
-                throw new ForbiddenException("Invalid content id : " + contentForm.getId());
+                throw new AccessDeniedException("Invalid content id : " + contentForm.getId());
             }
             if(!StringUtils.isEmpty(blockPosted.getName())){
                 block = blockService.find(blockPosted.getName());
@@ -155,7 +155,7 @@ public class AdminContentTemplateController {
                 cf = fieldsetService.findContentTemplateFieldset(contentFieldsetIdList.get(i));
                 if(cf == null){
                     response.setStatus(500);
-                    throw new ForbiddenException("Invalid contentfieldset id : " + contentForm.getId());
+                    throw new AccessDeniedException("Invalid contentfieldset id : " + contentForm.getId());
                 }
             } else{
                 cf = new ContentTemplateFieldsetEntity();

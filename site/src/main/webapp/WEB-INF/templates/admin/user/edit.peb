@@ -11,7 +11,9 @@
             <div class="panel-body">
                 <h2>{% if editUser is null  %}{{ message('create user') | capitalize }}{% else %}{{ message('edit user') | capitalize }}{% endif %}</h2>
                 <hr class="section">
-
+                {% if redirectMessage is not empty and redirectMessage.message is not empty %}
+                    <div class="alert alert-{{ redirectMessage.type }}"><i class="fa fa-{{ redirectMessage.icon }}" aria-hidden="true"></i>{{ message(redirectMessage.message) | capitalize }}</div>
+                {% endif %}
                 <div class="row">
                     <div class="col-md-6 p-r-50">
                         <fieldset>
@@ -27,7 +29,7 @@
                             </div>
                             <div class="form-group m-b-20 required">
                                 <label for="lastName">{{ message('name') }}</label>
-                                <input id="lastName" name="lastName" value="{{ editUser.name }}" type="text" required class="form-control">
+                                <input id="lastName" name="lastName" value="{{ editUser.lastname }}" type="text" required class="form-control">
                             </div>
                             <div class="form-group m-b-20 required">
                                 <label for="firstname">{{ message('firstname') }}</label>
@@ -123,7 +125,14 @@
                 </div>
             </div>
             <div class="panel-footer">
-                <button type="submit" class="btn btn-success">send</button>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <a href="/admin/user" class="btn btn-danger btn-block m-t-5">{{ message('back') | capitalize }}</a>
+                    </div>
+                    <div class="col-sm-6">
+                        <input id="submitBtn" type="submit" value="{{ message('save') | capitalize }}" class="btn btn-success btn-block m-t-5" />
+                    </div>
+                </div>
             </div>
         </div>
     </form>

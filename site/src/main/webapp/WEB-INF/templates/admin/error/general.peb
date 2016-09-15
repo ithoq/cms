@@ -2,11 +2,10 @@
 <html>
 <head>
     <meta charset=utf-8/>
-    <title>Error</title>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-    <!--[if IE]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <title>{{ title }}</title>
+    <link href="/resources/cms/libs/boostrapv3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/resources/cms/libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <script src="/resources/cms/libs/jQuery/jquery-2.2.4.min.js"></script>
     <style>
         .error-container
         {
@@ -19,17 +18,38 @@
         {
             font-size: 60px;
         }
+        h4 i {
+            font-size: 180px!important;
+            color: #c10000;
+        }
         p.error-message
         {
             font-size: 28px;
         }
-
+        .stacktrace{
+            max-height: 400px;
+            overflow: auto;
+        }
     </style>
 </head>
 <body>
 <div class="error-container">
-    <h4 class="error">{{ message("oops") | capitalize }}...</h4>
-    <p class="error-message">{% if code == 404 %}{{ message("error.notFound") }}{% else %}{%  if msg is not empty %}{{ msg }}{% else %}{{ message("error.general") }}{% endif %}{% endif %} </p>
+    <h4 class="error">{% if errorCode == 403 %}<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>{% else %}{{ message("oops") | capitalize }}...{% endif %}</h4>
+    <p class="error-message">{% if errorCode == 404 %}{{ message("error.notFound") | capitalize }}{% elseif errorCode == 403 %} {{ message("accessDenied.message") | capitalize }}{% else %}{{ message("error.general") | capitalize }}{% endif %} </p>
+
+    {% if beans.viewHelper.isSuperAdmin() %}
+        <div style="margin-top:50px">
+            <pre>
+                {{ errorMsg }}
+            </pre>
+        </div>
+        <div class="stacktrace">
+            <pre>
+                {{ errorStacktrace }}
+            </pre>
+        </div>
+    {%  endif %}
+
 </div>
 </body>
 </html>

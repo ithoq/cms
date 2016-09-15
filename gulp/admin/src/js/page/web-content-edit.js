@@ -8,6 +8,12 @@ $(function () {
   var tags = window.tags;
   var themes = window.themes;
 
+  // back link
+  var currentType = $('#types').val();
+  if(currentType){
+      $('#back').attr('href', "/admin/webContent?type=" + currentType);
+  }
+
   $.Cms.addCsrfAjaxHeaderToken();
   //=include include/cms/datatables_event.js
 

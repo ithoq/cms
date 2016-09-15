@@ -65,6 +65,12 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
+                                            <div class="checkbox ">
+                                                <input type="checkbox" name="useMember" id="useMember" {% if appConfig.useMember %}checked{% endif %}>
+                                                <label for="useMember">Site with member</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
                                             <span class="label">Main languages</span><span class="m-l-15 label label-success">{{ defaultSiteLang }}</span>
                                         </div>
                                         <div class="form-group">
@@ -199,12 +205,11 @@
 
             $table.on('click', '.btn-empty-cache', function () {
                 var id = $(this).closest('tr').data('id');
-                console.log(id);
                 deleteCache(id)
             });
 
             $('#emptyCache').click(function(){
-                deleteCache()
+                deleteCache(null)
             })
 
 
@@ -213,11 +218,10 @@
                     name = '';
                 }
                 var url =  '/admin/backinfo/clearCache/' + name;
-                console.log(url);
                 $.Cms.ajax({
                     type: 'DELETE',
                     url: url,
-                    successMessage: 'User deleted successfully',
+                    successMessage: 'Cache deleted successfully',
                     onSuccess: function (data) {
                         $table.DataTable().ajax.reload();
                     },

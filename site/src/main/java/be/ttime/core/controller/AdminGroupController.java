@@ -1,6 +1,7 @@
 package be.ttime.core.controller;
 
 import be.ttime.core.error.ResourceNotFoundException;
+import be.ttime.core.model.RedirectMessage;
 import be.ttime.core.persistence.model.GroupEntity;
 import be.ttime.core.persistence.model.RoleEntity;
 import be.ttime.core.persistence.model.UserEntity;
@@ -15,10 +16,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,12 +56,12 @@ public class AdminGroupController {
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
-    public String edit(ModelMap model) {
-        return edit(null, model);
+    public String edit(ModelMap model, @ModelAttribute("redirectMessage") RedirectMessage redirectMessage) {
+        return edit(null, model, redirectMessage);
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, ModelMap model) {
+    public String edit(@PathVariable("id") Long id, ModelMap model, @ModelAttribute("redirectMessage") RedirectMessage redirectMessage) {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().disableHtmlEscaping().create();
         if (id != null) {
             GroupEntity group = authorityService.findGroupById(id);
@@ -74,34 +73,38 @@ public class AdminGroupController {
 
             model.put("group", group);
         }
+        model.put("redirectMessage", redirectMessage);
         model.put("rolesByGroup", authorityService.getRoleByGroup());
         model.put("isSuperAdmin", CmsUtils.isSuperAdmin());
         return VIEWPATH + "edit";
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String edit(ModelMap model, Long id, String name, String description, Long[] roles, HttpServletRequest request) throws ResourceNotFoundException {
+    public String edit(ModelMap model, Long id, String name, String description, Long[] roles, HttpServletRequest request, RedirectAttributes redirectAttributes) throws ResourceNotFoundException {
         GroupEntity role;
         if(id != null){
             role = authorityService.findGroupById(id);
-
             if(role == null){
                 throw new ResourceNotFoundException("User with id \" + id + \" not found!\"");
             }
         } else{
             role = new GroupEntity();
+            role.setDeletable(true);
         }
 
         boolean isSuperAdmin = CmsUtils.isSuperAdmin();
+
         Set<RoleEntity> roleEntityList = new HashSet<>();
         RoleEntity roleEntity;
-        for (Long roleId : roles) {
-            roleEntity = authorityService.findRoleById(roleId);
-            if(roleEntity ==null)
-                throw new IllegalArgumentException("role with id " + roleId + " is not found");
-            if(!isSuperAdmin && roleEntity.isSuperAdmin())
-                continue;
-            roleEntityList.add(roleEntity);
+        if(roles != null) {
+            for (Long roleId : roles) {
+                roleEntity = authorityService.findRoleById(roleId);
+                if (roleEntity == null)
+                    throw new IllegalArgumentException("role with id " + roleId + " is not found");
+                if (!isSuperAdmin && roleEntity.isSuperAdmin())
+                    continue;
+                roleEntityList.add(roleEntity);
+            }
         }
         role.setName(name);
         role.setDescription(description);
@@ -117,7 +120,36 @@ public class AdminGroupController {
                 CmsUtils.updateSessionUser(databaseUser);
             }
         }
+        RedirectMessage redirectMessage = new RedirectMessage();
+        redirectMessage.setType(RedirectMessage.SUCCESS);
+        redirectMessage.setMessage("success.general");
+        redirectAttributes.addFlashAttribute("redirectMessage", redirectMessage);
 
         return "redirect:/admin/group/edit/" + role.getId() ;
+    }
+
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public void delete(@PathVariable("id") Long id, HttpServletResponse response) {
+
+        if (id == null) {
+            response.setStatus(500);
+        }
+        try {
+            GroupEntity group = authorityService.findGroupById(id);
+            if(group == null || group.getName().equals("GROUP_SUPER_ADMIN")){
+                response.setStatus(500);
+            } else {
+                if(group.getName().equals("GROUP_ADMIN") && !CmsUtils.isSuperAdmin()){
+                    response.setStatus(500);
+                } else{
+                    authorityService.deleteGroup(id);
+                }
+            }
+
+        } catch (Exception e) {
+            response.setStatus(500);
+        }
     }
 }

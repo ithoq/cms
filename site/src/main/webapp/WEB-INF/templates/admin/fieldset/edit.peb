@@ -7,6 +7,9 @@
 
     <h4>{% if fieldset is null  %}Create fieldset{% else %}Edit fieldset{% endif %}</h4>
     <hr class="section">
+    {% if redirectMessage is not empty and redirectMessage.message is not empty %}
+        <div class="alert alert-{{ redirectMessage.type }}"><i class="fa fa-{{ redirectMessage.icon }}" aria-hidden="true"></i>{{ message(redirectMessage.message) | capitalize }}</div>
+    {% endif %}
     <form id="fieldsetForm" action="" method="POST">
         {{ csrf | raw }}
         <h5 class="fieldsetTitle">Fieldset :</h5>

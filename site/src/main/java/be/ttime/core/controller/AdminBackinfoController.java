@@ -117,20 +117,27 @@ public class AdminBackinfoController {
         }
         return totalUsage;
     }
+
+
+    @RequestMapping(value = "/clearCache/", method = RequestMethod.DELETE)
+    @ResponseBody
+    public String clearAllCache(ModelMap model) {
+
+        cacheManager.clearAll();
+        return "{ data : \"\" }";
+    }
+
     @RequestMapping(value = "/clearCache/{name}", method = RequestMethod.DELETE)
     @ResponseBody
     public String clearCache(ModelMap model, @PathVariable("name") String name) {
-        if(name == null){
-            cacheManager.clearAll();
+
+        Cache cache = cacheManager.getCache(name);
+        if(cache == null){
+            return "{ error : \"cache not found\" }";
+        } else {
+            cache.removeAll();
         }
-        else{
-            Cache cache = cacheManager.getCache(name);
-            if(cache == null){
-                return "{ error : \"cache not found\" }";
-            } else {
-                cache.removeAll();
-            }
-        }
+
         return "{ data : \"\" }";
     }
 
@@ -206,6 +213,7 @@ public class AdminBackinfoController {
         appConfig.setAlreadyInstall(true);
         appConfig.setMaintenance(form.isMaintenance());
         appConfig.setForcedLangInUrl(form.isLangInUrl());
+        appConfig.setUseMember(form.isUseMember());
         applicationService.saveApplicationConfig(appConfig);
 
         RedirectMessage redirectMessage = new RedirectMessage();

@@ -43,6 +43,12 @@
         <input id="contentType" type="hidden" name="contentType" value="{{ contentType }}"/>
 
         {% include 'admin/cms/page'  with {"isWebContent": true}  %}
+    </form>
+    <div class="row">
+        <div class="col-xs-offset-3 col-sm-6">
+            <a href="/admin/webContent" id="back" class="btn btn-danger btn-block m-t-5">{{ message('back') | capitalize }}</a>
+        </div>
+    </div>
 
 {% endblock content %}
 

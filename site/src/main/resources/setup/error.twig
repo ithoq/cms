@@ -1,10 +1,4 @@
-<div class="breadcrumb">
-    <div class="l-container">
-        <div class="breadcrumb-page-title">{{ message("error") | capitalize }}</div>
-        <p class="breadcrumb-sub"></p>
-    </div>
-</div>
 <div class="error-container">
-    <h4 class="error">{{ message("oops") | capitalize }}...</h4>
-    <p class="error-message">{{ message("error.general") }}.</p>
+    <h4 class="error">{% if errorCode == 403 %}{{ message("access denied") | capitalize }}{% elseif errorCode == 503 %}<img src="/resources/cms/img/maintenance.png" />{% else %}{{ message("oops") | capitalize }}...{% endif %}</h4>
+    <p class="error-message">{% if errorCode == 404 %}{{ message("error.notFound") | capitalize }}{% elseif errorCode == 403 %} {{ message("accessDenied.message") | capitalize }}{% elseif errorCode == 503 %}{{ message("error.maintenance.message") | capitalize }}{% else %}{{ message("error.general") | capitalize }}{% endif %} </p>
 </div>

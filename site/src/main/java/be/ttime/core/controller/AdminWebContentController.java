@@ -132,7 +132,7 @@ public class AdminWebContentController {
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, String lang, ModelMap model, @ModelAttribute("redirectMessage") RedirectMessage redirectMessage) throws Exception{
+    public String edit(@PathVariable("id") Long id, String lang, String type, ModelMap model, @ModelAttribute("redirectMessage") RedirectMessage redirectMessage) throws Exception{
 
         model.put("thumbnailWidth", env.getProperty("thumbnail.size.width"));
         model.put("thumbnailHeight", env.getProperty("thumbnail.size.height"));
@@ -172,7 +172,7 @@ public class AdminWebContentController {
         }
         List<String> tags = new ArrayList<>();
         List<String> themes= new ArrayList<>();
-        String taxonomyType = "";
+        String taxonomyType = null;
         Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 
         if(content.getId() != 0){
@@ -194,13 +194,13 @@ public class AdminWebContentController {
             }
 
             for (TaxonomyTermEntity t : content.getTaxonomyTermEntities()) {
-                String type = t.getTaxonomyType().getName();
-                if (type.equals("TAG")){
+                String _type = t.getTaxonomyType().getName();
+                if (_type.equals("TAG")){
                     tags.add(t.getName());
 
-                } else if(type.equals("THEME")){
+                } else if(_type.equals("THEME")){
                     themes.add(t.getName());
-                } else if(type.equals("TYPE")){
+                } else if(_type.equals("TYPE")){
                     taxonomyType = t.getName();
                 }
             }
@@ -226,6 +226,12 @@ public class AdminWebContentController {
         else{
             // ADD
             contentData = new ContentDataEntity();
+            if(!StringUtils.isEmpty(type)){
+                taxonomyType = type;
+            } else{
+                taxonomyType = "";
+            }
+
             contentData.setContent(content);
             contentData.setLanguage(applicationService.getSiteApplicationLanguageMap().get(lang));
             content.addContentData(contentData);

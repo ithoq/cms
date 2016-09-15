@@ -1,7 +1,7 @@
 package be.ttime.core.controller;
 
-import be.ttime.core.error.ForbiddenException;
 import be.ttime.core.error.ResourceNotFoundException;
+import be.ttime.core.model.RedirectMessage;
 import be.ttime.core.model.form.AdminFielsetForm;
 import be.ttime.core.persistence.model.BlockEntity;
 import be.ttime.core.persistence.model.BlockTypeEntity;
@@ -15,14 +15,13 @@ import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -52,7 +51,7 @@ public class AdminFieldsetController {
     }
 
     @RequestMapping(value= "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id,ModelMap model) {
+    public String edit(@PathVariable("id") Long id,ModelMap model, @ModelAttribute("redirectMessage") RedirectMessage redirectMessage) {
         if(id != null){
             FieldsetEntity fieldset = fieldsetService.findFieldset(id);
             if(fieldset == null){
@@ -61,6 +60,7 @@ public class AdminFieldsetController {
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             List<InputDefinitionEntity> inputs = fieldset.getInputs();
             String jsonResult = gson.toJson(inputs);
+            model.put("redirectMessage", redirectMessage);
             model.put("fieldset", fieldset);
             model.put("inputsJson", jsonResult);
         }
@@ -69,8 +69,8 @@ public class AdminFieldsetController {
 
 
     @RequestMapping(value= "/edit", method = RequestMethod.POST)
-    public String edit(ModelMap model, @Valid AdminFielsetForm form, BindingResult result) {
-        return edit(null, model, form, result);
+    public String edit(ModelMap model, @Valid AdminFielsetForm form, BindingResult result, RedirectAttributes redirectAttributes ) {
+        return edit(null, model, form, result,redirectAttributes);
     }
 
     @RequestMapping(value = "/getJson", method = RequestMethod.GET)
@@ -95,7 +95,7 @@ public class AdminFieldsetController {
     }
 
     @RequestMapping(value= "/edit/{id}", method = RequestMethod.POST)
-    public String edit(@PathVariable("id") Long id, ModelMap model, @Valid AdminFielsetForm form, BindingResult result) throws ResourceNotFoundException {
+    public String edit(@PathVariable("id") Long id, ModelMap model, @Valid AdminFielsetForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ResourceNotFoundException {
 
         FieldsetEntity fieldset;
         BlockEntity blockEntity;
@@ -116,7 +116,7 @@ public class AdminFieldsetController {
         fieldset.setArray(form.isArray());
         List<InputDefinitionEntity> inputDefinitionEntityList = new ArrayList<>();
         if(inputDefinitionEntityList.size() > 0) {
-            throw new ForbiddenException("Field must have at least one input!");
+            throw new AccessDeniedException("Field must have at least one input!");
         }
 
         for (int i = 0; i < form.getInputsName().length; i++) {
@@ -148,6 +148,11 @@ public class AdminFieldsetController {
 
         //return new RedirectView("/admin/fieldset/edit/" + fieldset.getId(), true, true , false);
         //model.clear();
+        RedirectMessage redirectMessage = new RedirectMessage();
+        redirectMessage.setType(RedirectMessage.SUCCESS);
+        redirectMessage.setMessage("success.general");
+        redirectAttributes.addFlashAttribute("redirectMessage", redirectMessage);
+
         return "redirect:/admin/fieldset/edit/" + fieldset.getId() ;
     }
 

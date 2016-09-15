@@ -32,9 +32,19 @@ public class ApplicationConfigEntity {
 
     private boolean maintenance = false;
 
+    private boolean useMember = true;
+
     private String siteName;
 
     private String url;
 
     private String seoDescription;
+
+    private String errorBlockGeneral;
+
+    private String errorBlock404;
+
+    private String errorBlock403;
+
+    private String errorBlock503;
 }

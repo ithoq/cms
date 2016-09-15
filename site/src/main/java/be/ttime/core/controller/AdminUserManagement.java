@@ -1,6 +1,7 @@
 package be.ttime.core.controller;
 
 import be.ttime.core.error.ResourceNotFoundException;
+import be.ttime.core.model.RedirectMessage;
 import be.ttime.core.model.form.AdminEditUser;
 import be.ttime.core.persistence.model.GroupEntity;
 import be.ttime.core.persistence.model.UserEntity;
@@ -14,16 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
@@ -52,7 +51,8 @@ public class AdminUserManagement {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @RequestMapping(value= "", method = RequestMethod.GET)
-    public String home(ModelMap model) {
+    public String home(ModelMap model, @ModelAttribute("redirectMessage") RedirectMessage redirectMessage) {
+        model.put("redirectMessage", redirectMessage);
         return VIEWPATH + "home";
     }
 
@@ -65,13 +65,20 @@ public class AdminUserManagement {
     }
 
     @RequestMapping(value= "/edit", method = RequestMethod.POST)
-    public String edit(ModelMap model, @Valid AdminEditUser form, BindingResult result, HttpServletRequest request) throws ResourceNotFoundException, IOException {
+    public String edit(ModelMap model, @Valid AdminEditUser form,  BindingResult result, RedirectAttributes redirectAttributes) throws ResourceNotFoundException, IOException {
         UserEntity userEntity;
 
         //UserEntity currentUser = CmsUtils.getCurrentUser();
-
+        RedirectMessage redirectMessage = new RedirectMessage();
         if (result.hasErrors()) {
-            throw new IllegalArgumentException("Error in form");
+            redirectMessage.setType(RedirectMessage.ERROR);
+            redirectMessage.setMessage("error.validation.message");
+            redirectAttributes.addFlashAttribute("redirectMessage", redirectMessage);
+            long id = 0;
+            if(form.getId() != null){
+                id = form.getId();
+            }
+            return "redirect:/admin/user/edit/" + id;
         } else {
 
             if (form.getId() == null) {
@@ -130,25 +137,48 @@ public class AdminUserManagement {
                 userEntity.setGroups(roles);
             }
             userEntity = userService.save(userEntity);
+
+            redirectMessage.setType(RedirectMessage.SUCCESS);
+            redirectMessage.setMessage("success.general");
+            redirectAttributes.addFlashAttribute("redirectMessage", redirectMessage);
+            return "redirect:/admin/user/edit/" + userEntity.getId() ;
         }
 
-        return "redirect:/admin/user/edit/" + userEntity.getId() ;
+
 
     }
 
     @RequestMapping(value= "/edit", method = RequestMethod.GET)
-    public String edit(ModelMap model) {
-        return edit(null, model);
+    public String edit(ModelMap model,  RedirectAttributes redirectAttributes, @ModelAttribute("redirectMessage") RedirectMessage redirectMessage) {
+        return edit(null, model, redirectAttributes, redirectMessage);
     }
 
     @RequestMapping(value= "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, ModelMap model) {
+    public String edit(@PathVariable("id") Long id, ModelMap model,  RedirectAttributes redirectAttributes, @ModelAttribute("redirectMessage") RedirectMessage redirectMessage) {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().disableHtmlEscaping().create();
         if(id != null){
             UserEntity user = userService.findById(id);
 
             if(user == null){
                 throw new ResourceNotFoundException("User with id \" + id + \" not found!\"");
+            }
+
+            boolean role_super_admin = user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"));
+
+            /*outerloop:
+            for (GrantedAuthority authority : authorities) {
+                if(authority.getAuthority().equals("ROLE_SUPER_ADMIN")) {
+                    role_super_admin = true;
+                    break outerloop;
+                }
+            }*/
+
+            if(role_super_admin && !CmsUtils.isSuperAdmin()){
+                RedirectMessage superAdminRedirectMessage = new RedirectMessage();
+                superAdminRedirectMessage.setType(RedirectMessage.ERROR);
+                superAdminRedirectMessage.setMessage("admin.editSuperAdmin.message");
+                redirectAttributes.addFlashAttribute("redirectMessage", superAdminRedirectMessage);
+                return "redirect:/admin/user";
             }
 
             if(user.getBirthday() != null){
@@ -167,10 +197,10 @@ public class AdminUserManagement {
 
         }
 
+        model.put("redirectMessage", redirectMessage);
         model.put("groupList", authorityService.findAllClientGroup());
         return VIEWPATH + "edit";
     }
-
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     @ResponseBody
@@ -181,7 +211,14 @@ public class AdminUserManagement {
         }
         try {
             UserEntity user = userService.findById(id);
-            userService.delete(user);
+            boolean role_super_admin = user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"));
+
+            if(role_super_admin && !CmsUtils.isSuperAdmin()){
+                response.setStatus(500);
+            } else {
+                userService.delete(user);
+            }
+
         } catch (Exception e) {
             response.setStatus(500);
         }

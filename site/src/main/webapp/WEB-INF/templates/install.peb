@@ -39,6 +39,12 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <div class="checkbox ">
+                            <input type="checkbox" name="useMember" id="useMember" checked>
+                            <label for="useMember">Site with member</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label>Main languages</label><span class="help">default language</span>
                         <div class="selectContainer">
                             <select id="siteLocale" name="siteLocale" >

@@ -10,7 +10,7 @@
                 <li class="m-t-30"><a href="/admin/cms" class="detailed"><span class="title">CMS</span><span class="details">{{ message('admin.pagesManagement') }}</span></a><span class="icon-thumbnail">cms</span></li>
             {% endif %}
             {% if hasRole("ROLE_ADMIN_BLOCK") %}
-                <li><a href="/admin/block" class="detailed"><span class="title">{{ message('admin.blocks') | capitalize }}</span><span class="details">{{ message('admin.blocksManagement') }}</span></a><span class="icon-thumbnail"><i class="fa fa-th-large"></i></span></li>
+                <li><a href="/admin/block" class="detailed"><span class="title">{{ message('block') | capitalize }}</span><span class="details">{{ message('admin.blocksManagement') }}</span></a><span class="icon-thumbnail"><i class="fa fa-th-large"></i></span></li>
             {% endif %}
             {% if hasRole("ROLE_ADMIN_WEBCONTENT") %}
                 <li>

@@ -1,6 +1,5 @@
 package be.ttime.core.persistence.service;
 
-import be.ttime.core.error.ForbiddenException;
 import be.ttime.core.persistence.model.GroupEntity;
 import be.ttime.core.persistence.model.RoleEntity;
 import be.ttime.core.persistence.repository.IGroupRepository;
@@ -9,6 +8,7 @@ import be.ttime.core.util.CmsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,7 +113,7 @@ public class AuthorityServiceImpl implements IAuthorityService {
             throw new IllegalArgumentException();
         }
         if(!group.isDeletable()){
-            throw new ForbiddenException();
+            throw new AccessDeniedException("Undeletable group");
         }
 
         groupRepository.delete(group);
@@ -126,12 +126,12 @@ public class AuthorityServiceImpl implements IAuthorityService {
         JsonArrayBuilder data = Json.createArrayBuilder();
         JsonObjectBuilder row;
 
-        for (GroupEntity role : findAllClientGroup()) {
+        for (GroupEntity group : findAllClientGroup()) {
             row = Json.createObjectBuilder();
-            row.add("DT_RowData", Json.createObjectBuilder().add("id", role.getId()));
-            row.add("name", CmsUtils.emptyStringIfnull(role.getName()));
-            row.add("description", CmsUtils.emptyStringIfnull(role.getDescription()));
-            row.add("deletable", role.isDeletable());
+            row.add("DT_RowData", Json.createObjectBuilder().add("id", group.getId()));
+            row.add("name", CmsUtils.emptyStringIfnull(group.getName()));
+            row.add("description", CmsUtils.emptyStringIfnull(group.getDescription()));
+            row.add("deletable", group.isDeletable());
             data.add(row);
         }
 

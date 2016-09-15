@@ -1,6 +1,5 @@
 package be.ttime.core.model;
 
-import be.ttime.core.error.ForbiddenException;
 import be.ttime.core.model.field.PageData;
 import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.service.IApplicationService;
@@ -15,6 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -234,6 +234,10 @@ public class ViewHelper {
         return CmsUtils.hasRole(role);
     }
 
+    public boolean isSuperAdmin(){
+        return CmsUtils.isSuperAdmin();
+    }
+
     public boolean hasRoles(Collection<String> roles){
         return CmsUtils.hasRoles(roles);
     }
@@ -250,7 +254,7 @@ public class ViewHelper {
         boolean result = userHasRole(content);
         result = false;
         if(!result){
-            throw new ForbiddenException();
+            throw new AccessDeniedException("You don't have permission to access the resource");
         }
     }
 

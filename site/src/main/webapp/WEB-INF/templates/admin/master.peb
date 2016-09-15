@@ -79,7 +79,7 @@
             <div class="modal-content">
                 <div class="modal-body text-center m-t-20">
                     <h3>{{ message('session expiration') | capitalize }}</h3>
-                    <p>{{ message('session.will.expire') | capitalize }}</p>
+                    <p>{{ message('session.will.expire') | capitalize }}.</p>
                     <span id="sessionCounter" class="sessionCounter"></span>
                     <button type="button" id="sessionKeepAlive" class="btn btn-primary btn-cons" data-dismiss="modal">{{ message('stay connected') | capitalize }}</button>
                 </div>
@@ -125,10 +125,6 @@
             </div>
         </div>
     </div>
-    {% if noFooter == null or not noFooter %}
-        {% include 'admin/include/footer' %}
-    {% endif %}
-
 </div>
 <script src="/resources/cms/libs/pages/js/pages.js"></script>
 <script src="/resources/cms/js/main.js"></script>

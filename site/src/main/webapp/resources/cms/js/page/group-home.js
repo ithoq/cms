@@ -25,6 +25,7 @@ $(function () {
         defaultContent: '<button type="button" class="btn btn-default ' +
         'btn-modal-edit"><i class="fa fa-pencil"></i></button>',
       },
+      { data: 'deletable', },
     ],
   });
 

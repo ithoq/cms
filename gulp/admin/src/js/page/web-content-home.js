@@ -7,9 +7,16 @@
   $(function () {
     $.Cms.addCsrfAjaxHeaderToken();
 
+
+    $('.js-create-webcontent').on('click', function(e){
+        e.preventDefault();
+        var href = $(this).attr('href') + '&type=' + $('#types').val();
+        document.location.href=href;
+    });
+    
     // init variables
     $table = $('#webContentTable');
-/*
+  /*
     var isPrivate = $.Cms.getParameterByName('contentPrivate');
 
     var param = {

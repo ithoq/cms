@@ -40,4 +40,7 @@ public class InstallCmsForm {
     private boolean langInUrl = false;
 
     private boolean maintenance = false;
+
+    private boolean useMember = false;
+
 }
