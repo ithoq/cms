@@ -1,6 +1,6 @@
 function startSessionInterval() {
     stopSessionInterval();
-    sessionCheckInterval = setInterval(alertFunc, 1000 * 60);
+    sessionCheckInterval = setInterval(alertFunc, 1000 * 30);
 }
 
 function stopSessionInterval() {

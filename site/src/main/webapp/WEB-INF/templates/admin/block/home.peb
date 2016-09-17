@@ -78,13 +78,11 @@
                 {% else %}
                     <div class="panel-heading">
                         <div class="panel-block-title m-b-30">
-                            <h2>{{ message('admin.block') | capitalize }}</h2>
+                            <h2>{{ message('block') | capitalize }}</h2>
                         </div>
                     </div>
                     <div class="panel-body">
-                        <p>Blocks are areas of a page used in multiple pages (like the footer or a sidebar).</p>
-
-                        <p>When you make change on a block, you will see the repercussion on all page that use this block.</p>
+                        <p>{{ message('admin.block.intro') }}</p>
                     </div>
                 {% endif %}
             </div>
@@ -133,12 +131,15 @@
                         <option value="SYSTEM">{{ message('system') }}</option>
                     {% endif %}
                 </select>
+                {% if hasNotRole("ROLE_SUPER_ADMIN") %}
+                    <input type="hidden" value="CONTENT" name="blockType">
+                {% endif %}
             </div>
             <div class="form-group form-group-default m-b-20 required">
                 <label>{{ message('name') }}</label>
 
                 {% verbatim %}<input value="{{ name }}" type="text" name="name" class="form-control" {% endverbatim %} {% if hasNotRole("ROLE_SUPER_ADMIN") %}disabled{% endif %} />
-
+                {% if hasNotRole("ROLE_SUPER_ADMIN") %}{% verbatim %}<input type="hidden" value="{{ name }}" name="name">{% endverbatim %}{% endif %}
             </div>
             <div class="form-group">
                 <label for="content-block">{{ message('content') }}</label>

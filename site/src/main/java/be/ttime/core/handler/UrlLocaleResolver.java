@@ -115,9 +115,14 @@ public class UrlLocaleResolver extends CookieGenerator implements LocaleResolver
         return locale;
     }
 
+    @Override
+    public String getCookieName() {
+        return isAdmin ? DEFAULT_COOKIE_ADMIN_NAME : DEFAULT_COOKIE_PUBLIC_NAME;
+    }
+
     private Locale getCookieLocale(HttpServletRequest request) {
         // Retrieve and parse cookie value.
-        Cookie cookie = WebUtils.getCookie(request, this.getCookieName());
+        Cookie cookie = WebUtils.getCookie(request, getCookieName());
         if (cookie != null) {
             Locale l = StringUtils.parseLocaleString(cookie.getValue());
             if (langMap.containsKey(l.toString()))

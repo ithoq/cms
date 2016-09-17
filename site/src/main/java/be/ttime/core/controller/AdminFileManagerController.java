@@ -7,6 +7,7 @@ import be.ttime.core.util.CmsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ import java.io.IOException;
 @Controller
 @Slf4j
 @RequestMapping(value = "/admin/fileManager")
+@PreAuthorize("hasRole('ROLE_ADMIN_FILE_MANAGER')")
 public class AdminFileManagerController {
 
     @Autowired

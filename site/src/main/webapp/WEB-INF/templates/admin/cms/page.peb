@@ -75,6 +75,12 @@
             </div>
         </div>
     </div>
+{% else %}
+    {% for t in allTemplates %}
+        {%  if t.id == template.id %}
+            <input type="hidden" value="{{ t.id }}" name="templateId" />
+        {% endif %}
+    {% endfor %}
 {% endif %}
 <div class="panel panel-default">
     <div class="lang-selector">
@@ -127,9 +133,6 @@
 
                     {% if content.enabled and contentData.enabled and contentData.computedSlug is not empty  %}
                         <a href="{{ contentData.computedSlug }}" target="_blank" class="btn btn-default"><i class="fa fa-link"></i></a>
-                    {% endif %}
-                    {% if isWebContent is null %}
-                        <button type="button" id="preview" class="btn btn-default"><i class="fa fa-eye"></i></button>
                     {% endif %}
                 {% endif %}
             </div>

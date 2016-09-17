@@ -1,6 +1,7 @@
 package be.ttime.core.controller;
 
 import be.fabriceci.fmc.util.FileManagerUtils;
+import be.ttime.core.model.JsonDataResponse;
 import be.ttime.core.model.form.AdminFileUploadForm;
 import be.ttime.core.persistence.model.ContentDataEntity;
 import be.ttime.core.persistence.model.FileEntity;
@@ -54,6 +55,16 @@ public class AdminFileController {
     @Autowired
     private MessageSource messageSource;
 
+    private static List<String> imagesType;
+
+    static{
+        imagesType = new ArrayList<>();
+        imagesType.add("jpg");
+        imagesType.add("jpeg");
+        imagesType.add("png");
+        imagesType.add("gif");
+    }
+
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN_FILE_DELETE')")
@@ -98,22 +109,18 @@ public class AdminFileController {
         return fileService.getFilesListJson(urlId, type);
     }
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST, produces="application/json")
+    @RequestMapping(value = "/upload", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN_FILE')")
-    public Map<String, String> upload(MultipartHttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
-        Map<String, String> jsonResponse = new HashMap<>();
-        jsonResponse.put("status", "error");
-        response.setStatus(500);
+    public Object upload(MultipartHttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
+
         Iterator<String> itr = request.getFileNames();
         int size = Iterators.size(itr);
         if (size > 0) {
             MultipartFile[] files = new MultipartFile[size];
             itr = request.getFileNames(); // reset iterator
-            // List<MultipartFile> list = new ArrayList<>();
             int i = 0;
             while (itr.hasNext()) {
-                //list.add(request.getFile(itr.next()));
                 files[i] = request.getFile(itr.next());
                 i++;
             }
@@ -121,6 +128,7 @@ public class AdminFileController {
             AdminFileUploadForm uploadForm = new AdminFileUploadForm();
             uploadForm.setFiles(files);
             String longId = request.getParameter("contentId");
+            String uploadType = request.getParameter("type");
             Long contentId = Long.parseLong(longId);
             uploadForm.setPageId(contentId);
             Map<String, String> map = new HashMap<>();
@@ -129,14 +137,14 @@ public class AdminFileController {
 
             // if errors
             if (errors.hasErrors()) {
-                response.setStatus(500);
-                StringBuilder sb = new StringBuilder();
-                if(errors.getErrorCount() > 1){
+                String errorTitle = messageSource.getMessage("an error occured", null, locale);
+                String errorDetail = null;
+                if (errors.getErrorCount() >= 1) {
                     ObjectError error = errors.getAllErrors().get(0);
-                    jsonResponse.put("message",  messageSource.getMessage(error.getCode(), null, locale));
+                    errorDetail = messageSource.getMessage(error.getCode(), null, error.getDefaultMessage(), locale);
                 }
-                return jsonResponse;
-                //return sb.toString();
+
+                return CmsUtils.getJsonErrorResponse(errorTitle, errorDetail);
             }
 
             List<FileEntity> pageFiles = new ArrayList<>();
@@ -146,6 +154,13 @@ public class AdminFileController {
                 if (!file.isEmpty()) {
                     String name = file.getOriginalFilename();
                     String ext = FilenameUtils.getExtension(name);
+                    if (uploadType.equals("G") && !imagesType.contains(ext)) {
+
+                        String errorTitle = messageSource.getMessage("an error occured", null, locale);
+                        String errorDetail = messageSource.getMessage("unallowed file type", null, locale);
+
+                        return CmsUtils.getJsonErrorResponse(errorTitle, errorDetail);
+                    }
                     try {
 
                         // Upload the file
@@ -157,32 +172,29 @@ public class AdminFileController {
                         pageFile.setExtension(ext);
                         pageFile.setSize(Math.round(file.getSize()));
                         pageFile.setMimeType(FileManagerUtils.getMimeTypeByExt(ext));
-                        if(uploadForm.getPageId() != null){
+                        if (uploadForm.getPageId() != null) {
                             ContentDataEntity c = contentService.findContentData(uploadForm.getPageId());
                             pageFile.setContentDataEntity(c);
                         }
 
-                        pageFile.setFileType(request.getParameter("type"));
+                        pageFile.setFileType(uploadType);
 
                         pageFiles.add(pageFile);
                     } catch (IOException e) {
                         log.error("You failed to upload " + name + " => " + e.getMessage());
-                        return jsonResponse;
+                        return CmsUtils.getJsonErrorResponse(messageSource, locale);
                     }
                 } else {
-                    log.info("You failed to upload because the file was empty");
-                    jsonResponse.put("message", "empty file");
-                    return jsonResponse;
+                    return CmsUtils.getJsonErrorResponse(messageSource.getMessage("empty file", null, locale), null);
                 }
             }
 
-            fileService.save(pageFiles);
-            response.setStatus(200);
-            jsonResponse.put("status", "success");
-            return jsonResponse;
+            try {
+                fileService.save(pageFiles);
+            } catch (Exception e) {
+                return CmsUtils.getJsonErrorResponse(messageSource, locale);
+            }
         }
-        return jsonResponse;
+        return new JsonDataResponse();
     }
-
-
 }

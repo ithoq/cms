@@ -3,6 +3,7 @@ package be.ttime.core.config;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.PersistenceConfiguration;
 import net.sf.ehcache.config.SizeOfPolicyConfiguration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -15,8 +16,20 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 public class CachingConfig extends CachingConfigurerSupport {
 
+    @Value("${cache.maxMb}")
+    private double cacheMaxMb;
+    @Value("${cache.maxContentMb}")
+    private int cacheContentMb;
+
     @Bean(destroyMethod = "shutdown")
     public net.sf.ehcache.CacheManager ehCacheManager() {
+        String maxMb = (int)cacheMaxMb + "M";
+        int highMbInt = cacheContentMb > 0 ? cacheContentMb : (int)(cacheMaxMb/3);
+        int mediumMbInt = (int)(cacheMaxMb/10);
+        int minMbInt = (int)(cacheMaxMb/20);
+        String highMb = highMbInt > 0 ? highMbInt + "M" : "1M";
+        String mediumMb = mediumMbInt > 0 ? mediumMbInt + "M" : "1M";
+        String minMb = minMbInt > 0 ? minMbInt + "M" : "1M";
 
         final SizeOfPolicyConfiguration sizeOfPolicyConfiguration = new SizeOfPolicyConfiguration();
         sizeOfPolicyConfiguration.maxDepth(25);
@@ -24,7 +37,7 @@ public class CachingConfig extends CachingConfigurerSupport {
 
         net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
 
-        config.setMaxBytesLocalHeap("100M");
+        config.setMaxBytesLocalHeap(maxMb);
         config.sizeOfPolicy(sizeOfPolicyConfiguration);
 
         // I don't want to set a Name or a default cache is possible || config.setName("mainCache"); || config.addDefaultCache(cacheConfig("default", "5M", false, 1 * 60, null));
@@ -41,11 +54,11 @@ public class CachingConfig extends CachingConfigurerSupport {
         config.addCache(cacheConfig("adminTree", null, true, null, null));
         config.addCache(cacheConfig("templateList", null, true, null, null));
         config.addCache(cacheConfig("template", null, true, null, null));
-        config.addCache(cacheConfig("content", "10M", true, null, null));
-        config.addCache(cacheConfig("searchContent", "10M", true, null, null));
-        config.addCache(cacheConfig("adminContent", "50M", true, null, null));
-        config.addCache(cacheConfig("user", "5M", true, null, null));
-        config.addCache(cacheConfig("persistentLogin", "5M", true, null, null));
+        config.addCache(cacheConfig("content", mediumMb, true, null, null));
+        config.addCache(cacheConfig("searchContent", mediumMb, true, null, null));
+        config.addCache(cacheConfig("adminContent", highMb, true, null, null));
+        config.addCache(cacheConfig("user", minMb, true, null, null));
+        config.addCache(cacheConfig("persistentLogin", minMb, true, null, null));
 
         return net.sf.ehcache.CacheManager.create(config);
     }

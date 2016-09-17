@@ -74,7 +74,7 @@ $(function () {
         { // group
           aTargets: [2],
           mRender: function (data, type, full) {
-            return '<input required type="text" class="light-input fileGroup" value="' + data + '"/>';
+            return '<input type="text" class="light-input fileGroup" value="' + data + '"/>';
           },
         },
         { // Active
@@ -166,8 +166,8 @@ $(function () {
     formData.type = $el.data('type');
     formData.contentId = $el.data('id');
 
-    if (formData.type === 'GALLERY') {
-      options.maxSize = 5 * 1000 * 1000;
+    if (formData.type === 'G') {
+      options.maxSize = 2 * 1000 * 1000;
       options.acceptFileTypes = /(\.|\/)(gif|jpe?g|png)$/i;
     }
 

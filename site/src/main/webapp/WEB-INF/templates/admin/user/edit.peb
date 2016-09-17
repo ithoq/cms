@@ -54,14 +54,14 @@
                                 <label>{{ message('gender') }}</label>
                                 <div class="radio radio-success">
                                     <input type="radio" {% if editUser.gender is empty or editUser.gender == "MALE"%}checked="checked"{% endif %} value="MALE" name="gender" id="male">
-                                    <label for="male">Male</label>
+                                    <label for="male">{{ message('male') | capitalize }}</label>
                                     <input type="radio"  {% if editUser.gender == "FEMALE" %}checked="checked"{% endif %} value="FEMALE" name="gender" id="female">
-                                    <label for="female">Female</label>
+                                    <label for="female">{{ message('female') | capitalize }}</label>
                                 </div>
                             </div>
                         </fieldset>
                         <fieldset>
-                            <legend>Address:</legend>
+                            <legend>{{ message('address') | capitalize }}:</legend>
                             <div class="form-group m-b-20 required">
                                 <label for="street">{{ message('street') }}</label>
                                 <input id="street" name="street" type="text" value="{{ editUser.street1 }}" class="form-control">
@@ -82,11 +82,11 @@
                     </div>
                     <div class="col-md-6">
                         <fieldset>
-                            <legend>Security:</legend>
+                            <legend>{{ message('security') | capitalize }}:</legend>
                             <div class="form-group m-b-20 required">
                                 <div class="checkbox">
                                     <input type="checkbox" {% if editUser is empty or editUser.enabled %}checked="checked"{%  endif %} id="enabled" name="enabled">
-                                    <label for="enabled">User is enabled</label>
+                                    <label for="enabled">{{ message('enabled') | capitalize }}</label>
                                 </div>
                             </div>
                             <div class="form-group m-b-20 required">
@@ -98,7 +98,7 @@
                                 <input id="passwordVerification" name="passwordVerification" type="password" data-parsley-equalto="#password" class="form-control">
                             </div>
                             <div class="form-group form-group-default form-group-default-select2 r">
-                                <label for="group">Group</label>
+                                <label for="group">{{ message('group') | capitalize }}</label>
                                 <select id="group" name="group" multiple data-init-plugin="select2" class="full-width">
                                     {% for ur in editUser.getroles()   %}
 
@@ -115,9 +115,9 @@
 
                         </fieldset>
                         <fieldset>
-                            <legend>Misc:</legend>
+                            <legend>{{ message('miscellaneous') | capitalize }}:</legend>
                             <div class="form-group m-t-10">
-                                <label>Comment</label>
+                                <label>{{ message('comment') | capitalize }}</label>
                                 <textarea rows="3" class="form-control" id="comment" name="comment">{{ editUser.comment }}</textarea>
                             </div>
                         </fieldset>

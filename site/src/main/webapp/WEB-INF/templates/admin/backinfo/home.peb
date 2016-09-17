@@ -14,7 +14,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-12">
-            <h2>Back Info</h2>
+            <h2>{{ message('admin.metrics') }}</h2>
             {% if redirectMessage is not empty and redirectMessage.message is not empty %}
                 <div class="alert alert-{{ redirectMessage.type }}"><i class="fa fa-{{ redirectMessage.icon }}" aria-hidden="true"></i>{{ redirectMessage.message }}</div>
             {% endif %}
@@ -22,7 +22,7 @@
                <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <div class="panel-title">Server information</div>
+                            <div class="panel-title">{{ message('server information') | capitalize }}</div>
                         </div>
                         <div class="panel-body">
                             <ul>

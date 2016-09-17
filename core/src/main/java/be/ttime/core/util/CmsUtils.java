@@ -1,5 +1,6 @@
 package be.ttime.core.util;
 
+import be.ttime.core.model.JsonErrorResponse;
 import be.ttime.core.model.field.PageData;
 import be.ttime.core.persistence.model.*;
 import be.ttime.core.persistence.service.IApplicationService;
@@ -14,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -713,5 +715,21 @@ public class CmsUtils {
         }
 
         return size.get();
+    }
+
+    public static JsonErrorResponse getJsonErrorResponse(MessageSource messageSource, Locale locale){
+        return getJsonErrorResponse(messageSource.getMessage("an error occured", null, locale), messageSource.getMessage("error.general", null, locale));
+    }
+
+    public static JsonErrorResponse getJsonErrorResponse(String title, String detail){
+        JsonErrorResponse jsonErrorResponse = new JsonErrorResponse();
+
+        Map errorMap = new HashMap();
+        errorMap.put("title", CmsUtils.capitalizeFirstLetter(title));
+        if(!StringUtils.isEmpty(detail)) {
+            errorMap.put("detail", CmsUtils.capitalizeFirstLetter(detail));
+        }
+        jsonErrorResponse.getErrors().add(errorMap);
+        return jsonErrorResponse;
     }
 }

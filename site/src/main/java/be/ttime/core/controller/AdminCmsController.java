@@ -381,8 +381,16 @@ public class AdminCmsController {
     private void fillPageForm(EditPageForm form, HttpServletRequest request, ContentEntity content, ContentDataEntity contentData ) throws IOException, ParseException {
 
         // retrieve data
-        ContentTemplateEntity template = contentTemplateService.find(form.getTemplateId());
-        content.setContentTemplate(template);
+        ContentTemplateEntity template = null;
+        if(CmsUtils.isSuperAdmin()) {
+            template = contentTemplateService.find(form.getTemplateId());
+            content.setContentTemplate(template);
+            content.setIncludeTop(form.getDevIncludeTop());
+            content.setIncludeBottom(form.getDevIncludeBot());
+
+        } else{
+            template = contentTemplateService.find(content.getContentTemplate().getId());
+        }
 
         if (content == null || contentData == null || template == null) {
             throw new IllegalArgumentException("The page, the content or the template is incorrect!");
@@ -399,26 +407,30 @@ public class AdminCmsController {
         Map<String, String> data = new HashMap<>();
 
 
-        content.setIncludeTop(form.getDevIncludeTop());
-        content.setIncludeBottom(form.getDevIncludeBot());
 
         data.put("seo_h1", form.getSeoH1());
-        data.put("seo_description", form.getSeoDescription());
-        data.put("seo_tags", form.getSeoTag());
+        if(CmsUtils.hasRole("ROLE_ADMIN_SEO")) {
+            data.put("seo_description", form.getSeoDescription());
+            data.put("seo_tags", form.getSeoTag());
+        }
         pageData.getDataString().putAll(data);
 
         content.setName(form.getName());
 
         content.setMenuItem(form.isMenuItem());
         content.setEnabled(form.isEnabled());
-        content.setMemberOnly(form.isMemberOnly());
+        if(applicationService.getApplicationConfig().isUseMember()) {
+            content.setMemberOnly(form.isMemberOnly());
+        }
 
         Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat(CmsUtils.DATETIME_FORMAT).create();
         contentData.setData(gson.toJson(pageData));//.getBytes("UTF8").toString());
 
         contentData.setTitle(form.getPageDataTitle());
         contentData.setSlug(form.getSlug());
-        contentData.setEnabled(form.isContentDataEnabled());
         contentData.setComputedSlug(CmsUtils.computeSlug(content, contentData, appLanguage.getLocale(), applicationService.getApplicationConfig().isForcedLangInUrl()));
+
+        contentData.setEnabled(form.isContentDataEnabled());
+
     }
 }

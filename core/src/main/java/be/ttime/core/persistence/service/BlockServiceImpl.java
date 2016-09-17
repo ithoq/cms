@@ -81,7 +81,7 @@ public class BlockServiceImpl implements IBlockService {
 
     @Override
     @Cacheable(value = "blockJson", key = "#type")
-    public String jsonBlockArray(String type, boolean dynamic) {
+    public String jsonBlockArray(String type, boolean canDelete) {
 
         List<BlockEntity> blocks = null;
         if(type == null || type.equals("all")){
@@ -100,7 +100,7 @@ public class BlockServiceImpl implements IBlockService {
             row.add("name", CmsUtils.emptyStringIfnull(StringUtils.isEmpty(block.getDisplayName()) ? block.getName(): block.getDisplayName()));
             row.add("type", CmsUtils.emptyStringIfnull(block.getBlockType().getName()));
             row.add("dynamic", block.isDynamic());
-            row.add("deletable", block.isDeletable());
+            row.add("deletable", block.isDeletable() && canDelete);
             data.add(row);
         }
 

@@ -7,28 +7,28 @@
                         <form action="/login" method="post">
                             <fieldset>
                                 <legend>{{ message('sign in to your account') | capitalize }}</legend>
-                                <!-- use param.error assuming FormLoginConfigurer#failureUrl contains the query parameter error -->
-
-                                {% if get.error is not null %}
-                                    <div class="alert alert-danger">
-                                        <h4>{{ message("login failed") | capitalize }}.</h4>
-                                        <p>{{session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION")}}</p>
-                                    </div>
-                                {% endif %}
-                                {% if get.logout is not null %}
-                                    <div class="alert alert-info">
-                                        <p>{{ message('you have been logged out') | capitalize }}.</p>
-                                    </div>
-                                {% elseif get.sessionExpiration is not null %}
-                                    <div class="alert alert-warning">
-                                        <p>{{ message('your session has expired, please login again') | capitalize }}.</p>
-                                    </div>
-                                {% endif %}
                                 {% if request.userPrincipal.authenticated %}
-                                    {{ message("logged as") | capitalize }} : {{ user.email }}
+                                    <h4>{{ message("logged as") | capitalize }} : <strong>{{ user.email }}</strong></h4>
                                 {% else %}
+                                    <div class="message">
+                                        {% if get.error is not null %}
+                                            <div class="alert alert-danger">
+                                                <h4>{{ message("login failed") | capitalize }}.</h4>
+                                                <p>{{session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION")}}</p>
+                                            </div>
+                                        {% endif %}
+                                        {% if get.logout is not null %}
+                                            <div class="alert alert-info">
+                                                <p>{{ message('you have been logged out') | capitalize }}.</p>
+                                            </div>
+                                        {% elseif get.sessionExpiration is not null %}
+                                            <div class="alert alert-warning">
+                                                <p>{{ message('your session has expired, please login again') | capitalize }}.</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                     <p>
-                                        <label for="username">{{  message('username') | capitalize }}</label>
+                                        <label for="username">{{  message('email') | capitalize }}</label>
                                         <input type="text" id="username" name="username"/>
                                     </p>
                                     <p>
@@ -42,7 +42,7 @@
                                         </span>
                                     </p>
                                     <p>
-                                        <button type="submit" class="btn btn-success">{{   message('log in') | capitalize }}</button>
+                                        <button type="submit" class="btn btn-success">{{   message('login') | capitalize }}</button>
                                     </p>
                                     {{ csrf | raw }}
                                 {% endif %}

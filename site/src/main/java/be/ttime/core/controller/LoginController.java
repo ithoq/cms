@@ -47,7 +47,7 @@ public class LoginController {
     @RequestMapping(value = {"/admin", "/admin/"}, method = RequestMethod.GET)
     public String adminHome()
     {
-        return "redirect:/admin/home";
+        return "redirect:/admin/cms";
     }
 
     @RequestMapping(value = "/admin/login", method = RequestMethod.GET)

@@ -14,7 +14,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="panel-block-title m-b-30">
-                        <h2 class="inline">{{ message('admin.templatesManagement') | capitalize }}</h2>
+                        <h2 class="inline">{{ message('admin.groupManagement') | capitalize }}</h2>
                         <a href="/admin/group/edit" class="btn btn-success pull-right btnCreateFieldset"><i class="fa fa-plus-circle fieldsetAddBtn"></i></a>
                     </div>
                 </div>

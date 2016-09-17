@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,9 +30,11 @@ public class FormController {
     private IMailer mailer;
     @Autowired
     private IRecaptchaService recaptchaService;
+    @Value("${email.contact}")
+    private String emailContact;
 
-    @RequestMapping(value = "/contact", method = RequestMethod.POST, produces="application/json")
-    public String contactForm(HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping(value = "/contact", method = RequestMethod.POST, produces = "text/html;charset=UTF-8")
+    public String contactForm(HttpServletRequest request, HttpServletResponse response) throws Exception{
 
         String name = request.getParameter("name");
         String email = request.getParameter("email");
@@ -40,6 +43,11 @@ public class FormController {
         String captchaResponse = request.getParameter("g-recaptcha-response");
         boolean captchaResult = recaptchaService.isResponseValid(null, captchaResponse);
         boolean error = false;
+
+        if(true){
+            throw new Exception("test exception");
+        }
+
         if(StringUtils.isEmpty(name) || StringUtils.isEmpty(email) || !captchaResult ){
             error= true;
         }
@@ -50,7 +58,7 @@ public class FormController {
             builder.append("<b>Email</b> : " + email + "<br>");
             builder.append("<b>Message</b> : " + message + "<br>");
             try {
-                mailer.sendMail(" jpbousez@gmail.com", "Website - contact", builder.toString());
+                mailer.sendMail(emailContact, "Website - contact", builder.toString());
             } catch (MessagingException e) {
                 error= true;
                 log.error("Error contact form", e);
@@ -59,7 +67,6 @@ public class FormController {
                 log.error("Error contact form", e);
             }
         }
-
 
 
         return !error ? "redirect:/contact?success" : "redirect:/contact?error";

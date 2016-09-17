@@ -41,7 +41,7 @@ public class AdminBlockController {
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN_BLOCK_DELETE')")
     public String deleteBlock(@PathVariable("id") String id, HttpServletResponse response) {
 
         if (id == null) {
@@ -67,8 +67,7 @@ public class AdminBlockController {
     @RequestMapping(value = "/getJson", method = RequestMethod.GET)
     @ResponseBody
     public String getjson(HttpServletResponse response) {
-
-        return (CmsUtils.isSuperAdmin())? pageBlockRepository.jsonBlockArray("all", true) : pageBlockRepository.jsonBlockArray("CONTENT", false);
+        return (CmsUtils.isSuperAdmin())? pageBlockRepository.jsonBlockArray("all", true) : pageBlockRepository.jsonBlockArray("CONTENT", CmsUtils.hasRole(CmsUtils.ROLE_ADMIN_BLOCK_DELETE));
     }
 
     @RequestMapping(value = "/get/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

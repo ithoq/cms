@@ -45,7 +45,7 @@ Cms.prototype.initFileUpload = function initFileUpload(params) {
       }
 
       if (options.acceptFileTypes) {
-        if (options.acceptFileTypes.test(fileType)) {
+        if (!options.acceptFileTypes.test('.' + fileType)) {
           $.Cms.notif({
             message: 'The file type is not allowed',
             type: 'error',
@@ -96,8 +96,28 @@ Cms.prototype.initFileUpload = function initFileUpload(params) {
     },
 
     fail: function (e, data) {
-      // Something has gone wrong!
       data.context.addClass('error');
+      $.Cms.notif({
+        message: 'The file type is not allowed',
+        type: 'error',
+      });
+    },
+
+    // only if success
+    done: function(e, data){
+      if(data.result.errors) {
+        $(data.context['0']).addClass('error');
+        $.Cms.notif({
+          message: data.result.errors[0].message ? data.result.errors[0].message : data.result.errors[0].title,
+          type: 'error',
+        });
+        return;
+      } else {
+        var hide = function(data){
+          $(data.context['0']).fadeOut(700);
+        };
+        setTimeout(function(){hide(data)}, 3000);
+      }
     },
 
     stop: function () {

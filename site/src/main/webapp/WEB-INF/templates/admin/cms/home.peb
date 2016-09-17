@@ -52,7 +52,7 @@
                         <button id="btnResetSearch" class="btn btn-default">X</button>
                     </div>
                     <div class="tree-search-input">
-                        <input placeholder="search" name="search" id="searchTree" class="light-input">
+                        <input placeholder="{{ message('search') | capitalize }}" name="search" id="searchTree" class="light-input">
                     </div>
                 </div>
             </div>

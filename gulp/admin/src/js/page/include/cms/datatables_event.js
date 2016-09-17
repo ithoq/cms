@@ -57,7 +57,7 @@ function initDataTable(options) {
       { // group
         aTargets: [2],
         mRender: function (data, type, full) {
-          return '<input required type="text" class="light-input fileGroup" value="' + data + '"/>';
+          return '<input type="text" class="light-input fileGroup" value="' + data + '"/>';
         },
       },
       { // Active

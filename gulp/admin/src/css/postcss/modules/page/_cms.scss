@@ -204,9 +204,10 @@ input.page-title
         {
             opacity: 1;
         }
-        &:hover i
+
+        &.btn:hover
         {
-            color: #fff;
+            background: #ececec;
         }
         &.btn-delete
         {
@@ -218,12 +219,20 @@ input.page-title
         {
             border-color: #f55753;
             background: #f55753;
+            i
+            {
+                color: #fff;
+            }
         }
 
         &.btn-add:hover
         {
             border-color: #10cfbd;
             background: #10cfbd;
+            i
+            {
+                color: #fff;
+            }
         }
     }
 }

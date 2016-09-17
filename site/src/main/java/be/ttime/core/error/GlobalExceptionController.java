@@ -55,7 +55,12 @@ class GlobalExceptionController {
     private ApplicationContext applicationContext;
 
     private  String handleException(final Exception e, HttpServletRequest request, final HttpServletResponse response, int sc) {
-        log.error(request.getRequestURI() + " - " + e.getMessage(), e);
+
+        if(sc != 404){
+            log.error(request.getRequestURI() + " - " + e.getMessage(), e);
+        } else{
+            log.warn("404 ERROR : " + request.getRequestURI());
+        }
 
         response.setCharacterEncoding(CharEncoding.UTF_8);
         response.setContentType(MediaType.TEXT_HTML_VALUE);
